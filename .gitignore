@@ -1,0 +1,41 @@
+# Local rollback copies; keep the working files on disk.
+/.rollback/
+
+# Python caches and local environments.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local dependencies, editor settings and operating-system temporary files.
+node_modules/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+.goutputstream-*
+*.swp
+*.swo
+*~
+
+# Local server state and execution logs.
+*.log
+*.pid
+
+# Raster exports duplicate the SVG figures. Keep SVG, layout JSON, semantic
+# IR, source evidence and source files, including historical catalog entries.
+/snapshots/**/generated/**/*.png
+
+# Reproducible full-graph audit dumps. Keep compact reports, screenshots,
+# SVG comparisons and test fixtures (including verification/performance/before).
+/verification/recursive-expansion/*-mixed.json
+/verification/boundary-turns/transformer-before.json
+/verification/boundary-turns/transformer-after.json
+
+# Do not ignore data/catalog.* or data/cases/*: the browser needs the JS
+# bundles and the regression tests/tools read their JSON counterparts.
+# Do not ignore verification/source-adapter/*.json: these include the
+# built-in source-import example and real adapter test fixtures.

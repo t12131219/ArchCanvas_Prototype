@@ -92,10 +92,23 @@
     const fixed=P.active(edge,side);
     return fixed?port(n,fixed):R.port(n,R.candidateSides(n,other)[0]);
   }
+  const descendantsCache=new WeakMap();
   function descendants(graph,id) {
-    const result=new Set([id]);let changed=true;
-    while(changed){changed=false;for(const n of graph.nodes)if(result.has(n.parent)&&!result.has(n.id)){result.add(n.id);changed=true;}}
-    return result;
+    let cache=descendantsCache.get(graph);if(!cache){cache=new Map();descendantsCache.set(graph,cache);}
+    if(cache.has(id))return new Set(cache.get(id));
+    const byParent=new Map();for(const n of graph.nodes){const list=byParent.get(n.parent)||[];list.push(n.id);byParent.set(n.parent,list);}
+    const result=new Set([id]),queue=[id];
+    while(queue.length){for(const child of byParent.get(queue.shift())||[]){if(!result.has(child)){result.add(child);queue.push(child);}}}
+    cache.set(id,[...result]);return new Set(result);
+  }
+  const previewSessionCache=new WeakMap();
+  function movePreviewSession(graph,id){
+    let cache=previewSessionCache.get(graph);if(!cache){cache=new Map();previewSessionCache.set(graph,cache);}
+    if(cache.has(id))return cache.get(id);
+    const ids=descendants(graph,id),selected=graph.nodes.find(n=>n.id===id);
+    if(!selected)return null;
+    const session={ids,selected,moving:graph.nodes.filter(n=>ids.has(n.id)),siblings:graph.nodes.filter(n=>!ids.has(n.id)&&n.parent===selected.parent&&!n.junction),edges:graph.edges.filter(e=>ids.has(e.source)||ids.has(e.target))};
+    cache.set(id,session);return session;
   }
   const normals={left:[-1,0],right:[1,0],top:[0,-1],bottom:[0,1]};
   function footprint(n){
@@ -221,10 +234,10 @@
   }
   // Pointer motion updates only presentation geometry. The authoritative
   // move() runs on the pre-drag graph when the gesture ends, in a worker.
-  function movePreview(graph,id,dx,dy) {
-    const ids=descendants(graph,id),selected=graph.nodes.find(n=>n.id===id);
+  function movePreview(graph,id,dx,dy,session=movePreviewSession(graph,id)) {
+    const ids=session?.ids||descendants(graph,id),selected=session?.selected||graph.nodes.find(n=>n.id===id);
     if(!selected||(!dx&&!dy))return ids;
-    const moving=graph.nodes.filter(n=>ids.has(n.id));
+    const moving=session?.moving||graph.nodes.filter(n=>ids.has(n.id));
     const bounds=footprint(selected);
     if(graph.canvas){dx=Math.max(3-bounds.x,Math.min(graph.canvas[0]-3-bounds.x-bounds.w,dx));dy=Math.max(3-bounds.y,Math.min(graph.canvas[1]-3-bounds.y-bounds.h,dy));}
     const owner=graph.nodes.find(n=>n.id===selected.parent);
@@ -232,12 +245,12 @@
       dx=Math.max(owner.x+pad-bounds.x,Math.min(owner.x+owner.w-pad-bounds.x-bounds.w,dx));
       dy=Math.max(owner.y+pad-bounds.y,Math.min(owner.y+owner.h-pad-bounds.y-bounds.h,dy));
     }
-    const siblings=graph.nodes.filter(n=>!ids.has(n.id)&&n.parent===selected.parent&&!n.junction);
+    const siblings=session?.siblings||graph.nodes.filter(n=>!ids.has(n.id)&&n.parent===selected.parent&&!n.junction);
     const overlap=node=>{const b=footprint(node);return Math.min(bounds.x+dx+bounds.w,b.x+b.w)-Math.max(bounds.x+dx,b.x)>1e-5&&
       Math.min(bounds.y+dy+bounds.h,b.y+b.h)-Math.max(bounds.y+dy,b.y)>1e-5;};
     if(siblings.some(overlap)){graph.lastMove={blocked:true,reason:'node overlap'};return new Set();}
     for(const n of moving){n.x+=dx;n.y+=dy;}
-    for(const e of graph.edges){const s=ids.has(e.source),t=ids.has(e.target);
+    for(const e of session?.edges||graph.edges){const s=ids.has(e.source),t=ids.has(e.target);
       if(s&&t){e.route=(e.route||[]).map(p=>({x:p.x+dx,y:p.y+dy}));e.waypoints=(e.waypoints||[]).map(p=>({x:p.x+dx,y:p.y+dy}));}
       else{if(s&&e.route?.length)e.route[0]=endpoint(graph,e,'source');if(t&&e.route?.length)e.route[e.route.length-1]=endpoint(graph,e,'target');}
     }
@@ -294,7 +307,6 @@
   }
   const path=(points,style,graph,e)=>style==='curved'?R.roundedPath(points,curveRadius(graph,e,points)):R.polylinePath(points);
   function adaptiveOptions(graph,e,options) {
-    if(graph.caseId==='routing-lab')return {...options,width:graph.canvas[0],height:graph.canvas[1]};
     const s=graph.nodes.find(n=>n.id===e.source),t=graph.nodes.find(n=>n.id===e.target);
     let gap=Infinity;
     for(const a of [s,t])for(const b of graph.nodes){
@@ -420,7 +432,7 @@
     const placed=L.place(graph,a,points,occupied,fast);if(placed){out.set(a.id,placed);occupied.push(placed.box);}
   }return out;}
   function snapRouteLabel(graph,a,p){return L.snap(a,labelPath(graph,a),p);}
-  const api={labelPath,routeLabelPlacements,snapRouteLabel,clone,upgradePresentation,port,endpoint,descendants,move,movePreview,reconnect,crop,arrow,path,curvePoints,curveRadius,displayed,adaptiveOptions,conflicts,overlapsWire,sharesPresentation,layoutConflicts,validateView,routeOne,routeBatch,attachmentTransform,junctionPoint:J.point};
+  const api={labelPath,routeLabelPlacements,snapRouteLabel,clone,upgradePresentation,port,endpoint,descendants,move,movePreview,movePreviewSession,reconnect,crop,arrow,path,curvePoints,curveRadius,displayed,adaptiveOptions,conflicts,overlapsWire,sharesPresentation,layoutConflicts,validateView,routeOne,routeBatch,attachmentTransform,junctionPoint:J.point};
   root.SummaryEngine=api;
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

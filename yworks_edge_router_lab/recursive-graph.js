@@ -4,25 +4,44 @@
   'use strict';
   const R=root.EdgeRouterLabRouting,E=root.SummaryEngine,C=root.SummaryConstraints;
   const copy=v=>JSON.parse(JSON.stringify(v)),eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b),EPS=1e-5;
-  const receiptCache=new WeakMap();
+  const receiptCache=new WeakMap(),descendantCache=new WeakMap();
   const PRESENTATION_VERSION=10;
-  function children(authority,id){return authority.detail.nodes.filter(n=>n.parent===id);}
-  function containers(authority){return authority.detail.nodes.filter(n=>children(authority,n.id).length&&!n.junction).map(n=>n.id);}
+  // The authority graph is immutable during a frontier edit. Keep parent and
+  // child indexes beside it so expansion does not repeatedly scan every
+  // source node (the old path was O(N²) for a deep atomic graph).
+  function indexAuthority(authority){
+    const nodes=authority.detail.nodes||[],old=authority.index;
+    if(old&&old.nodeCount===nodes.length&&old.edgeCount===(authority.detail.edges||[]).length)return old;
+    const nodesById=Object.create(null),childrenById=Object.create(null);
+    for(const n of nodes){nodesById[n.id]=n;(childrenById[n.parent||'']||(childrenById[n.parent||'']=[])).push(n.id);}
+    authority.index={nodeCount:nodes.length,edgeCount:(authority.detail.edges||[]).length,nodesById,childrenById,
+      containerIds:nodes.filter(n=>!n.junction&&(childrenById[n.id]||[]).length).map(n=>n.id)};
+    return authority.index;
+  }
+  function children(authority,id){const index=indexAuthority(authority);return (index.childrenById[id]||[]).map(v=>index.nodesById[v]).filter(Boolean);}
+  function containers(authority){return indexAuthority(authority).containerIds.slice();}
   function create(sources){
     const ordered=['overview','modules','detailed',...Object.keys(sources)].filter((k,i,a)=>sources[k]&&a.indexOf(k)===i);
-    const variants=ordered.map(k=>copy(sources[k])),detail=copy(sources.detailed||variants.at(-1)),overview=copy(sources.overview||variants[0]);
+    const variants=ordered.map(k=>copy(sources[k])),detail=copy(sources['source-atomic']||sources.detailed||variants.at(-1)),overview=copy(sources.overview||sources['source-atomic']||variants[0]);
+    // A source-atomic case may carry an audited detailed route template as an
+    // internal variant. It is never exposed as a selectable view; atomic
+    // metadata from the authority remains attached to every template glyph.
+    if(sources['source-atomic']){const atomicById=new Map(detail.nodes.map(n=>[n.id,n]));for(const variant of variants)for(const n of variant.nodes){const a=atomicById.get(n.id);if(a)for(const key of ['atomicity','semantic_kind','source_evidence','source_line','source_expression','source_binding'])if(a[key]!==undefined)n[key]=copy(a[key]);}}
     // A single detailed-only audit has no compact snapshot. Its root remains
     // the minimum skeleton, and its nested source containers start folded.
     const mandatory=overview.nodes.filter(n=>n.expanded&&detail.nodes.some(v=>v.parent===n.id)).map(n=>n.id);
     if(!sources.overview){mandatory.splice(0,mandatory.length,...detail.nodes.filter(n=>!n.parent&&children({detail},n.id).length).map(n=>n.id));}
-    return {schema:1,presentationVersion:PRESENTATION_VERSION,authority:{detail,variants,mandatory},state:{open:[...mandatory],folded:[],layouts:{},frontiers:{}},revision:0};
+    const authority={detail,variants,mandatory};indexAuthority(authority);
+    return {schema:1,presentationVersion:PRESENTATION_VERSION,authority,state:{open:[...mandatory],folded:[],layouts:{},frontiers:{}},revision:0};
   }
   function opened(doc,id){return doc.authority.mandatory.includes(id)||doc.state.open.includes(id)&&!doc.state.folded.includes(id);}
-  function visible(doc){const ids=new Set(),nodes=doc.authority.detail.nodes;
-    function visit(id){ids.add(id);if(opened(doc,id))for(const n of nodes)if(n.parent===id)visit(n.id);}
-    for(const n of nodes)if(!n.parent||!nodes.some(p=>p.id===n.parent))visit(n.id);return ids;
+  function visible(doc){const ids=new Set(),authority=doc.authority,index=indexAuthority(authority);
+    function visit(id){ids.add(id);if(opened(doc,id))for(const child of children(authority,id))visit(child.id);}
+    for(const id of index.childrenById['']||[])visit(id);
+    for(const n of authority.detail.nodes)if(n.parent&&!index.nodesById[n.parent])visit(n.id);
+    return ids;
   }
-  function representative(doc,id,ids=visible(doc)){const by=new Map(doc.authority.detail.nodes.map(n=>[n.id,n]));let n=by.get(id),seen=new Set();while(n&&!ids.has(n.id)&&!seen.has(n.id)){seen.add(n.id);n=by.get(n.parent);}return n?.id||null;}
+  function representative(doc,id,ids=visible(doc)){const by=indexAuthority(doc.authority).nodesById;let n=by[id],seen=new Set();while(n&&!ids.has(n.id)&&!seen.has(n.id)){seen.add(n.id);n=by[n.parent];}return n?.id||null;}
   const signature=doc=>[...visible(doc)].sort().join('|');
   const trace=e=>e.binding?.semantic_edges||e.binding?.semantic_trace||e.binding?.trace||[];
   const semanticKey=e=>e.binding?.endpoint_binding?.edge_id||[e.binding?.canonical_src||e.binding?.semantic_src||e.source,e.binding?.canonical_dst||e.binding?.semantic_dst||e.target,e.binding?.semantic_trace||e.binding?.trace||[],e.role||e.binding?.role||'tensor'].map(v=>JSON.stringify(v)).join('→');
@@ -180,8 +199,8 @@
     return out;
   }
   function upgrade(graph){
-    const doc=graph.recursive,adapterChanged=graph.sourceAdapter&&graph.sourceAdapter.presentationVersion!==doc?.authority.detail.sourceAdapter?.presentationVersion;
-    if(!doc||doc.presentationVersion===PRESENTATION_VERSION&&!adapterChanged)return graph;
+    const doc=graph.recursive;
+    if(!doc||doc.presentationVersion===PRESENTATION_VERSION)return graph;
     // Retain expansion choices, local offsets, edits and label anchors. Only
     // projections made by the defective renderer are rebuilt.
     doc.state.frontiers={};doc.presentationVersion=PRESENTATION_VERSION;
@@ -311,6 +330,19 @@
     g.recursiveReceipt.annotations={labels:copy(g.routeLabels.map(a=>Object.fromEntries(Object.entries(a).filter(([k])=>k!=='anchor')))),attachments:copy(g.attachments)};
     return g;
   }
+  // Frontier changes usually affect one branch. Reuse already legal routes
+  // for edges outside that branch after translating their two terminals.
+  function carryRoutes(before,after,changedId){
+    if(!before?.recursive||!after?.recursive)return after;
+    const authority=after.recursive.authority,changed=new Set([changedId]),queue=[changedId];
+    while(queue.length)for(const child of children(authority,queue.shift()))if(!changed.has(child.id)){changed.add(child.id);queue.push(child.id);}
+    const oldByRaw=new Map();for(const e of before.edges)for(const id of e.projection?.originals||[e.projection?.original])oldByRaw.set(id,e);
+    for(const e of after.edges){const rawId=(e.projection?.originals||[e.projection?.original])?.[0],old=oldByRaw.get(rawId),raw=authority.detail.edges.find(v=>v.id===rawId);if(!old||!raw||changed.has(raw.source)||changed.has(raw.target))continue;
+      const oldSource=before.nodes.find(n=>n.id===old.source),oldTarget=before.nodes.find(n=>n.id===old.target),newSource=after.nodes.find(n=>n.id===e.source),newTarget=after.nodes.find(n=>n.id===e.target);if(!oldSource||!oldTarget||!newSource||!newTarget)continue;
+      e.route=translateRoute(old.route,{x:newSource.x-oldSource.x,y:newSource.y-oldSource.y},{x:newTarget.x-oldTarget.x,y:newTarget.y-oldTarget.y});e.waypoints=(old.waypoints||[]).map(p=>({x:p.x+newSource.x-oldSource.x,y:p.y+newSource.y-oldSource.y}));delete e.needsRecursiveRouting;
+    }
+    return after;
+  }
   function remember(graph){const doc=graph.recursive;if(!doc)return;doc.state.edgeEdits=doc.state.edgeEdits||{};for(const e of graph.edges)if(!e.draft)for(const id of e.projection?.originals||[e.projection?.original])doc.state.edgeEdits[id]={arrow:e.arrow,style:e.style};doc.state.draftOperations=copy(graph.sourceDraftOperations||[]);doc.state.drafts=copy(graph.edges.filter(e=>e.draft));doc.state.captionAnchors={...(doc.state.captionAnchors||{}),...Object.fromEntries((graph.routeLabels||[]).filter(a=>a.anchor).map(a=>[a.id,a.anchor]))};
     const g=copy({...graph,recursive:undefined});doc.state.frontiers[signature(doc)]=g;
     // Limit cache size, retaining local offsets and the complete open tree.
@@ -318,12 +350,12 @@
   }
   function captureMove(before,after,id){const doc=after.recursive;if(!doc)return;const a=before.nodes.find(n=>n.id===id),b=after.nodes.find(n=>n.id===id);if(!a||!b)return;const dx=b.x-a.x,dy=b.y-a.y;if(!dx&&!dy)return;
     const parent=b.parent||'$root';doc.state.layouts[parent]=doc.state.layouts[parent]||{};const old=doc.state.layouts[parent][id]||{x:0,y:0};doc.state.layouts[parent][id]={x:old.x+dx,y:old.y+dy};
-    const all=doc.authority.detail.nodes,desc=new Set([id]);let changed=true;while(changed){changed=false;for(const n of all)if(desc.has(n.parent)&&!desc.has(n.id)){desc.add(n.id);changed=true;}}
+    const desc=new Set([id]),queue=[id];while(queue.length)for(const child of children(doc.authority,queue.shift()))if(!desc.has(child.id)){desc.add(child.id);queue.push(child.id);}
     for(const cached of Object.values(doc.state.frontiers)){for(const n of cached.nodes)if(desc.has(n.id)){n.x+=dx;n.y+=dy;}for(const e of cached.edges)if(desc.has(e.source)&&desc.has(e.target)){e.route=e.route.map(p=>({x:p.x+dx,y:p.y+dy}));}else if(desc.has(e.source)||desc.has(e.target)){e.needsRecursiveRouting=true;}}
     remember(after);
   }
-  function toggle(graph,id,force){const doc=graph.recursive;if(!doc||!children(doc.authority,id).length||doc.authority.mandatory.includes(id))return null;remember(graph);const next=force===undefined?!opened(doc,id):force;
-    if(next){if(!doc.state.open.includes(id))doc.state.open.push(id);doc.state.folded=doc.state.folded.filter(v=>v!==id);}else {if(!doc.state.folded.includes(id))doc.state.folded.push(id);}doc.revision++;return build(doc);
+  function toggle(graph,id,force){const doc=graph.recursive;if(!doc||!children(doc.authority,id).length||doc.authority.mandatory.includes(id))return null;const before=graph;remember(graph);const next=force===undefined?!opened(doc,id):force;
+    if(next){if(!doc.state.open.includes(id))doc.state.open.push(id);doc.state.folded=doc.state.folded.filter(v=>v!==id);}else {if(!doc.state.folded.includes(id))doc.state.folded.push(id);}doc.revision++;return carryRoutes(before,build(doc),id);
   }
   function all(graph,open){const doc=graph.recursive;remember(graph);if(open){doc.state.open=containers(doc.authority);doc.state.folded=[];}else{doc.state.folded=containers(doc.authority).filter(id=>!doc.authority.mandatory.includes(id));}doc.revision++;return build(doc);}
   function nodeErrors(graph){const doc=graph.recursive;if(!doc)return[];const errors=[],a=doc.authority,r=receipts(doc),ids=visible(doc),actual=new Set(graph.nodes.map(n=>n.id));
@@ -380,5 +412,5 @@
     const result=E.routeBatch(graph,ids,batchOptions);
     if(!graph.junctionMarkers.length){const groups=new Map();for(const e of graph.edges){const key=e.source+'|'+e.contract.wire,es=groups.get(key)||[];es.push(e);groups.set(key,es);}for(const es of groups.values())if(es.length>1){const raw=graph.recursive.authority.detail.junctionMarkers?.find(m=>m.edges.some(id=>es.some(e=>e.projection.original===id))),owner=es[0].source;if(!raw)continue;const marker={...copy(raw),id:'recursive-fork:'+es[0].id,owner,edges:es.map(e=>e.id),original:[graph.nodes.find(n=>n.id===owner).base[0],graph.nodes.find(n=>n.id===owner).base[1]],fragments:[]};if(root.SummaryJunctionMarkers.point(graph,marker))graph.junctionMarkers.push(marker);}}
     return result;}
-  const api={create,children,containers,opened,visible,representative,signature,build,toggle,all,remember,captureMove,nodeErrors,edgeErrors,validate,route,upgrade,annotations};root.SummaryRecursive=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+  const api={create,children,containers,opened,visible,representative,signature,build,toggle,all,remember,captureMove,nodeErrors,edgeErrors,validate,route,upgrade,annotations,carryRoutes};root.SummaryRecursive=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

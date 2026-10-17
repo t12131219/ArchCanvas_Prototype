@@ -1,6 +1,6 @@
 # 从 Transformer 源码到三层架构图：图元对应、语义依据与程序化排布
 
-> 本轮源码端点审查已同步活跃 SVG / PNG / 生成脚本。旧检查计数及“IR 字节不变”描述属于历史布局阶段；当前准确的 PE、summary 与 leaf binding、完整边处置及测试结果见 [Transformer 专项审查](../arrow_semantic_audit/transformer/README.md)。历史 snapshots 保留旧字节与旧缺陷。
+> 本轮源码端点审查已同步活跃 SVG / PNG / 生成脚本。旧检查计数及“IR 字节不变”描述属于历史布局阶段；当前准确的 PE、summary 与 leaf binding、完整边处置及测试结果见 [Transformer 专项审查](generated/layout_checks.json)。当前目录仅保留 Transformer 当前生成结果。
 
 **版式可选：** 本文对应当前默认的“统一自底向上版”；上次的“箭头优化后、内部仍为混合方向”的完整结果也已单独保存。可从 [版本选择页](版本选择.html) 或 [版本目录与生成命令](版本选择.md) 查看两套图、脚本和各自说明。
 

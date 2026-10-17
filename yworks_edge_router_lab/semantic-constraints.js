@@ -46,7 +46,7 @@
       e.contract={version:1,gates,wire:wireIdentity(e),bus:['fork_bus','collection_bus'].includes(e.binding?.representation),
         source:e.source,target:e.target,originalSourcePort:e.fixedSource,originalTargetPort:e.fixedTarget,
         minimumTerminal:Math.min(9,R.dist(e.route.at(-1)||{},e.route.at(-2)||{})),
-        enforcePortApproach:!!(graph.irSha256||graph.caseId==='routing-lab'||e.draft)};
+        enforcePortApproach:!!(graph.irSha256||e.draft)};
     }
     // The source identity licenses sharing; geometry only records where the
     // existing fan-out splits. The longest common initial segment retains

@@ -1,4 +1,4 @@
-/* Exercise the shared fork rule on independently sourced model collections. */
+/* Exercise the shared fork rule on the Transformer collection. */
 const fs=require('node:fs'),path=require('node:path'),root=path.resolve(__dirname,'..');
 require('../yworks_edge_router_lab/router.js');const E=require('../yworks_edge_router_lab/graph-engine.js'),C=globalThis.SummaryConstraints,J=globalThis.SummaryJunctionMarkers;
 const cat=JSON.parse(fs.readFileSync(root+'/data/catalog.json')),reports=[],covered=new Set();
@@ -19,7 +19,7 @@ for(const c of cat.cases.filter(c=>!c.historical)){
     if(covered.has(c.collection))break;
   }
 }
-const required=['arrow_semantic_audit','model_zoo_programmatic_guide','module_programmatic_guide','timeseries_programmatic_guide','transformer_programmatic_guide'];
+const required=['transformer_programmatic_guide'];
 const missing=required.filter(c=>!covered.has(c));
 const report={passed:!missing.length,collections:covered.size,reports,missing,model_executed:false};
 fs.writeFileSync(root+'/verification/shortest-routing/junction-motion.json',JSON.stringify(report,null,2)+'\n');

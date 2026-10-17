@@ -110,6 +110,6 @@ Cross-attention 内部再从 memory 边界端口扇出到 K、V 投影输入。�
 
 当前两版实际 SVG 路径均为 24 / 40 / 83 条；模块摘要具有明确 source members 和命名接口，展开后箭头继续到真实叶算子。PE 的 buffer 与 Add 分别具有身份；残差来源追到上游状态；memory 从最终 Encoder LayerNorm 分别接 cross WK/WV。Q/K/V、FFN X/Z 网格按 producer 作为值别名，分段箭头保留同一 canonical edge。
 
-`semantic_projection.edge_dispositions` 记录全部 134 条 IR 边，防止隐藏依赖无声消失。`check_svg_routes.py generated --border 0.1 --summary --strict` 同时检查实际 SVG 与 layout 的路径/端点/trace 一致性，以及 source projection 与别名续线。默认版保持模块内部向上；compact 明确采用混合方向。本轮 semantic_ir 增加准确 PE 算子、接口绑定和摘要来源，源码字节未修改。历史检查记录和 preservation manifest 只描述当时版本。
+`semantic_projection.edge_dispositions` 记录全部 134 条 IR 边，防止隐藏依赖无声消失。`check_svg_routes.py generated --border 0.1 --summary --strict` 同时检查实际 SVG 与 layout 的路径/端点/trace 一致性，以及 source projection 与别名续线。默认版保持模块内部向上；compact 明确采用混合方向。本轮 semantic_ir 增加准确 PE 算子、接口绑定和摘要来源，源码字节未修改。当前生成结果以 generated/ 下文件为准。
 
-详细数字、负例与最终渲染凭据见 [Transformer 专项审查](../arrow_semantic_audit/transformer/README.md)。这些检查不证明任意源码等价，也不证明所有文字与箭头在任意缩放下无碰撞。
+详细数字、负例与最终渲染凭据见 [Transformer 专项审查](generated/layout_checks.json)。这些检查不证明任意源码等价，也不证明所有文字与箭头在任意缩放下无碰撞。

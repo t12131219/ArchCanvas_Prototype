@@ -107,9 +107,16 @@
     if(cache.has(id))return cache.get(id);
     const ids=descendants(graph,id),selected=graph.nodes.find(n=>n.id===id);
     if(!selected)return null;
-    const session={ids,selected,moving:graph.nodes.filter(n=>ids.has(n.id)),siblings:graph.nodes.filter(n=>!ids.has(n.id)&&n.parent===selected.parent&&!n.junction),edges:graph.edges.filter(e=>ids.has(e.source)||ids.has(e.target))};
+    const session={ids,selected,moving:graph.nodes.filter(n=>ids.has(n.id)),siblings:graph.nodes.filter(n=>!ids.has(n.id)&&n.parent===selected.parent&&!n.junction),edges:graph.edges.filter(e=>ids.has(e.source)||ids.has(e.target)),
+      // These stable ownership lists let the browser update only objects whose
+      // geometry can change during a gesture. The full scene remains the
+      // authoritative path at pointerup and after an expansion transaction.
+      labelIds:new Set((graph.routeLabels||[]).filter(a=>graph.edges.some(e=>e.id===a.edge&&(ids.has(e.source)||ids.has(e.target)))).map(a=>a.id)),
+      attachmentIds:new Set((graph.attachments||[]).filter(a=>ids.has(a.owner)).map(a=>a.id)),
+      markerIds:new Set((graph.junctionMarkers||[]).filter(m=>m.edges.some(id=>sessionEdge(graph,id,ids))).map(m=>m.id))};
     cache.set(id,session);return session;
   }
+  function sessionEdge(graph,id,ids){const edge=graph.edges.find(e=>e.id===id);return !!edge&&(ids.has(edge.source)||ids.has(edge.target));}
   const normals={left:[-1,0],right:[1,0],top:[0,-1],bottom:[0,1]};
   function footprint(n){
     if(!n.glyphPresentation)return n;

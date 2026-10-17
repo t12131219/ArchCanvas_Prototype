@@ -1,6 +1,8 @@
-# Summary_Merge · Transformer
+# Summary_Merge · Transformer 与通用源码语义适配
 
-当前工作区只保留教育版 **Transformer** 及其源码原子粒度副本：原案例 ID 为 `01093cc06a87b35a`，副本 ID 为 `01093cc06a87b35b`。原案例保留概览、模块操作和算子详细三份基线视图；副本只暴露 `source-atomic` 一份 authority 图，由递归展开控制源码颗粒度。
+当前工作区保留教育版 **Transformer** 及其源码原子粒度副本：原案例 ID 为 `01093cc06a87b35a`，副本 ID 为 `01093cc06a87b35b`。原案例保留概览、模块操作和算子详细三份基线视图；副本只暴露 `source-atomic` 一份 authority 图，由递归展开控制源码颗粒度。
+
+新增独立的实验性通用 PyTorch 语义链路：只读 AST 抽取 → 统一 IR → 隔离 CPU 证据 → 原子关系 → 数据流模式组合 → 递归图。入口为 <http://127.0.0.1:8766/semantic_studio/index.html>，完整范围、命令与限制见 [通用适配层说明](docs/semantic-adapter.md)。已读取两个参考集合并生成 7 个外部模型静态图，保留未知边界；外部 Notebook 未执行、未复制模型实现。CPU 端到端验证使用用户允许的 conda `ArchCanvas` 环境。
 
 源码原子粒度标准（`source-atomic-v1`）把一个源码函数调用/表达式、参数或 buffer、控制量（mask/causal/循环）和明确的张量值别名作为最小可解释单位。端口绑定只表达关系，界面标签和说明框不计为算子。每个原子节点记录 `source_evidence`、源码行号/表达式、`semantic_kind` 和 `atomicity`，展开只改变可见投影，不改变源码、IR 或 canonical binding。
 
@@ -32,12 +34,18 @@ python3 -m http.server 8766 --bind 127.0.0.1 --directory .
 
 打开 <http://127.0.0.1:8766/yworks_edge_router_lab/index.html>。页面加载原案例和源码原子副本；副本不通过 overview/modules/detailed 切换，而是在同一份源码 authority 图上逐级展开。原三份图只作为不可见的已审计路由模板复用，不作为用户视图。画布平移直接按住鼠标滚轮拖动，滚轮滚动仍用于缩放。节点移动、递归展开、约束布线、撤销/重做和 SVG/JSON 导出仍由 `yworks_edge_router_lab/` 提供。
 
+交互性能路径：展开/收起的递归投影构建、路由和完整约束校验在 `routing-worker.js` 中作为一个事务执行，主线程只保留状态提交和最终渲染。兼容模式拖动在 `requestAnimationFrame` 中只更新移动子树、受影响边、跟随标注/附件和句柄；释放鼠标后才执行完整移动校验、路由修复和历史提交。这样大模块展开后移动时，帧成本随局部交互前沿增长，而不会重复遍历整张 SVG 场景。
+
 ## 目录
 
 ```text
 Summary_Merge/
 ├── data/catalog.{json,js}       Transformer 基线与源码原子副本索引
 ├── data/cases/                  基线视图及源码原子副本编辑数据
+├── data/semantic/               通用 IR、源码清单、CPU 运行证据和索引
+├── semantic_adapter/            静态抽取、运行探针、证据合并、模式与 CLI
+├── semantic_studio/             通用语义递归画布
+├── docs/semantic-adapter.md      通用层标准、范围、运行方式与限制
 ├── snapshots/transformer_programmatic_guide/
 │   ├── sources/                 Transformer 源码
 │   ├── generated/               SVG、IR、布局和检查结果
@@ -49,4 +57,4 @@ Summary_Merge/
 └── verification/                Transformer 的历史验证证据
 ```
 
-其它模型案例、历史快照、通用用户源码导入服务及其源码适配层已从工作区移除。编辑器不再提供“导入陌生模型”入口。
+旧的其它模型案例和通用源码导入服务已移除。新的通用层通过 CLI 显式指定入口和运行输入，页面只打开派生 IR/图文档；既有 Transformer 图与编辑状态独立保留。

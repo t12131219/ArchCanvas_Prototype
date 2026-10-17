@@ -1,0 +1,127 @@
+{
+  "schema": "semantic-validation/1",
+  "checked_at": "2026-10-17T18:01:54.966891+00:00",
+  "catalog_models": 12,
+  "catalog_validated": true,
+  "reference_report": "semantic-collections.json",
+  "tests": {
+    "python_semantic": {
+      "passed": 11,
+      "failed": 0
+    },
+    "javascript_semantic_projection": {
+      "passed": 4,
+      "failed": 0
+    },
+    "existing_interaction": {
+      "passed": 5,
+      "failed": 0
+    },
+    "existing_recursive_expansion": {
+      "passed": 4,
+      "failed": 0
+    },
+    "existing_source_contracts": {
+      "views": 4,
+      "negative_cases_rejected": 76
+    }
+  },
+  "cpu_cases": [
+    {
+      "entry": "BranchMLP",
+      "nodes": 87,
+      "edges": 56,
+      "opaque": 0,
+      "runs": 4,
+      "coverage": "bounded-branch-verified",
+      "complete": true,
+      "framework": "2.7.1+cu118",
+      "source_unchanged": true,
+      "isolation_passed": true,
+      "replay_matched": true,
+      "export_statuses": [
+        "captured",
+        "captured",
+        "captured",
+        "captured"
+      ]
+    },
+    {
+      "entry": "TinyCNN",
+      "nodes": 32,
+      "edges": 22,
+      "opaque": 0,
+      "runs": 1,
+      "coverage": "partial",
+      "complete": false,
+      "framework": "2.7.1+cu118",
+      "source_unchanged": true,
+      "isolation_passed": true,
+      "replay_matched": true,
+      "export_statuses": [
+        "captured"
+      ]
+    },
+    {
+      "entry": "ReusedRecurrent",
+      "nodes": 46,
+      "edges": 42,
+      "opaque": 0,
+      "runs": 1,
+      "coverage": "partial",
+      "complete": false,
+      "framework": "2.7.1+cu118",
+      "source_unchanged": true,
+      "isolation_passed": true,
+      "replay_matched": true,
+      "export_statuses": [
+        "captured"
+      ]
+    },
+    {
+      "entry": "Transformer",
+      "nodes": 651,
+      "edges": 558,
+      "opaque": 8,
+      "runs": 2,
+      "coverage": "partial",
+      "complete": false,
+      "framework": "2.7.1+cu118",
+      "source_unchanged": true,
+      "isolation_passed": true,
+      "replay_matched": true,
+      "export_statuses": [
+        "captured",
+        "captured"
+      ]
+    }
+  ],
+  "browser": {
+    "url": "http://127.0.0.1:8766/semantic_studio/index.html",
+    "errors_observed": [],
+    "cnn_collapse_nodes": 1,
+    "cnn_doubleclick_expanded_nodes": 8,
+    "cnn_full_source_nodes": 14,
+    "branch_mlp_runtime_nodes": 69,
+    "transformer_runtime_nodes": 568,
+    "transformer_runtime_edges": 482,
+    "transformer_attention_candidates": 6,
+    "drag_transform": "translate(100.33918762207031,75.97362518310547)",
+    "undo_transform": "translate(32,30)",
+    "redo_and_reopen_transform": "translate(100.33918762207031,75.97362518310547)",
+    "canvas_export_and_reopen": true,
+    "svg_export_parsed": true,
+    "screenshot": "semantic-browser/cnn-source.jpg",
+    "limitations": [
+      "Browser download event did not arrive; export text saved and reopened through the real file chooser instead.",
+      "Middle-button held panning and frame-rate benchmarks were not exercised by the browser API."
+    ]
+  },
+  "limits": [
+    "Prototype first stage, not universal PyTorch support.",
+    "External notebooks static-only; no reference model implementations copied or downloaded.",
+    "Bounded coverage certifies declared concrete inputs and selected source branches, not arbitrary inputs or all Python paths.",
+    "Static/runtime hierarchies remain distinct; source-line matches do not prove operator equivalence.",
+    "Simplified orthogonal routes; no publication routing or broad performance certification."
+  ]
+}

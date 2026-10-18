@@ -7,6 +7,7 @@ keeps catalog metadata in sync and deliberately does not import arbitrary
 models or adapt unrelated SVG examples.
 """
 from pathlib import Path
+import hashlib
 import json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,7 +73,7 @@ def build_catalog():
         "atomicity": atomic.get("sourceAtomicStandard", {}).get("name"),
         "sourceAtomicCounts": atomic.get("sourceAtomicCounts"),
     }
-    return {
+    catalog = {
         "schema": "summary-merge/1",
         "cases": [{
             "id": CASE_ID,
@@ -98,6 +99,34 @@ def build_catalog():
         "inputs": ["transformer_programmatic_guide"],
         "errors": [],
     }
+    runtime_id = "01093cc06a87b35c"
+    runtime_path = ROOT / f"data/cases/{runtime_id}-source-atomic.json"
+    if runtime_path.is_file():
+        runtime = json.loads(runtime_path.read_text(encoding="utf-8"))
+        catalog["cases"].append({
+            "id": runtime_id, "title": "Transformer · CPU 轨迹细化副本",
+            "collection": "transformer_programmatic_guide", "historical": False,
+            "origin": "CPU / with-masks / eval", "copiedFrom": ATOMIC_CASE_ID,
+            "views": [{"key": "source-atomic", "label": "CPU 轨迹原子图",
+                       "asset": f"data/cases/{runtime_id}-source-atomic.js",
+                       "json": str(runtime_path.relative_to(ROOT)),
+                       "nodes": len(runtime["nodes"]), "edges": len(runtime["edges"]),
+                       "ir": runtime["irSource"]}],
+            "routeTemplates": [{"key": key, "asset": f"data/cases/{runtime_id}-{key}.js"}
+                               for key in ("overview", "compact-templates")],
+            "sourceIndex": "semantic_studio/index.html?case=transformer-runtime",
+            "sourceAtomic": {**runtime["sourceAtomicStandard"], "counts": runtime["sourceAtomicCounts"]},
+            "runtimeExpansion": runtime["runtimeExpansion"],
+        })
+        catalog["counts"]["cases"] += 1
+        catalog["counts"]["active"] += 1
+        catalog["counts"]["views"] += 1
+        frontiers = ROOT / f"data/cases/{runtime_id}-frontiers.json"
+        if frontiers.is_file():
+            cache = json.loads(frontiers.read_text(encoding="utf-8"))
+            if cache["authoritySha256"] == hashlib.sha256(runtime_path.read_bytes()).hexdigest():
+                catalog["cases"][-1]["routeTemplates"].extend(cache["views"])
+    return catalog
 
 
 def main():

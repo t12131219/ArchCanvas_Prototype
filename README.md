@@ -6,6 +6,10 @@
 
 源码原子粒度标准（`source-atomic-v1`）把一个源码函数调用/表达式、参数或 buffer、控制量（mask/causal/循环）和明确的张量值别名作为最小可解释单位。端口绑定只表达关系，界面标签和说明框不计为算子。每个原子节点记录 `source_evidence`、源码行号/表达式、`semantic_kind` 和 `atomicity`，展开只改变可见投影，不改变源码、IR 或 canonical binding。
 
+## 可组合架构表达
+
+通用语义画布新增局部语义规则、架构摘要与拓扑布局。陌生组合中的残差、门控、前馈和重复结构可独立归纳；未知边界、原始连接、参数身份和端口证据保留。支持紧凑显示、递归展开与 Node SVG 导出。实现范围、使用命令及自主测试见 [架构表达说明](docs/architecture-rules.md)。
+
 ## 保留的构建链
 
 - `snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py`：输入源码。

@@ -28,9 +28,9 @@ def merge(ir, receipt):
              'granularity': 'composite' if kind == 'composite' else 'atomic', 'evidence_status': 'runtime-only', **extra}
         graph_nodes.append(n)
         return identity
-    def edge(a, b, kind='data', slot='in'):
+    def edge(a, b, kind='data', slot='in', source_slot='out'):
         if a == b: return
-        graph_edges.append({'id': f'rt-edge:{len(graph_edges)}', 'source': a, 'target': b, 'source_port': 'out',
+        graph_edges.append({'id': f'rt-edge:{len(graph_edges)}', 'source': a, 'target': b, 'source_port': str(source_slot),
                             'target_port': str(slot), 'kind': kind, 'evidence': 'runtime-state' if kind == 'state-write' else 'runtime-tensor'})
     observed_root = add('runtime-observations', 'composite', 'CPU observed execution', root, [{'receipt': receipt.get('trace_digest')}])
     for index, run in enumerate(receipt['runs']):
@@ -71,7 +71,7 @@ def merge(ir, receipt):
                 if key not in producers:
                     producers[key] = add(prefix + key, 'interface' if producer and producer.startswith('input:') else 'opaque', key, group, proof,
                                          tensor=tensor, reason=None if producer else 'tensor producer not observed')
-                edge(producers[key], node, 'state-write' if event['mutable'] else 'data', i)
+                edge(producers[key], node, 'state-write' if event['mutable'] else 'data', i, tensor.get('slot', 'out'))
             if evidence:
                 for original in static:
                     if original['kind'] not in {'compute', 'opaque'}: continue
@@ -84,7 +84,7 @@ def merge(ir, receipt):
             key = tensor['producer'] or ('unresolved:' + tensor['id'])
             if key not in producers:
                 producers[key] = add(prefix + key, 'opaque', key, group, proof, reason='output producer unresolved')
-            edge(producers[key], output, slot=i)
+            edge(producers[key], output, slot=i, source_slot=tensor.get('slot', 'out'))
     ir['nodes'].extend(graph_nodes)
     ir['edges'].extend(graph_edges)
     coverage = []

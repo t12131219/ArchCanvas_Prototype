@@ -1,7 +1,7 @@
 {
   "passed": true,
-  "views": 4,
-  "negative_cases": 76,
+  "views": 5,
+  "negative_cases": 86,
   "models": [
     {
       "case": "01093cc06a87b35a",
@@ -412,6 +412,64 @@
           "case": "required source fork annotation removed",
           "rejected": true,
           "reason": "source junction ownership or route references changed"
+        }
+      ]
+    },
+    {
+      "case": "01093cc06a87b35c",
+      "title": "Transformer · CPU 轨迹细化副本",
+      "collection": "transformer_programmatic_guide",
+      "view": "source-atomic",
+      "negative": [
+        {
+          "case": "source node metadata tampered",
+          "rejected": true,
+          "reason": "source node metadata changed runtime:call0"
+        },
+        {
+          "case": "source containment dropped or forged",
+          "rejected": true,
+          "reason": "source containment changed runtime:call0"
+        },
+        {
+          "case": "canonical trace tampered",
+          "rejected": true,
+          "reason": "trace-edge-0000: canonical source binding or trace changed"
+        },
+        {
+          "case": "required semantic connection removed",
+          "rejected": true,
+          "reason": "source connection missing trace-edge-0000"
+        },
+        {
+          "case": "unapproved endpoint swap after reinitialization",
+          "rejected": true,
+          "reason": "trace-edge-0000: source producer/consumer changed"
+        },
+        {
+          "case": "fixed physical port changed",
+          "rejected": true,
+          "reason": "trace-edge-0000: source port changed without a draft"
+        },
+        {
+          "case": "registered routing policy changed",
+          "rejected": true,
+          "reason": "trace-edge-0000: source routing policy changed"
+        },
+        {
+          "case": "physical endpoint detached from node perimeter",
+          "rejected": true,
+          "reason": "trace-edge-0000: unregistered or colliding physical target port"
+        },
+        {
+          "case": "source-authorized shared tensor trunk removed",
+          "rejected": true,
+          "reason": "trace-edge-0003: source routing policy changed"
+        },
+        {
+          "case": "source-authorized gate follow identity changed",
+          "rejected": true,
+          "reason": "trace-edge-0001: source routing policy changed"
         }
       ]
     }

@@ -90,6 +90,177 @@
           "foldedSourceUnits": 34
         }
       }
+    },
+    {
+      "id": "01093cc06a87b35c",
+      "title": "Transformer · CPU 轨迹细化副本",
+      "collection": "transformer_programmatic_guide",
+      "historical": false,
+      "origin": "CPU / with-masks / eval",
+      "copiedFrom": "01093cc06a87b35b",
+      "views": [
+        {
+          "key": "source-atomic",
+          "label": "CPU 轨迹原子图",
+          "asset": "data/cases/01093cc06a87b35c-source-atomic.js",
+          "json": "data/cases/01093cc06a87b35c-source-atomic.json",
+          "nodes": 306,
+          "edges": 250,
+          "ir": "data/semantic/transformer-runtime.json"
+        }
+      ],
+      "routeTemplates": [
+        {
+          "key": "overview",
+          "asset": "data/cases/01093cc06a87b35c-overview.js"
+        },
+        {
+          "key": "compact-templates",
+          "asset": "data/cases/01093cc06a87b35c-compact-templates.js"
+        },
+        {
+          "key": "frontier-01",
+          "asset": "data/cases/01093cc06a87b35c-frontier-01.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-01.json",
+          "nodes": 17,
+          "edges": 23
+        },
+        {
+          "key": "frontier-02",
+          "asset": "data/cases/01093cc06a87b35c-frontier-02.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-02.json",
+          "nodes": 25,
+          "edges": 29
+        },
+        {
+          "key": "frontier-03",
+          "asset": "data/cases/01093cc06a87b35c-frontier-03.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-03.json",
+          "nodes": 35,
+          "edges": 37
+        },
+        {
+          "key": "frontier-04",
+          "asset": "data/cases/01093cc06a87b35c-frontier-04.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-04.json",
+          "nodes": 41,
+          "edges": 42
+        },
+        {
+          "key": "frontier-05",
+          "asset": "data/cases/01093cc06a87b35c-frontier-05.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-05.json",
+          "nodes": 60,
+          "edges": 60
+        },
+        {
+          "key": "frontier-06",
+          "asset": "data/cases/01093cc06a87b35c-frontier-06.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-06.json",
+          "nodes": 17,
+          "edges": 23
+        },
+        {
+          "key": "frontier-07",
+          "asset": "data/cases/01093cc06a87b35c-frontier-07.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-07.json",
+          "nodes": 29,
+          "edges": 33
+        },
+        {
+          "key": "frontier-08",
+          "asset": "data/cases/01093cc06a87b35c-frontier-08.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-08.json",
+          "nodes": 39,
+          "edges": 41
+        },
+        {
+          "key": "frontier-09",
+          "asset": "data/cases/01093cc06a87b35c-frontier-09.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-09.json",
+          "nodes": 45,
+          "edges": 46
+        },
+        {
+          "key": "frontier-10",
+          "asset": "data/cases/01093cc06a87b35c-frontier-10.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-10.json",
+          "nodes": 18,
+          "edges": 24
+        },
+        {
+          "key": "frontier-11",
+          "asset": "data/cases/01093cc06a87b35c-frontier-11.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-11.json",
+          "nodes": 20,
+          "edges": 25
+        },
+        {
+          "key": "frontier-12",
+          "asset": "data/cases/01093cc06a87b35c-frontier-12.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-12.json",
+          "nodes": 18,
+          "edges": 24
+        },
+        {
+          "key": "frontier-13",
+          "asset": "data/cases/01093cc06a87b35c-frontier-13.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-13.json",
+          "nodes": 20,
+          "edges": 25
+        },
+        {
+          "key": "frontier-14",
+          "asset": "data/cases/01093cc06a87b35c-frontier-14.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-14.json",
+          "nodes": 20,
+          "edges": 25
+        },
+        {
+          "key": "frontier-15",
+          "asset": "data/cases/01093cc06a87b35c-frontier-15.js",
+          "json": "data/cases/01093cc06a87b35c-frontier-15.json",
+          "nodes": 20,
+          "edges": 25
+        }
+      ],
+      "sourceIndex": "semantic_studio/index.html?case=transformer-runtime",
+      "sourceAtomic": {
+        "name": "cpu-runtime-atomic-v1",
+        "unit_rules": [
+          "runtime-operator: 一个实际 ATen 事件；保留每个输出槽位和张量 ID。",
+          "module-call / source-helper: 调用或源码函数层级，内部可继续展开。",
+          "parameter / buffer: 按资源身份去重；复用资源仅画一个节点。",
+          "value-alias: 明确的同一张量别名，不增加计算。",
+          "observed-identity-call: 实际进入但未产生 ATen 计算的调用。"
+        ],
+        "counts": {
+          "nodes": 306,
+          "edges": 250,
+          "atomicNodes": 237,
+          "presentationNodes": 0,
+          "sourceIrNodes": 651,
+          "foldedSourceUnits": 0
+        }
+      },
+      "runtimeExpansion": {
+        "schema": "runtime-editor-copy/1",
+        "copiedFrom": "01093cc06a87b35b",
+        "originalSha256": "c60ff91f963bd7909d8186b656b89b460a1f1239ac70fd673594aacbb743e0fd",
+        "traceDigest": "15fe48741909bae29324e055879de50375ee96fbfee08946c4c8df997f267061",
+        "run": "with-masks",
+        "mode": "eval",
+        "receipt": "data/semantic/transformer-runtime.json",
+        "coverage": "observed-run",
+        "counts": {
+          "operators": 186,
+          "moduleCalls": 52,
+          "parameters": 45,
+          "buffers": 1,
+          "nodes": 306,
+          "edges": 250
+        }
+      }
     }
   ],
   "evidence": [
@@ -110,10 +281,10 @@
     }
   ],
   "counts": {
-    "cases": 2,
-    "active": 2,
+    "cases": 3,
+    "active": 3,
     "historical": 0,
-    "views": 4,
+    "views": 5,
     "snapshotFiles": 16
   },
   "inputs": [

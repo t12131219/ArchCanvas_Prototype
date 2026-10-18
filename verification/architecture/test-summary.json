@@ -1,0 +1,75 @@
+{
+  "schema": "architecture-validation/1",
+  "date": "2026-10-18",
+  "test_cases": 42,
+  "commands": [
+    {
+      "command": [
+        "node",
+        "tests/architecture.test.cjs"
+      ],
+      "exit_code": 0,
+      "output": "check-1.txt",
+      "tests": 23
+    },
+    {
+      "command": [
+        "node",
+        "tests/semantic-projection.test.cjs"
+      ],
+      "exit_code": 0,
+      "output": "check-2.txt",
+      "tests": 4
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_*adapter.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "output": "check-3.txt",
+      "tests": 15
+    },
+    {
+      "command": [
+        "node",
+        "tools/audit_architecture.cjs"
+      ],
+      "exit_code": 0,
+      "output": "check-4.txt"
+    }
+  ],
+  "catalog_models": 20,
+  "catalog_states": 270,
+  "sibling_overlaps": 0,
+  "failed_routes": 0,
+  "browser_checks": 13,
+  "browser_console_errors": 0,
+  "cpu": {
+    "status": "passed",
+    "runs": 4,
+    "all_replays_matched": true,
+    "source_unchanged": true,
+    "isolation_status": "passed",
+    "coverage": "partial",
+    "trace_digest": "377545b01c340bcf565ef0386b81105b53952af6e3bf3592f8d9bce3edc18352"
+  },
+  "implementation_sha256": {
+    "semantic_studio/architecture.js": "e2d605dcc658d2682db0fb1121cb771699e1f31832969d46530cd2e360f81335",
+    "semantic_studio/architecture-layout.js": "3ff1b43cc589b472d0925ac6b2200474ade3b7b0198bea486130a083da49a43e",
+    "semantic_studio/semantic-engine.js": "ec15e680ab8f501da63b8332aefde83d568a44e144eb446c484b7fef99c39291",
+    "semantic_adapter/analyzer.py": "b665d9e3ef437d76fa9693e6a65a6510248696ac532a168c18b75869598684c0",
+    "semantic_adapter/merge.py": "9c7ccc5e0308835a3a6891f7239ab11f6f93bb21335a513a83d5c0f567e7d643",
+    "semantic_studio/app.js": "48d68d0eab71156118c6eb1fa3f904b524c910adef11fcaed778f3f8a644b0aa",
+    "semantic_studio/index.html": "a34e75cf6e8ee3a7db10167032947d008c1ed039727a68f20655935b421064a6",
+    "semantic_studio/style.css": "01f745c499c9ab20160c3bede2398e4ac6f83a71c1792e25a2d4a70c699ae825",
+    "tools/export_architecture.cjs": "af2da01cb4fe0341ddcc718a883a327440209fe4e8cfa8a9161f5f60f44337e0"
+  }
+}

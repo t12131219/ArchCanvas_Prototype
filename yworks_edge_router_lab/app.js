@@ -87,7 +87,7 @@
     if(busy){toast('正在重新布线，完成后可切换示例。');return;}
     flushPersist();const token=++loadToken;current=c;view={key:'unified',label:'递归图'};
     try{
-      const descriptors=c.sourceAtomic?[...c.views,
+      const descriptors=c.routeTemplates?[...c.views,...c.routeTemplates]:c.sourceAtomic?[...c.views,
         {key:'overview',asset:'data/cases/01093cc06a87b35a-overview.js',dataKey:'01093cc06a87b35a:overview'},
         {key:'modules',asset:'data/cases/01093cc06a87b35a-modules.js',dataKey:'01093cc06a87b35a:modules'},
         {key:'detailed',asset:'data/cases/01093cc06a87b35a-detailed.js',dataKey:'01093cc06a87b35a:detailed'}]:c.views;
@@ -101,9 +101,16 @@
       if(!saved)try{const disk=JSON.parse(localStorage.getItem('summary-merge:'+key()));if(disk?.version===4&&disk.ir===(base.irSha256||null))saved={graph:disk.graph,history:[],future:[],dirty:disk.dirty};
         else if(disk?.version){localStorage.setItem('summary-merge:archived:'+key()+':'+Date.now(),JSON.stringify(disk));toast('早期递归草稿已保留归档，当前使用新的递归文档。');}
       }catch(_){}
+      if(saved&&base.runtimePresentation&&saved.graph.runtimePresentation!==base.runtimePresentation){
+        // Layout versions are independent of the semantic IR. Archive the
+        // complete prior document before presenting the new lane geometry.
+        await window.SummaryRecursiveStorage.put('archived:'+key()+':'+Date.now(),{version:5,ir:base.irSha256,graph:saved.graph,dirty:saved.dirty,reason:'runtime presentation migration'});
+        if(token!==loadToken)return;saved=null;
+        toast('旧布局草稿已完整归档，当前显示新的双泳道布局。');
+      }
       graph=E.clone(saved?.graph||base);
       if(saved){graph.recursive.authority=E.clone(base.recursive.authority);const prior=graph;graph=F.upgrade(graph);if(graph!==prior){const updated=F.route(graph);if(updated.failed)throw new Error('保存的展开图无法恢复合法连接');saved.history=[];saved.future=[];}if(!C.validateSource(graph).ok){
-        const archiveKey='summary-merge:archived:'+key()+':'+Date.now();localStorage.setItem(archiveKey,JSON.stringify(saved));graph=E.clone(base);saved=null;toast('旧草稿不符合当前层级契约，已保留归档。');}}
+        const archiveKey='archived:'+key()+':'+Date.now();await window.SummaryRecursiveStorage.put(archiveKey,{version:5,ir:base.irSha256,graph:saved.graph,dirty:saved.dirty,reason:'source presentation contract migration'});if(token!==loadToken)return;graph=E.clone(base);saved=null;toast('旧草稿不符合当前层级契约，已保留归档。');}}
       syncUnifiedState();history=saved?.history||[];future=saved?.future||[];dirty=saved?.dirty||false;ghost=[];selectedNodes.clear();selectedEdges.clear();connection=null;drag=null;metrics={routed:0,time:0};
       $('routingStyle').value='orthogonal';$('keepBends').checked=false;$('showPorts').checked=false;$('clearance').value=6;$('clearanceValue').value=$('clearance').value+' px';
       $('modelTitle').textContent=c.title;$('modelCollection').textContent=names[c.collection]||c.collection;$('modelOrigin').textContent=(c.historical?'历史快照 / ':'')+c.origin;
@@ -112,7 +119,7 @@
       const docs=Object.entries(data.sourceDocs||{}).map(([name,url])=>[name==='source_map.md'?'源码映射':name==='source_evidence.json'?'源码证据':'案例说明',url]);
       $('sourceLinks').innerHTML=[['原始 SVG',data.source],['布局与接口',data.layoutSource],['语义 IR',data.irSource],...docs,['原始案例',c.sourceIndex]].filter(([,url])=>url).map(([name,url])=>`<a href="../${esc(url)}" target="_blank">${name} ↗</a>`).join('');
       $('sourceFacts').innerHTML=data.sourceFacts?.length?'<ul>'+data.sourceFacts.map(f=>'<li>'+esc(f)+'</li>').join('')+'</ul>':'<p>保留原始图元、层次和连接映射。点击容器逐级展开，视觉编辑可撤销，源模型未执行。</p>';
-      if(c.sourceAtomic){const standard=c.sourceAtomic,counts=standard.counts||{};const rules=(standard.unit_rules||[]).map(f=>'<li>'+esc(f)+'</li>').join('');$('sourceFacts').innerHTML='<p><strong>源码原子粒度</strong>：展开只改变可见投影，不改变源码、IR 或 canonical binding。</p><p>当前 authority：'+esc(counts.atomicNodes||0)+' 个源码原子节点；源码 IR：'+esc(counts.sourceIrNodes||0)+' 个单位；折叠的源码单位：'+esc(counts.foldedSourceUnits||0)+'。</p><ul>'+rules+'</ul>';}
+      if(c.sourceAtomic&&!data.runtimeExpansion){const standard=c.sourceAtomic,counts=standard.counts||{};const rules=(standard.unit_rules||[]).map(f=>'<li>'+esc(f)+'</li>').join('');$('sourceFacts').innerHTML='<p><strong>源码原子粒度</strong>：展开只改变可见投影，不改变源码、IR 或 canonical binding。</p><p>当前 authority：'+esc(counts.atomicNodes||0)+' 个源码原子节点；源码 IR：'+esc(counts.sourceIrNodes||0)+' 个单位；折叠的源码单位：'+esc(counts.foldedSourceUnits||0)+'。</p><ul>'+rules+'</ul>';}
       if(Object.keys(data.sourceProfile||{}).length)$('sourceFacts').innerHTML+='<pre>'+esc(JSON.stringify(data.sourceProfile,null,2))+'</pre>';
       const url=new URL(location.href);url.searchParams.set('case',c.id);url.searchParams.delete('view');window.history.replaceState(null,'',url);
       renderCatalog();fit();render();persist();
@@ -338,7 +345,7 @@
   svg.addEventListener('pointercancel',()=>{if(dragFrame)cancelAnimationFrame(dragFrame);dragFrame=0;dragPoint=null;if(drag?.saved){graph=E.clone(drag.before);history.pop();}drag=null;connection=null;$('previewLayer').replaceChildren();render();});
   svg.addEventListener('wheel',ev=>{if(!graph)return;ev.preventDefault();zoom(ev.deltaY<0?1.15:1/1.15,point(ev));},{passive:false});
   function ensureWorker(){if(worker||location.protocol==='file:'||typeof Worker==='undefined')return worker;
-    try{worker=new Worker('routing-worker.js');worker.onmessage=event=>{const resolve=pendingTasks.get(event.data.requestId);if(resolve){pendingTasks.delete(event.data.requestId);resolve(event.data);}};
+    try{worker=new Worker('routing-worker.js?v=runtime-lanes-1');worker.onmessage=event=>{const resolve=pendingTasks.get(event.data.requestId);if(resolve){pendingTasks.delete(event.data.requestId);resolve(event.data);}};
       worker.onerror=()=>{worker.terminate();worker=null;for(const resolve of pendingTasks.values())resolve(null);pendingTasks.clear();};
     }catch(_){worker=null;}return worker;
   }

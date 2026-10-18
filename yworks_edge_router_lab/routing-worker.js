@@ -1,4 +1,4 @@
-importScripts('router.js','physical-ports.js','junction-markers.js','route-labels.js','source-contracts.js','semantic-constraints.js','graph-engine.js','recursive-graph.js');
+importScripts('router.js','physical-ports.js','junction-markers.js','route-labels.js','source-contracts.js','semantic-constraints.js','graph-engine.js','runtime-layout.js','recursive-graph.js');
 const validateView=graph=>SummaryEngine.validateView(graph);
 self.onmessage = event => {
   const {requestId,task,graph,ids,options,id,dx,dy,operation}=event.data;

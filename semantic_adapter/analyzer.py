@@ -39,6 +39,8 @@ FUNCTIONS = {
     'mean': 'reduce', 'norm': 'reduce', 'chunk': 'split', 'split': 'split', 'unbind': 'split',
     'pack_padded_sequence': 'pack-sequence', 'pad_packed_sequence': 'unpack-sequence',
     'len': 'shape', 'range': 'range', 'enumerate': 'enumerate',
+    'topk': 'top-k', 'gather': 'gather', 'scatter': 'scatter', 'scatter_add': 'scatter-add',
+    'where': 'select', 'index_select': 'index-select',
 }
 
 
@@ -108,7 +110,7 @@ class Analyzer:
         loc = f'{parent or "model"}/{n.lineno}:{n.col_offset}:{kind}'
         self.counts[loc] = self.counts.get(loc, 0) + 1
         identity = loc + ':' + str(self.counts[loc])
-        node = {'id': identity, 'kind': kind, 'label': label, 'parent': parent,
+        node = {'id': identity, 'kind': kind, 'label': label, 'parent': parent, 'source_parent': parent,
                 'source': self.evidence(u, n, symbol), 'evidence_status': 'opaque' if kind == 'opaque' else 'static-only',
                 'granularity': 'composite' if kind == 'composite' else 'atomic',
                 'glyph': GLYPHS[kind], 'runtime_evidence': [], **extra}
@@ -165,7 +167,8 @@ class Analyzer:
         if not fn:
             return self.add('opaque', label, parent, u, cls, symbol, reason='no local forward definition')
         composite = self.add('composite', label, parent, u, fn, symbol,
-                             semantic_type='source-module' if is_class else 'source-function', module_path=module_path)
+                             semantic_type='source-module' if is_class else 'source-function', module_path=module_path,
+                             constructor=ctor)
         values = dict(self.globals)
         values.update(ctor)
         owner = cls if is_class else owner
@@ -269,7 +272,7 @@ class Analyzer:
                     tensor_method = receiver is not None and short in FUNCTIONS
                     known = (qualified.startswith(('torch.', 'math.')) or tensor_method or target in {'len', 'range', 'enumerate'}) and short in FUNCTIONS
                     node = self.add('compute' if known else 'opaque', short, scope, u, n, symbol,
-                                    operator=FUNCTIONS.get(short, qualified) if known else qualified,
+                                    operator=FUNCTIONS.get(short, qualified) if known else qualified, function_target=qualified,
                                     reason=None if known else 'unresolved-call-target')
                 self.edge(receiver, node, target_port='receiver')
                 for i, value in enumerate(actuals): self.edge(value, node, target_port=f'arg:{i}')

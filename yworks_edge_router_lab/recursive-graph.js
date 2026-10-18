@@ -6,6 +6,7 @@
   const copy=v=>JSON.parse(JSON.stringify(v)),eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b),EPS=1e-5;
   const receiptCache=new WeakMap(),descendantCache=new WeakMap();
   const PRESENTATION_VERSION=10;
+  const T=root.SummaryRuntimeLayout||(typeof require==='function'?require('./runtime-layout.js'):null);
   // The authority graph is immutable during a frontier edit. Keep parent and
   // child indexes beside it so expansion does not repeatedly scan every
   // source node (the old path was O(N²) for a deep atomic graph).
@@ -126,6 +127,18 @@
   }
   function layout(doc){
     const a=doc.authority,ids=visible(doc),out=[],templates=new Map();
+    if(a.detail.runtimePresentation===T?.VERSION){
+      for(const source of a.detail.nodes.filter(n=>ids.has(n.id))){
+        const has=children(a,source.id).length,open=has&&opened(doc,source.id);
+        const ref=open?source:has?(foldedVariant(a,source)||compact(source)):source;
+        const n=copy(ref);n.parent=source.parent;n.expanded=!!open;n.routingObstacle=!open;
+        out.push(n);
+      }
+      T.place(out);
+      function shift(id,dx,dy){const n=out.find(n=>n.id===id);if(!n)return;n.x+=dx;n.y+=dy;for(const c of out.filter(c=>c.parent===id))shift(c.id,dx,dy);}
+      for(const local of Object.values(doc.state.layouts))for(const [id,d]of Object.entries(local))shift(id,d.x,d.y);
+      return out;
+    }
     function build(source,parentRef){
       const has=children(a,source.id).length,open=has&&opened(doc,source.id),g=open?expandedTemplate(a,source):null;
       const ref=open?g.nodes.find(n=>n.id===source.id):parentRef&&!parentRef.expanded?parentRef:foldedVariant(a,source)||source;
@@ -155,6 +168,7 @@
       const glyphs=built.filter(b=>!b.node.junction),padX=Math.max(24,Math.min(48,ref.x+ref.w-Math.max(...glyphs.map(b=>b.ref.x+b.ref.w)))),padY=Math.max(24,Math.min(48,ref.y+ref.h-Math.max(...glyphs.map(b=>b.ref.y+b.ref.h))));
       const minWidth=Math.min(...a.variants.flatMap(v=>v.nodes.filter(v=>v.id===n.id).map(v=>v.w))),labels=n.labelObstacles||[];
       n.w=Math.max(160,minWidth,...labels.map(b=>b.x+b.w+16),...glyphs.map(b=>b.node.x+Math.max(b.node.w,...(b.node.labelObstacles||[]).map(l=>l.x+l.w))+padX));n.h=Math.max(72,...labels.map(b=>b.y+b.h+20),...glyphs.map(b=>b.node.y+Math.max(b.node.h,...(b.node.labelObstacles||[]).map(l=>l.y+l.h))+padY));
+      if(a.detail.runtimeExpansion&&source.runtimeRoutingPadding)n.h=Math.max(n.h,...glyphs.map(b=>b.node.y+b.node.h+source.runtimeRoutingPadding));
       for(const b of built)for(const k of b.items){k.x+=n.x;k.y+=n.y;}
       return {node:n,items:[n,...built.flatMap(b=>b.items)]};
     }
@@ -299,6 +313,7 @@
       // physical slots, stems and branch dots without rebuilding that layout.
       if(source&&visual){e.fixedSource=copy(visual.fixedSource);e.fixedTarget=copy(visual.fixedTarget);e.route=translateRoute(visual.route,ds,dt);e.contract=copy(visual.contract);e.contract.wire=C.wireIdentity(raw);e.contract.source=s;e.contract.target=t;e.portPolicy=copy(visual.portPolicy);for(const k of ['physicalSource','physicalTarget'])if(visual[k])e[k]=copy(visual[k]);}e.route[0]=E.endpoint(g,e,'source');e.route[e.route.length-1]=E.endpoint(g,e,'target');
       e.projection.visual=visual?.id||null;e.projection.presentationSlots={source:root.SummaryPhysicalPorts.slot(visual||raw,'source'),target:root.SummaryPhysicalPorts.slot(visual||raw,'target')};
+      if(source&&visual?.boundaryLane)e.boundaryLane=copy(visual.boundaryLane);
       const peer=visual&&g.edges.find(v=>v.source===s&&v.target===t&&v.contract.wire===e.contract.wire&&v.projection.visual===visual.id&&(s!==raw.source||t!==raw.target));
       if(peer){peer.projection.originals=peer.projection.originals||[peer.projection.original];peer.projection.originals.push(raw.id);}else g.edges.push(e);
     }
@@ -314,7 +329,10 @@
     if(!source){for(const e of g.edges){const groups=new Map();for(const gate of e.contract.gates){if(gate.frame===e.source||gate.frame===e.target)continue;const key=gate.side+':'+gate.direction,gates=groups.get(key)||[];gates.push(gate);groups.set(key,gates);}for(const gates of groups.values())if(gates.length>1){const axis=['left','right'].includes(gates[0].side)?'y':'x',size=axis==='x'?'w':'h',low=Math.max(...gates.map(g=>by.get(g.frame)[axis]+12)),high=Math.min(...gates.map(g=>by.get(g.frame)[axis]+by.get(g.frame)[size]-12));if(low<high){const anchor=gates[0].direction==='exit'?'source':'target',f=e[anchor==='source'?'fixedSource':'fixedTarget'],endpoint=E.port(by.get(e[anchor]),f),coordinate=Math.max(low,Math.min(high,endpoint[axis]));for(const gate of gates)gate.fraction=(coordinate-by.get(gate.frame)[axis])/by.get(gate.frame)[size];}}}
     const groups=new Map();for(const e of g.edges){const f=e.fixedSource,key=e.source+'|'+e.contract.wire+'|'+f.side+'|'+f.fraction+'|'+f.inward;const group=groups.get(key)||[];group.push(e);groups.set(key,group);}for(const es of groups.values())if(es.length>1){const n=by.get(es[0].source),f=es[0].fixedSource,p=E.port(n,f),axis=['left','right'].includes(f.side)?'x':'y',sign=(['top','left'].includes(f.side)?-1:1)*(f.inward?-1:1);const stem={side:f.side,length:14,axis,coordinate:p[axis]-(n[axis]-n.base[axis==='x'?0:1])+sign*14,owner:n.id};for(const e of es){e.portPolicy.source.sharedStem=copy(stem);e.contract.sharedStem=copy(stem);}}}
     if(!source){for(const e of g.edges)for(const gate of e.contract.gates){const side=gate.frame===e.source?'source':gate.frame===e.target?'target':null;if(side){const f=e[side==='source'?'fixedSource':'fixedTarget'];if(f.side===gate.side)gate.fraction=f.fraction;}}}
-    if(!source)separateGates(g);
+    // Runtime operands already have individual right-side slots. A shared
+    // tensor may enter at several heights (Q/K/V/residual); merging those
+    // gates onto the external source's height destroys the vertical lanes.
+    if(!source&&g.runtimePresentation!==T?.VERSION)separateGates(g);
     // Slot allocation is complete. Bind route terminals once, to these final
     // slots, before the router or verifier sees the frontier.
     for(const e of g.edges){e.route[0]=E.endpoint(g,e,'source');e.route[e.route.length-1]=E.endpoint(g,e,'target');}
@@ -325,7 +343,7 @@
     for(const v of labelSources){for(const label of v.routeLabels||[]){const edge=presentationEdge(g,v.edges.find(e=>e.id===label.edge));if(edge){const a=copy(label);a.edge=edge.id;if(doc.state.captionAnchors?.[a.id])a.anchor=copy(doc.state.captionAnchors[a.id]);g.routeLabels.push(a);}}
       for(const m of source?v.junctionMarkers||[]:[]){const mapped=m.edges.map(id=>presentationEdge(g,v.edges.find(e=>e.id===id))?.id);if(mapped.every(id=>present.has(id))&&new Set(mapped).size>1)g.junctionMarkers.push({...copy(m),edges:[...new Set(mapped)]});}}
     g.attachments=annotations(doc,g.nodes);
-    g.canvas=source?copy(source.canvas):[Math.max(detail.canvas[0],...g.nodes.map(n=>n.x+n.w+80)),Math.max(720,...g.nodes.map(n=>n.y+n.h+120))];g.recursive=doc;
+    g.canvas=source?copy(source.canvas):[Math.max(detail.fitFrontier?720:detail.canvas[0],...g.nodes.map(n=>n.x+n.w+80)),Math.max(720,...g.nodes.map(n=>n.y+n.h+120))];g.recursive=doc;
     g.recursiveReceipt={signature:signature(doc),edges:Object.fromEntries(g.edges.map(e=>[e.id,{source:e.source,target:e.target,fixedSource:copy(e.fixedSource),fixedTarget:copy(e.fixedTarget),portPolicy:copy(e.portPolicy),contract:copy(e.contract),projection:copy(e.projection)}]))};
     g.recursiveReceipt.annotations={labels:copy(g.routeLabels.map(a=>Object.fromEntries(Object.entries(a).filter(([k])=>k!=='anchor')))),attachments:copy(g.attachments)};
     return g;
@@ -334,10 +352,19 @@
   // for edges outside that branch after translating their two terminals.
   function carryRoutes(before,after,changedId){
     if(!before?.recursive||!after?.recursive)return after;
+    if(after.runtimeExpansion&&exact(after.recursive))return after;
     const authority=after.recursive.authority,changed=new Set([changedId]),queue=[changedId];
     while(queue.length)for(const child of children(authority,queue.shift()))if(!changed.has(child.id)){changed.add(child.id);queue.push(child.id);}
     const oldByRaw=new Map();for(const e of before.edges)for(const id of e.projection?.originals||[e.projection?.original])oldByRaw.set(id,e);
-    for(const e of after.edges){const rawId=(e.projection?.originals||[e.projection?.original])?.[0],old=oldByRaw.get(rawId),raw=authority.detail.edges.find(v=>v.id===rawId);if(!old||!raw||changed.has(raw.source)||changed.has(raw.target))continue;
+    for(const e of after.edges){const rawId=(e.projection?.originals||[e.projection?.original])?.[0],old=oldByRaw.get(rawId),raw=authority.detail.edges.find(v=>v.id===rawId);if(!old||!raw)continue;
+      if(changed.has(raw.source)||changed.has(raw.target)){
+        if(after.runtimeExpansion&&changed.has(raw.source)!==changed.has(raw.target)){
+          const s=E.endpoint(before,old,'source'),t=E.endpoint(before,old,'target'),ns=E.endpoint(after,e,'source'),nt=E.endpoint(after,e,'target');
+          e.route=translateRoute(old.route,{x:ns.x-s.x,y:ns.y-s.y},{x:nt.x-t.x,y:nt.y-t.y});
+          e.route[0]=ns;e.route[e.route.length-1]=nt;
+        }
+        continue;
+      }
       const oldSource=before.nodes.find(n=>n.id===old.source),oldTarget=before.nodes.find(n=>n.id===old.target),newSource=after.nodes.find(n=>n.id===e.source),newTarget=after.nodes.find(n=>n.id===e.target);if(!oldSource||!oldTarget||!newSource||!newTarget)continue;
       e.route=translateRoute(old.route,{x:newSource.x-oldSource.x,y:newSource.y-oldSource.y},{x:newTarget.x-oldTarget.x,y:newTarget.y-oldTarget.y});e.waypoints=(old.waypoints||[]).map(p=>({x:p.x+newSource.x-oldSource.x,y:p.y+newSource.y-oldSource.y}));delete e.needsRecursiveRouting;
     }
@@ -390,6 +417,36 @@
     return {ok:!errors.length,violations:[...new Set(errors)]};
   }
   function route(graph,options={}){C.initialize(graph);const context=C.validationContext(graph);
+    if(graph.runtimePresentation===T?.VERSION&&graph.edges.some(e=>e.needsRecursiveRouting||!C.validate(graph,e,e.route,context).ok||C.needsLaneRepair(graph,e,context))){
+      const candidates=T.seeds(graph);
+      for(const e of graph.edges){
+        if(!e.needsRecursiveRouting&&C.validate(graph,e,e.route,context).ok&&!C.needsLaneRepair(graph,e,context))continue;
+        const ps=candidates.get(e.id);
+        if(ps&&C.validate(graph,e,ps,context).ok&&!C.laneContacts(graph,e,ps,context).length){e.route=ps;e.failed=false;delete e.reason;delete e.needsRecursiveRouting;}
+      }
+    }
+    // Trace timelines reserve a lower corridor per source container. Seed
+    // that known geometry before visibility search; accept it only through
+    // the same source, gate and obstacle validator as an ordinary route.
+    if(graph.runtimeExpansion){
+      const by=new Map(graph.nodes.map(n=>[n.id,n])),lanes=new Map(),candidates=new Map();
+      for(const e of graph.edges){
+        if(!e.needsRecursiveRouting&&C.validate(graph,e,e.route,context).ok)continue;
+        const sf=root.SummaryPhysicalPorts.active(e,'source'),tf=root.SummaryPhysicalPorts.active(e,'target');
+        if(sf.side!=='bottom'||tf.side!=='bottom')continue;
+        const sc=C.ancestors(graph,e.source),tc=C.ancestors(graph,e.target),owner=by.get(sc.find(id=>tc.includes(id)));
+        if(!owner?.parent||!owner.runtimeRoutingPadding)continue;
+        let wires=lanes.get(owner.id);if(!wires){wires=[];lanes.set(owner.id,wires);}if(!wires.includes(e.contract.wire))wires.push(e.contract.wire);
+        const s=E.endpoint(graph,e,'source'),t=E.endpoint(graph,e,'target'),y=owner.y+owner.h-32-wires.indexOf(e.contract.wire)*16;
+        const points=R.simplify([s,{x:s.x,y},{x:t.x,y},t]);
+        if(C.validate(graph,e,points,context).ok&&!C.laneContacts(graph,e,points,context).length)candidates.set(e.id,points);
+      }
+      const parked=new Set(graph.edges.filter(e=>!candidates.has(e.id)&&!e.needsRecursiveRouting&&C.validate(graph,e,e.route,context).ok).map(e=>e.id));
+      for(const e of graph.edges){const points=candidates.get(e.id);if(!points)continue;
+        const overlaps=graph.edges.some(v=>v!==e&&(candidates.has(v.id)||parked.has(v.id))&&v.contract.wire!==e.contract.wire&&(candidates.get(v.id)||v.route).slice(1).some((q,j)=>points.slice(1).some((p,i)=>R.overlap(points[i],p,(candidates.get(v.id)||v.route)[j],q)>EPS)));
+        if(!overlaps){e.route=points;e.failed=false;delete e.reason;delete e.needsRecursiveRouting;}
+      }
+    }
     // Keep the complete invalid frontier in one routing transaction.  The
     // inexpensive elbow pass below may find a legal path for one branch, but
     // leaving that branch out of the batch makes its temporary lane an
@@ -408,7 +465,7 @@
     }
     const ids=graph.edges.filter(e=>initialInvalid.has(e.id)||e.needsRecursiveRouting||!C.validate(graph,e,e.route,context).ok).map(e=>e.id);if(!ids.length){const topology=C.validateJunctions(graph);return {graph,routed:0,failed:topology.ok?0:1,...(!topology.ok?{reason:topology.violations.join('; ')}:{})};}
     for(const e of graph.edges){delete e.needsRecursiveRouting;if(ids.includes(e.id)){e.waypoints=C.activeGates(graph,e).filter(g=>g.frame!==e.source&&g.frame!==e.target).sort((a,b)=>a.order-b.order).flatMap(g=>{const frame=graph.nodes.find(n=>n.id===g.frame),p=C.gatePoint(frame,g),normal=normals[g.side],pad=C.laneClearances(graph,e,frame,context)[g.side],sign=g.direction==='enter'?1:-1,before=sign>0?pad.outside:pad.inside,after=sign>0?pad.inside:pad.outside;return [{x:p.x+normal[0]*before*sign,y:p.y+normal[1]*before*sign},{x:p.x-normal[0]*after*sign,y:p.y-normal[1]*after*sign}];});}}
-    const batchOptions={margin:4,stub:14,bendCost:40,crossingCost:180,overlapCost:2,edgeSpacing:10,sides:'any',style:'orthogonal',optimizeCrossings:false,groupByWire:true,...options,preserve:true};
+    const batchOptions={margin:4,stub:14,bendCost:40,crossingCost:180,overlapCost:2,edgeSpacing:10,sides:'any',style:'orthogonal',optimizeCrossings:false,groupByWire:true,preferCurrentPorts:!!graph.runtimeExpansion,...options,preserve:true};
     const result=E.routeBatch(graph,ids,batchOptions);
     if(!graph.junctionMarkers.length){const groups=new Map();for(const e of graph.edges){const key=e.source+'|'+e.contract.wire,es=groups.get(key)||[];es.push(e);groups.set(key,es);}for(const es of groups.values())if(es.length>1){const raw=graph.recursive.authority.detail.junctionMarkers?.find(m=>m.edges.some(id=>es.some(e=>e.projection.original===id))),owner=es[0].source;if(!raw)continue;const marker={...copy(raw),id:'recursive-fork:'+es[0].id,owner,edges:es.map(e=>e.id),original:[graph.nodes.find(n=>n.id===owner).base[0],graph.nodes.find(n=>n.id===owner).base[1]],fragments:[]};if(root.SummaryJunctionMarkers.point(graph,marker))graph.junctionMarkers.push(marker);}}
     return result;}

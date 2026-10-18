@@ -388,7 +388,13 @@
       while(index<waypoints.length&&Math.abs(R.dist(source,waypoints[index])+R.dist(waypoints[index],stem)-length)<1e-5)index++;
       if(!waypoints.some(p=>R.dist(p,stem)<1e-5))waypoints.splice(index,0,stem);
     }
-    const result=R.routeEdge({...e,fixedSource:P.active(e,'source'),fixedTarget:P.active(e,'target'),waypoints},graph.nodes,compatible,{...C.constraints(graph,e,opts,context),...extra,preserve:!!stem||options.preserve});
+    const routedEdge={...e,fixedSource:P.active(e,'source'),fixedTarget:P.active(e,'target'),waypoints};
+    const routeSettings={...C.constraints(graph,e,opts,context),...extra,preserve:!!stem||options.preserve};
+    // Recorded execution timelines already allocate operand slots. Try that
+    // pair first instead of searching every perimeter pair for a marginally
+    // shorter path. Failure still falls back to the complete port search.
+    let result=options.preferCurrentPorts&&flexible?R.routeEdge(routedEdge,graph.nodes,compatible,{...routeSettings,sourceCandidates:[P.active(e,'source')],targetCandidates:[P.active(e,'target')]}):null;
+    if(!result?.ok)result=R.routeEdge(routedEdge,graph.nodes,compatible,routeSettings);
     if(!result.ok&&options.boundaryLanes!==false){
       // Aesthetic lane width cannot make a previously legal narrow source
       // interface immovable. Retry the painted-stroke safety constraint and

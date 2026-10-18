@@ -8,6 +8,7 @@ function openToDepth(ir,state,depth){
   for(const id of idx.children.get(null)||[])visit(id,0);return open;
 }
 function render(ir,state){
+  if(state.view==='publication')return require('../semantic_studio/publication-renderer.js').render(ir,state);
   E.validate(ir);const g=E.project(ir,state),routes=g.edges.map(e=>({...e,route:E.route(e,g.positions)})),b={...g.bounds};
   // Routing corridors may extend beyond the node bounds (feedback in particular).
   for(const e of routes)for(const p of e.route.points){const right=b.x+b.w,bottom=b.y+b.h;b.x=Math.min(b.x,p.x-24);b.y=Math.min(b.y,p.y-24);b.w=Math.max(right,p.x+24)-b.x;b.h=Math.max(bottom,p.y+24)-b.y;}
@@ -25,11 +26,12 @@ function render(ir,state){
 }
 if(require.main===module){
   const [input,output,...options]=process.argv.slice(2);
-  if(!input||!output){console.error('Usage: node tools/export_architecture.cjs input.json output.svg [--mode source|runtime|merged] [--depth 2] [--details] [--view architecture|source]');process.exit(2);}
+  if(!input||!output){console.error('Usage: node tools/export_architecture.cjs input.json output.svg [--mode source|runtime|merged] [--depth 2] [--details] [--view architecture|source|publication] [--linear]');process.exit(2);}
   const option=(name,fallback)=>{const i=options.indexOf(name);if(i<0)return fallback;if(!options[i+1])throw Error('missing '+name+' value');return options[i+1];};
-  const state={mode:option('--mode','source'),view:option('--view','architecture'),details:options.includes('--details'),offsets:{}},depth=Number(option('--depth','2'));
-  if(!['source','runtime','merged'].includes(state.mode)||!['architecture','source'].includes(state.view)||!Number.isInteger(depth)||depth<0)throw Error('invalid view/mode/depth');
+  const state={mode:option('--mode','source'),view:option('--view','architecture'),details:options.includes('--details'),foldSerial:!options.includes('--linear'),offsets:{}},depth=Number(option('--depth','2'));
+  if(!['source','runtime','merged'].includes(state.mode)||!['architecture','source','publication'].includes(state.view)||!Number.isInteger(depth)||depth<0)throw Error('invalid view/mode/depth');
   const ir=JSON.parse(fs.readFileSync(input));state.open=openToDepth(ir,state,depth);
+  if(state.view==='publication'&&options.includes('--depth'))state.paperAuto=false;
   const result=render(ir,state);fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});fs.writeFileSync(output,result.svg);
   const document=output.replace(/\.svg$/i,'')+'.layout.json';fs.writeFileSync(document,JSON.stringify(result.document,null,2)+'\n');
   console.log(JSON.stringify({svg:output,document,nodes:result.graph.nodes.length,edges:result.graph.edges.length,route_failures:result.document.diagnostics.route_failures.length}));

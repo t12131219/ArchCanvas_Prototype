@@ -1,0 +1,4107 @@
+{
+  "schema": "archcanvas-architecture-document/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "GatedMixture",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+      "class": "GatedMixture",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+        "cell": null,
+        "sha256": "eeefe6465e68ed00a42d5795420b2a1db6b1489deab8cfd4a13150c604ebd2c8",
+        "unit_sha256": "eeefe6465e68ed00a42d5795420b2a1db6b1489deab8cfd4a13150c604ebd2c8"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/14:4:composite:1",
+        "kind": "composite",
+        "label": "GatedMixture",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 14,
+            "end_line": 23,
+            "column": 4,
+            "end_column": 35,
+            "symbol": "GatedMixture.forward",
+            "expression": "def forward(self, x, previous):\n    encoded = self.encoder(x)\n    sequence, hidden = self.sequence(encoded)\n    left = torch.sigmoid(self.left_weight(sequence)) * previous\n    right = torch.sigmoid(self.right_weight(previous)) * torch.tanh(sequence)\n    mixed = left + right\n    result = unfamiliar_kernel(mixed)\n    return (result, hidden, left)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "GatedMixture"
+      },
+      {
+        "id": "model/14:4:composite:1/14:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 14,
+            "end_line": 14,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "GatedMixture.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/14:4:composite:1/14:25:interface:1",
+        "kind": "interface",
+        "label": "previous",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 14,
+            "end_line": 14,
+            "column": 25,
+            "end_column": 33,
+            "symbol": "GatedMixture.forward",
+            "expression": "previous"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "previous"
+      },
+      {
+        "id": "model/14:4:composite:1/15:18:compute:1",
+        "kind": "compute",
+        "label": "encoder · TransformerEncoderLayer",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 15,
+            "end_line": 15,
+            "column": 18,
+            "end_column": 33,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.encoder(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "encoder-layer",
+        "module_path": "encoder",
+        "framework_type": "torch.nn.TransformerEncoderLayer",
+        "constructor": {
+          "args": [
+            8,
+            2,
+            16
+          ],
+          "kwargs": {
+            "batch_first": true
+          }
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/15:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "encoded",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 15,
+            "end_line": 15,
+            "column": 8,
+            "end_column": 15,
+            "symbol": "GatedMixture.forward",
+            "expression": "encoded"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/14:4:composite:1/16:27:compute:1",
+        "kind": "compute",
+        "label": "sequence · RNN",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 27,
+            "end_column": 49,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.sequence(encoded)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "rnn",
+        "module_path": "sequence",
+        "framework_type": "torch.nn.RNN",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {
+            "batch_first": true
+          }
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/16:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "sequence",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "GatedMixture.forward",
+            "expression": "sequence"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "0"
+      },
+      {
+        "id": "model/14:4:composite:1/16:18:value-alias:1",
+        "kind": "value-alias",
+        "label": "hidden",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 18,
+            "end_column": 24,
+            "symbol": "GatedMixture.forward",
+            "expression": "hidden"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "1"
+      },
+      {
+        "id": "model/14:4:composite:1/17:15:compute:1",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 67,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence)) * previous"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult"
+      },
+      {
+        "id": "model/14:4:composite:1/17:29:compute:1",
+        "kind": "compute",
+        "label": "left_weight · Linear",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 29,
+            "end_column": 55,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.left_weight(sequence)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "left_weight",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/11:27:parameter:1",
+        "kind": "parameter",
+        "label": "left_weight.parameters",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 11,
+            "end_line": 11,
+            "column": 27,
+            "end_column": 42,
+            "symbol": "GatedMixture.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "left_weight",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/14:4:composite:1/17:15:compute:2",
+        "kind": "compute",
+        "label": "sigmoid",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 56,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.left_weight(sequence)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null
+      },
+      {
+        "id": "model/14:4:composite:1/17:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "left",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 8,
+            "end_column": 12,
+            "symbol": "GatedMixture.forward",
+            "expression": "left"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/14:4:composite:1/18:16:compute:1",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous)) * torch.tanh(sequence)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult"
+      },
+      {
+        "id": "model/14:4:composite:1/18:30:compute:1",
+        "kind": "compute",
+        "label": "right_weight · Linear",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 30,
+            "end_column": 57,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.right_weight(previous)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "right_weight",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/12:28:parameter:1",
+        "kind": "parameter",
+        "label": "right_weight.parameters",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 28,
+            "end_column": 43,
+            "symbol": "GatedMixture.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "right_weight",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/14:4:composite:1/18:16:compute:2",
+        "kind": "compute",
+        "label": "sigmoid",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 58,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.right_weight(previous)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null
+      },
+      {
+        "id": "model/14:4:composite:1/18:61:compute:1",
+        "kind": "compute",
+        "label": "tanh",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 61,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.tanh(sequence)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "sequence"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null
+      },
+      {
+        "id": "model/14:4:composite:1/18:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "right",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "GatedMixture.forward",
+            "expression": "right"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 19,
+            "end_line": 19,
+            "column": 16,
+            "end_column": 28,
+            "symbol": "GatedMixture.forward",
+            "expression": "left + right"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add"
+      },
+      {
+        "id": "model/14:4:composite:1/19:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "mixed",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 19,
+            "end_line": 19,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "GatedMixture.forward",
+            "expression": "mixed"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/14:4:composite:1/20:17:opaque:1",
+        "kind": "opaque",
+        "label": "unfamiliar_kernel",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 20,
+            "end_line": 20,
+            "column": 17,
+            "end_column": 41,
+            "symbol": "GatedMixture.forward",
+            "expression": "unfamiliar_kernel(mixed)"
+          }
+        ],
+        "evidence_status": "opaque",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "dashed-rect",
+          "fill": "#fbe4e4"
+        },
+        "runtime_evidence": [],
+        "operator": "unfamiliar_kernel",
+        "function_target": "unfamiliar_kernel",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "mixed"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": "unresolved-call-target"
+      },
+      {
+        "id": "model/14:4:composite:1/20:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "result",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 20,
+            "end_line": 20,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "GatedMixture.forward",
+            "expression": "result"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "compute",
+        "label": "structured value",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 23,
+            "end_line": 23,
+            "column": 15,
+            "end_column": 35,
+            "symbol": "GatedMixture.forward",
+            "expression": "(result, hidden, left)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "structure",
+        "structure_kind": "tuple"
+      },
+      {
+        "id": "model/14:4:composite:1/23:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 23,
+            "end_line": 23,
+            "column": 8,
+            "end_column": 35,
+            "symbol": "GatedMixture.forward",
+            "expression": "return (result, hidden, left)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/14:4:composite:1/14:22:interface:1",
+        "target": "model/14:4:composite:1/15:18:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/14:4:composite:1/15:18:compute:1",
+        "target": "model/14:4:composite:1/15:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/14:4:composite:1/15:8:value-alias:1",
+        "target": "model/14:4:composite:1/16:27:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/14:4:composite:1/16:27:compute:1",
+        "target": "model/14:4:composite:1/16:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "0",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/14:4:composite:1/16:27:compute:1",
+        "target": "model/14:4:composite:1/16:18:value-alias:1",
+        "kind": "alias",
+        "source_port": "1",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/14:4:composite:1/11:27:parameter:1",
+        "target": "model/14:4:composite:1/17:29:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00005"
+      },
+      {
+        "source": "model/14:4:composite:1/16:8:value-alias:1",
+        "target": "model/14:4:composite:1/17:29:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/14:4:composite:1/17:29:compute:1",
+        "target": "model/14:4:composite:1/17:15:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/14:4:composite:1/17:15:compute:2",
+        "target": "model/14:4:composite:1/17:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/14:4:composite:1/14:25:interface:1",
+        "target": "model/14:4:composite:1/17:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/14:4:composite:1/17:15:compute:1",
+        "target": "model/14:4:composite:1/17:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/14:4:composite:1/12:28:parameter:1",
+        "target": "model/14:4:composite:1/18:30:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00011"
+      },
+      {
+        "source": "model/14:4:composite:1/14:25:interface:1",
+        "target": "model/14:4:composite:1/18:30:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/14:4:composite:1/18:30:compute:1",
+        "target": "model/14:4:composite:1/18:16:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      },
+      {
+        "source": "model/14:4:composite:1/18:16:compute:2",
+        "target": "model/14:4:composite:1/18:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00014"
+      },
+      {
+        "source": "model/14:4:composite:1/16:8:value-alias:1",
+        "target": "model/14:4:composite:1/18:61:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00015"
+      },
+      {
+        "source": "model/14:4:composite:1/18:61:compute:1",
+        "target": "model/14:4:composite:1/18:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00016"
+      },
+      {
+        "source": "model/14:4:composite:1/18:16:compute:1",
+        "target": "model/14:4:composite:1/18:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00017"
+      },
+      {
+        "source": "model/14:4:composite:1/17:8:value-alias:1",
+        "target": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00018"
+      },
+      {
+        "source": "model/14:4:composite:1/18:8:value-alias:1",
+        "target": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00019"
+      },
+      {
+        "source": "model/14:4:composite:1/19:16:compute:1",
+        "target": "model/14:4:composite:1/19:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00020"
+      },
+      {
+        "source": "model/14:4:composite:1/19:8:value-alias:1",
+        "target": "model/14:4:composite:1/20:17:opaque:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00021"
+      },
+      {
+        "source": "model/14:4:composite:1/20:17:opaque:1",
+        "target": "model/14:4:composite:1/20:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00022"
+      },
+      {
+        "source": "model/14:4:composite:1/20:8:value-alias:1",
+        "target": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00023"
+      },
+      {
+        "source": "model/14:4:composite:1/16:18:value-alias:1",
+        "target": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00024"
+      },
+      {
+        "source": "model/14:4:composite:1/17:8:value-alias:1",
+        "target": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00025"
+      },
+      {
+        "source": "model/14:4:composite:1/23:15:compute:1",
+        "target": "model/14:4:composite:1/23:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00026"
+      }
+    ],
+    "branches": [],
+    "motifs": [
+      {
+        "id": "motif:RNN:0",
+        "semantic_type": "RNN",
+        "members": [
+          "model/14:4:composite:1/16:27:compute:1"
+        ],
+        "evidence": [
+          "versioned torch.nn framework type; gates not inferred"
+        ],
+        "confidence": "rule-confirmed",
+        "rule_version": "dataflow-motifs/1"
+      }
+    ],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "847099f62bf69ad39d3811bb3c8f9efee1246012619a84de7724057b1ad12c37"
+  },
+  "state": {
+    "paperFocus": "architecture:gated-sum:ebcd1468",
+    "view": "publication"
+  },
+  "architecture": {
+    "schema": "archcanvas-architecture/1",
+    "rule_version": "architecture-rules/3",
+    "canonical_digest": "847099f62bf69ad39d3811bb3c8f9efee1246012619a84de7724057b1ad12c37",
+    "nodes": [
+      {
+        "id": "model/14:4:composite:1",
+        "kind": "composite",
+        "label": "GatedMixture",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 14,
+            "end_line": 23,
+            "column": 4,
+            "end_column": 35,
+            "symbol": "GatedMixture.forward",
+            "expression": "def forward(self, x, previous):\n    encoded = self.encoder(x)\n    sequence, hidden = self.sequence(encoded)\n    left = torch.sigmoid(self.left_weight(sequence)) * previous\n    right = torch.sigmoid(self.right_weight(previous)) * torch.tanh(sequence)\n    mixed = left + right\n    result = unfamiliar_kernel(mixed)\n    return (result, hidden, left)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "GatedMixture",
+        "paper": {
+          "title": "GatedMixture",
+          "caption": "Module · 1 unresolved",
+          "lines": [
+            "GatedMixture"
+          ],
+          "captions": [
+            "Module · 1 unresolved"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 1,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/14:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 14,
+            "end_line": 14,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "GatedMixture.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/14:25:interface:1",
+        "kind": "interface",
+        "label": "previous",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 14,
+            "end_line": 14,
+            "column": 25,
+            "end_column": 33,
+            "symbol": "GatedMixture.forward",
+            "expression": "previous"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "previous",
+        "paper": {
+          "title": "previous",
+          "caption": "",
+          "lines": [
+            "previous"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/15:18:compute:1",
+        "kind": "compute",
+        "label": "encoder · TransformerEncoderLayer",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 15,
+            "end_line": 15,
+            "column": 18,
+            "end_column": 33,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.encoder(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "encoder-layer",
+        "module_path": "encoder",
+        "framework_type": "torch.nn.TransformerEncoderLayer",
+        "constructor": {
+          "args": [
+            8,
+            2,
+            16
+          ],
+          "kwargs": {
+            "batch_first": true
+          }
+        },
+        "paper": {
+          "title": "encoder · TransformerEncoderLayer",
+          "caption": "encoder-layer",
+          "lines": [
+            "encoder ·",
+            "TransformerEncoder",
+            "Layer"
+          ],
+          "captions": [
+            "encoder-layer"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 98
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/15:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "encoded",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 15,
+            "end_line": 15,
+            "column": 8,
+            "end_column": 15,
+            "symbol": "GatedMixture.forward",
+            "expression": "encoded"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "encoded",
+          "caption": "Value",
+          "lines": [
+            "encoded"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/16:27:compute:1",
+        "kind": "compute",
+        "label": "sequence · RNN",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 27,
+            "end_column": 49,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.sequence(encoded)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "rnn",
+        "module_path": "sequence",
+        "framework_type": "torch.nn.RNN",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {
+            "batch_first": true
+          }
+        },
+        "paper": {
+          "title": "sequence · RNN",
+          "caption": "hidden 8",
+          "lines": [
+            "sequence · RNN"
+          ],
+          "captions": [
+            "hidden 8"
+          ],
+          "font": 16,
+          "fill": "#fff1e2",
+          "stroke": "#a17b41",
+          "category": "recurrent",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/16:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "sequence",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "GatedMixture.forward",
+            "expression": "sequence"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "0",
+        "paper": {
+          "title": "sequence",
+          "caption": "Value",
+          "lines": [
+            "sequence"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/16:18:value-alias:1",
+        "kind": "value-alias",
+        "label": "hidden",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 18,
+            "end_column": 24,
+            "symbol": "GatedMixture.forward",
+            "expression": "hidden"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "1",
+        "paper": {
+          "title": "hidden",
+          "caption": "Value",
+          "lines": [
+            "hidden"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/17:15:compute:1",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "architecture:gate:8328156",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 67,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence)) * previous"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult",
+        "paper": {
+          "title": "mult",
+          "caption": "mult",
+          "lines": [
+            "mult"
+          ],
+          "captions": [
+            "mult"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": "×",
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/17:29:compute:1",
+        "kind": "compute",
+        "label": "left_weight · Linear",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 29,
+            "end_column": 55,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.left_weight(sequence)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "left_weight",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        },
+        "paper": {
+          "title": "left_weight · Linear",
+          "caption": "8 → 8",
+          "lines": [
+            "left_weight · Linear"
+          ],
+          "captions": [
+            "8 → 8"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/11:27:parameter:1",
+        "kind": "parameter",
+        "label": "left_weight.parameters",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 11,
+            "end_line": 11,
+            "column": 27,
+            "end_column": 42,
+            "symbol": "GatedMixture.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "left_weight",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "left_weight.parameters",
+          "caption": "parameter",
+          "lines": [
+            "left_weight.",
+            "parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 78
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/17:15:compute:2",
+        "kind": "compute",
+        "label": "sigmoid",
+        "parent": "architecture:gate:8328156",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 56,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.left_weight(sequence)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "paper": {
+          "title": "sigmoid",
+          "caption": "activation",
+          "lines": [
+            "sigmoid"
+          ],
+          "captions": [
+            "activation"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/17:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "left",
+        "parent": "architecture:gate:8328156",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 8,
+            "end_column": 12,
+            "symbol": "GatedMixture.forward",
+            "expression": "left"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "left",
+          "caption": "Value",
+          "lines": [
+            "left"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/18:16:compute:1",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "architecture:gate:7ab59c6",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous)) * torch.tanh(sequence)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult",
+        "paper": {
+          "title": "mult",
+          "caption": "mult",
+          "lines": [
+            "mult"
+          ],
+          "captions": [
+            "mult"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": "×",
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/18:30:compute:1",
+        "kind": "compute",
+        "label": "right_weight · Linear",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 30,
+            "end_column": 57,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.right_weight(previous)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "right_weight",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        },
+        "paper": {
+          "title": "right_weight · Linear",
+          "caption": "8 → 8",
+          "lines": [
+            "right_weight · Linear"
+          ],
+          "captions": [
+            "8 → 8"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/12:28:parameter:1",
+        "kind": "parameter",
+        "label": "right_weight.parameters",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 28,
+            "end_column": 43,
+            "symbol": "GatedMixture.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "right_weight",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "right_weight.parameters",
+          "caption": "parameter",
+          "lines": [
+            "right_weight.",
+            "parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 78
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/18:16:compute:2",
+        "kind": "compute",
+        "label": "sigmoid",
+        "parent": "architecture:gate:7ab59c6",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 58,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.right_weight(previous)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "paper": {
+          "title": "sigmoid",
+          "caption": "activation",
+          "lines": [
+            "sigmoid"
+          ],
+          "captions": [
+            "activation"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/18:61:compute:1",
+        "kind": "compute",
+        "label": "tanh",
+        "parent": "architecture:gate:7ab59c6",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 61,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.tanh(sequence)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "sequence"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "paper": {
+          "title": "tanh",
+          "caption": "activation",
+          "lines": [
+            "tanh"
+          ],
+          "captions": [
+            "activation"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/18:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "right",
+        "parent": "architecture:gate:7ab59c6",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "GatedMixture.forward",
+            "expression": "right"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "right",
+          "caption": "Value",
+          "lines": [
+            "right"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 19,
+            "end_line": 19,
+            "column": 16,
+            "end_column": 28,
+            "symbol": "GatedMixture.forward",
+            "expression": "left + right"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "paper": {
+          "title": "add",
+          "caption": "add",
+          "lines": [
+            "add"
+          ],
+          "captions": [
+            "add"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": "+",
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/19:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "mixed",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 19,
+            "end_line": 19,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "GatedMixture.forward",
+            "expression": "mixed"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "mixed",
+          "caption": "Value",
+          "lines": [
+            "mixed"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/20:17:opaque:1",
+        "kind": "opaque",
+        "label": "unfamiliar_kernel",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 20,
+            "end_line": 20,
+            "column": 17,
+            "end_column": 41,
+            "symbol": "GatedMixture.forward",
+            "expression": "unfamiliar_kernel(mixed)"
+          }
+        ],
+        "evidence_status": "opaque",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "dashed-rect",
+          "fill": "#fbe4e4"
+        },
+        "runtime_evidence": [],
+        "operator": "unfamiliar_kernel",
+        "function_target": "unfamiliar_kernel",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "mixed"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": "unresolved-call-target",
+        "paper": {
+          "title": "unfamiliar_kernel",
+          "caption": "Unresolved operation",
+          "lines": [
+            "unfamiliar_kernel"
+          ],
+          "captions": [
+            "Unresolved operation"
+          ],
+          "font": 16,
+          "fill": "#fff4f0",
+          "stroke": "#ac6857",
+          "category": "unknown",
+          "unknown_count": 1,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/20:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "result",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 20,
+            "end_line": 20,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "GatedMixture.forward",
+            "expression": "result"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "result",
+          "caption": "Value",
+          "lines": [
+            "result"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "compute",
+        "label": "structured value",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 23,
+            "end_line": 23,
+            "column": 15,
+            "end_column": 35,
+            "symbol": "GatedMixture.forward",
+            "expression": "(result, hidden, left)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "structure",
+        "structure_kind": "tuple",
+        "paper": {
+          "title": "Pack values",
+          "caption": "",
+          "lines": [
+            "Pack values"
+          ],
+          "captions": [],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/14:4:composite:1/23:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/14:4:composite:1",
+        "source_parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 23,
+            "end_line": 23,
+            "column": 8,
+            "end_column": 35,
+            "symbol": "GatedMixture.forward",
+            "expression": "return (result, hidden, left)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "architecture:gate:8328156",
+        "kind": "composite",
+        "label": "Sigmoid gate",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 56,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 67,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence)) * previous"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 8,
+            "end_column": 12,
+            "symbol": "GatedMixture.forward",
+            "expression": "left"
+          }
+        ],
+        "runtime_evidence": [],
+        "semantic_type": "gate",
+        "granularity": "composite",
+        "evidence_status": "static-only",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#e9f1ff"
+        },
+        "presentation_only": true,
+        "finding": "architecture:gate:8328156",
+        "canonical_members": [
+          "model/14:4:composite:1/17:15:compute:1",
+          "model/14:4:composite:1/17:15:compute:2",
+          "model/14:4:composite:1/17:8:value-alias:1"
+        ],
+        "boundary_ports": [
+          {
+            "id": "e00007",
+            "direction": "input",
+            "source": "model/14:4:composite:1/17:29:compute:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/17:15:compute:2",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00009",
+            "direction": "input",
+            "source": "model/14:4:composite:1/14:25:interface:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/17:15:compute:1",
+            "target_port": "2",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00018",
+            "direction": "output",
+            "source": "model/14:4:composite:1/17:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/19:16:compute:1",
+            "target_port": "0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00025",
+            "direction": "output",
+            "source": "model/14:4:composite:1/17:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/23:15:compute:1",
+            "target_port": "2",
+            "evidence": "source-dependency"
+          }
+        ],
+        "paper": {
+          "title": "Sigmoid gate",
+          "caption": "gate",
+          "lines": [
+            "Sigmoid gate"
+          ],
+          "captions": [
+            "gate"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "architecture:gate:7ab59c6",
+        "kind": "composite",
+        "label": "Sigmoid gate",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 58,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous)) * torch.tanh(sequence)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 61,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.tanh(sequence)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "GatedMixture.forward",
+            "expression": "right"
+          }
+        ],
+        "runtime_evidence": [],
+        "semantic_type": "gate",
+        "granularity": "composite",
+        "evidence_status": "static-only",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#e9f1ff"
+        },
+        "presentation_only": true,
+        "finding": "architecture:gate:7ab59c6",
+        "canonical_members": [
+          "model/14:4:composite:1/18:16:compute:1",
+          "model/14:4:composite:1/18:16:compute:2",
+          "model/14:4:composite:1/18:61:compute:1",
+          "model/14:4:composite:1/18:8:value-alias:1"
+        ],
+        "boundary_ports": [
+          {
+            "id": "e00013",
+            "direction": "input",
+            "source": "model/14:4:composite:1/18:30:compute:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/18:16:compute:2",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00015",
+            "direction": "input",
+            "source": "model/14:4:composite:1/16:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/18:61:compute:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00019",
+            "direction": "output",
+            "source": "model/14:4:composite:1/18:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/19:16:compute:1",
+            "target_port": "2",
+            "evidence": "source-dependency"
+          }
+        ],
+        "paper": {
+          "title": "Sigmoid gate",
+          "caption": "gate",
+          "lines": [
+            "Sigmoid gate"
+          ],
+          "captions": [
+            "gate"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "architecture:gated-sum:ebcd1468",
+        "kind": "composite",
+        "label": "Gated sum",
+        "parent": "model/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 56,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 67,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.left_weight(sequence)) * previous"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 8,
+            "end_column": 12,
+            "symbol": "GatedMixture.forward",
+            "expression": "left"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 58,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 16,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.sigmoid(self.right_weight(previous)) * torch.tanh(sequence)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 61,
+            "end_column": 81,
+            "symbol": "GatedMixture.forward",
+            "expression": "torch.tanh(sequence)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "GatedMixture.forward",
+            "expression": "right"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 19,
+            "end_line": 19,
+            "column": 16,
+            "end_column": 28,
+            "symbol": "GatedMixture.forward",
+            "expression": "left + right"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 19,
+            "end_line": 19,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "GatedMixture.forward",
+            "expression": "mixed"
+          }
+        ],
+        "runtime_evidence": [],
+        "semantic_type": "gated-sum",
+        "granularity": "composite",
+        "evidence_status": "static-only",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#e9f1ff"
+        },
+        "presentation_only": true,
+        "finding": "architecture:gated-sum:ebcd1468",
+        "canonical_members": [
+          "model/14:4:composite:1/19:16:compute:1",
+          "model/14:4:composite:1/19:8:value-alias:1",
+          "model/14:4:composite:1/17:15:compute:1",
+          "model/14:4:composite:1/17:15:compute:2",
+          "model/14:4:composite:1/17:8:value-alias:1",
+          "model/14:4:composite:1/18:16:compute:1",
+          "model/14:4:composite:1/18:16:compute:2",
+          "model/14:4:composite:1/18:61:compute:1",
+          "model/14:4:composite:1/18:8:value-alias:1"
+        ],
+        "boundary_ports": [
+          {
+            "id": "e00007",
+            "direction": "input",
+            "source": "model/14:4:composite:1/17:29:compute:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/17:15:compute:2",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00009",
+            "direction": "input",
+            "source": "model/14:4:composite:1/14:25:interface:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/17:15:compute:1",
+            "target_port": "2",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00013",
+            "direction": "input",
+            "source": "model/14:4:composite:1/18:30:compute:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/18:16:compute:2",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00015",
+            "direction": "input",
+            "source": "model/14:4:composite:1/16:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/18:61:compute:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00021",
+            "direction": "output",
+            "source": "model/14:4:composite:1/19:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/20:17:opaque:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00025",
+            "direction": "output",
+            "source": "model/14:4:composite:1/17:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/14:4:composite:1/23:15:compute:1",
+            "target_port": "2",
+            "evidence": "source-dependency"
+          }
+        ],
+        "paper": {
+          "title": "Gated sum",
+          "caption": "2 sigmoid-gated products",
+          "lines": [
+            "Gated sum"
+          ],
+          "captions": [
+            "2 sigmoid-gated products"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "paper:port:59449e3c",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "kind": "interface",
+        "role": "input",
+        "label": "left_weight · Linear",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 29,
+            "end_column": 55,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.left_weight(sequence)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00007",
+        "canonical_endpoint": "model/14:4:composite:1/17:29:compute:1",
+        "paper": {
+          "title": "left_weight · Linear",
+          "caption": "",
+          "lines": [
+            "left_weight ·",
+            "Linear"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 62
+        }
+      },
+      {
+        "id": "paper:port:5f44a7ae",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "kind": "interface",
+        "role": "input",
+        "label": "previous",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 14,
+            "end_line": 14,
+            "column": 25,
+            "end_column": 33,
+            "symbol": "GatedMixture.forward",
+            "expression": "previous"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00009",
+        "canonical_endpoint": "model/14:4:composite:1/14:25:interface:1",
+        "paper": {
+          "title": "previous",
+          "caption": "",
+          "lines": [
+            "previous"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "paper:port:55425959",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "kind": "interface",
+        "role": "input",
+        "label": "right_weight · Linear",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 30,
+            "end_column": 57,
+            "symbol": "GatedMixture.forward",
+            "expression": "self.right_weight(previous)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00013",
+        "canonical_endpoint": "model/14:4:composite:1/18:30:compute:1",
+        "paper": {
+          "title": "right_weight · Linear",
+          "caption": "",
+          "lines": [
+            "right_weight ·",
+            "Linear"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 62
+        }
+      },
+      {
+        "id": "paper:port:57425c7f",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "kind": "interface",
+        "role": "input",
+        "label": "sequence",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "GatedMixture.forward",
+            "expression": "sequence"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00015",
+        "canonical_endpoint": "model/14:4:composite:1/16:8:value-alias:1",
+        "paper": {
+          "title": "sequence",
+          "caption": "",
+          "lines": [
+            "sequence"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "paper:port:e349f4a8",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "kind": "interface",
+        "role": "output",
+        "label": "unfamiliar_kernel",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 20,
+            "end_line": 20,
+            "column": 17,
+            "end_column": 41,
+            "symbol": "GatedMixture.forward",
+            "expression": "unfamiliar_kernel(mixed)"
+          }
+        ],
+        "evidence_status": "opaque",
+        "runtime_evidence": [],
+        "boundary_edge": "e00021",
+        "canonical_endpoint": "model/14:4:composite:1/20:17:opaque:1",
+        "boundary_value": {
+          "source": "model/14:4:composite:1/19:16:compute:1",
+          "source_port": "out",
+          "identity_scope": "extracted-graph",
+          "tensor_equality": "not-asserted"
+        },
+        "boundary_uses": [
+          {
+            "source": "model/14:4:composite:1/19:8:value-alias:1",
+            "target": "model/14:4:composite:1/20:17:opaque:1",
+            "kind": "data",
+            "source_port": "out",
+            "target_port": "arg:0",
+            "evidence": "source-dependency",
+            "id": "e00021"
+          }
+        ],
+        "paper": {
+          "title": "unfamiliar_kernel",
+          "caption": "",
+          "lines": [
+            "unfamiliar_",
+            "kernel"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 62
+        }
+      },
+      {
+        "id": "paper:port:e749faf4",
+        "parent": "architecture:gated-sum:ebcd1468",
+        "kind": "interface",
+        "role": "output",
+        "label": "slot 2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+            "line": 23,
+            "end_line": 23,
+            "column": 15,
+            "end_column": 35,
+            "symbol": "GatedMixture.forward",
+            "expression": "(result, hidden, left)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00025",
+        "canonical_endpoint": "model/14:4:composite:1/23:15:compute:1",
+        "boundary_value": {
+          "source": "model/14:4:composite:1/17:15:compute:1",
+          "source_port": "out",
+          "identity_scope": "extracted-graph",
+          "tensor_equality": "not-asserted"
+        },
+        "boundary_uses": [
+          {
+            "source": "model/14:4:composite:1/17:8:value-alias:1",
+            "target": "model/14:4:composite:1/23:15:compute:1",
+            "kind": "data",
+            "source_port": "out",
+            "target_port": "2",
+            "evidence": "source-dependency",
+            "id": "e00025"
+          }
+        ],
+        "paper": {
+          "title": "slot 2",
+          "caption": "",
+          "lines": [
+            "slot 2"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/14:4:composite:1/14:22:interface:1",
+        "target": "model/14:4:composite:1/15:18:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/14:4:composite:1/15:18:compute:1",
+        "target": "model/14:4:composite:1/15:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/14:4:composite:1/15:8:value-alias:1",
+        "target": "model/14:4:composite:1/16:27:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/14:4:composite:1/16:27:compute:1",
+        "target": "model/14:4:composite:1/16:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "0",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/14:4:composite:1/16:27:compute:1",
+        "target": "model/14:4:composite:1/16:18:value-alias:1",
+        "kind": "alias",
+        "source_port": "1",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/14:4:composite:1/11:27:parameter:1",
+        "target": "model/14:4:composite:1/17:29:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00005"
+      },
+      {
+        "source": "model/14:4:composite:1/16:8:value-alias:1",
+        "target": "model/14:4:composite:1/17:29:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/14:4:composite:1/17:29:compute:1",
+        "target": "model/14:4:composite:1/17:15:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/14:4:composite:1/17:15:compute:2",
+        "target": "model/14:4:composite:1/17:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/14:4:composite:1/14:25:interface:1",
+        "target": "model/14:4:composite:1/17:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/14:4:composite:1/17:15:compute:1",
+        "target": "model/14:4:composite:1/17:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/14:4:composite:1/12:28:parameter:1",
+        "target": "model/14:4:composite:1/18:30:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00011"
+      },
+      {
+        "source": "model/14:4:composite:1/14:25:interface:1",
+        "target": "model/14:4:composite:1/18:30:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/14:4:composite:1/18:30:compute:1",
+        "target": "model/14:4:composite:1/18:16:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      },
+      {
+        "source": "model/14:4:composite:1/18:16:compute:2",
+        "target": "model/14:4:composite:1/18:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00014"
+      },
+      {
+        "source": "model/14:4:composite:1/16:8:value-alias:1",
+        "target": "model/14:4:composite:1/18:61:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00015"
+      },
+      {
+        "source": "model/14:4:composite:1/18:61:compute:1",
+        "target": "model/14:4:composite:1/18:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00016"
+      },
+      {
+        "source": "model/14:4:composite:1/18:16:compute:1",
+        "target": "model/14:4:composite:1/18:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00017"
+      },
+      {
+        "source": "model/14:4:composite:1/17:8:value-alias:1",
+        "target": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00018"
+      },
+      {
+        "source": "model/14:4:composite:1/18:8:value-alias:1",
+        "target": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00019"
+      },
+      {
+        "source": "model/14:4:composite:1/19:16:compute:1",
+        "target": "model/14:4:composite:1/19:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00020"
+      },
+      {
+        "source": "model/14:4:composite:1/19:8:value-alias:1",
+        "target": "model/14:4:composite:1/20:17:opaque:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00021"
+      },
+      {
+        "source": "model/14:4:composite:1/20:17:opaque:1",
+        "target": "model/14:4:composite:1/20:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00022"
+      },
+      {
+        "source": "model/14:4:composite:1/20:8:value-alias:1",
+        "target": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00023"
+      },
+      {
+        "source": "model/14:4:composite:1/16:18:value-alias:1",
+        "target": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00024"
+      },
+      {
+        "source": "model/14:4:composite:1/17:8:value-alias:1",
+        "target": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00025"
+      },
+      {
+        "source": "model/14:4:composite:1/23:15:compute:1",
+        "target": "model/14:4:composite:1/23:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00026"
+      }
+    ],
+    "findings": [
+      {
+        "id": "architecture:gate:8328156",
+        "rule": "gate",
+        "label": "Sigmoid gate",
+        "members": [
+          "model/14:4:composite:1/17:15:compute:2",
+          "model/14:4:composite:1/17:15:compute:1"
+        ],
+        "roles": {
+          "gate": "model/14:4:composite:1/17:15:compute:2",
+          "value": "model/14:4:composite:1/14:25:interface:1",
+          "output": "model/14:4:composite:1/17:15:compute:1"
+        },
+        "proof": [
+          "sigmoid output is an explicit operand of multiplication; no LSTM claim"
+        ],
+        "excluded": [],
+        "rule_version": "architecture-rules/3",
+        "evidence_scope": "source-dependencies",
+        "presentation": "group",
+        "parent": "model/14:4:composite:1"
+      },
+      {
+        "id": "architecture:gate:7ab59c6",
+        "rule": "gate",
+        "label": "Sigmoid gate",
+        "members": [
+          "model/14:4:composite:1/18:16:compute:2",
+          "model/14:4:composite:1/18:16:compute:1",
+          "model/14:4:composite:1/18:61:compute:1"
+        ],
+        "roles": {
+          "gate": "model/14:4:composite:1/18:16:compute:2",
+          "value": "model/14:4:composite:1/18:61:compute:1",
+          "output": "model/14:4:composite:1/18:16:compute:1"
+        },
+        "proof": [
+          "sigmoid output is an explicit operand of multiplication; no LSTM claim"
+        ],
+        "excluded": [],
+        "rule_version": "architecture-rules/3",
+        "evidence_scope": "source-dependencies",
+        "presentation": "group",
+        "parent": "model/14:4:composite:1"
+      },
+      {
+        "id": "architecture:gated-sum:ebcd1468",
+        "rule": "gated-sum",
+        "label": "Gated sum",
+        "members": [
+          "model/14:4:composite:1/17:15:compute:2",
+          "model/14:4:composite:1/17:15:compute:1",
+          "model/14:4:composite:1/18:16:compute:2",
+          "model/14:4:composite:1/18:16:compute:1",
+          "model/14:4:composite:1/18:61:compute:1",
+          "model/14:4:composite:1/19:16:compute:1"
+        ],
+        "roles": {
+          "terms": [
+            {
+              "gate": "model/14:4:composite:1/17:15:compute:2",
+              "value": "model/14:4:composite:1/14:25:interface:1",
+              "product": "model/14:4:composite:1/17:15:compute:1",
+              "gate_port": "out",
+              "value_port": "out",
+              "gate_edge": "e00008",
+              "value_edge": "e00009",
+              "sum_edge": "e00018",
+              "sum_port": "0"
+            },
+            {
+              "gate": "model/14:4:composite:1/18:16:compute:2",
+              "value": "model/14:4:composite:1/18:61:compute:1",
+              "product": "model/14:4:composite:1/18:16:compute:1",
+              "gate_port": "out",
+              "value_port": "out",
+              "gate_edge": "e00014",
+              "value_edge": "e00016",
+              "sum_edge": "e00019",
+              "sum_port": "2"
+            }
+          ],
+          "output": "model/14:4:composite:1/19:16:compute:1",
+          "weight_normalization": "not-asserted",
+          "state_update": "not-asserted",
+          "model_family": "not-asserted"
+        },
+        "proof": [
+          "two explicit sigmoid-gated products are the distinct operands of addition",
+          "each product and sum operand retains its original edge, slot and evidence; no state-update or model-family claim"
+        ],
+        "excluded": [],
+        "rule_version": "architecture-rules/3",
+        "evidence_scope": "source-dependencies",
+        "presentation": "group",
+        "parent": "model/14:4:composite:1"
+      }
+    ],
+    "limitations": [
+      "Local dependency patterns do not certify arbitrary-input behavior.",
+      "Unknown operations, tuple slots, conditional joins and loop templates remain explicit.",
+      "No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names."
+    ],
+    "publication": {
+      "schema": "archcanvas-publication-plan/1",
+      "structural_regions": 0
+    }
+  },
+  "publication": {
+    "schema": "archcanvas-publication/1",
+    "focus": "architecture:gated-sum:ebcd1468",
+    "auto": true,
+    "open": [
+      "architecture:gated-sum:ebcd1468"
+    ],
+    "budget": 12,
+    "boundary": [
+      {
+        "source": "model/14:4:composite:1/17:29:compute:1",
+        "target": "model/14:4:composite:1/17:15:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007",
+        "direction": "input",
+        "port_node": "paper:port:59449e3c",
+        "visible_node": "paper:port:59449e3c"
+      },
+      {
+        "source": "model/14:4:composite:1/14:25:interface:1",
+        "target": "model/14:4:composite:1/17:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00009",
+        "direction": "input",
+        "port_node": "paper:port:5f44a7ae",
+        "visible_node": "paper:port:5f44a7ae"
+      },
+      {
+        "source": "model/14:4:composite:1/18:30:compute:1",
+        "target": "model/14:4:composite:1/18:16:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00013",
+        "direction": "input",
+        "port_node": "paper:port:55425959",
+        "visible_node": "paper:port:55425959"
+      },
+      {
+        "source": "model/14:4:composite:1/16:8:value-alias:1",
+        "target": "model/14:4:composite:1/18:61:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00015",
+        "direction": "input",
+        "port_node": "paper:port:57425c7f",
+        "visible_node": "paper:port:57425c7f"
+      },
+      {
+        "source": "model/14:4:composite:1/19:8:value-alias:1",
+        "target": "model/14:4:composite:1/20:17:opaque:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00021",
+        "direction": "output",
+        "port_node": "paper:port:e349f4a8",
+        "visible_node": "paper:port:e349f4a8"
+      },
+      {
+        "source": "model/14:4:composite:1/17:8:value-alias:1",
+        "target": "model/14:4:composite:1/23:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00025",
+        "direction": "output",
+        "port_node": "paper:port:e749faf4",
+        "visible_node": "paper:port:e749faf4"
+      }
+    ],
+    "wire_bundles": [],
+    "paper_width_mm": 180,
+    "fit_page": true,
+    "min_font_pt": 8,
+    "unknowns": 0
+  },
+  "layout": {
+    "bounds": {
+      "x": 4,
+      "y": 2,
+      "w": 622,
+      "h": 666
+    },
+    "nodes": [
+      {
+        "id": "architecture:gated-sum:ebcd1468",
+        "x": 32,
+        "y": 30,
+        "title": "Gated sum",
+        "caption": "2 sigmoid-gated products",
+        "lines": [
+          "Gated sum"
+        ],
+        "captions": [
+          "2 sigmoid-gated products"
+        ],
+        "font": 16,
+        "fill": "#f7eef7",
+        "stroke": "#90678e",
+        "category": "algebra",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 566,
+        "h": 610,
+        "expanded": true,
+        "header": 66,
+        "cyclic": false
+      },
+      {
+        "id": "model/14:4:composite:1/19:16:compute:1",
+        "x": 382,
+        "y": 446,
+        "title": "add",
+        "caption": "add",
+        "lines": [
+          "add"
+        ],
+        "captions": [
+          "add"
+        ],
+        "font": 16,
+        "fill": "#f7eef7",
+        "stroke": "#90678e",
+        "category": "algebra",
+        "unknown_count": 0,
+        "symbol": "+",
+        "w": 48,
+        "h": 48,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "architecture:gate:8328156",
+        "x": 89,
+        "y": 322,
+        "title": "Sigmoid gate",
+        "caption": "gate",
+        "lines": [
+          "Sigmoid gate"
+        ],
+        "captions": [
+          "gate"
+        ],
+        "font": 16,
+        "fill": "#f7eef7",
+        "stroke": "#90678e",
+        "category": "algebra",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "architecture:gate:7ab59c6",
+        "x": 329,
+        "y": 322,
+        "title": "Sigmoid gate",
+        "caption": "gate",
+        "lines": [
+          "Sigmoid gate"
+        ],
+        "captions": [
+          "gate"
+        ],
+        "font": 16,
+        "fill": "#f7eef7",
+        "stroke": "#90678e",
+        "category": "algebra",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:59449e3c",
+        "x": 56,
+        "y": 96,
+        "title": "left_weight · Linear",
+        "caption": "",
+        "lines": [
+          "left_weight ·",
+          "Linear"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 62,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:5f44a7ae",
+        "x": 238,
+        "y": 96,
+        "title": "previous",
+        "caption": "",
+        "lines": [
+          "previous"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:55425959",
+        "x": 420,
+        "y": 96,
+        "title": "right_weight · Linear",
+        "caption": "",
+        "lines": [
+          "right_weight ·",
+          "Linear"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 62,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:57425c7f",
+        "x": 56,
+        "y": 218,
+        "title": "sequence",
+        "caption": "",
+        "lines": [
+          "sequence"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:e349f4a8",
+        "x": 238,
+        "y": 554,
+        "title": "unfamiliar_kernel",
+        "caption": "",
+        "lines": [
+          "unfamiliar_",
+          "kernel"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 62,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:e749faf4",
+        "x": 200,
+        "y": 446,
+        "title": "slot 2",
+        "caption": "",
+        "lines": [
+          "slot 2"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "paper:port:59449e3c",
+        "target": "architecture:gate:8328156",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007",
+        "originals": [
+          "e00007"
+        ],
+        "canonical_source": "model/14:4:composite:1/17:29:compute:1",
+        "canonical_target": "model/14:4:composite:1/17:15:compute:2",
+        "resolved_source": "model/14:4:composite:1/17:29:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 133,
+              "y": 158
+            },
+            {
+              "x": 133,
+              "y": 174
+            },
+            {
+              "x": 46,
+              "y": 174
+            },
+            {
+              "x": 46,
+              "y": 306
+            },
+            {
+              "x": 165,
+              "y": 306
+            },
+            {
+              "x": 165,
+              "y": 322
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "paper:port:5f44a7ae",
+        "target": "architecture:gate:8328156",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00009",
+        "originals": [
+          "e00009"
+        ],
+        "canonical_source": "model/14:4:composite:1/14:25:interface:1",
+        "canonical_target": "model/14:4:composite:1/17:15:compute:1",
+        "resolved_source": "model/14:4:composite:1/14:25:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 315,
+              "y": 140
+            },
+            {
+              "x": 315,
+              "y": 306
+            },
+            {
+              "x": 225,
+              "y": 306
+            },
+            {
+              "x": 225,
+              "y": 322
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "paper:port:55425959",
+        "target": "architecture:gate:7ab59c6",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00013",
+        "originals": [
+          "e00013"
+        ],
+        "canonical_source": "model/14:4:composite:1/18:30:compute:1",
+        "canonical_target": "model/14:4:composite:1/18:16:compute:2",
+        "resolved_source": "model/14:4:composite:1/18:30:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 497,
+              "y": 158
+            },
+            {
+              "x": 497,
+              "y": 306
+            },
+            {
+              "x": 465,
+              "y": 306
+            },
+            {
+              "x": 465,
+              "y": 322
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "paper:port:57425c7f",
+        "target": "architecture:gate:7ab59c6",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00015",
+        "originals": [
+          "e00015"
+        ],
+        "canonical_source": "model/14:4:composite:1/16:8:value-alias:1",
+        "canonical_target": "model/14:4:composite:1/18:61:compute:1",
+        "resolved_source": "model/14:4:composite:1/16:8:value-alias:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 133,
+              "y": 262
+            },
+            {
+              "x": 133,
+              "y": 278
+            },
+            {
+              "x": 405,
+              "y": 278
+            },
+            {
+              "x": 405,
+              "y": 322
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "architecture:gate:8328156",
+        "target": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00018",
+        "originals": [
+          "e00010",
+          "e00018"
+        ],
+        "canonical_source": "model/14:4:composite:1/17:8:value-alias:1",
+        "canonical_target": "model/14:4:composite:1/19:16:compute:1",
+        "resolved_source": "model/14:4:composite:1/17:15:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 225,
+              "y": 386
+            },
+            {
+              "x": 225,
+              "y": 402
+            },
+            {
+              "x": 403.3333333333333,
+              "y": 402
+            },
+            {
+              "x": 403.3333333333333,
+              "y": 446.14860824000226
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "architecture:gate:7ab59c6",
+        "target": "model/14:4:composite:1/19:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00019",
+        "originals": [
+          "e00017",
+          "e00019"
+        ],
+        "canonical_source": "model/14:4:composite:1/18:8:value-alias:1",
+        "canonical_target": "model/14:4:composite:1/19:16:compute:1",
+        "resolved_source": "model/14:4:composite:1/18:16:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 435,
+              "y": 386
+            },
+            {
+              "x": 435,
+              "y": 430.14860824000226
+            },
+            {
+              "x": 408.6666666666667,
+              "y": 430.14860824000226
+            },
+            {
+              "x": 408.6666666666667,
+              "y": 446.14860824000226
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/14:4:composite:1/19:16:compute:1",
+        "target": "paper:port:e349f4a8",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00021",
+        "originals": [
+          "e00020",
+          "e00021"
+        ],
+        "canonical_source": "model/14:4:composite:1/19:8:value-alias:1",
+        "canonical_target": "model/14:4:composite:1/20:17:opaque:1",
+        "resolved_source": "model/14:4:composite:1/19:16:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 406,
+              "y": 494
+            },
+            {
+              "x": 406,
+              "y": 538
+            },
+            {
+              "x": 315,
+              "y": 538
+            },
+            {
+              "x": 315,
+              "y": 554
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "architecture:gate:8328156",
+        "target": "paper:port:e749faf4",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00025",
+        "originals": [
+          "e00010",
+          "e00025"
+        ],
+        "canonical_source": "model/14:4:composite:1/17:8:value-alias:1",
+        "canonical_target": "model/14:4:composite:1/23:15:compute:1",
+        "resolved_source": "model/14:4:composite:1/17:15:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 165,
+              "y": 386
+            },
+            {
+              "x": 165,
+              "y": 430
+            },
+            {
+              "x": 277,
+              "y": 430
+            },
+            {
+              "x": 277,
+              "y": 446
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      }
+    ],
+    "edge_accounting": {
+      "visible": [
+        "e00007",
+        "e00009",
+        "e00013",
+        "e00015",
+        "e00018",
+        "e00019",
+        "e00021",
+        "e00025"
+      ],
+      "internal": [
+        "e00008",
+        "e00014",
+        "e00016"
+      ],
+      "excluded": [
+        "e00000",
+        "e00001",
+        "e00002",
+        "e00003",
+        "e00004",
+        "e00006",
+        "e00012",
+        "e00022",
+        "e00023",
+        "e00024",
+        "e00026"
+      ],
+      "contracted": [
+        "e00010",
+        "e00017",
+        "e00020"
+      ],
+      "attached": [
+        "e00005",
+        "e00011"
+      ]
+    },
+    "node_accounting": {
+      "visible": [
+        "model/14:4:composite:1/19:16:compute:1"
+      ],
+      "collapsed": [
+        "model/14:4:composite:1/17:15:compute:1",
+        "model/14:4:composite:1/17:15:compute:2",
+        "model/14:4:composite:1/18:16:compute:1",
+        "model/14:4:composite:1/18:16:compute:2",
+        "model/14:4:composite:1/18:61:compute:1"
+      ],
+      "contracted": [
+        "model/14:4:composite:1/17:8:value-alias:1",
+        "model/14:4:composite:1/18:8:value-alias:1",
+        "model/14:4:composite:1/19:8:value-alias:1"
+      ],
+      "attached": [],
+      "excluded": [
+        "model/14:4:composite:1",
+        "model/14:4:composite:1/14:22:interface:1",
+        "model/14:4:composite:1/14:25:interface:1",
+        "model/14:4:composite:1/15:18:compute:1",
+        "model/14:4:composite:1/15:8:value-alias:1",
+        "model/14:4:composite:1/16:27:compute:1",
+        "model/14:4:composite:1/16:8:value-alias:1",
+        "model/14:4:composite:1/16:18:value-alias:1",
+        "model/14:4:composite:1/17:29:compute:1",
+        "model/14:4:composite:1/11:27:parameter:1",
+        "model/14:4:composite:1/18:30:compute:1",
+        "model/14:4:composite:1/12:28:parameter:1",
+        "model/14:4:composite:1/20:17:opaque:1",
+        "model/14:4:composite:1/20:8:value-alias:1",
+        "model/14:4:composite:1/23:15:compute:1",
+        "model/14:4:composite:1/23:8:interface:1"
+      ]
+    },
+    "representatives": {
+      "model/14:4:composite:1/17:15:compute:1": "architecture:gate:8328156",
+      "model/14:4:composite:1/17:15:compute:2": "architecture:gate:8328156",
+      "model/14:4:composite:1/17:8:value-alias:1": "architecture:gate:8328156",
+      "model/14:4:composite:1/18:16:compute:1": "architecture:gate:7ab59c6",
+      "model/14:4:composite:1/18:16:compute:2": "architecture:gate:7ab59c6",
+      "model/14:4:composite:1/18:61:compute:1": "architecture:gate:7ab59c6",
+      "model/14:4:composite:1/18:8:value-alias:1": "architecture:gate:7ab59c6",
+      "model/14:4:composite:1/19:16:compute:1": "model/14:4:composite:1/19:16:compute:1",
+      "model/14:4:composite:1/19:8:value-alias:1": "architecture:gated-sum:ebcd1468"
+    },
+    "labels": []
+  },
+  "diagnostics": {
+    "route_failures": [],
+    "publication": {
+      "schema": "publication-quality/1",
+      "route_strategy": "neighbors-short",
+      "wire_length": 1818,
+      "min_print_font_pt": 10.66,
+      "target_min_font_pt": 8,
+      "requested_width_mm": 180,
+      "width_mm": 180,
+      "height_mm": 192.7,
+      "route_failures": [],
+      "unplaced_port_labels": [],
+      "line_geometry": {
+        "crossings": 1,
+        "overlapping_paths": [],
+        "unrelated_contacts": []
+      },
+      "issues": []
+    },
+    "routing": {
+      "selected": "neighbors-short",
+      "baseline_crossings": 4,
+      "refinement": {
+        "attempts": 9,
+        "accepted": [
+          {
+            "phase": "crossings",
+            "edge": "e00007",
+            "crossing_cost": 180,
+            "stub_length": 16,
+            "crossings": [
+              2,
+              1
+            ],
+            "contacts": [
+              0,
+              0
+            ]
+          }
+        ],
+        "before_crossings": 2,
+        "before_contacts": 0,
+        "after_crossings": 1,
+        "after_contacts": 0
+      },
+      "candidates": [
+        {
+          "strategy": "canonical-short",
+          "crossings": 4,
+          "issues": [],
+          "wire_length": 1874,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-short",
+          "crossings": 2,
+          "issues": [],
+          "wire_length": 1754,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-long",
+          "crossings": 4,
+          "issues": [],
+          "wire_length": 1754,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "canonical-long",
+          "crossings": 4,
+          "issues": [],
+          "wire_length": 1874,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-clear-short",
+          "crossings": 2,
+          "issues": [],
+          "wire_length": 1754,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-clear-long",
+          "crossings": 4,
+          "issues": [],
+          "wire_length": 1754,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        }
+      ]
+    }
+  }
+}

@@ -6,6 +6,7 @@ unsupported Python remains source-backed opaque rather than a fabricated templat
 """
 from __future__ import annotations
 import ast
+import copy
 from pathlib import Path
 from .schema import SCHEMA, COVERAGE_CONTRACT, GLYPHS, seal
 from .sources import units
@@ -14,7 +15,7 @@ MODULES = {
     'Linear': 'linear', 'Conv1d': 'convolution', 'Conv2d': 'convolution', 'Conv3d': 'convolution',
     'ConvTranspose2d': 'convolution', 'Embedding': 'embedding', 'LayerNorm': 'normalization',
     'BatchNorm1d': 'normalization', 'BatchNorm2d': 'normalization', 'GroupNorm': 'normalization',
-    'ReLU': 'activation', 'GELU': 'activation', 'Sigmoid': 'activation', 'Tanh': 'activation',
+    'LeakyReLU': 'activation', 'ELU': 'activation', 'SiLU': 'activation', 'ReLU': 'activation', 'GELU': 'activation', 'Sigmoid': 'activation', 'Tanh': 'activation',
     'Softmax': 'softmax', 'LogSoftmax': 'softmax', 'Dropout': 'dropout',
     'MaxPool2d': 'pooling', 'AvgPool2d': 'pooling', 'AdaptiveAvgPool2d': 'pooling',
     'Flatten': 'reshape', 'Identity': 'identity', 'LSTM': 'lstm', 'GRU': 'gru', 'RNN': 'rnn',
@@ -23,7 +24,7 @@ MODULES = {
     'TransformerDecoder': 'decoder', 'TransformerDecoderLayer': 'decoder-layer',
 }
 FUNCTIONS = {
-    'relu': 'activation', 'gelu': 'activation', 'sigmoid': 'activation', 'tanh': 'activation',
+    'leaky_relu': 'activation', 'elu': 'activation', 'silu': 'activation', 'relu': 'activation', 'gelu': 'activation', 'sigmoid': 'activation', 'tanh': 'activation',
     'softmax': 'softmax', 'log_softmax': 'softmax', 'matmul': 'matmul', 'bmm': 'matmul',
     'mm': 'matmul', 'einsum': 'einsum', 'linear': 'linear', 'conv2d': 'convolution',
     'max_pool2d': 'pooling', 'avg_pool2d': 'pooling', 'adaptive_avg_pool2d': 'pooling',
@@ -41,6 +42,11 @@ FUNCTIONS = {
     'len': 'shape', 'range': 'range', 'enumerate': 'enumerate',
     'topk': 'top-k', 'gather': 'gather', 'scatter': 'scatter', 'scatter_add': 'scatter-add',
     'where': 'select', 'index_select': 'index-select',
+    'interpolate': 'interpolate', 'pad': 'pad', 'pow': 'pow', 'rsqrt': 'rsqrt', 'abs': 'abs', 'sin': 'sin', 'cos': 'cos',
+    # max/min are overloaded: the second argument can be a tensor or a dim.
+    'max': 'maximum-or-reduction', 'min': 'minimum-or-reduction', 'amax': 'reduce',
+    'clamp': 'clamp', 'expand': 'expand', 't': 'transpose',
+    'add': 'add', 'mul': 'mult', 'sub': 'sub', 'div': 'div',
 }
 
 
@@ -155,6 +161,50 @@ class Analyzer:
                 target = text(result[key]); seen.add(target); result[key] = result[target]
         return result
 
+    def constructor_values(self, cls, call, values):
+        init = next((m for m in cls.body if isinstance(m, ast.FunctionDef) and m.name == '__init__'), None)
+        if not init:
+            return {}
+        args = [a.arg for a in init.args.args if a.arg != 'self']
+        bound = {p: literal(a, values) for p, a in zip(args[-len(init.args.defaults):], init.args.defaults)} if init.args.defaults else {}
+        bound.update({p: literal(a, values) for p, a in zip(args, call.args)})
+        bound.update({k.arg: literal(k.value, values) for k in call.keywords if k.arg})
+        return bound
+
+    def factory(self, call, unit):
+        """Inline only a unique, single-return nn constructor factory as AST.
+
+        No loops, assignments, side effects, dynamic argument binding or imports
+        are executed. Evidence retains both the factory return and invocation.
+        """
+        if not isinstance(call, ast.Call):
+            return None
+        pair = self.definition(text(call.func), unit['cell']) or self.definition(text(call.func))
+        if not pair or not isinstance(pair[1], ast.FunctionDef) or pair[1].decorator_list or pair[1].args.posonlyargs:
+            return None
+        source, fn = pair
+        body = [n for n in fn.body if not (isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant) and isinstance(n.value.value, str))]
+        if len(body) != 1 or not isinstance(body[0], ast.Return) or not isinstance(body[0].value, ast.Call):
+            return None
+        result = body[0].value
+        if not self.resolve(text(result.func)).startswith('torch.nn.') or fn.args.vararg or fn.args.kwarg or fn.args.kwonlyargs or any(isinstance(a, ast.Starred) for a in call.args) or any(k.arg is None for k in call.keywords):
+            return None
+        params = [a.arg for a in fn.args.args]
+        if len(call.args) > len(params):
+            return None
+        bindings = dict(zip(params[-len(fn.args.defaults):], fn.args.defaults)) if fn.args.defaults else {}
+        bindings.update(zip(params, call.args))
+        for k in call.keywords:
+            if k.arg not in params or k.arg in params[:len(call.args)]:
+                return None
+            bindings[k.arg] = k.value
+        if any(p not in bindings for p in params):
+            return None
+        class Substitute(ast.NodeTransformer):
+            def visit_Name(self, n):
+                return copy.deepcopy(bindings[n.id]) if n.id in bindings else n
+        return source, Substitute().visit(copy.deepcopy(result)), body[0]
+
     def call(self, cls_pair, parent, label, actuals, keywords, ctor, depth, module_path='', owner=None):
         u, cls = cls_pair
         symbol = cls.name + '.forward' if isinstance(cls, ast.ClassDef) else cls.name
@@ -168,8 +218,13 @@ class Analyzer:
             return self.add('opaque', label, parent, u, cls, symbol, reason='no local forward definition')
         composite = self.add('composite', label, parent, u, fn, symbol,
                              semantic_type='source-module' if is_class else 'source-function', module_path=module_path,
-                             constructor=ctor)
+                             constructor=ctor, source_class=cls.name if is_class else None)
         values = dict(self.globals)
+        if is_class:
+            init = next((m for m in cls.body if isinstance(m, ast.FunctionDef) and m.name == '__init__'), None)
+            if init and init.args.defaults:
+                params = [a.arg for a in init.args.args]
+                values.update({p: literal(a, values) for p, a in zip(params[-len(init.args.defaults):], init.args.defaults)})
         values.update(ctor)
         owner = cls if is_class else owner
         modules = self.module_map(owner, values) if owner is not None else {}
@@ -180,10 +235,30 @@ class Analyzer:
             env[arg.arg] = node
             binding = keywords.get(arg.arg) or (actuals[index] if index < len(actuals) else None)
             self.edge(binding, node, 'interface-binding', arg.arg)
-        returned = []
+        returned, write_scopes = [], []
+
+        def rebound_target(target, bindings):
+            # A forward-time write invalidates constructor-time module identity,
+            # including writes to a containing object or module collection.
+            writes = set().union(*write_scopes) if write_scopes else set()
+            return next((name for name in sorted(writes) if name in bindings and (target == name or
+                         target.startswith(name + '.') or target.startswith(name + '['))), None)
 
         def expr(n, scope, bindings):
             if n is None or isinstance(n, ast.Constant): return None
+            if isinstance(n, ast.UnaryOp) and isinstance(n.op, (ast.USub, ast.UAdd)) and isinstance(n.operand, ast.Constant): return None
+            if isinstance(n, ast.Subscript):
+                node = self.add('compute', 'getitem · ' + text(n.slice)[:45], scope, u, n, symbol, operator='getitem', selector=text(n.slice))
+                self.edge(expr(n.value, scope, bindings), node, target_port='value')
+                def selector_dependencies(selector):
+                    if isinstance(selector, ast.Slice):
+                        return [x for x in (selector.lower, selector.upper, selector.step) if x is not None]
+                    if isinstance(selector, ast.Tuple):
+                        return [x for child in selector.elts for x in selector_dependencies(child)]
+                    return [selector]
+                for i, child in enumerate(selector_dependencies(n.slice)):
+                    self.edge(expr(child, scope, bindings), node, target_port='index:' + str(i))
+                return node
             if isinstance(n, ast.Name):
                 if n.id in bindings: return bindings[n.id]
                 key = 'global:' + n.id
@@ -193,7 +268,8 @@ class Analyzer:
                 return bindings[key]
             if isinstance(n, (ast.Tuple, ast.List, ast.Dict)):
                 children = n.values if isinstance(n, ast.Dict) else n.elts
-                node = self.add('compute', 'structured value', scope, u, n, symbol, operator='structure')
+                node = self.add('compute', 'structured value', scope, u, n, symbol, operator='structure',
+                                structure_kind=type(n).__name__.lower())
                 for i, child in enumerate(children): self.edge(expr(child, scope, bindings), node, target_port=str(i))
                 return node
             if isinstance(n, ast.Attribute):
@@ -206,50 +282,77 @@ class Analyzer:
                 return node
             if isinstance(n, ast.Call):
                 target = text(n.func)
-                raw_module = modules.get(target)
+                if target.endswith('.forward') and target[:-8] in modules:
+                    target = target[:-8]
+                rebound = rebound_target(target, bindings)
+                raw_module = modules.get(target) if rebound is None else None
+                factory = self.factory(raw_module, u)
+                if factory: raw_module = factory[1]
                 receiver = None
                 # Receiver first, then positional and keyword expressions: preserve
                 # dependencies (not an invented edge between adjacent statements).
-                if isinstance(n.func, ast.Attribute) and not target.startswith(('self.', 'torch.', 'nn.', 'F.', 'math.')) and (target.split('.')[0] in bindings or isinstance(n.func.value, (ast.Call, ast.Subscript))):
-                    receiver = expr(n.func.value, scope, bindings)
+                if isinstance(n.func, ast.Attribute):
+                    chained = isinstance(n.func.value, (ast.Call, ast.Subscript))
+                    bound_receiver = target.split('.')[0] in bindings
+                    state_method = target.startswith('self.') and n.func.attr in FUNCTIONS and text(n.func.value) != 'self'
+                    namespace = target.startswith(('torch.', 'nn.', 'F.', 'math.'))
+                    if chained or (not namespace and (bound_receiver or state_method)):
+                        receiver = expr(n.func.value, scope, bindings)
                 actuals = [expr(a, scope, bindings) for a in n.args]
                 kw = {k.arg: expr(k.value, scope, bindings) for k in n.keywords if k.arg}
                 helper = None
-                if owner is not None and target.startswith('self.') and target not in modules:
+                if rebound is None and owner is not None and target.startswith('self.') and target not in modules:
                     name = target[5:]
                     helper_fn = next((m for m in owner.body if isinstance(m, ast.FunctionDef) and m.name == name), None)
                     if helper_fn: helper = (u, helper_fn)
-                elif self.definition(target) and isinstance(self.definition(target)[1], ast.FunctionDef):
+                elif rebound is None and self.definition(target) and isinstance(self.definition(target)[1], ast.FunctionDef):
                     helper = self.definition(target)
                 if helper:
                     return self.call(helper, scope, target, actuals, kw, ctor, depth + 1, module_path, owner)
                 if isinstance(raw_module, ast.Call):
                     constructor_name = text(raw_module.func)
                     short = constructor_name.split('.')[-1]
-                    local = self.definition(constructor_name)
+                    local = self.definition(constructor_name, u['cell']) or self.definition(constructor_name)
                     if local and isinstance(local[1], ast.ClassDef):
-                        init = next((m for m in local[1].body if isinstance(m, ast.FunctionDef) and m.name == '__init__'), None)
-                        params = [a.arg for a in init.args.args if a.arg != 'self'] if init else []
-                        v = {p: literal(a, values) for p, a in zip(params, raw_module.args)}
-                        v.update({k.arg: literal(k.value, values) for k in raw_module.keywords if k.arg})
+                        v = self.constructor_values(local[1], raw_module, values)
                         return self.call(local, scope, target[5:], actuals, kw, v, depth + 1,
                                          (module_path + '.' + target[5:]).strip('.'))
                     if short == 'Sequential' and self.resolve(constructor_name).startswith('torch.nn.'):
                         frame = self.add('composite', target[5:], scope, u, n, symbol, semantic_type='sequential', module_path=(module_path + '.' + target[5:]).strip('.'))
                         previous = actuals[0] if actuals else None
-                        for i, child in enumerate(raw_module.args):
+                        def sequential_child(child, previous, frame, path, child_label, level):
+                            if level > self.max_depth:
+                                sub = self.add('opaque', child_label, frame, u, child, symbol, reason='analysis-depth-limit')
+                                self.edge(previous, sub, evidence='framework-contract')
+                                return sub
                             if isinstance(child, ast.Call):
                                 child_type = self.resolve(text(child.func))
                                 child_short = child_type.split('.')[-1]
+                                pair = self.definition(text(child.func), u['cell']) or self.definition(text(child.func))
+                                if pair and isinstance(pair[1], ast.ClassDef):
+                                    v = self.constructor_values(pair[1], child, values)
+                                    return self.call(pair, frame, child_label + ': ' + child_short, [previous], {}, v, level + 1, path)
+                                if child_type == 'torch.nn.Sequential':
+                                    nested = self.add('composite', child_label + ': Sequential', frame, u, child, symbol, semantic_type='sequential', module_path=path)
+                                    for j, item in enumerate(child.args):
+                                        previous = sequential_child(item, previous, nested, path + '.' + str(j), str(j), level + 1)
+                                    out = self.add('interface', 'out', nested, u, child, symbol, role='output')
+                                    self.edge(previous, out, 'interface-binding', evidence='framework-contract')
+                                    return out
                                 known = child_type.startswith('torch.nn.') and child_short in MODULES
-                                sub = self.add('compute' if known else 'opaque', f'{i}: {child_short}', frame, u, child, symbol,
-                                               operator=MODULES.get(child_short, child_type) if known else child_type,
-                                               module_path=(module_path + '.' + target[5:] + '.' + str(i)).strip('.'))
-                                self.edge(previous, sub, evidence='framework-contract')
-                                previous = sub
+                                sub = self.add('compute' if known else 'opaque', child_label + ': ' + child_short, frame, u, child, symbol,
+                                               operator=MODULES[child_short] if known else child_type, framework_type=child_type,
+                                               module_path=path, constructor={'args': [literal(a, values) for a in child.args], 'kwargs': {k.arg: literal(k.value, values) for k in child.keywords if k.arg}})
+                                if any(k.arg == 'inplace' and literal(k.value, values) is True for k in child.keywords):
+                                    self.node_by[sub].update(mutable=True, effect_scope='sequential-call; external-aliases-unresolved')
+                                    self.coverage_blockers.append({'file': u['path'], 'line': child.lineno,
+                                                                   'kind': 'sequential-mutation-alias-unresolved'})
                             else:
                                 sub = self.add('opaque', text(child)[:60], frame, u, child, symbol, reason='unresolved sequential child')
-                                self.edge(previous, sub, evidence='framework-contract'); previous = sub
+                            self.edge(previous, sub, evidence='framework-contract')
+                            return sub
+                        for i, child in enumerate(raw_module.args):
+                            previous = sequential_child(child, previous, frame, (module_path + '.' + target[5:] + '.' + str(i)).strip('.'), str(i), depth + 1)
                         output = self.add('interface', 'out', frame, u, n, symbol, role='output')
                         self.edge(previous, output, 'interface-binding', evidence='framework-contract')
                         return output
@@ -259,7 +362,10 @@ class Analyzer:
                     kind = 'compute' if known else 'opaque'
                     node = self.add(kind, f'{target[5:]} · {short}', scope, u, n, symbol, operator=operator,
                                     module_path=(module_path + '.' + target[5:]).strip('.'),
-                                    framework_type=qualified, constructor={k.arg: literal(k.value, values) for k in raw_module.keywords if k.arg})
+                                    framework_type=qualified, constructor={'args': [literal(a, values) for a in raw_module.args], 'kwargs': {k.arg: literal(k.value, values) for k in raw_module.keywords if k.arg}})
+                    if factory:
+                        self.node_by[node]['source'].extend(self.evidence(factory[0], factory[2], text(modules[target].func)))
+                        self.node_by[node]['constructor_factory'] = text(modules[target].func)
                     # Parameter resources are separate from the compute call, and
                     # shapes/sharing remain unknown until a runtime observation.
                     if known and short in {'Linear', 'Conv1d', 'Conv2d', 'Conv3d', 'Embedding', 'LayerNorm', 'BatchNorm1d', 'BatchNorm2d'}:
@@ -270,13 +376,29 @@ class Analyzer:
                     qualified = self.resolve(target)
                     short = target.split('.')[-1]
                     tensor_method = receiver is not None and short in FUNCTIONS
-                    known = (qualified.startswith(('torch.', 'math.')) or tensor_method or target in {'len', 'range', 'enumerate'}) and short in FUNCTIONS
+                    shadowed_callable = rebound and (target in modules or target == rebound)
+                    known = not shadowed_callable and (qualified.startswith(('torch.', 'math.')) or tensor_method or target in {'len', 'range', 'enumerate'}) and short in FUNCTIONS
                     node = self.add('compute' if known else 'opaque', short, scope, u, n, symbol,
                                     operator=FUNCTIONS.get(short, qualified) if known else qualified, function_target=qualified,
-                                    reason=None if known else 'unresolved-call-target')
+                                    arguments={'args': [literal(a, values) for a in n.args],
+                                               'kwargs': {k.arg: literal(k.value, values) for k in n.keywords if k.arg}},
+                                    reason=None if known else 'rebound-call-target' if shadowed_callable else 'unresolved-call-target')
+                if rebound and (target in modules or target == rebound):
+                    self.edge(bindings[rebound], node, target_port='callable')
                 self.edge(receiver, node, target_port='receiver')
                 for i, value in enumerate(actuals): self.edge(value, node, target_port=f'arg:{i}')
                 for key, value in kw.items(): self.edge(value, node, target_port='kw:' + key)
+                inplace = None
+                if isinstance(raw_module, ast.Call):
+                    inplace = next((literal(k.value, values) for k in raw_module.keywords if k.arg == 'inplace'), None)
+                else:
+                    inplace = next((literal(k.value, values) for k in n.keywords if k.arg == 'inplace'), None)
+                method_effect = isinstance(n.func, ast.Attribute) and n.func.attr.endswith('_') and not n.func.attr.endswith('__')
+                if method_effect or inplace is True:
+                    self.node_by[node]['mutable'] = True
+                    self.node_by[node]['effect_scope'] = 'direct-aliases-only; view-and-external-aliases-unresolved'
+                    destination = n.func.value if method_effect and receiver else n.args[0] if n.args else None
+                    apply_effect(destination, node, scope, bindings)
                 return node
             if isinstance(n, ast.IfExp):
                 control = self.add('control', text(n.test)[:70], scope, u, n.test, symbol, operator='if-expression')
@@ -295,25 +417,87 @@ class Analyzer:
                 if isinstance(child, ast.expr): self.edge(expr(child, scope, bindings), node, target_port=str(i))
             return node
 
-        def assign(target, producer, scope, bindings, slot=None):
+        def invalidate_reads(name, bindings):
+            for key in list(bindings):
+                if key.startswith(name + '.') or key.startswith(name + '['): del bindings[key]
+
+        def apply_effect(destination, effect, scope, bindings):
+            # Track proven whole-value aliases only. A view or custom object may
+            # share storage, but source syntax alone does not establish that.
+            base = destination
+            while isinstance(base, ast.Subscript): base = base.value
+            if not isinstance(base, (ast.Name, ast.Attribute)):
+                self.node_by[effect].update(kind='opaque', evidence_status='opaque', glyph=GLYPHS['opaque'],
+                                            reason='unresolved-mutation-receiver')
+                self.coverage_blockers.append({'file': u['path'], 'line': self.node_by[effect]['source'][0]['line'],
+                                               'kind': 'unresolved-mutation-receiver'})
+                return
+            name = text(base)
+            before = expr(base, scope, bindings)
+            self.edge(before, effect, 'state-write', target_port='previous')
+            def origin(value):
+                seen = set()
+                while value and value not in seen:
+                    seen.add(value)
+                    item = self.node_by[value]
+                    if item['kind'] != 'value-alias' or item.get('slot') is not None: break
+                    incoming = next((e for e in self.edges if e['target'] == value and e['kind'] == 'alias'), None)
+                    if not incoming: break
+                    value = incoming['source']
+                return value
+            source = origin(before)
+            affected = [key for key, value in bindings.items() if not key.startswith('global:') and origin(value) == source]
+            for key in sorted(set(affected + [name])):
+                invalidate_reads(key, bindings)
+                bindings[key] = effect
+                if write_scopes: write_scopes[-1].add(key)
+            self.coverage_blockers.append({'file': u['path'], 'line': self.node_by[effect]['source'][0]['line'],
+                                           'kind': 'mutation-alias-coverage-unresolved'})
+
+        def assign(target, producer, scope, bindings, slot=None, writes=None):
             if isinstance(target, (ast.Tuple, ast.List)):
-                for i, child in enumerate(target.elts): assign(child, producer, scope, bindings, f'{slot + "." if slot else ""}{i}')
+                for i, child in enumerate(target.elts): assign(child, producer, scope, bindings, f'{slot + "." if slot else ""}{i}', writes)
+                return
+            if isinstance(target, ast.Subscript):
+                previous = expr(target, scope, bindings)
+                store = self.add('opaque', 'setitem · ' + text(target.slice)[:45], scope, u, target, symbol,
+                                 operator='setitem', selector=text(target.slice), mutable=True,
+                                 reason='storage-alias-effects-unresolved',
+                                 effect_scope='direct-aliases-only; view-and-external-aliases-unresolved')
+                self.edge(previous, store, target_port='destination')
+                self.edge(producer, store, target_port='value')
+                apply_effect(target.value, store, scope, bindings)
                 return
             name = text(target)
+            # Cached reads belong to a particular binding generation. Rebinding
+            # x must not make the next x.shape read reuse the previous producer.
+            invalidate_reads(name, bindings)
             alias = self.add('state' if isinstance(target, ast.Attribute) else 'value-alias', name, scope, u, target, symbol, slot=slot)
-            self.edge(producer, alias, 'state-write' if isinstance(target, ast.Attribute) else 'alias', target_port=slot or 'value')
+            self.edge(producer, alias, 'state-write' if isinstance(target, ast.Attribute) else 'alias',
+                      target_port=slot or 'value', source_port=slot if slot is not None else 'out')
             bindings[name] = alias
+            if writes is not None: writes.add(name)
 
         def statements(body, scope, bindings):
+            written = set()
+            write_scopes.append(written)
             for statement in body:
                 if isinstance(statement, ast.Assign):
                     value = expr(statement.value, scope, bindings)
-                    for target in statement.targets: assign(target, value, scope, bindings)
+                    for target in statement.targets: assign(target, value, scope, bindings, writes=written)
                 elif isinstance(statement, ast.AnnAssign):
-                    assign(statement.target, expr(statement.value, scope, bindings), scope, bindings)
+                    if statement.value is not None:
+                        assign(statement.target, expr(statement.value, scope, bindings), scope, bindings, writes=written)
                 elif isinstance(statement, ast.AugAssign):
                     value = expr(ast.copy_location(ast.BinOp(left=statement.target, op=statement.op, right=statement.value), statement), scope, bindings)
-                    assign(statement.target, value, scope, bindings)
+                    if not isinstance(statement.target, ast.Subscript):
+                        effect = self.add('opaque', 'augmented write · ' + text(statement.target), scope, u, statement, symbol,
+                                          operator='augmented-write', mutable=True, reason='inplace-overload-unresolved',
+                                          effect_scope='direct-aliases-only; view-and-external-aliases-unresolved')
+                        self.edge(value, effect, target_port='value')
+                        apply_effect(statement.target, effect, scope, bindings)
+                        value = effect
+                    assign(statement.target, value, scope, bindings, writes=written)
                 elif isinstance(statement, ast.Return):
                     value = expr(statement.value, scope, bindings)
                     output = self.add('interface', 'return', scope, u, statement, symbol, role='output')
@@ -325,20 +509,24 @@ class Analyzer:
                     self.edge(expr(statement.test, scope, bindings), control, 'control')
                     self.branches.append({'id': control, 'file': u['path'], 'line': statement.lineno, 'column': statement.col_offset,
                                           'outcomes': ['true', 'false'], 'kind': 'if'})
-                    alternatives = []
+                    alternatives, branch_writes = [], set()
                     for outcome, block in [('true', statement.body), ('false', statement.orelse)]:
                         frame = self.add('composite', outcome, scope, u, statement, symbol, semantic_type='conditional-region', condition={'branch': control, 'outcome': outcome})
                         self.edge(control, frame, 'control', outcome)
                         branch_env = dict(bindings)
-                        statements(block, frame, branch_env)
+                        branch_writes.update(statements(block, frame, branch_env))
                         alternatives.append(branch_env)
-                    for name in set(alternatives[0]) | set(alternatives[1]):
+                    # Reading a property or external value does not assign it.
+                    # Join actual writes only, never expression-cache entries.
+                    for name in sorted(branch_writes):
                         a, b = alternatives[0].get(name), alternatives[1].get(name)
                         if a == b: continue
                         phi = self.add('value-alias', name + ' · branch join', scope, u, statement, symbol, operator='phi')
                         self.edge(a, phi, target_port='true', condition={'branch': control, 'outcome': 'true'})
                         self.edge(b, phi, target_port='false', condition={'branch': control, 'outcome': 'false'})
+                        invalidate_reads(name, bindings)
                         bindings[name] = phi
+                    written.update(branch_writes)
                 elif isinstance(statement, (ast.For, ast.While)):
                     control = self.add('control', ('for ' + text(statement.target) + ' in ' + text(statement.iter))[:90] if isinstance(statement, ast.For) else 'while ' + text(statement.test)[:80], scope, u, statement, symbol,
                                        operator='loop', loop_semantics='source-body-template; repetition-and-carried-state-unresolved')
@@ -347,17 +535,22 @@ class Analyzer:
                     frame = self.add('composite', 'loop body (source template)', scope, u, statement, symbol, semantic_type='loop-template')
                     self.edge(control, frame, 'control')
                     loop_env = dict(bindings)
-                    if isinstance(statement, ast.For): assign(statement.target, control, frame, loop_env)
-                    statements(statement.body, frame, loop_env)
-                    for name in set(loop_env) - set(bindings) | {k for k in bindings if loop_env.get(k) != bindings[k]}:
+                    loop_writes = set()
+                    if isinstance(statement, ast.For): assign(statement.target, control, frame, loop_env, writes=loop_writes)
+                    loop_writes.update(statements(statement.body, frame, loop_env))
+                    for name in sorted(loop_writes):
                         join = self.add('opaque', name + ' · loop-carried value', scope, u, statement, symbol, reason='iteration-binding-unresolved')
                         self.edge(bindings.get(name), join, target_port='initial')
                         self.edge(loop_env.get(name), join, target_port='body')
+                        invalidate_reads(name, bindings)
                         bindings[name] = join
+                    written.update(loop_writes)
                 elif isinstance(statement, ast.Expr): expr(statement.value, scope, bindings)
                 elif isinstance(statement, (ast.Pass, ast.Import, ast.ImportFrom)): continue
                 else:
                     self.add('opaque', type(statement).__name__, scope, u, statement, symbol, reason='unsupported-statement')
+            write_scopes.pop()
+            return written
         statements(fn.body, composite, env)
         if len(returned) == 1: return returned[0]
         output = self.add('interface', 'outputs / conditional returns', composite, u, fn, symbol, role='output')
@@ -379,6 +572,7 @@ class Analyzer:
                            'reason': 'static dependencies are not execution proof'},
               'limitations': ['Static edges express source dependencies, not observed tensor bindings.',
                               'Unresolved calls/loops/external definitions remain explicit opaque boundaries.',
+                              'Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.',
                               'Notebook cells are parsed as data; notebook setup/training cells are never executed.']}
         from .motifs import recognize
         recognize(ir)

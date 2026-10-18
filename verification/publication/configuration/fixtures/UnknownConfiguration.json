@@ -1,0 +1,217 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "UnknownConfiguration",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+    "class": "UnknownConfiguration",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+      "cell": null,
+      "sha256": "99db5a251406b4469f3e6186c9d22cd758018727ebc286ac2052050fb2079a81",
+      "unit_sha256": "99db5a251406b4469f3e6186c9d22cd758018727ebc286ac2052050fb2079a81"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/40:4:composite:1",
+      "kind": "composite",
+      "label": "UnknownConfiguration",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+          "line": 40,
+          "end_line": 41,
+          "column": 4,
+          "end_column": 36,
+          "symbol": "UnknownConfiguration.forward",
+          "expression": "def forward(self, x):\n    return custom_view(x, 4 * 2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "UnknownConfiguration"
+    },
+    {
+      "id": "model/40:4:composite:1/40:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/40:4:composite:1",
+      "source_parent": "model/40:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+          "line": 40,
+          "end_line": 40,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "UnknownConfiguration.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/40:4:composite:1/41:30:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/40:4:composite:1",
+      "source_parent": "model/40:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 30,
+          "end_column": 35,
+          "symbol": "UnknownConfiguration.forward",
+          "expression": "4 * 2"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult"
+    },
+    {
+      "id": "model/40:4:composite:1/41:15:opaque:1",
+      "kind": "opaque",
+      "label": "custom_view",
+      "parent": "model/40:4:composite:1",
+      "source_parent": "model/40:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 15,
+          "end_column": 36,
+          "symbol": "UnknownConfiguration.forward",
+          "expression": "custom_view(x, 4 * 2)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "custom_view",
+      "function_target": "custom_view",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          },
+          8
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/40:4:composite:1/41:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/40:4:composite:1",
+      "source_parent": "model/40:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/configuration_composition.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 8,
+          "end_column": 36,
+          "symbol": "UnknownConfiguration.forward",
+          "expression": "return custom_view(x, 4 * 2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/40:4:composite:1/40:22:interface:1",
+      "target": "model/40:4:composite:1/41:15:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/40:4:composite:1/41:30:compute:1",
+      "target": "model/40:4:composite:1/41:15:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/40:4:composite:1/41:15:opaque:1",
+      "target": "model/40:4:composite:1/41:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "01d459efe9055a6a01c52ae4831f0c6f8b081c407a20510f64e540edf8434a22"
+}

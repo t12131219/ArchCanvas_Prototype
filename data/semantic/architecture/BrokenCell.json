@@ -44,7 +44,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "BrokenCell"
     },
     {
       "id": "model/35:4:composite:1/35:22:interface:1",
@@ -127,7 +128,13 @@
       "operator": "linear",
       "module_path": "a",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/35:4:composite:1/32:17:parameter:1",
@@ -182,6 +189,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.a(x)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -237,7 +252,13 @@
       "operator": "linear",
       "module_path": "b",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/35:4:composite:1/33:17:parameter:1",
@@ -292,6 +313,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.b(state)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -491,7 +520,8 @@
   "limitations": [
     "Static edges express source dependencies, not observed tensor bindings.",
     "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
     "Notebook cells are parsed as data; notebook setup/training cells are never executed."
   ],
-  "ir_digest": "1a85529b30ab6db1ae0a33900ae2c8157ff5d6b6b5b33b783d4074fd8183917c"
+  "ir_digest": "fc9736e6ac2549ba7d24f3713d38b44d441f8e19f93dc1ae176951dd19ef44b6"
 }

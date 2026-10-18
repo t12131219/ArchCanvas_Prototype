@@ -44,7 +44,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "UnknownFusion"
     },
     {
       "id": "model/104:4:composite:1/104:22:interface:1",
@@ -126,7 +127,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "part",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "BrokenCell"
     },
     {
       "id": "model/104:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -209,7 +211,13 @@
       "operator": "linear",
       "module_path": "part.a",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/104:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -264,6 +272,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.a(x)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -319,7 +335,13 @@
       "operator": "linear",
       "module_path": "part.b",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/104:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -374,6 +396,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.b(state)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -506,6 +536,17 @@
       "runtime_evidence": [],
       "operator": "unfamiliar_kernel",
       "function_target": "unfamiliar_kernel",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "local"
+          },
+          {
+            "unresolved": "state"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": "unresolved-call-target"
     },
     {
@@ -786,7 +827,8 @@
   "limitations": [
     "Static edges express source dependencies, not observed tensor bindings.",
     "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
     "Notebook cells are parsed as data; notebook setup/training cells are never executed."
   ],
-  "ir_digest": "eeaa32e6d0939c783ba1f08f2b0fbf755e649e3f85dc4253c6730d3529e62cd8"
+  "ir_digest": "288b441d6d35ed0e2cbd486c132786e7f6628251dfd7ea8030c24ced2388b244"
 }

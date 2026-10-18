@@ -1,0 +1,4023 @@
+{
+  "schema": "archcanvas-architecture-document/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "ConvNet",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb",
+      "class": "ConvNet",
+      "cell": 9,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=5",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb",
+        "cell": 5,
+        "sha256": "60f0e98bc2a0237c6544787f02ecf197fd6a6eb17dc53bdf3a6943dc72b25959",
+        "unit_sha256": "30e51f1a9397bd9937e941e030e2898ba3f0264f301ca65d9268678ffb41c8ef"
+      },
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=7",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb",
+        "cell": 7,
+        "sha256": "60f0e98bc2a0237c6544787f02ecf197fd6a6eb17dc53bdf3a6943dc72b25959",
+        "unit_sha256": "66d3037eb6dd35aec70a8af9f66113d87f648a3380725a1c99a52ff5cdb574b1"
+      },
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb",
+        "cell": 9,
+        "sha256": "60f0e98bc2a0237c6544787f02ecf197fd6a6eb17dc53bdf3a6943dc72b25959",
+        "unit_sha256": "883f0e044f40e2eee192bbdb00226888a8f2a72a41dac6084660dcf23b69fe58"
+      },
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=11",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb",
+        "cell": 11,
+        "sha256": "60f0e98bc2a0237c6544787f02ecf197fd6a6eb17dc53bdf3a6943dc72b25959",
+        "unit_sha256": "8f219e6fcae6bcaf137d5dfe5815f5b56be112f5605e6220d1699c3b14455b1b"
+      },
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=13",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb",
+        "cell": 13,
+        "sha256": "60f0e98bc2a0237c6544787f02ecf197fd6a6eb17dc53bdf3a6943dc72b25959",
+        "unit_sha256": "94d31fc9d340baf0a61020aadcd4bf621f2bd4afbd2d44350029680eed7c4f6d"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/48:4:composite:1",
+        "kind": "composite",
+        "label": "ConvNet",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 48,
+            "end_line": 59,
+            "column": 4,
+            "end_column": 29,
+            "symbol": "ConvNet.forward",
+            "expression": "def forward(self, x):\n    out = self.conv_1(x)\n    out = F.relu(out)\n    out = self.pool_1(out)\n    out = self.conv_2(out)\n    out = F.relu(out)\n    out = self.pool_2(out)\n    logits = self.linear_1(out.view(-1, 7 * 7 * 16))\n    probas = F.softmax(logits, dim=1)\n    return (logits, probas)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "convolutional network",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "ConvNet"
+      },
+      {
+        "id": "model/48:4:composite:1/48:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 48,
+            "end_line": 48,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "ConvNet.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/48:4:composite:1/49:14:compute:1",
+        "kind": "compute",
+        "label": "conv_1 · Conv2d",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 14,
+            "end_column": 28,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_1(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "conv_1",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "in_channels": 1,
+            "out_channels": 8,
+            "kernel_size": [
+              3,
+              3
+            ],
+            "stride": [
+              1,
+              1
+            ],
+            "padding": 1
+          }
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/16:22:parameter:1",
+        "kind": "parameter",
+        "label": "conv_1.parameters",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 16,
+            "end_line": 20,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "conv_1",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/48:4:composite:1/49:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/50:14:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.nn.functional.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "out"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null
+      },
+      {
+        "id": "model/48:4:composite:1/50:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/51:14:compute:1",
+        "kind": "compute",
+        "label": "pool_1 · MaxPool2d",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 51,
+            "end_line": 51,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_1(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "pooling",
+        "module_path": "pool_1",
+        "framework_type": "torch.nn.MaxPool2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "kernel_size": [
+              2,
+              2
+            ],
+            "stride": [
+              2,
+              2
+            ],
+            "padding": 0
+          }
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/51:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 51,
+            "end_line": 51,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/53:14:compute:1",
+        "kind": "compute",
+        "label": "conv_2 · Conv2d",
+        "parent": "motif:CNN block:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_2(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "conv_2",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "in_channels": 8,
+            "out_channels": 16,
+            "kernel_size": [
+              3,
+              3
+            ],
+            "stride": [
+              1,
+              1
+            ],
+            "padding": 1
+          }
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/26:22:parameter:1",
+        "kind": "parameter",
+        "label": "conv_2.parameters",
+        "parent": "motif:CNN block:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 26,
+            "end_line": 30,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=8, out_channels=16, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "conv_2",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/48:4:composite:1/53:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "motif:CNN block:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/54:14:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "motif:CNN block:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.nn.functional.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "out"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null
+      },
+      {
+        "id": "model/48:4:composite:1/54:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "motif:CNN block:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/55:14:compute:1",
+        "kind": "compute",
+        "label": "pool_2 · MaxPool2d",
+        "parent": "motif:CNN block:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 55,
+            "end_line": 55,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_2(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "pooling",
+        "module_path": "pool_2",
+        "framework_type": "torch.nn.MaxPool2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "kernel_size": [
+              2,
+              2
+            ],
+            "stride": [
+              2,
+              2
+            ],
+            "padding": 0
+          }
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/55:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 55,
+            "end_line": 55,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/57:44:compute:1",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 44,
+            "end_column": 50,
+            "symbol": "ConvNet.forward",
+            "expression": "7 * 7 * 16"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult"
+      },
+      {
+        "id": "model/48:4:composite:1/57:44:compute:2",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 44,
+            "end_column": 47,
+            "symbol": "ConvNet.forward",
+            "expression": "7 * 7"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult"
+      },
+      {
+        "id": "model/48:4:composite:1/57:31:compute:1",
+        "kind": "compute",
+        "label": "view",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 31,
+            "end_column": 51,
+            "symbol": "ConvNet.forward",
+            "expression": "out.view(-1, 7 * 7 * 16)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "reshape",
+        "function_target": "out.view",
+        "arguments": {
+          "args": [
+            -1,
+            784
+          ],
+          "kwargs": {}
+        },
+        "reason": null
+      },
+      {
+        "id": "model/48:4:composite:1/57:17:compute:1",
+        "kind": "compute",
+        "label": "linear_1 · Linear",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 17,
+            "end_column": 52,
+            "symbol": "ConvNet.forward",
+            "expression": "self.linear_1(out.view(-1, 7 * 7 * 16))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "linear_1",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            784,
+            10
+          ],
+          "kwargs": {}
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/36:24:parameter:1",
+        "kind": "parameter",
+        "label": "linear_1.parameters",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 36,
+            "end_line": 36,
+            "column": 24,
+            "end_column": 60,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Linear(7 * 7 * 16, num_classes)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "linear_1",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/48:4:composite:1/57:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "logits",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "ConvNet.forward",
+            "expression": "logits"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/58:17:compute:1",
+        "kind": "compute",
+        "label": "softmax",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 58,
+            "end_line": 58,
+            "column": 17,
+            "end_column": 41,
+            "symbol": "ConvNet.forward",
+            "expression": "F.softmax(logits, dim=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "softmax",
+        "function_target": "torch.nn.functional.softmax",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "logits"
+            }
+          ],
+          "kwargs": {
+            "dim": 1
+          }
+        },
+        "reason": null
+      },
+      {
+        "id": "model/48:4:composite:1/58:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "probas",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 58,
+            "end_line": 58,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "ConvNet.forward",
+            "expression": "probas"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "compute",
+        "label": "structured value",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 59,
+            "end_line": 59,
+            "column": 15,
+            "end_column": 29,
+            "symbol": "ConvNet.forward",
+            "expression": "(logits, probas)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "structure",
+        "structure_kind": "tuple"
+      },
+      {
+        "id": "model/48:4:composite:1/59:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 59,
+            "end_line": 59,
+            "column": 8,
+            "end_column": 29,
+            "symbol": "ConvNet.forward",
+            "expression": "return (logits, probas)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "motif:CNN block:0",
+        "kind": "composite",
+        "label": "CNN block",
+        "parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 14,
+            "end_column": 28,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_1(x)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 51,
+            "end_line": 51,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_1(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 16,
+            "end_line": 20,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "semantic_type": "CNN block",
+        "runtime_evidence": [],
+        "motif": "motif:CNN block:0"
+      },
+      {
+        "id": "motif:CNN block:1",
+        "kind": "composite",
+        "label": "CNN block",
+        "parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_2(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 55,
+            "end_line": 55,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_2(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 26,
+            "end_line": 30,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=8, out_channels=16, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "semantic_type": "CNN block",
+        "runtime_evidence": [],
+        "motif": "motif:CNN block:1"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/48:4:composite:1/16:22:parameter:1",
+        "target": "model/48:4:composite:1/49:14:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00000"
+      },
+      {
+        "source": "model/48:4:composite:1/48:22:interface:1",
+        "target": "model/48:4:composite:1/49:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/48:4:composite:1/49:14:compute:1",
+        "target": "model/48:4:composite:1/49:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/48:4:composite:1/49:8:value-alias:1",
+        "target": "model/48:4:composite:1/50:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/48:4:composite:1/50:14:compute:1",
+        "target": "model/48:4:composite:1/50:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/48:4:composite:1/50:8:value-alias:1",
+        "target": "model/48:4:composite:1/51:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/48:4:composite:1/51:14:compute:1",
+        "target": "model/48:4:composite:1/51:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/48:4:composite:1/26:22:parameter:1",
+        "target": "model/48:4:composite:1/53:14:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00007"
+      },
+      {
+        "source": "model/48:4:composite:1/51:8:value-alias:1",
+        "target": "model/48:4:composite:1/53:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/48:4:composite:1/53:14:compute:1",
+        "target": "model/48:4:composite:1/53:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/48:4:composite:1/53:8:value-alias:1",
+        "target": "model/48:4:composite:1/54:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/48:4:composite:1/54:14:compute:1",
+        "target": "model/48:4:composite:1/54:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/48:4:composite:1/54:8:value-alias:1",
+        "target": "model/48:4:composite:1/55:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/48:4:composite:1/55:14:compute:1",
+        "target": "model/48:4:composite:1/55:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      },
+      {
+        "source": "model/48:4:composite:1/57:44:compute:2",
+        "target": "model/48:4:composite:1/57:44:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00014"
+      },
+      {
+        "source": "model/48:4:composite:1/55:8:value-alias:1",
+        "target": "model/48:4:composite:1/57:31:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00015"
+      },
+      {
+        "source": "model/48:4:composite:1/57:44:compute:1",
+        "target": "model/48:4:composite:1/57:31:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:1",
+        "evidence": "source-dependency",
+        "id": "e00016"
+      },
+      {
+        "source": "model/48:4:composite:1/36:24:parameter:1",
+        "target": "model/48:4:composite:1/57:17:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00017"
+      },
+      {
+        "source": "model/48:4:composite:1/57:31:compute:1",
+        "target": "model/48:4:composite:1/57:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00018"
+      },
+      {
+        "source": "model/48:4:composite:1/57:17:compute:1",
+        "target": "model/48:4:composite:1/57:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00019"
+      },
+      {
+        "source": "model/48:4:composite:1/57:8:value-alias:1",
+        "target": "model/48:4:composite:1/58:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00020"
+      },
+      {
+        "source": "model/48:4:composite:1/58:17:compute:1",
+        "target": "model/48:4:composite:1/58:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00021"
+      },
+      {
+        "source": "model/48:4:composite:1/57:8:value-alias:1",
+        "target": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00022"
+      },
+      {
+        "source": "model/48:4:composite:1/58:8:value-alias:1",
+        "target": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00023"
+      },
+      {
+        "source": "model/48:4:composite:1/59:15:compute:1",
+        "target": "model/48:4:composite:1/59:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00024"
+      }
+    ],
+    "branches": [],
+    "motifs": [
+      {
+        "id": "motif:CNN block:0",
+        "semantic_type": "CNN block",
+        "members": [
+          "model/48:4:composite:1/49:14:compute:1",
+          "model/48:4:composite:1/49:8:value-alias:1",
+          "model/48:4:composite:1/50:14:compute:1",
+          "model/48:4:composite:1/50:8:value-alias:1",
+          "model/48:4:composite:1/51:14:compute:1",
+          "model/48:4:composite:1/16:22:parameter:1"
+        ],
+        "evidence": [
+          "convolution → activation → pooling",
+          "source operand dependencies"
+        ],
+        "confidence": "rule-confirmed",
+        "rule_version": "dataflow-motifs/1"
+      },
+      {
+        "id": "motif:CNN block:1",
+        "semantic_type": "CNN block",
+        "members": [
+          "model/48:4:composite:1/53:14:compute:1",
+          "model/48:4:composite:1/53:8:value-alias:1",
+          "model/48:4:composite:1/54:14:compute:1",
+          "model/48:4:composite:1/54:8:value-alias:1",
+          "model/48:4:composite:1/55:14:compute:1",
+          "model/48:4:composite:1/26:22:parameter:1"
+        ],
+        "evidence": [
+          "convolution → activation → pooling",
+          "source operand dependencies"
+        ],
+        "confidence": "rule-confirmed",
+        "rule_version": "dataflow-motifs/1"
+      }
+    ],
+    "diagnostics": [
+      {
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=1",
+        "kind": "syntax-unavailable",
+        "line": 1,
+        "reason": "invalid syntax"
+      },
+      {
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=14",
+        "kind": "syntax-unavailable",
+        "line": 1,
+        "reason": "invalid syntax"
+      }
+    ],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "776a9953373e9b4ffe3fd04b8014a28b40fce7a5a4983933e47d603f70332d2e"
+  },
+  "state": {
+    "view": "publication"
+  },
+  "architecture": {
+    "schema": "archcanvas-architecture/1",
+    "rule_version": "architecture-rules/3",
+    "canonical_digest": "776a9953373e9b4ffe3fd04b8014a28b40fce7a5a4983933e47d603f70332d2e",
+    "nodes": [
+      {
+        "id": "model/48:4:composite:1",
+        "kind": "composite",
+        "label": "ConvNet",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 48,
+            "end_line": 59,
+            "column": 4,
+            "end_column": 29,
+            "symbol": "ConvNet.forward",
+            "expression": "def forward(self, x):\n    out = self.conv_1(x)\n    out = F.relu(out)\n    out = self.pool_1(out)\n    out = self.conv_2(out)\n    out = F.relu(out)\n    out = self.pool_2(out)\n    logits = self.linear_1(out.view(-1, 7 * 7 * 16))\n    probas = F.softmax(logits, dim=1)\n    return (logits, probas)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "convolutional network",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "ConvNet",
+        "paper": {
+          "title": "ConvNet",
+          "caption": "convolutional network",
+          "lines": [
+            "ConvNet"
+          ],
+          "captions": [
+            "convolutional network"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/48:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 48,
+            "end_line": 48,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "ConvNet.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/49:14:compute:1",
+        "kind": "compute",
+        "label": "conv_1 · Conv2d",
+        "parent": "architecture:convolution-block:8ea35009",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 14,
+            "end_column": 28,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_1(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "conv_1",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "in_channels": 1,
+            "out_channels": 8,
+            "kernel_size": [
+              3,
+              3
+            ],
+            "stride": [
+              1,
+              1
+            ],
+            "padding": 1
+          }
+        },
+        "paper": {
+          "title": "conv_1 · Conv2d",
+          "caption": "1 → 8 · k=3×3",
+          "lines": [
+            "conv_1 · Conv2d"
+          ],
+          "captions": [
+            "1 → 8 · k=3×3"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/16:22:parameter:1",
+        "kind": "parameter",
+        "label": "conv_1.parameters",
+        "parent": "architecture:convolution-block:8ea35009",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 16,
+            "end_line": 20,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "conv_1",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "conv_1.parameters",
+          "caption": "parameter",
+          "lines": [
+            "conv_1.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/49:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "architecture:convolution-block:8ea35009",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "out",
+          "caption": "Value",
+          "lines": [
+            "out"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/50:14:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "architecture:convolution-block:8ea35009",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.nn.functional.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "out"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "paper": {
+          "title": "relu",
+          "caption": "activation",
+          "lines": [
+            "relu"
+          ],
+          "captions": [
+            "activation"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/50:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "architecture:convolution-block:8ea35009",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "out",
+          "caption": "Value",
+          "lines": [
+            "out"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/51:14:compute:1",
+        "kind": "compute",
+        "label": "pool_1 · MaxPool2d",
+        "parent": "architecture:convolution-block:8ea35009",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 51,
+            "end_line": 51,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_1(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "pooling",
+        "module_path": "pool_1",
+        "framework_type": "torch.nn.MaxPool2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "kernel_size": [
+              2,
+              2
+            ],
+            "stride": [
+              2,
+              2
+            ],
+            "padding": 0
+          }
+        },
+        "paper": {
+          "title": "pool_1 · MaxPool2d",
+          "caption": "pooling",
+          "lines": [
+            "pool_1 · MaxPool2d"
+          ],
+          "captions": [
+            "pooling"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/51:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 51,
+            "end_line": 51,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "out",
+          "caption": "Value",
+          "lines": [
+            "out"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/53:14:compute:1",
+        "kind": "compute",
+        "label": "conv_2 · Conv2d",
+        "parent": "architecture:convolution-block:5a8c7c28",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_2(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "conv_2",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "in_channels": 8,
+            "out_channels": 16,
+            "kernel_size": [
+              3,
+              3
+            ],
+            "stride": [
+              1,
+              1
+            ],
+            "padding": 1
+          }
+        },
+        "paper": {
+          "title": "conv_2 · Conv2d",
+          "caption": "8 → 16 · k=3×3",
+          "lines": [
+            "conv_2 · Conv2d"
+          ],
+          "captions": [
+            "8 → 16 · k=3×3"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/26:22:parameter:1",
+        "kind": "parameter",
+        "label": "conv_2.parameters",
+        "parent": "architecture:convolution-block:5a8c7c28",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 26,
+            "end_line": 30,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=8, out_channels=16, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "conv_2",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "conv_2.parameters",
+          "caption": "parameter",
+          "lines": [
+            "conv_2.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/53:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "architecture:convolution-block:5a8c7c28",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "out",
+          "caption": "Value",
+          "lines": [
+            "out"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/54:14:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "architecture:convolution-block:5a8c7c28",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.nn.functional.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "out"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "paper": {
+          "title": "relu",
+          "caption": "activation",
+          "lines": [
+            "relu"
+          ],
+          "captions": [
+            "activation"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/54:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "architecture:convolution-block:5a8c7c28",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "out",
+          "caption": "Value",
+          "lines": [
+            "out"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/55:14:compute:1",
+        "kind": "compute",
+        "label": "pool_2 · MaxPool2d",
+        "parent": "architecture:convolution-block:5a8c7c28",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 55,
+            "end_line": 55,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_2(out)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "pooling",
+        "module_path": "pool_2",
+        "framework_type": "torch.nn.MaxPool2d",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "kernel_size": [
+              2,
+              2
+            ],
+            "stride": [
+              2,
+              2
+            ],
+            "padding": 0
+          }
+        },
+        "paper": {
+          "title": "pool_2 · MaxPool2d",
+          "caption": "pooling",
+          "lines": [
+            "pool_2 · MaxPool2d"
+          ],
+          "captions": [
+            "pooling"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/55:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "out",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 55,
+            "end_line": 55,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "out",
+          "caption": "Value",
+          "lines": [
+            "out"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/57:44:compute:1",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 44,
+            "end_column": 50,
+            "symbol": "ConvNet.forward",
+            "expression": "7 * 7 * 16"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult",
+        "paper": {
+          "title": "mult",
+          "caption": "mult",
+          "lines": [
+            "mult"
+          ],
+          "captions": [
+            "mult"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": "×",
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/57:44:compute:2",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 44,
+            "end_column": 47,
+            "symbol": "ConvNet.forward",
+            "expression": "7 * 7"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult",
+        "paper": {
+          "title": "mult",
+          "caption": "mult",
+          "lines": [
+            "mult"
+          ],
+          "captions": [
+            "mult"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": "×",
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/57:31:compute:1",
+        "kind": "compute",
+        "label": "view",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 31,
+            "end_column": 51,
+            "symbol": "ConvNet.forward",
+            "expression": "out.view(-1, 7 * 7 * 16)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "reshape",
+        "function_target": "out.view",
+        "arguments": {
+          "args": [
+            -1,
+            784
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "paper": {
+          "title": "view",
+          "caption": "shape -1 × 784",
+          "lines": [
+            "view"
+          ],
+          "captions": [
+            "shape -1 × 784"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/57:17:compute:1",
+        "kind": "compute",
+        "label": "linear_1 · Linear",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 17,
+            "end_column": 52,
+            "symbol": "ConvNet.forward",
+            "expression": "self.linear_1(out.view(-1, 7 * 7 * 16))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "linear_1",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            784,
+            10
+          ],
+          "kwargs": {}
+        },
+        "paper": {
+          "title": "linear_1 · Linear",
+          "caption": "784 → 10",
+          "lines": [
+            "linear_1 · Linear"
+          ],
+          "captions": [
+            "784 → 10"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/36:24:parameter:1",
+        "kind": "parameter",
+        "label": "linear_1.parameters",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 36,
+            "end_line": 36,
+            "column": 24,
+            "end_column": 60,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Linear(7 * 7 * 16, num_classes)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "linear_1",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "linear_1.parameters",
+          "caption": "parameter",
+          "lines": [
+            "linear_1.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/57:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "logits",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "ConvNet.forward",
+            "expression": "logits"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "logits",
+          "caption": "Value",
+          "lines": [
+            "logits"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/58:17:compute:1",
+        "kind": "compute",
+        "label": "softmax",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 58,
+            "end_line": 58,
+            "column": 17,
+            "end_column": 41,
+            "symbol": "ConvNet.forward",
+            "expression": "F.softmax(logits, dim=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "softmax",
+        "function_target": "torch.nn.functional.softmax",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "logits"
+            }
+          ],
+          "kwargs": {
+            "dim": 1
+          }
+        },
+        "reason": null,
+        "paper": {
+          "title": "softmax",
+          "caption": "softmax",
+          "lines": [
+            "softmax"
+          ],
+          "captions": [
+            "softmax"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/58:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "probas",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 58,
+            "end_line": 58,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "ConvNet.forward",
+            "expression": "probas"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "probas",
+          "caption": "Value",
+          "lines": [
+            "probas"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "compute",
+        "label": "structured value",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 59,
+            "end_line": 59,
+            "column": 15,
+            "end_column": 29,
+            "symbol": "ConvNet.forward",
+            "expression": "(logits, probas)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "structure",
+        "structure_kind": "tuple",
+        "paper": {
+          "title": "Pack values",
+          "caption": "",
+          "lines": [
+            "Pack values"
+          ],
+          "captions": [],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/48:4:composite:1/59:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/48:4:composite:1",
+        "source_parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 59,
+            "end_line": 59,
+            "column": 8,
+            "end_column": 29,
+            "symbol": "ConvNet.forward",
+            "expression": "return (logits, probas)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "motif:CNN block:0",
+        "kind": "composite",
+        "label": "CNN block",
+        "parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 14,
+            "end_column": 28,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_1(x)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 51,
+            "end_line": 51,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_1(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 16,
+            "end_line": 20,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "semantic_type": "CNN block",
+        "runtime_evidence": [],
+        "motif": "motif:CNN block:0",
+        "source_parent": "model/48:4:composite:1",
+        "paper": {
+          "title": "CNN block",
+          "caption": "CNN block",
+          "lines": [
+            "CNN block"
+          ],
+          "captions": [
+            "CNN block"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "motif:CNN block:1",
+        "kind": "composite",
+        "label": "CNN block",
+        "parent": "model/48:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_2(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 55,
+            "end_line": 55,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_2(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 26,
+            "end_line": 30,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=8, out_channels=16, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "semantic_type": "CNN block",
+        "runtime_evidence": [],
+        "motif": "motif:CNN block:1",
+        "source_parent": "model/48:4:composite:1",
+        "paper": {
+          "title": "CNN block",
+          "caption": "CNN block",
+          "lines": [
+            "CNN block"
+          ],
+          "captions": [
+            "CNN block"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "architecture:convolution-block:5a8c7c28",
+        "kind": "composite",
+        "label": "Convolution block",
+        "parent": "motif:CNN block:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_2(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 55,
+            "end_line": 55,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_2(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 26,
+            "end_line": 30,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=8, out_channels=16, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 53,
+            "end_line": 53,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 54,
+            "end_line": 54,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "runtime_evidence": [],
+        "semantic_type": "convolution-block",
+        "granularity": "composite",
+        "evidence_status": "static-only",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#e9f1ff"
+        },
+        "presentation_only": true,
+        "finding": "architecture:convolution-block:5a8c7c28",
+        "canonical_members": [
+          "model/48:4:composite:1/53:14:compute:1",
+          "model/48:4:composite:1/26:22:parameter:1",
+          "model/48:4:composite:1/53:8:value-alias:1",
+          "model/48:4:composite:1/54:14:compute:1",
+          "model/48:4:composite:1/54:8:value-alias:1",
+          "model/48:4:composite:1/55:14:compute:1"
+        ],
+        "boundary_ports": [
+          {
+            "id": "e00008",
+            "direction": "input",
+            "source": "model/48:4:composite:1/51:8:value-alias:1",
+            "source_port": "out",
+            "target": "model/48:4:composite:1/53:14:compute:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00013",
+            "direction": "output",
+            "source": "model/48:4:composite:1/55:14:compute:1",
+            "source_port": "out",
+            "target": "model/48:4:composite:1/55:8:value-alias:1",
+            "target_port": "value",
+            "evidence": "source-dependency"
+          }
+        ],
+        "paper": {
+          "title": "Convolution block",
+          "caption": "convolution-block",
+          "lines": [
+            "Convolution block"
+          ],
+          "captions": [
+            "convolution-block"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "architecture:convolution-block:8ea35009",
+        "kind": "composite",
+        "label": "Convolution block",
+        "parent": "motif:CNN block:0",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 14,
+            "end_column": 28,
+            "symbol": "ConvNet.forward",
+            "expression": "self.conv_1(x)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 14,
+            "end_column": 25,
+            "symbol": "ConvNet.forward",
+            "expression": "F.relu(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 51,
+            "end_line": 51,
+            "column": 14,
+            "end_column": 30,
+            "symbol": "ConvNet.forward",
+            "expression": "self.pool_1(out)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 16,
+            "end_line": 20,
+            "column": 22,
+            "end_column": 48,
+            "symbol": "ConvNet.forward",
+            "expression": "torch.nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 49,
+            "end_line": 49,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 50,
+            "end_line": 50,
+            "column": 8,
+            "end_column": 11,
+            "symbol": "ConvNet.forward",
+            "expression": "out"
+          }
+        ],
+        "runtime_evidence": [],
+        "semantic_type": "convolution-block",
+        "granularity": "composite",
+        "evidence_status": "static-only",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#e9f1ff"
+        },
+        "presentation_only": true,
+        "finding": "architecture:convolution-block:8ea35009",
+        "canonical_members": [
+          "model/48:4:composite:1/49:14:compute:1",
+          "model/48:4:composite:1/16:22:parameter:1",
+          "model/48:4:composite:1/49:8:value-alias:1",
+          "model/48:4:composite:1/50:14:compute:1",
+          "model/48:4:composite:1/50:8:value-alias:1",
+          "model/48:4:composite:1/51:14:compute:1"
+        ],
+        "boundary_ports": [
+          {
+            "id": "e00001",
+            "direction": "input",
+            "source": "model/48:4:composite:1/48:22:interface:1",
+            "source_port": "out",
+            "target": "model/48:4:composite:1/49:14:compute:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00006",
+            "direction": "output",
+            "source": "model/48:4:composite:1/51:14:compute:1",
+            "source_port": "out",
+            "target": "model/48:4:composite:1/51:8:value-alias:1",
+            "target_port": "value",
+            "evidence": "source-dependency"
+          }
+        ],
+        "paper": {
+          "title": "Convolution block",
+          "caption": "convolution-block",
+          "lines": [
+            "Convolution block"
+          ],
+          "captions": [
+            "convolution-block"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/48:4:composite:1/16:22:parameter:1",
+        "target": "model/48:4:composite:1/49:14:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00000"
+      },
+      {
+        "source": "model/48:4:composite:1/48:22:interface:1",
+        "target": "model/48:4:composite:1/49:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/48:4:composite:1/49:14:compute:1",
+        "target": "model/48:4:composite:1/49:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/48:4:composite:1/49:8:value-alias:1",
+        "target": "model/48:4:composite:1/50:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/48:4:composite:1/50:14:compute:1",
+        "target": "model/48:4:composite:1/50:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/48:4:composite:1/50:8:value-alias:1",
+        "target": "model/48:4:composite:1/51:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/48:4:composite:1/51:14:compute:1",
+        "target": "model/48:4:composite:1/51:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/48:4:composite:1/26:22:parameter:1",
+        "target": "model/48:4:composite:1/53:14:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00007"
+      },
+      {
+        "source": "model/48:4:composite:1/51:8:value-alias:1",
+        "target": "model/48:4:composite:1/53:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/48:4:composite:1/53:14:compute:1",
+        "target": "model/48:4:composite:1/53:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/48:4:composite:1/53:8:value-alias:1",
+        "target": "model/48:4:composite:1/54:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/48:4:composite:1/54:14:compute:1",
+        "target": "model/48:4:composite:1/54:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/48:4:composite:1/54:8:value-alias:1",
+        "target": "model/48:4:composite:1/55:14:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/48:4:composite:1/55:14:compute:1",
+        "target": "model/48:4:composite:1/55:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      },
+      {
+        "source": "model/48:4:composite:1/57:44:compute:2",
+        "target": "model/48:4:composite:1/57:44:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00014"
+      },
+      {
+        "source": "model/48:4:composite:1/55:8:value-alias:1",
+        "target": "model/48:4:composite:1/57:31:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00015"
+      },
+      {
+        "source": "model/48:4:composite:1/57:44:compute:1",
+        "target": "model/48:4:composite:1/57:31:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:1",
+        "evidence": "source-dependency",
+        "id": "e00016"
+      },
+      {
+        "source": "model/48:4:composite:1/36:24:parameter:1",
+        "target": "model/48:4:composite:1/57:17:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00017"
+      },
+      {
+        "source": "model/48:4:composite:1/57:31:compute:1",
+        "target": "model/48:4:composite:1/57:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00018"
+      },
+      {
+        "source": "model/48:4:composite:1/57:17:compute:1",
+        "target": "model/48:4:composite:1/57:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00019"
+      },
+      {
+        "source": "model/48:4:composite:1/57:8:value-alias:1",
+        "target": "model/48:4:composite:1/58:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00020"
+      },
+      {
+        "source": "model/48:4:composite:1/58:17:compute:1",
+        "target": "model/48:4:composite:1/58:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00021"
+      },
+      {
+        "source": "model/48:4:composite:1/57:8:value-alias:1",
+        "target": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00022"
+      },
+      {
+        "source": "model/48:4:composite:1/58:8:value-alias:1",
+        "target": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00023"
+      },
+      {
+        "source": "model/48:4:composite:1/59:15:compute:1",
+        "target": "model/48:4:composite:1/59:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00024"
+      }
+    ],
+    "findings": [
+      {
+        "id": "architecture:convolution-block:8ea35009",
+        "rule": "convolution-block",
+        "label": "Convolution block",
+        "members": [
+          "model/48:4:composite:1/49:14:compute:1",
+          "model/48:4:composite:1/50:14:compute:1",
+          "model/48:4:composite:1/51:14:compute:1"
+        ],
+        "roles": {
+          "convolution": "model/48:4:composite:1/49:14:compute:1",
+          "activation": "model/48:4:composite:1/50:14:compute:1",
+          "pooling": "model/48:4:composite:1/51:14:compute:1"
+        },
+        "proof": [
+          "convolution → activation → pooling operand dependency path"
+        ],
+        "excluded": [],
+        "rule_version": "architecture-rules/3",
+        "evidence_scope": "source-dependencies",
+        "presentation": "group",
+        "parent": "motif:CNN block:0"
+      },
+      {
+        "id": "architecture:convolution-block:5a8c7c28",
+        "rule": "convolution-block",
+        "label": "Convolution block",
+        "members": [
+          "model/48:4:composite:1/53:14:compute:1",
+          "model/48:4:composite:1/54:14:compute:1",
+          "model/48:4:composite:1/55:14:compute:1"
+        ],
+        "roles": {
+          "convolution": "model/48:4:composite:1/53:14:compute:1",
+          "activation": "model/48:4:composite:1/54:14:compute:1",
+          "pooling": "model/48:4:composite:1/55:14:compute:1"
+        },
+        "proof": [
+          "convolution → activation → pooling operand dependency path"
+        ],
+        "excluded": [],
+        "rule_version": "architecture-rules/3",
+        "evidence_scope": "source-dependencies",
+        "presentation": "group",
+        "parent": "motif:CNN block:1"
+      }
+    ],
+    "limitations": [
+      "Local dependency patterns do not certify arbitrary-input behavior.",
+      "Unknown operations, tuple slots, conditional joins and loop templates remain explicit.",
+      "No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names."
+    ],
+    "publication": {
+      "schema": "archcanvas-publication-plan/1",
+      "structural_regions": 0
+    }
+  },
+  "publication": {
+    "schema": "archcanvas-publication/1",
+    "focus": "model/48:4:composite:1",
+    "auto": true,
+    "open": [
+      "model/48:4:composite:1"
+    ],
+    "budget": 12,
+    "boundary": [],
+    "wire_bundles": [],
+    "configuration_arithmetic": [
+      {
+        "node": "model/48:4:composite:1/57:44:compute:1",
+        "kind": "literal-arithmetic",
+        "proof_scope": "full-extracted-graph",
+        "basis": "integer-literal-syntax-and-configuration-only-uses",
+        "expression": "7 * 7 * 16",
+        "dependencies": [
+          {
+            "source": "model/48:4:composite:1/57:44:compute:2",
+            "target": "model/48:4:composite:1/57:44:compute:1",
+            "kind": "data",
+            "source_port": "out",
+            "target_port": "0",
+            "evidence": "source-dependency",
+            "id": "e00014"
+          }
+        ],
+        "uses": [
+          {
+            "source": "model/48:4:composite:1/57:44:compute:1",
+            "target": "model/48:4:composite:1/57:31:compute:1",
+            "kind": "data",
+            "source_port": "out",
+            "target_port": "arg:1",
+            "evidence": "source-dependency",
+            "id": "e00016"
+          }
+        ],
+        "value_evaluation": "not-performed",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 44,
+            "end_column": 50,
+            "symbol": "ConvNet.forward",
+            "expression": "7 * 7 * 16"
+          }
+        ]
+      },
+      {
+        "node": "model/48:4:composite:1/57:44:compute:2",
+        "kind": "literal-arithmetic",
+        "proof_scope": "full-extracted-graph",
+        "basis": "integer-literal-syntax-and-configuration-only-uses",
+        "expression": "7 * 7",
+        "dependencies": [],
+        "uses": [
+          {
+            "source": "model/48:4:composite:1/57:44:compute:2",
+            "target": "model/48:4:composite:1/57:44:compute:1",
+            "kind": "data",
+            "source_port": "out",
+            "target_port": "0",
+            "evidence": "source-dependency",
+            "id": "e00014"
+          }
+        ],
+        "value_evaluation": "not-performed",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-basic.ipynb#cell=9",
+            "line": 57,
+            "end_line": 57,
+            "column": 44,
+            "end_column": 47,
+            "symbol": "ConvNet.forward",
+            "expression": "7 * 7"
+          }
+        ]
+      }
+    ],
+    "paper_width_mm": 180,
+    "fit_page": true,
+    "min_font_pt": 8,
+    "unknowns": 0
+  },
+  "layout": {
+    "bounds": {
+      "x": 4,
+      "y": 2,
+      "w": 564,
+      "h": 582
+    },
+    "nodes": [
+      {
+        "id": "model/48:4:composite:1",
+        "x": 32,
+        "y": 30,
+        "title": "ConvNet",
+        "caption": "convolutional network",
+        "lines": [
+          "ConvNet"
+        ],
+        "captions": [
+          "convolutional network"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 508,
+        "h": 526,
+        "expanded": true,
+        "header": 66,
+        "cyclic": false
+      },
+      {
+        "id": "model/48:4:composite:1/48:22:interface:1",
+        "x": 85,
+        "y": 106,
+        "title": "x",
+        "caption": "",
+        "lines": [
+          "x"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 0,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "model/48:4:composite:1/57:31:compute:1",
+        "x": 56,
+        "y": 220,
+        "title": "view",
+        "caption": "shape -1 × 784",
+        "lines": [
+          "view"
+        ],
+        "captions": [
+          "shape -1 × 784"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 3,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "model/48:4:composite:1/57:17:compute:1",
+        "x": 56,
+        "y": 344,
+        "title": "linear_1 · Linear",
+        "caption": "784 → 10",
+        "lines": [
+          "linear_1 · Linear"
+        ],
+        "captions": [
+          "784 → 10"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 4,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "model/48:4:composite:1/58:17:compute:1",
+        "x": 304,
+        "y": 344,
+        "title": "softmax",
+        "caption": "softmax",
+        "lines": [
+          "softmax"
+        ],
+        "captions": [
+          "softmax"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 5,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "model/48:4:composite:1/59:15:compute:1",
+        "x": 304,
+        "y": 468,
+        "title": "Pack values",
+        "caption": "",
+        "lines": [
+          "Pack values"
+        ],
+        "captions": [],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 6,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "model/48:4:composite:1/59:8:interface:1",
+        "x": 85,
+        "y": 478,
+        "title": "return",
+        "caption": "",
+        "lines": [
+          "return"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 7,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "motif:CNN block:0",
+        "x": 304,
+        "y": 96,
+        "title": "CNN block",
+        "caption": "CNN block",
+        "lines": [
+          "CNN block"
+        ],
+        "captions": [
+          "CNN block"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 1,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "motif:CNN block:1",
+        "x": 304,
+        "y": 220,
+        "title": "CNN block",
+        "caption": "CNN block",
+        "lines": [
+          "CNN block"
+        ],
+        "captions": [
+          "CNN block"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 2,
+        "arrangement": "folded-ranks"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/48:4:composite:1/48:22:interface:1",
+        "target": "motif:CNN block:0",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001",
+        "originals": [
+          "e00001"
+        ],
+        "canonical_source": "model/48:4:composite:1/48:22:interface:1",
+        "canonical_target": "model/48:4:composite:1/49:14:compute:1",
+        "resolved_source": "model/48:4:composite:1/48:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 239,
+              "y": 128
+            },
+            {
+              "x": 304,
+              "y": 128
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "right",
+          "target_side": "left"
+        }
+      },
+      {
+        "source": "motif:CNN block:0",
+        "target": "motif:CNN block:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00008",
+        "originals": [
+          "e00006",
+          "e00008"
+        ],
+        "canonical_source": "model/48:4:composite:1/51:8:value-alias:1",
+        "canonical_target": "model/48:4:composite:1/53:14:compute:1",
+        "resolved_source": "model/48:4:composite:1/51:14:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 410,
+              "y": 160
+            },
+            {
+              "x": 410,
+              "y": 220
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "motif:CNN block:1",
+        "target": "model/48:4:composite:1/57:31:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00015",
+        "originals": [
+          "e00013",
+          "e00015"
+        ],
+        "canonical_source": "model/48:4:composite:1/55:8:value-alias:1",
+        "canonical_target": "model/48:4:composite:1/57:31:compute:1",
+        "resolved_source": "model/48:4:composite:1/55:14:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 304,
+              "y": 252
+            },
+            {
+              "x": 268,
+              "y": 252
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "left",
+          "target_side": "right"
+        }
+      },
+      {
+        "source": "model/48:4:composite:1/57:31:compute:1",
+        "target": "model/48:4:composite:1/57:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00018",
+        "originals": [
+          "e00018"
+        ],
+        "canonical_source": "model/48:4:composite:1/57:31:compute:1",
+        "canonical_target": "model/48:4:composite:1/57:17:compute:1",
+        "resolved_source": "model/48:4:composite:1/57:31:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 162,
+              "y": 284
+            },
+            {
+              "x": 162,
+              "y": 344
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/48:4:composite:1/57:17:compute:1",
+        "target": "model/48:4:composite:1/58:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00020",
+        "originals": [
+          "e00019",
+          "e00020"
+        ],
+        "canonical_source": "model/48:4:composite:1/57:8:value-alias:1",
+        "canonical_target": "model/48:4:composite:1/58:17:compute:1",
+        "resolved_source": "model/48:4:composite:1/57:17:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 268,
+              "y": 376
+            },
+            {
+              "x": 304,
+              "y": 376
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "right",
+          "target_side": "left"
+        }
+      },
+      {
+        "source": "model/48:4:composite:1/57:17:compute:1",
+        "target": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00022",
+        "originals": [
+          "e00019",
+          "e00022"
+        ],
+        "canonical_source": "model/48:4:composite:1/57:8:value-alias:1",
+        "canonical_target": "model/48:4:composite:1/59:15:compute:1",
+        "resolved_source": "model/48:4:composite:1/57:17:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 162,
+              "y": 408
+            },
+            {
+              "x": 162,
+              "y": 452
+            },
+            {
+              "x": 380,
+              "y": 452
+            },
+            {
+              "x": 380,
+              "y": 468
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/48:4:composite:1/58:17:compute:1",
+        "target": "model/48:4:composite:1/59:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00023",
+        "originals": [
+          "e00021",
+          "e00023"
+        ],
+        "canonical_source": "model/48:4:composite:1/58:8:value-alias:1",
+        "canonical_target": "model/48:4:composite:1/59:15:compute:1",
+        "resolved_source": "model/48:4:composite:1/58:17:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 410,
+              "y": 408
+            },
+            {
+              "x": 410,
+              "y": 452
+            },
+            {
+              "x": 440,
+              "y": 452
+            },
+            {
+              "x": 440,
+              "y": 468
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/48:4:composite:1/59:15:compute:1",
+        "target": "model/48:4:composite:1/59:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00024",
+        "originals": [
+          "e00024"
+        ],
+        "canonical_source": "model/48:4:composite:1/59:15:compute:1",
+        "canonical_target": "model/48:4:composite:1/59:8:interface:1",
+        "resolved_source": "model/48:4:composite:1/59:15:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 304,
+              "y": 500
+            },
+            {
+              "x": 239,
+              "y": 500
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "left",
+          "target_side": "right"
+        }
+      }
+    ],
+    "edge_accounting": {
+      "visible": [
+        "e00001",
+        "e00008",
+        "e00015",
+        "e00018",
+        "e00020",
+        "e00022",
+        "e00023",
+        "e00024"
+      ],
+      "internal": [
+        "e00003",
+        "e00005",
+        "e00010",
+        "e00012"
+      ],
+      "excluded": [],
+      "contracted": [
+        "e00002",
+        "e00004",
+        "e00006",
+        "e00009",
+        "e00011",
+        "e00013",
+        "e00019",
+        "e00021"
+      ],
+      "attached": [
+        "e00000",
+        "e00007",
+        "e00014",
+        "e00016",
+        "e00017"
+      ]
+    },
+    "node_accounting": {
+      "visible": [
+        "model/48:4:composite:1",
+        "model/48:4:composite:1/48:22:interface:1",
+        "model/48:4:composite:1/57:31:compute:1",
+        "model/48:4:composite:1/57:17:compute:1",
+        "model/48:4:composite:1/58:17:compute:1",
+        "model/48:4:composite:1/59:15:compute:1",
+        "model/48:4:composite:1/59:8:interface:1",
+        "motif:CNN block:0",
+        "motif:CNN block:1"
+      ],
+      "collapsed": [
+        "model/48:4:composite:1/49:14:compute:1",
+        "model/48:4:composite:1/50:14:compute:1",
+        "model/48:4:composite:1/51:14:compute:1",
+        "model/48:4:composite:1/53:14:compute:1",
+        "model/48:4:composite:1/54:14:compute:1",
+        "model/48:4:composite:1/55:14:compute:1"
+      ],
+      "contracted": [
+        "model/48:4:composite:1/49:8:value-alias:1",
+        "model/48:4:composite:1/50:8:value-alias:1",
+        "model/48:4:composite:1/51:8:value-alias:1",
+        "model/48:4:composite:1/53:8:value-alias:1",
+        "model/48:4:composite:1/54:8:value-alias:1",
+        "model/48:4:composite:1/55:8:value-alias:1",
+        "model/48:4:composite:1/57:8:value-alias:1",
+        "model/48:4:composite:1/58:8:value-alias:1"
+      ],
+      "attached": [
+        "model/48:4:composite:1/16:22:parameter:1",
+        "model/48:4:composite:1/26:22:parameter:1",
+        "model/48:4:composite:1/57:44:compute:1",
+        "model/48:4:composite:1/57:44:compute:2",
+        "model/48:4:composite:1/36:24:parameter:1"
+      ],
+      "excluded": []
+    },
+    "representatives": {
+      "model/48:4:composite:1": "model/48:4:composite:1",
+      "model/48:4:composite:1/48:22:interface:1": "model/48:4:composite:1/48:22:interface:1",
+      "model/48:4:composite:1/49:14:compute:1": "motif:CNN block:0",
+      "model/48:4:composite:1/16:22:parameter:1": "motif:CNN block:0",
+      "model/48:4:composite:1/49:8:value-alias:1": "motif:CNN block:0",
+      "model/48:4:composite:1/50:14:compute:1": "motif:CNN block:0",
+      "model/48:4:composite:1/50:8:value-alias:1": "motif:CNN block:0",
+      "model/48:4:composite:1/51:14:compute:1": "motif:CNN block:0",
+      "model/48:4:composite:1/51:8:value-alias:1": "model/48:4:composite:1",
+      "model/48:4:composite:1/53:14:compute:1": "motif:CNN block:1",
+      "model/48:4:composite:1/26:22:parameter:1": "motif:CNN block:1",
+      "model/48:4:composite:1/53:8:value-alias:1": "motif:CNN block:1",
+      "model/48:4:composite:1/54:14:compute:1": "motif:CNN block:1",
+      "model/48:4:composite:1/54:8:value-alias:1": "motif:CNN block:1",
+      "model/48:4:composite:1/55:14:compute:1": "motif:CNN block:1",
+      "model/48:4:composite:1/55:8:value-alias:1": "model/48:4:composite:1",
+      "model/48:4:composite:1/57:44:compute:1": "model/48:4:composite:1",
+      "model/48:4:composite:1/57:44:compute:2": "model/48:4:composite:1",
+      "model/48:4:composite:1/57:31:compute:1": "model/48:4:composite:1/57:31:compute:1",
+      "model/48:4:composite:1/57:17:compute:1": "model/48:4:composite:1/57:17:compute:1",
+      "model/48:4:composite:1/36:24:parameter:1": "model/48:4:composite:1",
+      "model/48:4:composite:1/57:8:value-alias:1": "model/48:4:composite:1",
+      "model/48:4:composite:1/58:17:compute:1": "model/48:4:composite:1/58:17:compute:1",
+      "model/48:4:composite:1/58:8:value-alias:1": "model/48:4:composite:1",
+      "model/48:4:composite:1/59:15:compute:1": "model/48:4:composite:1/59:15:compute:1",
+      "model/48:4:composite:1/59:8:interface:1": "model/48:4:composite:1/59:8:interface:1",
+      "motif:CNN block:0": "motif:CNN block:0",
+      "motif:CNN block:1": "motif:CNN block:1"
+    },
+    "labels": []
+  },
+  "diagnostics": {
+    "route_failures": [],
+    "publication": {
+      "schema": "publication-quality/1",
+      "route_strategy": "canonical-short",
+      "wire_length": 690,
+      "min_print_font_pt": 11.76,
+      "target_min_font_pt": 8,
+      "requested_width_mm": 180,
+      "width_mm": 180,
+      "height_mm": 185.7,
+      "route_failures": [],
+      "unplaced_port_labels": [],
+      "line_geometry": {
+        "crossings": 0,
+        "overlapping_paths": [],
+        "unrelated_contacts": []
+      },
+      "issues": []
+    },
+    "routing": {
+      "selected": "canonical-short",
+      "baseline_crossings": 0,
+      "refinement": {
+        "attempts": 0,
+        "accepted": [],
+        "before_crossings": 0,
+        "before_contacts": 0,
+        "after_crossings": 0,
+        "after_contacts": 0
+      },
+      "candidates": [
+        {
+          "strategy": "canonical-short",
+          "crossings": 0,
+          "issues": [],
+          "wire_length": 690,
+          "min_print_font_pt": 11.76,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        }
+      ]
+    }
+  }
+}

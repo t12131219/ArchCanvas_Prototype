@@ -46,7 +46,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "UnknownFusion"
       },
       {
         "id": "model/104:4:composite:1/104:22:interface:1",
@@ -128,7 +129,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "part",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "BrokenCell"
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -211,7 +213,13 @@
         "operator": "linear",
         "module_path": "part.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -266,6 +274,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.a(x)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -321,7 +337,13 @@
         "operator": "linear",
         "module_path": "part.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -376,6 +398,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.b(state)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -508,6 +538,17 @@
         "runtime_evidence": [],
         "operator": "unfamiliar_kernel",
         "function_target": "unfamiliar_kernel",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "local"
+            },
+            {
+              "unresolved": "state"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": "unresolved-call-target"
       },
       {
@@ -788,9 +829,10 @@
     "limitations": [
       "Static edges express source dependencies, not observed tensor bindings.",
       "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
       "Notebook cells are parsed as data; notebook setup/training cells are never executed."
     ],
-    "ir_digest": "eeaa32e6d0939c783ba1f08f2b0fbf755e649e3f85dc4253c6730d3529e62cd8"
+    "ir_digest": "288b441d6d35ed0e2cbd486c132786e7f6628251dfd7ea8030c24ced2388b244"
   },
   "state": {
     "view": "architecture",
@@ -805,8 +847,8 @@
   },
   "architecture": {
     "schema": "archcanvas-architecture/1",
-    "rule_version": "architecture-rules/1",
-    "canonical_digest": "eeaa32e6d0939c783ba1f08f2b0fbf755e649e3f85dc4253c6730d3529e62cd8",
+    "rule_version": "architecture-rules/3",
+    "canonical_digest": "288b441d6d35ed0e2cbd486c132786e7f6628251dfd7ea8030c24ced2388b244",
     "nodes": [
       {
         "id": "model/104:4:composite:1",
@@ -834,7 +876,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "UnknownFusion"
       },
       {
         "id": "model/104:4:composite:1/104:22:interface:1",
@@ -916,7 +959,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "part",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "BrokenCell"
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -999,7 +1043,13 @@
         "operator": "linear",
         "module_path": "part.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -1054,6 +1104,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.a(x)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -1109,7 +1167,13 @@
         "operator": "linear",
         "module_path": "part.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -1164,6 +1228,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.b(state)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -1296,6 +1368,17 @@
         "runtime_evidence": [],
         "operator": "unfamiliar_kernel",
         "function_target": "unfamiliar_kernel",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "local"
+            },
+            {
+              "unresolved": "state"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": "unresolved-call-target"
       },
       {
@@ -1677,7 +1760,7 @@
           "sigmoid output is an explicit operand of multiplication; no LSTM claim"
         ],
         "excluded": [],
-        "rule_version": "architecture-rules/1",
+        "rule_version": "architecture-rules/3",
         "evidence_scope": "source-dependencies",
         "presentation": "group",
         "parent": "model/104:4:composite:1/35:4:composite:1"
@@ -1693,50 +1776,58 @@
     "bounds": {
       "x": -28,
       "y": -30,
-      "w": 928,
-      "h": 1564
+      "w": 1464,
+      "h": 1178
     },
     "nodes": [
       {
         "id": "model/104:4:composite:1",
         "x": 32,
         "y": 30,
-        "w": 672,
-        "h": 1444,
+        "w": 1344,
+        "h": 1058,
         "expanded": true,
+        "header": 74,
         "cyclic": false
       },
       {
         "id": "model/104:4:composite:1/104:22:interface:1",
-        "x": 218,
-        "y": 104,
+        "x": 64,
+        "y": 489,
         "w": 130,
         "h": 42,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 0,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/104:4:composite:1/104:25:interface:1",
-        "x": 388,
-        "y": 104,
+        "x": 234,
+        "y": 489,
         "w": 130,
         "h": 42,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 0,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1",
-        "x": 64,
-        "y": 222,
+        "x": 440,
+        "y": 104,
         "w": 608,
         "h": 812,
         "expanded": true,
-        "cyclic": false
+        "header": 74,
+        "cyclic": false,
+        "topological_rank": 1,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/35:22:interface:1",
-        "x": 218,
-        "y": 296,
+        "x": 594,
+        "y": 178,
         "w": 130,
         "h": 42,
         "expanded": false,
@@ -1744,8 +1835,8 @@
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/35:25:interface:1",
-        "x": 388,
-        "y": 296,
+        "x": 764,
+        "y": 178,
         "w": 130,
         "h": 42,
         "expanded": false,
@@ -1753,8 +1844,8 @@
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/37:29:compute:1",
-        "x": 128,
-        "y": 414,
+        "x": 504,
+        "y": 296,
         "w": 220,
         "h": 74,
         "expanded": false,
@@ -1762,8 +1853,8 @@
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/38:27:compute:1",
-        "x": 388,
-        "y": 414,
+        "x": 764,
+        "y": 296,
         "w": 220,
         "h": 74,
         "expanded": false,
@@ -1771,8 +1862,8 @@
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/39:8:interface:1",
-        "x": 303,
-        "y": 960,
+        "x": 679,
+        "y": 842,
         "w": 130,
         "h": 42,
         "expanded": false,
@@ -1780,17 +1871,18 @@
       },
       {
         "id": "architecture:gate:66556c42",
-        "x": 96,
-        "y": 564,
+        "x": 472,
+        "y": 446,
         "w": 544,
         "h": 320,
         "expanded": true,
+        "header": 74,
         "cyclic": false
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/37:15:compute:1",
-        "x": 128,
-        "y": 638,
+        "x": 504,
+        "y": 520,
         "w": 220,
         "h": 74,
         "expanded": false,
@@ -1798,8 +1890,8 @@
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/38:16:compute:1",
-        "x": 388,
-        "y": 638,
+        "x": 764,
+        "y": 520,
         "w": 220,
         "h": 74,
         "expanded": false,
@@ -1807,8 +1899,8 @@
       },
       {
         "id": "model/104:4:composite:1/35:4:composite:1/39:15:compute:1",
-        "x": 336,
-        "y": 788,
+        "x": 712,
+        "y": 670,
         "w": 64,
         "h": 64,
         "symbol": "×",
@@ -1817,31 +1909,37 @@
       },
       {
         "id": "model/104:4:composite:1/106:18:opaque:1",
-        "x": 258,
-        "y": 1110,
+        "x": 1124,
+        "y": 473,
         "w": 220,
         "h": 74,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 2,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/104:4:composite:1/107:15:compute:1",
-        "x": 336,
-        "y": 1260,
+        "x": 1202,
+        "y": 992,
         "w": 64,
         "h": 64,
         "symbol": "+",
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 3,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/104:4:composite:1/107:8:interface:1",
-        "x": 303,
-        "y": 1400,
+        "x": 679,
+        "y": 1003,
         "w": 130,
         "h": 42,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 4,
+        "arrangement": "folded-ranks"
       }
     ],
     "edges": [
@@ -1862,27 +1960,27 @@
         "route": {
           "points": [
             {
-              "x": 266.6666666666667,
-              "y": 146
+              "x": 129,
+              "y": 489
             },
             {
-              "x": 266.6666666666667,
-              "y": 280
+              "x": 129,
+              "y": 236
             },
             {
-              "x": 283,
-              "y": 280
+              "x": 642.6666666666666,
+              "y": 236
             },
             {
-              "x": 283,
-              "y": 296
+              "x": 642.6666666666666,
+              "y": 220
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "top",
+          "target_side": "bottom"
         }
       },
       {
@@ -1902,27 +2000,27 @@
         "route": {
           "points": [
             {
-              "x": 436.6666666666667,
-              "y": 146
+              "x": 299,
+              "y": 489
             },
             {
-              "x": 436.6666666666667,
-              "y": 280
+              "x": 299,
+              "y": 236
             },
             {
-              "x": 453,
-              "y": 280
+              "x": 812.6666666666666,
+              "y": 236
             },
             {
-              "x": 453,
-              "y": 296
+              "x": 812.6666666666666,
+              "y": 220
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "top",
+          "target_side": "bottom"
         }
       },
       {
@@ -1942,20 +2040,20 @@
         "route": {
           "points": [
             {
-              "x": 283,
-              "y": 338
+              "x": 675.3333333333334,
+              "y": 220
             },
             {
-              "x": 283,
-              "y": 398
+              "x": 675.3333333333334,
+              "y": 280
             },
             {
-              "x": 238,
-              "y": 398
+              "x": 614,
+              "y": 280
             },
             {
-              "x": 238,
-              "y": 414
+              "x": 614,
+              "y": 296
             }
           ],
           "ok": true,
@@ -1982,12 +2080,12 @@
         "route": {
           "points": [
             {
-              "x": 238,
-              "y": 488
+              "x": 614,
+              "y": 370
             },
             {
-              "x": 238,
-              "y": 638
+              "x": 614,
+              "y": 520
             }
           ],
           "ok": true,
@@ -2014,20 +2112,20 @@
         "route": {
           "points": [
             {
-              "x": 453,
-              "y": 338
+              "x": 845.3333333333334,
+              "y": 220
             },
             {
-              "x": 453,
-              "y": 398
+              "x": 845.3333333333334,
+              "y": 280
             },
             {
-              "x": 498,
-              "y": 398
+              "x": 874,
+              "y": 280
             },
             {
-              "x": 498,
-              "y": 414
+              "x": 874,
+              "y": 296
             }
           ],
           "ok": true,
@@ -2054,12 +2152,12 @@
         "route": {
           "points": [
             {
-              "x": 498,
-              "y": 488
+              "x": 874,
+              "y": 370
             },
             {
-              "x": 498,
-              "y": 638
+              "x": 874,
+              "y": 520
             }
           ],
           "ok": true,
@@ -2087,20 +2185,20 @@
         "route": {
           "points": [
             {
-              "x": 238,
-              "y": 712
+              "x": 614,
+              "y": 594
             },
             {
-              "x": 238,
-              "y": 772.4475744901354
+              "x": 614,
+              "y": 654.4475744901354
             },
             {
-              "x": 362.6666666666667,
-              "y": 772.4475744901354
+              "x": 738.6666666666666,
+              "y": 654.4475744901354
             },
             {
-              "x": 362.6666666666667,
-              "y": 788.4475744901354
+              "x": 738.6666666666666,
+              "y": 670.4475744901354
             }
           ],
           "ok": true,
@@ -2128,20 +2226,20 @@
         "route": {
           "points": [
             {
-              "x": 498,
-              "y": 712
+              "x": 874,
+              "y": 594
             },
             {
-              "x": 498,
-              "y": 772.4475744901354
+              "x": 874,
+              "y": 654.4475744901354
             },
             {
-              "x": 373.3333333333333,
-              "y": 772.4475744901354
+              "x": 749.3333333333334,
+              "y": 654.4475744901354
             },
             {
-              "x": 373.3333333333333,
-              "y": 788.4475744901354
+              "x": 749.3333333333334,
+              "y": 670.4475744901354
             }
           ],
           "ok": true,
@@ -2168,12 +2266,20 @@
         "route": {
           "points": [
             {
-              "x": 368,
-              "y": 852
+              "x": 744,
+              "y": 734
             },
             {
-              "x": 368,
-              "y": 960
+              "x": 744,
+              "y": 826
+            },
+            {
+              "x": 727.6666666666666,
+              "y": 826
+            },
+            {
+              "x": 727.6666666666666,
+              "y": 842
             }
           ],
           "ok": true,
@@ -2201,27 +2307,27 @@
         "route": {
           "points": [
             {
-              "x": 368,
-              "y": 1002
+              "x": 760.3333333333334,
+              "y": 842
             },
             {
-              "x": 368,
-              "y": 1094
+              "x": 760.3333333333334,
+              "y": 826
             },
             {
-              "x": 336.6666666666667,
-              "y": 1094
+              "x": 1202.6666666666667,
+              "y": 826
             },
             {
-              "x": 336.6666666666667,
-              "y": 1110
+              "x": 1202.6666666666667,
+              "y": 547
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "top",
+          "target_side": "bottom"
         }
       },
       {
@@ -2241,35 +2347,35 @@
         "route": {
           "points": [
             {
-              "x": 469.3333333333333,
-              "y": 146
+              "x": 364,
+              "y": 510
             },
             {
-              "x": 469.3333333333333,
-              "y": 162
+              "x": 380,
+              "y": 510
             },
             {
-              "x": 682,
-              "y": 162
+              "x": 380,
+              "y": 94
             },
             {
-              "x": 682,
-              "y": 1094
+              "x": 1108,
+              "y": 94
             },
             {
-              "x": 399.3333333333333,
-              "y": 1094
+              "x": 1108,
+              "y": 510
             },
             {
-              "x": 399.3333333333333,
-              "y": 1110
+              "x": 1124,
+              "y": 510
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "right",
+          "target_side": "left"
         }
       },
       {
@@ -2289,28 +2395,20 @@
         "route": {
           "points": [
             {
-              "x": 299.3333333333333,
-              "y": 146
+              "x": 129,
+              "y": 531
             },
             {
-              "x": 299.3333333333333,
-              "y": 162
+              "x": 129,
+              "y": 976.4475744901354
             },
             {
-              "x": 54,
-              "y": 162
+              "x": 1228.6666666666667,
+              "y": 976.4475744901354
             },
             {
-              "x": 54,
-              "y": 1244.4475744901354
-            },
-            {
-              "x": 362.6666666666667,
-              "y": 1244.4475744901354
-            },
-            {
-              "x": 362.6666666666667,
-              "y": 1260.4475744901354
+              "x": 1228.6666666666667,
+              "y": 992.4475744901354
             }
           ],
           "ok": true,
@@ -2338,20 +2436,20 @@
         "route": {
           "points": [
             {
-              "x": 368,
-              "y": 1184
+              "x": 1265.3333333333333,
+              "y": 547
             },
             {
-              "x": 368,
-              "y": 1244.4475744901354
+              "x": 1265.3333333333333,
+              "y": 976.4475744901354
             },
             {
-              "x": 373.3333333333333,
-              "y": 1244.4475744901354
+              "x": 1239.3333333333333,
+              "y": 976.4475744901354
             },
             {
-              "x": 373.3333333333333,
-              "y": 1260.4475744901354
+              "x": 1239.3333333333333,
+              "y": 992.4475744901354
             }
           ],
           "ok": true,
@@ -2378,19 +2476,19 @@
         "route": {
           "points": [
             {
-              "x": 368,
-              "y": 1324
+              "x": 1202,
+              "y": 1024
             },
             {
-              "x": 368,
-              "y": 1400
+              "x": 809,
+              "y": 1024
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "left",
+          "target_side": "right"
         }
       }
     ],

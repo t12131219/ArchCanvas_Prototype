@@ -41,16 +41,31 @@ def recognize(ir):
 
     def serial_mlp(ids):
         allowed = set(ids)
+        computations = {identity for identity in ids if by[identity]['kind'] == 'compute'}
+        # A path somewhere inside a source container is insufficient to name
+        # the entire container. Require its whole local computation to be one
+        # supported feed-forward path; concat, unknowns, state and other side
+        # computations retain the original source-module identity.
+        permitted = {'linear', 'activation', 'dropout', 'reshape', 'identity'}
+        if not computations or any(by[identity].get('operator') not in permitted or by[identity].get('mutable') for identity in computations):
+            return False
+        if any(by[identity]['kind'] in {'opaque', 'control', 'state'} or by[identity].get('operator') == 'phi' for identity in ids):
+            return False
         for start in ids:
             if by[start].get('operator') != 'linear': continue
-            queue = [(start, False)]; seen = set()
-            for current, activated in queue:
+            queue = [(start, False, frozenset())]; seen = set()
+            for current, activated, path in queue:
+                if current in path: continue
+                path = path | {current}
                 activated |= by[current].get('operator') == 'activation'
-                if (current, activated) in seen: continue
-                seen.add((current, activated))
-                if current != start and activated and by[current].get('operator') == 'linear': return True
+                key = (current, activated, path)
+                if key in seen: continue
+                seen.add(key)
+                if len(seen) > 2048: return False
+                if activated and computations <= path and sum(by[identity].get('operator') == 'linear' for identity in path) >= 2:
+                    return True
                 for target in outgoing.get(current, []):
-                    if target in allowed: queue.append((target, activated))
+                    if target in allowed: queue.append((target, activated, path))
         return False
 
     used = set()
@@ -80,7 +95,10 @@ def recognize(ir):
         for child in children.get(identity, []): result.extend([child, *descendants(child)])
         return result
     for n in list(nodes):
-        if n['kind'] != 'composite' or n.get('motif'): continue
+        # Control scopes retain their source contract even when their body
+        # contains a recognizable local block. Replacing this type would lose
+        # loop-carried/conditional boundaries in downstream presentation.
+        if n['kind'] != 'composite' or n.get('motif') or n.get('semantic_type') in {'loop-template', 'conditional-region'}: continue
         ds = descendants(n['id'])
         # A container which merely contains attention is not itself attention.
         # Source call boundaries stay intact; classify the local operation scope.

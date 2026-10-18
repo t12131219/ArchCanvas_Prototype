@@ -44,7 +44,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "LoopWithBoundary"
     },
     {
       "id": "model/125:4:composite:1/125:22:interface:1",
@@ -180,6 +181,14 @@
       "runtime_evidence": [],
       "operator": "range",
       "function_target": "range",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "count"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -260,7 +269,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "step",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "BrokenCell"
     },
     {
       "id": "model/125:4:composite:1/126:8:composite:1/35:4:composite:1/35:22:interface:1",
@@ -343,7 +353,13 @@
       "operator": "linear",
       "module_path": "step.a",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/125:4:composite:1/126:8:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -398,6 +414,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.a(x)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -453,7 +477,13 @@
       "operator": "linear",
       "module_path": "step.b",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/125:4:composite:1/126:8:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -508,6 +538,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.b(state)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -617,7 +655,7 @@
     {
       "id": "model/125:4:composite:1/126:8:opaque:1",
       "kind": "opaque",
-      "label": "state · loop-carried value",
+      "label": "i · loop-carried value",
       "parent": "model/125:4:composite:1",
       "source_parent": "model/125:4:composite:1",
       "source": [
@@ -643,7 +681,7 @@
     {
       "id": "model/125:4:composite:1/126:8:opaque:2",
       "kind": "opaque",
-      "label": "i · loop-carried value",
+      "label": "state · loop-carried value",
       "parent": "model/125:4:composite:1",
       "source_parent": "model/125:4:composite:1",
       "source": [
@@ -857,25 +895,25 @@
       "id": "e00017"
     },
     {
-      "source": "model/125:4:composite:1/125:25:interface:1",
-      "target": "model/125:4:composite:1/126:8:opaque:1",
-      "kind": "data",
-      "source_port": "out",
-      "target_port": "initial",
-      "evidence": "source-dependency",
-      "id": "e00018"
-    },
-    {
-      "source": "model/125:4:composite:1/126:8:composite:1/127:12:value-alias:1",
+      "source": "model/125:4:composite:1/126:8:composite:1/126:12:value-alias:1",
       "target": "model/125:4:composite:1/126:8:opaque:1",
       "kind": "data",
       "source_port": "out",
       "target_port": "body",
       "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/125:4:composite:1/125:25:interface:1",
+      "target": "model/125:4:composite:1/126:8:opaque:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "initial",
+      "evidence": "source-dependency",
       "id": "e00019"
     },
     {
-      "source": "model/125:4:composite:1/126:8:composite:1/126:12:value-alias:1",
+      "source": "model/125:4:composite:1/126:8:composite:1/127:12:value-alias:1",
       "target": "model/125:4:composite:1/126:8:opaque:2",
       "kind": "data",
       "source_port": "out",
@@ -884,7 +922,7 @@
       "id": "e00020"
     },
     {
-      "source": "model/125:4:composite:1/126:8:opaque:1",
+      "source": "model/125:4:composite:1/126:8:opaque:2",
       "target": "model/125:4:composite:1/128:8:interface:1",
       "kind": "interface-binding",
       "source_port": "out",
@@ -922,7 +960,8 @@
   "limitations": [
     "Static edges express source dependencies, not observed tensor bindings.",
     "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
     "Notebook cells are parsed as data; notebook setup/training cells are never executed."
   ],
-  "ir_digest": "9598429220b8b617fbcca0ec0215395791289f67539883fb42efaf8613539936"
+  "ir_digest": "b8924c35542945d3df4b3ecd36cfcda2685530aa42c49cfe8dc62f99c4012cdb"
 }

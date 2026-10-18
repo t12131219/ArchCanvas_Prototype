@@ -1,0 +1,137 @@
+{
+  "schema": "publication-configuration-self-review/1",
+  "audit_digest": "927730bf7d9788244ec085c373a497364d8797a10a12a019e5a86ab47577d726",
+  "arbitrary_model_publication_quality_achieved": false,
+  "external_models_executed": false,
+  "known_regressions": [
+    {
+      "id": "407b7e4f52f2",
+      "focus": "model/147:4:composite:1/93:4:composite:1",
+      "kind": "more-crossings"
+    },
+    {
+      "id": "bd6f31086b7e",
+      "focus": "model/147:4:composite:1/93:4:composite:1",
+      "kind": "more-crossings"
+    },
+    {
+      "id": "7f9c1f7f1c83",
+      "focus": "model/118:4:composite:1/80:4:composite:1",
+      "kind": "more-crossings"
+    }
+  ],
+  "positive_examples": [
+    {
+      "model": "ConvNet",
+      "nodes": [
+        11,
+        9
+      ],
+      "crossings": [
+        1,
+        0
+      ],
+      "wire": [
+        1890,
+        690
+      ],
+      "font_pt": [
+        10.08,
+        11.76
+      ],
+      "height_mm": [
+        159.2,
+        185.7
+      ],
+      "assessment": "Shape scalar math no longer appears as two tensor multiplication stages. Larger font increases physical height; this is not a height reduction. Actual inspector retains both source expressions and original edge/operand."
+    },
+    {
+      "model": "ShapeDrivenFusion",
+      "assessment": "Encoder, GRU, partial sigmoid gate and unknown fusion remain connected. Shape-only literal arithmetic attaches. One crossing and a long state bypass remain; this is a useful architecture view, not proof of arbitrary-model publication quality."
+    }
+  ],
+  "visual_regression_review": [
+    {
+      "id": "407b7e4f52f2",
+      "focus": "model/147:4:composite:1/93:4:composite:1",
+      "metrics": {
+        "before": {
+          "nodes": 11,
+          "crossings": 0,
+          "font": 9.42,
+          "wire": 2384,
+          "height": 192.3
+        },
+        "after": {
+          "nodes": 11,
+          "crossings": 3,
+          "font": 8.93,
+          "wire": 2624.3,
+          "height": 240
+        }
+      },
+      "screenshot": "review/407b7e4f52f2-comparison.png",
+      "assessment": "Configuration cleanup changes dependency-band partitions. The front half remains crowded; three crossings replace zero and font decreases. Needs better topology partitioning."
+    },
+    {
+      "id": "bd6f31086b7e",
+      "focus": "model/147:4:composite:1/93:4:composite:1",
+      "metrics": {
+        "before": {
+          "nodes": 11,
+          "crossings": 0,
+          "font": 9.42,
+          "wire": 2384,
+          "height": 192.3
+        },
+        "after": {
+          "nodes": 11,
+          "crossings": 3,
+          "font": 8.93,
+          "wire": 2624.3,
+          "height": 240
+        }
+      },
+      "screenshot": "review/bd6f31086b7e-comparison.png",
+      "assessment": "Configuration cleanup changes dependency-band partitions. The front half remains crowded; three crossings replace zero and font decreases. Needs better topology partitioning."
+    },
+    {
+      "id": "7f9c1f7f1c83",
+      "focus": "model/118:4:composite:1/80:4:composite:1",
+      "metrics": {
+        "before": {
+          "nodes": 10,
+          "crossings": 0,
+          "font": 10.84,
+          "wire": 1322,
+          "height": 210.6
+        },
+        "after": {
+          "nodes": 12,
+          "crossings": 1,
+          "font": 9.43,
+          "wire": 1170,
+          "height": 240
+        }
+      },
+      "screenshot": "review/7f9c1f7f1c83-comparison.png",
+      "assessment": "Three CNN blocks and mean/variance branches become explicit, improving structural meaning, while one crossing replaces zero and font decreases. Needs better parallel branch and bypass layout."
+    }
+  ],
+  "rejected_attempts": [
+    {
+      "candidate": "Larger rank gap (84)",
+      "reason": "Conditional VAE retains a crossing with smaller 8.17 pt text and longer wires; ConvVAE reaches zero crossings at unreadable 6.53 pt. Not adopted."
+    },
+    {
+      "candidate": "Disable serial folding, consumer ranks, or change summary budgets to 8/10",
+      "reason": "Exploratory layouts did not resolve the measured regressions. No new layout rule adopted."
+    }
+  ],
+  "interpretation": [
+    "Common-scope crossings 127 to 124 is a paired comparison over 1270 scopes. Aggregate 137 to 140 crosses different panel partitions and cannot establish improvement.",
+    "76 removed and 21 new panels are presentation partitions only; source scopes, semantic facts, original node/edge accounting and common-scope cuts remain checked.",
+    "Bounded static literal arithmetic recognizes syntax without evaluation. Returned scalars, tensor coefficients, unknown calls, mutation and runtime or ambiguous evidence stay data.",
+    "Browser measurement checks client rectangles with 1 CSS px tolerance, not semantic truth or visual taste. Stress panels have automated geometry checks, not exhaustive browser review."
+  ]
+}

@@ -93,6 +93,7 @@
       "kind": "composite",
       "label": "GraphNet",
       "parent": null,
+      "source_parent": null,
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -112,13 +113,16 @@
       },
       "runtime_evidence": [],
       "semantic_type": "source-module",
-      "module_path": ""
+      "module_path": "",
+      "constructor": {},
+      "source_class": "GraphNet"
     },
     {
       "id": "model/19:4:composite:1/19:22:interface:1",
       "kind": "interface",
       "label": "x",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -145,6 +149,7 @@
       "kind": "compute",
       "label": "size",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -164,6 +169,13 @@
       },
       "runtime_evidence": [],
       "operator": "shape",
+      "function_target": "x.size",
+      "arguments": {
+        "args": [
+          0
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -171,6 +183,7 @@
       "kind": "value-alias",
       "label": "B",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -192,10 +205,40 @@
       "slot": null
     },
     {
-      "id": "model/19:4:composite:1/25:19:opaque:1",
-      "kind": "opaque",
+      "id": "model/19:4:composite:1/25:19:state:1",
+      "kind": "state",
+      "label": "self.A",
+      "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
+          "line": 25,
+          "end_line": 25,
+          "column": 19,
+          "end_column": 25,
+          "symbol": "GraphNet.forward",
+          "expression": "self.A"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "self.A"
+      }
+    },
+    {
+      "id": "model/19:4:composite:1/25:19:compute:1",
+      "kind": "compute",
       "label": "unsqueeze",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -207,21 +250,29 @@
           "expression": "self.A.unsqueeze(0)"
         }
       ],
-      "evidence_status": "opaque",
+      "evidence_status": "static-only",
       "granularity": "atomic",
       "glyph": {
-        "shape": "dashed-rect",
-        "fill": "#fbe4e4"
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
       },
       "runtime_evidence": [],
-      "operator": "self.A.unsqueeze",
-      "reason": "unresolved-call-target"
+      "operator": "reshape",
+      "function_target": "self.A.unsqueeze",
+      "arguments": {
+        "args": [
+          0
+        ],
+        "kwargs": {}
+      },
+      "reason": null
     },
     {
       "id": "model/19:4:composite:1/25:8:value-alias:1",
       "kind": "value-alias",
       "label": "A_tensor",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -243,60 +294,11 @@
       "slot": null
     },
     {
-      "id": "model/19:4:composite:1/27:36:compute:1",
+      "id": "model/19:4:composite:1/27:19:compute:1",
       "kind": "compute",
-      "label": "unary",
-      "parent": "model/19:4:composite:1",
-      "source": [
-        {
-          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
-          "line": 27,
-          "end_line": 27,
-          "column": 36,
-          "end_column": 38,
-          "symbol": "GraphNet.forward",
-          "expression": "-1"
-        }
-      ],
-      "evidence_status": "static-only",
-      "granularity": "atomic",
-      "glyph": {
-        "shape": "rounded-rect",
-        "fill": "#dceffc"
-      },
-      "runtime_evidence": [],
-      "operator": "unary"
-    },
-    {
-      "id": "model/19:4:composite:1/27:40:compute:1",
-      "kind": "compute",
-      "label": "unary",
-      "parent": "model/19:4:composite:1",
-      "source": [
-        {
-          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
-          "line": 27,
-          "end_line": 27,
-          "column": 40,
-          "end_column": 42,
-          "symbol": "GraphNet.forward",
-          "expression": "-1"
-        }
-      ],
-      "evidence_status": "static-only",
-      "granularity": "atomic",
-      "glyph": {
-        "shape": "rounded-rect",
-        "fill": "#dceffc"
-      },
-      "runtime_evidence": [],
-      "operator": "unary"
-    },
-    {
-      "id": "model/19:4:composite:1/27:19:opaque:1",
-      "kind": "opaque",
       "label": "expand",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -308,21 +310,33 @@
           "expression": "self.A.expand(B, -1, -1)"
         }
       ],
-      "evidence_status": "opaque",
+      "evidence_status": "static-only",
       "granularity": "atomic",
       "glyph": {
-        "shape": "dashed-rect",
-        "fill": "#fbe4e4"
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
       },
       "runtime_evidence": [],
-      "operator": "self.A.expand",
-      "reason": "unresolved-call-target"
+      "operator": "expand",
+      "function_target": "self.A.expand",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "B"
+          },
+          -1,
+          -1
+        ],
+        "kwargs": {}
+      },
+      "reason": null
     },
     {
       "id": "model/19:4:composite:1/27:8:value-alias:1",
       "kind": "value-alias",
       "label": "A_tensor",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -344,35 +358,11 @@
       "slot": null
     },
     {
-      "id": "model/19:4:composite:1/31:30:compute:1",
-      "kind": "compute",
-      "label": "unary",
-      "parent": "model/19:4:composite:1",
-      "source": [
-        {
-          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
-          "line": 31,
-          "end_line": 31,
-          "column": 30,
-          "end_column": 32,
-          "symbol": "GraphNet.forward",
-          "expression": "-1"
-        }
-      ],
-      "evidence_status": "static-only",
-      "granularity": "atomic",
-      "glyph": {
-        "shape": "rounded-rect",
-        "fill": "#dceffc"
-      },
-      "runtime_evidence": [],
-      "operator": "unary"
-    },
-    {
       "id": "model/19:4:composite:1/31:20:compute:1",
       "kind": "compute",
       "label": "view",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -392,6 +382,17 @@
       },
       "runtime_evidence": [],
       "operator": "reshape",
+      "function_target": "x.view",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "B"
+          },
+          -1,
+          1
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -399,6 +400,7 @@
       "kind": "value-alias",
       "label": "x_reshape",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -420,19 +422,20 @@
       "slot": null
     },
     {
-      "id": "model/19:4:composite:1/36:72:compute:1",
+      "id": "model/19:4:composite:1/36:33:compute:1",
       "kind": "compute",
-      "label": "unary",
+      "label": "bmm",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
           "line": 36,
           "end_line": 36,
-          "column": 72,
-          "end_column": 74,
+          "column": 33,
+          "end_column": 63,
           "symbol": "GraphNet.forward",
-          "expression": "-1"
+          "expression": "torch.bmm(A_tensor, x_reshape)"
         }
       ],
       "evidence_status": "static-only",
@@ -442,13 +445,27 @@
         "fill": "#dceffc"
       },
       "runtime_evidence": [],
-      "operator": "unary"
+      "operator": "matmul",
+      "function_target": "torch.bmm",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "A_tensor"
+          },
+          {
+            "unresolved": "x_reshape"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
     },
     {
-      "id": "model/19:4:composite:1/36:33:compute:1",
+      "id": "model/19:4:composite:1/36:33:compute:2",
       "kind": "compute",
       "label": "view",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -468,6 +485,16 @@
       },
       "runtime_evidence": [],
       "operator": "reshape",
+      "function_target": "torch.bmm(A_tensor, x_reshape).view",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "B"
+          },
+          -1
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -475,6 +502,7 @@
       "kind": "value-alias",
       "label": "avg_neighbor_features",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -500,6 +528,7 @@
       "kind": "compute",
       "label": "fc · Linear",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -522,7 +551,15 @@
       "module_path": "fc",
       "framework_type": "torch.nn.Linear",
       "constructor": {
-        "bias": false
+        "args": [
+          {
+            "unresolved": "n_rows"
+          },
+          10
+        ],
+        "kwargs": {
+          "bias": false
+        }
       }
     },
     {
@@ -530,6 +567,7 @@
       "kind": "parameter",
       "label": "fc.parameters",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -556,6 +594,7 @@
       "kind": "value-alias",
       "label": "logits",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -581,6 +620,7 @@
       "kind": "compute",
       "label": "softmax",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -600,6 +640,17 @@
       },
       "runtime_evidence": [],
       "operator": "softmax",
+      "function_target": "torch.nn.functional.softmax",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "logits"
+          }
+        ],
+        "kwargs": {
+          "dim": 1
+        }
+      },
       "reason": null
     },
     {
@@ -607,6 +658,7 @@
       "kind": "value-alias",
       "label": "probas",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -632,6 +684,7 @@
       "kind": "compute",
       "label": "structured value",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -650,13 +703,15 @@
         "fill": "#dceffc"
       },
       "runtime_evidence": [],
-      "operator": "structure"
+      "operator": "structure",
+      "structure_kind": "tuple"
     },
     {
       "id": "model/19:4:composite:1/40:8:interface:1",
       "kind": "interface",
       "label": "return",
       "parent": "model/19:4:composite:1",
+      "source_parent": "model/19:4:composite:1",
       "source": [
         {
           "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/gnn/gnn-basic-1.ipynb#cell=15",
@@ -698,43 +753,43 @@
       "id": "e00001"
     },
     {
-      "source": "model/19:4:composite:1/25:19:opaque:1",
+      "source": "model/19:4:composite:1/25:19:state:1",
+      "target": "model/19:4:composite:1/25:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/19:4:composite:1/25:19:compute:1",
       "target": "model/19:4:composite:1/25:8:value-alias:1",
       "kind": "alias",
       "source_port": "out",
       "target_port": "value",
       "evidence": "source-dependency",
-      "id": "e00002"
-    },
-    {
-      "source": "model/19:4:composite:1/21:8:value-alias:1",
-      "target": "model/19:4:composite:1/27:19:opaque:1",
-      "kind": "data",
-      "source_port": "out",
-      "target_port": "arg:0",
-      "evidence": "source-dependency",
       "id": "e00003"
     },
     {
-      "source": "model/19:4:composite:1/27:36:compute:1",
-      "target": "model/19:4:composite:1/27:19:opaque:1",
+      "source": "model/19:4:composite:1/25:19:state:1",
+      "target": "model/19:4:composite:1/27:19:compute:1",
       "kind": "data",
       "source_port": "out",
-      "target_port": "arg:1",
+      "target_port": "receiver",
       "evidence": "source-dependency",
       "id": "e00004"
     },
     {
-      "source": "model/19:4:composite:1/27:40:compute:1",
-      "target": "model/19:4:composite:1/27:19:opaque:1",
+      "source": "model/19:4:composite:1/21:8:value-alias:1",
+      "target": "model/19:4:composite:1/27:19:compute:1",
       "kind": "data",
       "source_port": "out",
-      "target_port": "arg:2",
+      "target_port": "arg:0",
       "evidence": "source-dependency",
       "id": "e00005"
     },
     {
-      "source": "model/19:4:composite:1/27:19:opaque:1",
+      "source": "model/19:4:composite:1/27:19:compute:1",
       "target": "model/19:4:composite:1/27:8:value-alias:1",
       "kind": "alias",
       "source_port": "out",
@@ -761,49 +816,58 @@
       "id": "e00008"
     },
     {
-      "source": "model/19:4:composite:1/31:30:compute:1",
-      "target": "model/19:4:composite:1/31:20:compute:1",
-      "kind": "data",
-      "source_port": "out",
-      "target_port": "arg:1",
-      "evidence": "source-dependency",
-      "id": "e00009"
-    },
-    {
       "source": "model/19:4:composite:1/31:20:compute:1",
       "target": "model/19:4:composite:1/31:8:value-alias:1",
       "kind": "alias",
       "source_port": "out",
       "target_port": "value",
       "evidence": "source-dependency",
-      "id": "e00010"
+      "id": "e00009"
     },
     {
-      "source": "model/19:4:composite:1/21:8:value-alias:1",
+      "source": "model/19:4:composite:1/27:8:value-alias:1",
       "target": "model/19:4:composite:1/36:33:compute:1",
       "kind": "data",
       "source_port": "out",
       "target_port": "arg:0",
       "evidence": "source-dependency",
-      "id": "e00011"
+      "id": "e00010"
     },
     {
-      "source": "model/19:4:composite:1/36:72:compute:1",
+      "source": "model/19:4:composite:1/31:8:value-alias:1",
       "target": "model/19:4:composite:1/36:33:compute:1",
       "kind": "data",
       "source_port": "out",
       "target_port": "arg:1",
       "evidence": "source-dependency",
-      "id": "e00012"
+      "id": "e00011"
     },
     {
       "source": "model/19:4:composite:1/36:33:compute:1",
+      "target": "model/19:4:composite:1/36:33:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/19:4:composite:1/21:8:value-alias:1",
+      "target": "model/19:4:composite:1/36:33:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/19:4:composite:1/36:33:compute:2",
       "target": "model/19:4:composite:1/36:8:value-alias:1",
       "kind": "alias",
       "source_port": "out",
       "target_port": "value",
       "evidence": "source-dependency",
-      "id": "e00013"
+      "id": "e00014"
     },
     {
       "source": "model/19:4:composite:1/12:18:parameter:1",
@@ -812,7 +876,7 @@
       "source_port": "out",
       "target_port": "in",
       "evidence": "framework-contract",
-      "id": "e00014"
+      "id": "e00015"
     },
     {
       "source": "model/19:4:composite:1/36:8:value-alias:1",
@@ -821,7 +885,7 @@
       "source_port": "out",
       "target_port": "arg:0",
       "evidence": "source-dependency",
-      "id": "e00015"
+      "id": "e00016"
     },
     {
       "source": "model/19:4:composite:1/38:17:compute:1",
@@ -830,7 +894,7 @@
       "source_port": "out",
       "target_port": "value",
       "evidence": "source-dependency",
-      "id": "e00016"
+      "id": "e00017"
     },
     {
       "source": "model/19:4:composite:1/38:8:value-alias:1",
@@ -839,7 +903,7 @@
       "source_port": "out",
       "target_port": "arg:0",
       "evidence": "source-dependency",
-      "id": "e00017"
+      "id": "e00018"
     },
     {
       "source": "model/19:4:composite:1/39:17:compute:1",
@@ -848,7 +912,7 @@
       "source_port": "out",
       "target_port": "value",
       "evidence": "source-dependency",
-      "id": "e00018"
+      "id": "e00019"
     },
     {
       "source": "model/19:4:composite:1/38:8:value-alias:1",
@@ -857,7 +921,7 @@
       "source_port": "out",
       "target_port": "0",
       "evidence": "source-dependency",
-      "id": "e00019"
+      "id": "e00020"
     },
     {
       "source": "model/19:4:composite:1/39:8:value-alias:1",
@@ -866,7 +930,7 @@
       "source_port": "out",
       "target_port": "1",
       "evidence": "source-dependency",
-      "id": "e00020"
+      "id": "e00021"
     },
     {
       "source": "model/19:4:composite:1/40:15:compute:1",
@@ -875,7 +939,7 @@
       "source_port": "out",
       "target_port": "in",
       "evidence": "source-dependency",
-      "id": "e00021"
+      "id": "e00022"
     }
   ],
   "branches": [],
@@ -914,7 +978,8 @@
   "limitations": [
     "Static edges express source dependencies, not observed tensor bindings.",
     "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
     "Notebook cells are parsed as data; notebook setup/training cells are never executed."
   ],
-  "ir_digest": "9976acb8b24e638df32c1734bce663ba7fc025c7b646d044ce8698756b1994a0"
+  "ir_digest": "fb07798fe106a6ad65a1a40e4c6b75dcd9963150f1c46e942b86a54256be822a"
 }

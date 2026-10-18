@@ -42,9 +42,10 @@
         "fill": "#edf2ff"
       },
       "runtime_evidence": [],
-      "semantic_type": "MLP / feed-forward",
+      "semantic_type": "source-module",
       "module_path": "",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "BeforeNorm"
     },
     {
       "id": "model/85:4:composite:1/85:22:interface:1",
@@ -126,7 +127,12 @@
       "operator": "normalization",
       "module_path": "norm",
       "framework_type": "torch.nn.LayerNorm",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/85:4:composite:1/81:20:parameter:1",
@@ -182,7 +188,13 @@
       "operator": "linear",
       "module_path": "a",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          16
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/85:4:composite:1/82:17:parameter:1",
@@ -237,6 +249,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.a(self.norm(x))"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -266,7 +286,13 @@
       "operator": "linear",
       "module_path": "b",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          16,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/85:4:composite:1/83:17:parameter:1",
@@ -417,28 +443,7 @@
   "branches": [],
   "motifs": [
     {
-      "id": "motif:MLP / feed-forward:0",
-      "semantic_type": "MLP / feed-forward",
-      "members": [
-        "model/85:4:composite:1/85:22:interface:1",
-        "model/85:4:composite:1/86:15:compute:1",
-        "model/85:4:composite:1/86:44:compute:1",
-        "model/85:4:composite:1/81:20:parameter:1",
-        "model/85:4:composite:1/86:37:compute:1",
-        "model/85:4:composite:1/82:17:parameter:1",
-        "model/85:4:composite:1/86:26:compute:1",
-        "model/85:4:composite:1/86:19:compute:1",
-        "model/85:4:composite:1/83:17:parameter:1",
-        "model/85:4:composite:1/86:8:interface:1"
-      ],
-      "evidence": [
-        "source dependency path: Linear → activation → Linear"
-      ],
-      "confidence": "rule-confirmed",
-      "rule_version": "dataflow-motifs/1"
-    },
-    {
-      "id": "motif:add-and-normalization candidate:1",
+      "id": "motif:add-and-normalization candidate:0",
       "semantic_type": "add-and-normalization candidate",
       "members": [
         "model/85:4:composite:1/85:22:interface:1",
@@ -474,7 +479,8 @@
   "limitations": [
     "Static edges express source dependencies, not observed tensor bindings.",
     "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
     "Notebook cells are parsed as data; notebook setup/training cells are never executed."
   ],
-  "ir_digest": "92f319ae0e4bb6e3a2b3865916d36651ca6a1ba86d7614de80e785d14aefbd10"
+  "ir_digest": "3e959ff94ed805cfce466c47e49b37d8623b8dc94213915642dc5d47224b9b42"
 }

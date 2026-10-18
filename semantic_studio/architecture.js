@@ -3,7 +3,7 @@
  * Unknown operators are boundaries, not invitations to manufacture a template. */
 (function(root){
   'use strict';
-  const VERSION='architecture-rules/1';
+  const VERSION='architecture-rules/3';
   const copy=x=>JSON.parse(JSON.stringify(x));
   const flow=e=>['data','alias','interface-binding'].includes(e.kind);
   const transparent=n=>n&&(n.kind==='interface'||n.kind==='value-alias')&&n.slot==null&&!n.operator;
@@ -84,16 +84,25 @@
       }
       return [...new Set(result)];
     }
+    const scalarOutput=p=>p.port==='out'||p.port==='0'&&original.get(p.id)?.outputs?.length===1;
+    function gateTerm(id){
+      const n=original.get(id),ins=inputs(id);
+      const clean=n=>n&&n.kind==='compute'&&!n.mutable&&!n.condition&&!(incoming.get(n.id)||[]).some(e=>flow(e)&&e.condition);
+      if(!clean(n)||!['mult','mul'].includes(operator(n))||ins.length!==2||!compatible(ins[0].edge,ins[1].edge))return null;
+      const gate=ins.find(p=>scalarOutput(p)&&operator(original.get(p.id))==='sigmoid'&&clean(original.get(p.id)));
+      const signal=ins.find(p=>p!==gate);
+      if(!gate||gate.id===signal.id)return null;
+      const members=[gate.id,id];
+      if(scalarOutput(signal)&&operator(original.get(signal.id))==='tanh'&&clean(original.get(signal.id)))members.push(signal.id);
+      return {gate:gate.id,value:signal.id,output:id,gate_port:gate.port,value_port:signal.port,
+        gate_edge:gate.edge.id,value_edge:signal.edge.id,members,edges:ins.map(p=>p.edge)};
+    }
     for(const n of ir.nodes){
       if(n.kind!=='compute')continue;
       const op=operator(n),ins=inputs(n.id);
-      if(['mult','mul'].includes(op)&&ins.length===2&&compatible(ins[0].edge,ins[1].edge)){
-        const gate=ins.find(p=>operator(original.get(p.id))==='sigmoid');
-        if(gate&&gate.id!==ins.find(p=>p!==gate).id){
-          const value=ins.find(p=>p!==gate).id,members=[gate.id,n.id];
-          if(operator(original.get(value))==='tanh')members.push(value);
-          finding('gate','Sigmoid gate',members,{gate:gate.id,value,output:n.id},['sigmoid output is an explicit operand of multiplication; no LSTM claim']);
-        }
+      const term=gateTerm(n.id);
+      if(term){
+        finding('gate','Sigmoid gate',term.members,{gate:term.gate,value:term.value,output:n.id},['sigmoid output is an explicit operand of multiplication; no LSTM claim']);
       }
       if(op==='matmul'||/^aten\.(bmm|mm|matmul)\./.test(op||'')){
         for(const operand of ins){
@@ -117,7 +126,8 @@
         }
       }
       if(op==='linear'||op==='convolution'){
-        const activations=consumers(n.id).filter(id=>operator(original.get(id))==='activation');
+        const direct=consumers(n.id),normalizations=op==='convolution'?direct.filter(id=>operator(original.get(id))==='normalization'&&inputs(id).length===1):[];
+        const activations=[...new Set([...direct,...normalizations.flatMap(consumers)])].filter(id=>operator(original.get(id))==='activation');
         for(const act of activations){
           const next=consumers(act);
           if(op==='linear'){
@@ -125,7 +135,8 @@
               finding('feed-forward','Feed-forward',[n.id,act,end],{input:n.id,activation:act,output:end},['Linear → activation → Linear operand dependency path']);
           }else{
             const pool=next.find(id=>operator(original.get(id))==='pooling');
-            finding('convolution-block','Convolution block',[n.id,act,...(pool?[pool]:[])],{convolution:n.id,activation:act,...(pool?{pooling:pool}:{})},['convolution → activation'+(pool?' → pooling':'')+' operand dependency path']);
+            const norm=normalizations.find(id=>consumers(id).includes(act));
+            finding('convolution-block','Convolution block',[n.id,...(norm?[norm]:[]),act,...(pool?[pool]:[])],{convolution:n.id,...(norm?{normalization:norm}:{}),activation:act,...(pool?{pooling:pool}:{})},['convolution'+(norm?' → normalization':'')+' → activation'+(pool?' → pooling':'')+' operand dependency path']);
           }
         }
       }
@@ -144,6 +155,24 @@
           ['skip value is an actual producer of both the branch path and addition',norm?'normalization consumes the addition output':prenorm?'normalization directly consumes the skip value':'normalization order not asserted'],[skip]);
         break;
       }
+    }
+    // Compose proved local products by their exact sum operands. This describes
+    // the algebra even for unfamiliar cells, without asserting state, experts,
+    // complementary/normalized weights, independent paths or a model family.
+    for(const n of ir.nodes){
+      if(n.kind!=='compute'||operator(n)!=='add'||n.mutable||n.condition)continue;
+      const alpha=n.arguments?.kwargs?.alpha??n.arguments?.args?.[2]??1;
+      if(alpha!==1)continue;
+      const raw=(incoming.get(n.id)||[]).filter(flow),ins=inputs(n.id);
+      if(raw.some(e=>e.condition)||ins.length!==2||ins[0].id===ins[1].id||!ins.every(scalarOutput)||!compatible(ins[0].edge,ins[1].edge))continue;
+      const terms=ins.map(p=>gateTerm(p.id));
+      if(terms.some(t=>!t)||terms.some((t,i)=>t.edges.some(e=>!compatible(e,ins[i].edge))))continue;
+      finding('gated-sum','Gated sum',[...terms.flatMap(t=>t.members),n.id],
+        {terms:terms.map((t,i)=>({gate:t.gate,value:t.value,product:t.output,gate_port:t.gate_port,value_port:t.value_port,
+          gate_edge:t.gate_edge,value_edge:t.value_edge,sum_edge:ins[i].edge.id,sum_port:ins[i].edge.target_port})),
+        output:n.id,weight_normalization:'not-asserted',state_update:'not-asserted',model_family:'not-asserted'},
+        ['two explicit sigmoid-gated products are the distinct operands of addition',
+          'each product and sum operand retains its original edge, slot and evidence; no state-update or model-family claim']);
     }
     // Serial invocations of the same local definition and configuration can be
     // summarized without substituting one instance for another. All instances

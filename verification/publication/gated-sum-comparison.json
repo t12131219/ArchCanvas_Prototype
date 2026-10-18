@@ -1,0 +1,87 @@
+{
+  "schema": "publication-gated-sum-comparison/1",
+  "baseline_digest": "54c1affb6781b6cd5fdaad8005ab1d9b733c906e6d4c3798a7194a898f6fe5c7",
+  "current_digest": "fde0d886c5f0d99944e50b1aeb16135a853d281ec39dbb9ab6246ef203dff5ba",
+  "external_panels": 1346,
+  "external_svg_identical": true,
+  "external_accounting_identical": true,
+  "external_cuts_identical": true,
+  "external_gated_sum_findings": 0,
+  "external_layout_retries": 0,
+  "original": {
+    "entry": "GatedMixture",
+    "nodes": 25,
+    "edges": 27,
+    "unknowns": 1,
+    "terms": [
+      {
+        "gate": "model/14:4:composite:1/17:15:compute:2",
+        "value": "model/14:4:composite:1/14:25:interface:1",
+        "product": "model/14:4:composite:1/17:15:compute:1",
+        "gate_port": "out",
+        "value_port": "out",
+        "gate_edge": "e00008",
+        "value_edge": "e00009",
+        "sum_edge": "e00018",
+        "sum_port": "0"
+      },
+      {
+        "gate": "model/14:4:composite:1/18:16:compute:2",
+        "value": "model/14:4:composite:1/18:61:compute:1",
+        "product": "model/14:4:composite:1/18:16:compute:1",
+        "gate_port": "out",
+        "value_port": "out",
+        "gate_edge": "e00014",
+        "value_edge": "e00016",
+        "sum_edge": "e00019",
+        "sum_port": "2"
+      }
+    ],
+    "before": {
+      "issues": [
+        "port-label-requires-note"
+      ],
+      "visible_nodes": 13,
+      "crossings": 4
+    },
+    "after": {
+      "issues": [],
+      "visible_nodes": 11,
+      "crossings": 4,
+      "min_print_font_pt": 8.25
+    },
+    "label_retry": {
+      "reason": "unplaced-port-labels",
+      "before_unplaced_labels": 3,
+      "after_unplaced_labels": 0,
+      "candidates": [
+        {
+          "gap_y": 60,
+          "unplaced_labels": 0,
+          "min_print_font_pt": 8.25,
+          "issues": [],
+          "crossings": 4,
+          "contacts": 0,
+          "accepted": true
+        }
+      ]
+    }
+  },
+  "regressions": [],
+  "implementation_sha256": {
+    "semantic_studio/branch-regions.js": "1eab813442fb6a6e66f00bd57920043ca5656fa141b828f8e1640bd2d9713cb3",
+    "semantic_studio/publication.js": "a4ca31113059a98fc1177113437ea50465657535a8093dcd9d3b8d3895bc4162",
+    "semantic_studio/publication-renderer.js": "ce08ba53489669dfbc1306148d4735996092bcdd4674319eb85ecaeb161df823",
+    "semantic_studio/semantic-engine.js": "89698b8204fe5992426eb9fa767af02b143e52b45c7aed97639cabac4cb7d483",
+    "semantic_studio/architecture.js": "73725f302a127b05fb4f8826978841b68c725c4e8c4946b2c775c694f3468faa",
+    "semantic_studio/architecture-layout.js": "527118a611e6defa15e4cdbf08bc4446416a9dff7a9efd8848f6c643009567a6",
+    "tools/audit_publication.cjs": "61c001e000c64a3587eccf6848f257bc5476b84ea142c7c4fc1a30233c5d5204",
+    "semantic_studio/app.js": "732b976bc9651bb72a4b2de867a72e17e937d80e25dc4c27eff5b754f181e972",
+    "tools/compare_gated_sum.cjs": "82b27e2a2526fcc3d36cb72bda284c937150f3d591c2d184d0bf8b2f4c1eecc3"
+  },
+  "limits": [
+    "No external corpus model exercises gated-sum recognition; positive evidence comes from original source and adversarial graph cases.",
+    "This proves two sigmoid-gated products feeding addition, not an LSTM state update, normalized mixture, MoE or independent experts.",
+    "Label retries are bounded to three row gaps; manual layouts and offsets are preserved. Remaining failures stay explicit."
+  ]
+}

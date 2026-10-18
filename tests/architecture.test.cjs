@@ -13,6 +13,84 @@ function noOverlap(g){
 }
 function accounted(ir,g){const ids=Object.values(g.edge_accounting).flat();assert.equal(new Set(ids).size,ids.length);assert.deepEqual(ids.sort(),ir.edges.map(e=>e.id).sort());}
 
+function gatedFixture(){
+  const ir=graph(['x','y','g0','g1','v0','p0','p1','sum','sink'],[
+    ['x','g0'],['y','g1'],['x','v0'],['g0','p0',{target_port:'0'}],['y','p0',{target_port:'1'}],
+    ['v0','p1',{target_port:'0'}],['g1','p1',{target_port:'1'}],['p0','sum',{target_port:'0'}],
+    ['p1','sum',{target_port:'1'}],['p0','sink'],['sum','sink']]);
+  for(const [id,op]of Object.entries({g0:'sigmoid',g1:'sigmoid',v0:'tanh',p0:'mult',p1:'mult',sum:'add'}))ir.nodes.find(n=>n.id===id).operator=op;
+  ir.nodes.find(n=>n.id==='sink').kind='opaque';return ir;
+}
+
+test('two local gates compose into an exact gated sum with shared external uses',()=>{
+  const ir=gatedFixture(),before=JSON.stringify(ir),p=A.build(ir),f=p.findings.find(f=>f.rule==='gated-sum');
+  assert.ok(f);assert.equal(f.presentation,'group');
+  assert.deepEqual(f.roles.terms.map(t=>[t.gate,t.value,t.product,t.gate_edge,t.value_edge,t.sum_edge,t.sum_port]),
+    [['g0','y','p0','e3','e4','e7','0'],['g1','v0','p1','e6','e5','e8','1']]);
+  assert.equal(f.roles.state_update,'not-asserted');assert.equal(f.roles.weight_normalization,'not-asserted');assert.equal(f.roles.model_family,'not-asserted');
+  const group=p.nodes.find(n=>n.id===f.id);assert.ok(group.boundary_ports.some(e=>e.id==='e9'&&e.source==='p0'));
+  assert.ok(!group.canonical_members.includes('sink'));assert.equal(p.nodes.find(n=>n.id==='sink').kind,'opaque');
+  assert.equal(p.findings.filter(f=>f.rule==='gate'&&f.presentation==='group').length,2);
+  assert.equal(JSON.stringify(ir),before);accounted(ir,all(ir));
+});
+
+test('gated sums reject mutation, conditional operands, output slots and mixed evidence',()=>{
+  const changes=[
+    ir=>{ir.nodes.find(n=>n.id==='sum').mutable=true;},
+    ir=>{ir.nodes.find(n=>n.id==='p0').mutable=true;},
+    ir=>{ir.nodes.find(n=>n.id==='g1').mutable=true;},
+    ir=>{ir.nodes.find(n=>n.id==='g0').condition={branch:'if',outcome:'true'};},
+    ir=>{ir.edges.find(e=>e.id==='e7').condition={branch:'if',outcome:'true'};},
+    ir=>{ir.edges.find(e=>e.id==='e3').condition={branch:'if',outcome:'true'};},
+    ir=>{ir.edges.find(e=>e.id==='e3').source_port='1';},
+    ir=>{ir.edges.find(e=>e.id==='e8').source_port='1';},
+    ir=>{ir.edges.find(e=>e.id==='e8').source='p0';},
+    ir=>{ir.edges.find(e=>e.id==='e7').evidence='source-dependency';},
+    ir=>{ir.nodes.find(n=>n.id==='sum').arguments={kwargs:{alpha:2}};},
+    ir=>{ir.nodes.find(n=>n.id==='sum').arguments={args:['p0','p1',{unresolved:'alpha'}]};},
+  ];
+  for(const change of changes){const ir=gatedFixture();change(ir);assert.ok(!A.build(ir).findings.some(f=>f.rule==='gated-sum'),change.toString());accounted(ir,all(ir));}
+});
+
+test('in-place, conditional and slotted sigmoid products cannot certify a pure gate',()=>{
+  for(const change of [ir=>{ir.nodes.find(n=>n.id==='p0').mutable=true;},ir=>{ir.nodes.find(n=>n.id==='g0').mutable=true;},
+    ir=>{ir.edges.find(e=>e.id==='e3').condition={outcome:'true'};},ir=>{ir.edges.find(e=>e.id==='e3').source_port='1';}]){
+    const ir=gatedFixture();change(ir);assert.ok(!A.build(ir).findings.some(f=>f.rule==='gate'&&f.roles.output==='p0'));
+  }
+});
+
+test('observed single-output ATen products can compose without guessing tuple slots',()=>{
+  const ir=gatedFixture();
+  for(const n of ir.nodes.filter(n=>['g0','g1','v0','p0','p1','sum'].includes(n.id))){n.outputs=[{shape:[2,8]}];n.operator=({sigmoid:'aten.sigmoid.default',tanh:'aten.tanh.default',mult:'aten.mul.Tensor',add:'aten.add.Tensor'})[n.operator];}
+  for(const e of ir.edges)e.source_port='0';
+  assert.ok(A.build(ir).findings.some(f=>f.rule==='gated-sum'));
+  ir.nodes.find(n=>n.id==='p0').outputs.push({shape:[2,8]});
+  assert.ok(!A.build(ir).findings.some(f=>f.rule==='gated-sum'));
+});
+
+test('shorter terminal lead-ins separate independent routes in a tight row gap',()=>{
+  const R=require('../semantic_studio/publication-renderer.js'),ir=graph(['a','b','t','d'],[['a','t'],['b','t'],['b','d']]);
+  for(const edge of ir.edges)edge.resolved_source=edge.source;
+  const positions=new Map([['a',{x:0,y:0,w:212,h:64}],['b',{x:0,y:96,w:212,h:64}],['t',{x:0,y:192,w:212,h:64}],['d',{x:300,y:192,w:212,h:64}]]);
+  positions.context={idx:E.index(ir),edges:ir.edges,feedback:new Set()};
+  const first=L.route(ir.edges[0],positions),second=L.route(ir.edges[1],positions);
+  const geometry=a=>R.lineGeometry([{...ir.edges[0],route:a},{...ir.edges[1],route:second}]);
+  assert.equal(geometry(first).crossings,0);assert.equal(geometry(first).unrelated_contacts.length,1);
+  positions.context.stubLength=12;const fixed=L.route(ir.edges[0],positions);
+  assert.ok(first.ok&&second.ok&&fixed.ok);assert.deepEqual(fixed.points[0],first.points[0]);assert.deepEqual(fixed.points.at(-1),first.points.at(-1));
+  assert.equal(geometry(fixed).crossings,0);assert.deepEqual(geometry(fixed).unrelated_contacts,[]);
+});
+
+test('an in-place branch stops a residual proof across the old value',()=>{
+  const ir=graph(['input','branch','sum'],[['input','branch'],['branch','sum'],['input','sum']]);
+  ir.nodes.find(n=>n.id==='branch').operator='activation';
+  ir.nodes.find(n=>n.id==='sum').operator='add';
+  assert.ok(A.build(ir).findings.some(f=>f.rule==='residual'));
+  ir.nodes.find(n=>n.id==='branch').mutable=true;
+  assert.ok(!A.build(ir).findings.some(f=>f.rule.startsWith('residual')));
+  accounted(ir,all(ir));
+});
+
 test('unfamiliar composition gets independent local rules without editing canonical facts',()=>{
   const ir=load('ForeignComposition'),before=JSON.stringify(ir),p=E.architecture(ir);
   assert.ok(p.findings.some(f=>f.rule==='gate'&&f.presentation==='group'));
@@ -158,4 +236,53 @@ test('saved presentation state reproduces grouping, positions and boundary ident
 test('duplicate edge identifiers are rejected instead of overwriting physical terminals',()=>{
   const ir=graph(['a','b'],[['a','b'],['a','b']]);ir.edges[1].id=ir.edges[0].id;
   assert.throws(()=>E.validate(ir),/重复连接/);
+});
+
+test('long unfamiliar chains fold without changing operands and can retain vertical layout',()=>{
+  const ids=Array.from({length:16},(_,i)=>'foreign'+i),ir=graph(ids,ids.slice(1).map((id,i)=>[ids[i],id]));
+  const folded=all(ir,{details:false}),vertical=all(ir,{details:false,foldSerial:false});
+  accounted(ir,folded);noOverlap(folded);
+  assert.ok(folded.bounds.h<vertical.bounds.h*.6);
+  assert.deepEqual(folded.edges,vertical.edges);
+  for(const [i,id]of ids.entries()){const p=folded.positions.get(id);assert.equal(p.topological_rank,i);assert.equal(p.arrangement,'folded-ranks');}
+  for(const e of folded.edges)assert.ok(E.route(e,folded.positions).ok);
+  assert.ok(!all(ir,{view:'source'}).positions.get(ids[0]).arrangement);
+});
+test('folded narrow DAGs retain skip dependencies and parallel nodes in the same rank',()=>{
+  const ids=Array.from({length:10},(_,i)=>'n'+i),ir=graph([...ids,'side'],[...ids.slice(1).map((id,i)=>[ids[i],id]),['n1','side'],['side','n4'],['n0','n9']]);
+  const g=all(ir,{details:false});accounted(ir,g);noOverlap(g);
+  assert.equal(g.positions.get('side').topological_rank,g.positions.get('n2').topological_rank);
+  assert.equal(g.edges.length,12);
+  for(const e of g.edges)assert.ok(E.route(e,g.positions).ok,e.id);
+  const cyclic=E.clone(ir);cyclic.edges.push({id:'feedback',source:'n4',target:'n1',source_port:'out',target_port:'state',kind:'data',evidence:'runtime-tensor'});
+  assert.ok(!all(cyclic).positions.get('n0').arrangement);
+});
+test('convolution normalization activation rule requires the actual dependency path',()=>{
+  const ir=graph(['conv','norm','activation','pool'],[['conv','norm'],['norm','activation'],['activation','pool']]);
+  ['convolution','normalization','activation','pooling'].forEach((op,i)=>ir.nodes[i+1].operator=op);
+  const p=A.build(ir),f=p.findings.find(f=>f.rule==='convolution-block');assert.ok(f);assert.equal(f.roles.normalization,'norm');assert.deepEqual(f.members,['conv','norm','activation','pool']);
+  const disconnected=E.clone(ir);disconnected.edges=disconnected.edges.filter(e=>e.source!=='conv');
+  assert.ok(!A.build(disconnected).findings.some(f=>f.rule==='convolution-block'));
+});
+
+test('open-scope control edges can attach inside the header without cutting title text',()=>{
+  const ir=graph(['inside'],[]),idx=E.index(ir),e={id:'control',source:'inside',target:'root',source_port:'condition',target_port:'scope',kind:'control',evidence:'source-dependency'};
+  for(const reverse of [false,true]){
+    const edge=reverse?{...e,source:'root',target:'inside'}:e;
+    const positions=new Map([['root',{x:0,y:0,w:500,h:400,header:80,expanded:true}],['inside',{x:100,y:90,w:100,h:40}]]);
+    positions.context={idx,edges:[edge],feedback:new Set(),ancestorPorts:'header',portOrder:'neighbors'};
+    const route=L.route(edge,positions);assert.ok(route.ok);assert.equal(route.source_side,'top');assert.equal(route.target_side,'top');
+    assert.equal((reverse?route.points[0]:route.points.at(-1)).y,70);
+    for(let i=1;i<route.points.length;i++)assert.ok(!L.blocked(route.points[i-1],route.points[i],[{x:0,y:0,w:500,h:70}]));
+    assert.equal(edge.target_port,'scope');assert.equal(edge.source_port,'condition');
+  }
+});
+test('header control policy does not move data scope boundaries or merge physical terminals',()=>{
+  const ir=graph(['inside'],[]),idx=E.index(ir),base={source:'inside',target:'root',source_port:'out',target_port:'scope',evidence:'source-dependency'};
+  const edges=[{...base,id:'c1',kind:'control'},{...base,id:'c2',kind:'control'}, {...base,id:'data',kind:'data'}];
+  const positions=new Map([['root',{x:0,y:0,w:500,h:400,header:80,expanded:true}],['inside',{x:100,y:90,w:100,h:40}]]);
+  positions.context={idx,edges,feedback:new Set(),ancestorPorts:'header',portOrder:'neighbors'};
+  const controls=edges.slice(0,2).map(e=>L.route(e,positions));assert.ok(controls.every(r=>r.ok));
+  assert.notDeepEqual(controls[0].points.at(-1),controls[1].points.at(-1));
+  assert.equal(L.route(edges[2],positions).points.at(-1).y,400);
 });

@@ -1,0 +1,175 @@
+{
+  "schema": "publication-topology-self-review/1",
+  "audit_digest": "6d7c638ce217d8b1750054eddc8caa262ec5ab6f8ce26a3cef72241b2fdb1177",
+  "findings": [
+    {
+      "problem": "An early independent projection produced a long wire into a late gated sum.",
+      "change": "Evaluate one consumer-rank topology after existing print fitting and routing.",
+      "evidence": {
+        "entry": "GatedMixture",
+        "ir": "architecture/GatedMixture.json",
+        "focus": null,
+        "strategy": "consumer",
+        "accepted": true,
+        "before": {
+          "crossings": 4,
+          "contacts": 0,
+          "issues": [],
+          "min_print_font_pt": 8.25,
+          "unplaced_labels": 0,
+          "route_failures": 0,
+          "width_mm": 124.4776119402985,
+          "height_mm": 240,
+          "wire_length": 3724.3
+        },
+        "candidate": {
+          "crossings": 0,
+          "contacts": 0,
+          "issues": [],
+          "min_print_font_pt": 8.25,
+          "unplaced_labels": 0,
+          "route_failures": 0,
+          "width_mm": 180,
+          "height_mm": 137.9,
+          "wire_length": 3190.3
+        },
+        "selected": "consumer",
+        "max_area_ratio": 1.1,
+        "max_wire_ratio": 1.1,
+        "before_svg": "efd893c0ab7a-before.svg",
+        "after_svg": "efd893c0ab7a-after.svg",
+        "document": "efd893c0ab7a.layout.json"
+      },
+      "visual_assessment": "The overview is much shorter with no crossings, but it still has turns and long bypass wires. Arrows remain necessary."
+    },
+    {
+      "problem": "Removing crossings can merely create longer, harder-to-follow paths.",
+      "change": "Keep a fixed 10% area and wire-length ceiling, no font reduction and no label/contact regression.",
+      "evidence": [
+        {
+          "id": "2db9b47ab2ea",
+          "entry": "ConvNet",
+          "focus": null,
+          "strategy": "consumer",
+          "accepted": false,
+          "before": {
+            "crossings": 1,
+            "contacts": 0,
+            "issues": [],
+            "min_print_font_pt": 10.08,
+            "unplaced_labels": 0,
+            "route_failures": 0,
+            "width_mm": 180,
+            "height_mm": 159.2,
+            "wire_length": 1890
+          },
+          "candidate": {
+            "crossings": 0,
+            "contacts": 0,
+            "issues": [],
+            "min_print_font_pt": 10.08,
+            "unplaced_labels": 0,
+            "route_failures": 0,
+            "width_mm": 180,
+            "height_mm": 159.2,
+            "wire_length": 2254
+          },
+          "selected": "earliest",
+          "max_area_ratio": 1.1,
+          "max_wire_ratio": 1.1
+        }
+      ],
+      "visual_assessment": "The ConvNet alternative removes one crossing but adds about 19% wire length and more turns around the second convolution block. It was rejected; both SVGs are preserved."
+    },
+    {
+      "problem": "Consumer ranks can make a loop-template panel worse.",
+      "change": "Measure the actual routed candidate and retain the original when conflicts increase.",
+      "evidence": [
+        {
+          "id": "3603e84e9e92",
+          "entry": "TextCNN",
+          "focus": "model/15:4:composite:1/18:8:composite:1",
+          "strategy": "consumer",
+          "accepted": false,
+          "before": {
+            "crossings": 4,
+            "contacts": 0,
+            "issues": [],
+            "min_print_font_pt": 8.11,
+            "unplaced_labels": 0,
+            "route_failures": 0,
+            "width_mm": 149.72477064220183,
+            "height_mm": 240,
+            "wire_length": 4892.3
+          },
+          "candidate": {
+            "crossings": 7,
+            "contacts": 0,
+            "issues": [],
+            "min_print_font_pt": 8.11,
+            "unplaced_labels": 0,
+            "route_failures": 0,
+            "width_mm": 162.4954128440367,
+            "height_mm": 240,
+            "wire_length": 6314.3
+          },
+          "selected": "earliest",
+          "max_area_ratio": 1.1,
+          "max_wire_ratio": 1.1
+        }
+      ],
+      "visual_assessment": "TextCNN loop candidate rises from four to seven crossings. No universal superiority of late ranks is claimed."
+    },
+    {
+      "problem": "Some partial structures improve only slightly and at a routing cost.",
+      "change": "Keep the accepted residual-detail tradeoff explicit.",
+      "evidence": {
+        "entry": "ForeignComposition",
+        "ir": "architecture/ForeignComposition-runtime.json",
+        "focus": "architecture:residual-postnorm:c374666e",
+        "strategy": "consumer",
+        "accepted": true,
+        "before": {
+          "crossings": 2,
+          "contacts": 0,
+          "issues": [],
+          "min_print_font_pt": 8.72,
+          "unplaced_labels": 0,
+          "route_failures": 0,
+          "width_mm": 131.5976331360947,
+          "height_mm": 240,
+          "wire_length": 2658.8
+        },
+        "candidate": {
+          "crossings": 1,
+          "contacts": 0,
+          "issues": [],
+          "min_print_font_pt": 8.72,
+          "unplaced_labels": 0,
+          "route_failures": 0,
+          "width_mm": 131.5976331360947,
+          "height_mm": 240,
+          "wire_length": 2800.4
+        },
+        "selected": "consumer",
+        "max_area_ratio": 1.1,
+        "max_wire_ratio": 1.1,
+        "before_svg": "ee6f3404a5e0-before.svg",
+        "after_svg": "ee6f3404a5e0-after.svg",
+        "document": "ee6f3404a5e0.layout.json"
+      },
+      "visual_assessment": "Two crossings become one at the same font and physical size, with about 5.3% more wire length. The long residual bypass remains."
+    },
+    {
+      "problem": "Historical fixed-position and byte-identical SVG comparisons cannot describe a later layout change.",
+      "change": "Archive old implementation and corpus report; create a separate current evidence directory and validate both renderers in isolated VM globals.",
+      "visual_assessment": "All 1346 external diagrams reproduce the previous SVG byte for byte; two original panels change. The 91 rejected corpus candidates provide negative evidence only."
+    }
+  ],
+  "limits": [
+    "No external corpus candidate met the improvement gates. External coverage demonstrates preservation and rejection, not positive generalization.",
+    "Folded reading order still needs arrows; fewer crossings does not prove aesthetic or algorithmic completeness.",
+    "Only one alternative, at most 64 visible edges, no automatic override of manual geometry; denser or wholly novel topologies can remain poor.",
+    "Browser bounds checks find overflow, not diagram aesthetics. Dense unseen graphs, novel Python control flow and unresolved kernels remain open concerns."
+  ]
+}

@@ -46,7 +46,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "ForeignComposition"
       },
       {
         "id": "model/70:4:composite:1/70:22:interface:1",
@@ -128,7 +129,8 @@
         "runtime_evidence": [],
         "semantic_type": "attention-like",
         "module_path": "first",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "ForkUnit"
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
@@ -184,7 +186,13 @@
         "operator": "linear",
         "module_path": "first.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/13:17:parameter:1",
@@ -266,7 +274,13 @@
         "operator": "linear",
         "module_path": "first.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/14:17:parameter:1",
@@ -348,7 +362,13 @@
         "operator": "linear",
         "module_path": "first.c",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/15:17:parameter:1",
@@ -430,58 +450,6 @@
         "operator": "div"
       },
       {
-        "id": "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "model/70:4:composite:1/19:4:composite:1",
-        "source_parent": "model/70:4:composite:1/19:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 23,
-            "end_line": 23,
-            "column": 45,
-            "end_column": 47,
-            "symbol": "ForkUnit.forward",
-            "expression": "-2"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
-        "id": "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "model/70:4:composite:1/19:4:composite:1",
-        "source_parent": "model/70:4:composite:1/19:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 23,
-            "end_line": 23,
-            "column": 49,
-            "end_column": 51,
-            "symbol": "ForkUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
         "kind": "compute",
         "label": "transpose",
@@ -507,6 +475,13 @@
         "runtime_evidence": [],
         "operator": "transpose",
         "function_target": "k.transpose",
+        "arguments": {
+          "args": [
+            -2,
+            -1
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -535,6 +510,17 @@
         "runtime_evidence": [],
         "operator": "matmul",
         "function_target": "torch.matmul",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "q"
+            },
+            {
+              "unresolved": "k.transpose(-2, -1)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -564,32 +550,6 @@
         "slot": null
       },
       {
-        "id": "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "model/70:4:composite:1/19:4:composite:1",
-        "source_parent": "model/70:4:composite:1/19:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 24,
-            "end_line": 24,
-            "column": 50,
-            "end_column": 52,
-            "symbol": "ForkUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
         "kind": "compute",
         "label": "softmax",
@@ -615,6 +575,16 @@
         "runtime_evidence": [],
         "operator": "softmax",
         "function_target": "torch.softmax",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "scores"
+            }
+          ],
+          "kwargs": {
+            "dim": -1
+          }
+        },
         "reason": null
       },
       {
@@ -669,6 +639,17 @@
         "runtime_evidence": [],
         "operator": "matmul",
         "function_target": "torch.matmul",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "probabilities"
+            },
+            {
+              "unresolved": "v"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -750,7 +731,13 @@
         "operator": "linear",
         "module_path": "first.out",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/16:19:parameter:1",
@@ -806,7 +793,12 @@
         "operator": "normalization",
         "module_path": "first.norm",
         "framework_type": "torch.nn.LayerNorm",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/17:20:parameter:1",
@@ -913,7 +905,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "piece",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "BrokenCell"
       },
       {
         "id": "model/70:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -996,7 +989,13 @@
         "operator": "linear",
         "module_path": "piece.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -1051,6 +1050,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.a(x)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -1106,7 +1113,13 @@
         "operator": "linear",
         "module_path": "piece.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -1161,6 +1174,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.b(state)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -1295,7 +1316,13 @@
         "module_path": "sequence",
         "framework_type": "torch.nn.RNN",
         "constructor": {
-          "batch_first": true
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {
+            "batch_first": true
+          }
         }
       },
       {
@@ -1376,7 +1403,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "route",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "RoutedUnit"
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -1432,7 +1460,13 @@
         "operator": "linear",
         "module_path": "route.router",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            2
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/45:22:parameter:1",
@@ -1462,32 +1496,6 @@
         "identity_status": "declared-scope; sharing-unresolved"
       },
       {
-        "id": "model/70:4:composite:1/49:4:composite:1/50:52:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "model/70:4:composite:1/49:4:composite:1",
-        "source_parent": "model/70:4:composite:1/49:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 50,
-            "end_line": 50,
-            "column": 52,
-            "end_column": 54,
-            "symbol": "RoutedUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
         "kind": "compute",
         "label": "softmax",
@@ -1513,6 +1521,16 @@
         "runtime_evidence": [],
         "operator": "softmax",
         "function_target": "torch.softmax",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.router(x)"
+            }
+          ],
+          "kwargs": {
+            "dim": -1
+          }
+        },
         "reason": null
       },
       {
@@ -1542,32 +1560,6 @@
         "slot": null
       },
       {
-        "id": "model/70:4:composite:1/49:4:composite:1/51:55:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "model/70:4:composite:1/49:4:composite:1",
-        "source_parent": "model/70:4:composite:1/49:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 51,
-            "end_line": 51,
-            "column": 55,
-            "end_column": 57,
-            "symbol": "RoutedUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
         "kind": "compute",
         "label": "topk",
@@ -1593,6 +1585,17 @@
         "runtime_evidence": [],
         "operator": "top-k",
         "function_target": "torch.topk",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "weights"
+            },
+            1
+          ],
+          "kwargs": {
+            "dim": -1
+          }
+        },
         "reason": null
       },
       {
@@ -1725,6 +1728,10 @@
         "runtime_evidence": [],
         "operator": "reduce",
         "function_target": "indices.sum",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -1784,7 +1791,13 @@
         "operator": "linear",
         "module_path": "route.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/47:17:parameter:1",
@@ -1896,7 +1909,13 @@
         "operator": "linear",
         "module_path": "route.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/46:17:parameter:1",
@@ -2079,7 +2098,8 @@
           "fill": "#dceffc"
         },
         "runtime_evidence": [],
-        "operator": "structure"
+        "operator": "structure",
+        "structure_kind": "tuple"
       },
       {
         "id": "model/70:4:composite:1/75:15:compute:2",
@@ -2134,7 +2154,13 @@
         "operator": "linear",
         "module_path": "finish",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/68:22:parameter:1",
@@ -2291,31 +2317,13 @@
         "id": "e00010"
       },
       {
-        "source": "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-        "target": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "arg:0",
-        "evidence": "source-dependency",
-        "id": "e00011"
-      },
-      {
-        "source": "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
-        "target": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "arg:1",
-        "evidence": "source-dependency",
-        "id": "e00012"
-      },
-      {
         "source": "model/70:4:composite:1/19:4:composite:1/20:8:value-alias:1",
         "target": "model/70:4:composite:1/19:4:composite:1/23:17:compute:2",
         "kind": "data",
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00013"
+        "id": "e00011"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
@@ -2324,7 +2332,7 @@
         "source_port": "out",
         "target_port": "arg:1",
         "evidence": "source-dependency",
-        "id": "e00014"
+        "id": "e00012"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:17:compute:2",
@@ -2333,7 +2341,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00015"
+        "id": "e00013"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:17:compute:1",
@@ -2342,7 +2350,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00016"
+        "id": "e00014"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:8:value-alias:1",
@@ -2351,16 +2359,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00017"
-      },
-      {
-        "source": "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
-        "target": "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "kw:dim",
-        "evidence": "source-dependency",
-        "id": "e00018"
+        "id": "e00015"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
@@ -2369,7 +2368,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00019"
+        "id": "e00016"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/24:8:value-alias:1",
@@ -2378,7 +2377,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00020"
+        "id": "e00017"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/22:8:value-alias:1",
@@ -2387,7 +2386,7 @@
         "source_port": "out",
         "target_port": "arg:1",
         "evidence": "source-dependency",
-        "id": "e00021"
+        "id": "e00018"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/25:16:compute:1",
@@ -2396,7 +2395,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00022"
+        "id": "e00019"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
@@ -2405,7 +2404,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00023"
+        "id": "e00020"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/16:19:parameter:1",
@@ -2414,7 +2413,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00024"
+        "id": "e00021"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/25:8:value-alias:1",
@@ -2423,7 +2422,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00025"
+        "id": "e00022"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:29:compute:1",
@@ -2432,7 +2431,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00026"
+        "id": "e00023"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/17:20:parameter:1",
@@ -2441,7 +2440,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00027"
+        "id": "e00024"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:25:compute:1",
@@ -2450,7 +2449,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00028"
+        "id": "e00025"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:15:compute:1",
@@ -2459,7 +2458,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00029"
+        "id": "e00026"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:8:interface:1",
@@ -2468,7 +2467,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00030"
+        "id": "e00027"
       },
       {
         "source": "model/70:4:composite:1/71:8:value-alias:1",
@@ -2477,7 +2476,7 @@
         "source_port": "out",
         "target_port": "x",
         "evidence": "source-dependency",
-        "id": "e00031"
+        "id": "e00028"
       },
       {
         "source": "model/70:4:composite:1/70:25:interface:1",
@@ -2486,7 +2485,7 @@
         "source_port": "out",
         "target_port": "state",
         "evidence": "source-dependency",
-        "id": "e00032"
+        "id": "e00029"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -2495,7 +2494,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00033"
+        "id": "e00030"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -2504,7 +2503,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00034"
+        "id": "e00031"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/37:29:compute:1",
@@ -2513,7 +2512,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00035"
+        "id": "e00032"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/37:15:compute:1",
@@ -2522,7 +2521,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00036"
+        "id": "e00033"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -2531,7 +2530,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00037"
+        "id": "e00034"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/35:25:interface:1",
@@ -2540,7 +2539,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00038"
+        "id": "e00035"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/38:27:compute:1",
@@ -2549,7 +2548,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00039"
+        "id": "e00036"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/38:16:compute:1",
@@ -2558,7 +2557,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00040"
+        "id": "e00037"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/37:8:value-alias:1",
@@ -2567,7 +2566,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00041"
+        "id": "e00038"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/38:8:value-alias:1",
@@ -2576,7 +2575,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00042"
+        "id": "e00039"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/39:15:compute:1",
@@ -2585,7 +2584,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00043"
+        "id": "e00040"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/39:8:interface:1",
@@ -2594,7 +2593,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00044"
+        "id": "e00041"
       },
       {
         "source": "model/70:4:composite:1/72:8:value-alias:1",
@@ -2603,25 +2602,25 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00045"
+        "id": "e00042"
       },
       {
         "source": "model/70:4:composite:1/73:27:compute:1",
         "target": "model/70:4:composite:1/73:8:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "0",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00046"
+        "id": "e00043"
       },
       {
         "source": "model/70:4:composite:1/73:27:compute:1",
         "target": "model/70:4:composite:1/73:18:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "1",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00047"
+        "id": "e00044"
       },
       {
         "source": "model/70:4:composite:1/73:8:value-alias:1",
@@ -2630,7 +2629,7 @@
         "source_port": "out",
         "target_port": "x",
         "evidence": "source-dependency",
-        "id": "e00048"
+        "id": "e00045"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/45:22:parameter:1",
@@ -2639,7 +2638,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00049"
+        "id": "e00046"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -2648,7 +2647,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00050"
+        "id": "e00047"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/50:32:compute:1",
@@ -2657,16 +2656,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00051"
-      },
-      {
-        "source": "model/70:4:composite:1/49:4:composite:1/50:52:compute:1",
-        "target": "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "kw:dim",
-        "evidence": "source-dependency",
-        "id": "e00052"
+        "id": "e00048"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
@@ -2675,7 +2665,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00053"
+        "id": "e00049"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/50:8:value-alias:1",
@@ -2684,34 +2674,25 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00054"
-      },
-      {
-        "source": "model/70:4:composite:1/49:4:composite:1/51:55:compute:1",
-        "target": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "kw:dim",
-        "evidence": "source-dependency",
-        "id": "e00055"
+        "id": "e00050"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
         "target": "model/70:4:composite:1/49:4:composite:1/51:8:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "0",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00056"
+        "id": "e00051"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
         "target": "model/70:4:composite:1/49:4:composite:1/51:18:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "1",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00057"
+        "id": "e00052"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:18:value-alias:1",
@@ -2720,7 +2701,7 @@
         "source_port": "out",
         "target_port": "receiver",
         "evidence": "source-dependency",
-        "id": "e00058"
+        "id": "e00053"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:compute:2",
@@ -2729,7 +2710,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00059"
+        "id": "e00054"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:compute:1",
@@ -2738,7 +2719,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00060"
+        "id": "e00055"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
@@ -2747,7 +2728,7 @@
         "source_port": "out",
         "target_port": "true",
         "evidence": "source-dependency",
-        "id": "e00061"
+        "id": "e00056"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/47:17:parameter:1",
@@ -2756,7 +2737,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00062"
+        "id": "e00057"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -2765,7 +2746,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00063"
+        "id": "e00058"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/55:16:compute:1",
@@ -2774,7 +2755,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00064"
+        "id": "e00059"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
@@ -2783,7 +2764,7 @@
         "source_port": "out",
         "target_port": "false",
         "evidence": "source-dependency",
-        "id": "e00065"
+        "id": "e00060"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/46:17:parameter:1",
@@ -2792,7 +2773,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00066"
+        "id": "e00061"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -2801,7 +2782,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00067"
+        "id": "e00062"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/57:16:compute:1",
@@ -2810,7 +2791,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00068"
+        "id": "e00063"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/55:12:value-alias:1",
@@ -2823,7 +2804,7 @@
           "branch": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
           "outcome": "true"
         },
-        "id": "e00069"
+        "id": "e00064"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/57:12:value-alias:1",
@@ -2836,7 +2817,7 @@
           "branch": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
           "outcome": "false"
         },
-        "id": "e00070"
+        "id": "e00065"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:value-alias:1",
@@ -2845,7 +2826,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00071"
+        "id": "e00066"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:8:value-alias:1",
@@ -2854,7 +2835,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00072"
+        "id": "e00067"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/58:15:compute:1",
@@ -2863,7 +2844,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00073"
+        "id": "e00068"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/58:8:interface:1",
@@ -2872,7 +2853,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00074"
+        "id": "e00069"
       },
       {
         "source": "model/70:4:composite:1/68:22:parameter:1",
@@ -2881,7 +2862,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00075"
+        "id": "e00070"
       },
       {
         "source": "model/70:4:composite:1/74:8:value-alias:1",
@@ -2890,7 +2871,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00076"
+        "id": "e00071"
       },
       {
         "source": "model/70:4:composite:1/75:15:compute:3",
@@ -2899,7 +2880,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00077"
+        "id": "e00072"
       },
       {
         "source": "model/70:4:composite:1/71:8:value-alias:1",
@@ -2908,7 +2889,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00078"
+        "id": "e00073"
       },
       {
         "source": "model/70:4:composite:1/75:15:compute:2",
@@ -2917,7 +2898,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00079"
+        "id": "e00074"
       },
       {
         "source": "model/70:4:composite:1/73:18:value-alias:1",
@@ -2926,7 +2907,7 @@
         "source_port": "out",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00080"
+        "id": "e00075"
       },
       {
         "source": "model/70:4:composite:1/75:15:compute:1",
@@ -2935,7 +2916,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00081"
+        "id": "e00076"
       }
     ],
     "branches": [
@@ -2979,12 +2960,9 @@
           "model/70:4:composite:1/19:4:composite:1/15:17:parameter:1",
           "model/70:4:composite:1/19:4:composite:1/22:8:value-alias:1",
           "model/70:4:composite:1/19:4:composite:1/23:17:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:17:compute:2",
           "model/70:4:composite:1/19:4:composite:1/23:8:value-alias:1",
-          "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
           "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
           "model/70:4:composite:1/19:4:composite:1/24:8:value-alias:1",
           "model/70:4:composite:1/19:4:composite:1/25:16:compute:1",
@@ -3017,12 +2995,9 @@
           "model/70:4:composite:1/19:4:composite:1/15:17:parameter:1",
           "model/70:4:composite:1/19:4:composite:1/22:8:value-alias:1",
           "model/70:4:composite:1/19:4:composite:1/23:17:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:17:compute:2",
           "model/70:4:composite:1/19:4:composite:1/23:8:value-alias:1",
-          "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
           "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
           "model/70:4:composite:1/19:4:composite:1/24:8:value-alias:1",
           "model/70:4:composite:1/19:4:composite:1/25:16:compute:1",
@@ -3056,9 +3031,10 @@
     "limitations": [
       "Static edges express source dependencies, not observed tensor bindings.",
       "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
       "Notebook cells are parsed as data; notebook setup/training cells are never executed."
     ],
-    "ir_digest": "f85820b39f5d3135c7b71076e7e02482d08f7c0dd90746cd42efc61433b040f2"
+    "ir_digest": "adc3a72ff3526353ee8c3ab0c65d2167c9fb617d4713a7fed00eb37370ea85cb"
   },
   "state": {
     "view": "architecture",
@@ -3068,13 +3044,13 @@
     "open": [
       "model/70:4:composite:1",
       "model/70:4:composite:1/19:4:composite:1",
-      "architecture:residual:dd2d53ee"
+      "architecture:residual:76b17fbe"
     ]
   },
   "architecture": {
     "schema": "archcanvas-architecture/1",
-    "rule_version": "architecture-rules/1",
-    "canonical_digest": "f85820b39f5d3135c7b71076e7e02482d08f7c0dd90746cd42efc61433b040f2",
+    "rule_version": "architecture-rules/3",
+    "canonical_digest": "adc3a72ff3526353ee8c3ab0c65d2167c9fb617d4713a7fed00eb37370ea85cb",
     "nodes": [
       {
         "id": "model/70:4:composite:1",
@@ -3102,7 +3078,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "ForeignComposition"
       },
       {
         "id": "model/70:4:composite:1/70:22:interface:1",
@@ -3184,7 +3161,8 @@
         "runtime_evidence": [],
         "semantic_type": "attention-like",
         "module_path": "first",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "ForkUnit"
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
@@ -3217,7 +3195,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/20:12:compute:1",
         "kind": "compute",
         "label": "a · Linear",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3240,13 +3218,19 @@
         "operator": "linear",
         "module_path": "first.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/13:17:parameter:1",
         "kind": "parameter",
         "label": "a.parameters",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3273,7 +3257,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/20:8:value-alias:1",
         "kind": "value-alias",
         "label": "q",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3299,7 +3283,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/21:12:compute:1",
         "kind": "compute",
         "label": "b · Linear",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3322,13 +3306,19 @@
         "operator": "linear",
         "module_path": "first.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/14:17:parameter:1",
         "kind": "parameter",
         "label": "b.parameters",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3355,7 +3345,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/21:8:value-alias:1",
         "kind": "value-alias",
         "label": "k",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3381,7 +3371,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/22:12:compute:1",
         "kind": "compute",
         "label": "c · Linear",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3404,13 +3394,19 @@
         "operator": "linear",
         "module_path": "first.c",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/15:17:parameter:1",
         "kind": "parameter",
         "label": "c.parameters",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3437,7 +3433,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/22:8:value-alias:1",
         "kind": "value-alias",
         "label": "v",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3486,62 +3482,10 @@
         "operator": "div"
       },
       {
-        "id": "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "architecture:residual-postnorm:4368429a",
-        "source_parent": "model/70:4:composite:1/19:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 23,
-            "end_line": 23,
-            "column": 45,
-            "end_column": 47,
-            "symbol": "ForkUnit.forward",
-            "expression": "-2"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
-        "id": "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "architecture:residual-postnorm:4368429a",
-        "source_parent": "model/70:4:composite:1/19:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 23,
-            "end_line": 23,
-            "column": 49,
-            "end_column": 51,
-            "symbol": "ForkUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
         "kind": "compute",
         "label": "transpose",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3563,6 +3507,13 @@
         "runtime_evidence": [],
         "operator": "transpose",
         "function_target": "k.transpose",
+        "arguments": {
+          "args": [
+            -2,
+            -1
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -3591,6 +3542,17 @@
         "runtime_evidence": [],
         "operator": "matmul",
         "function_target": "torch.matmul",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "q"
+            },
+            {
+              "unresolved": "k.transpose(-2, -1)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -3620,32 +3582,6 @@
         "slot": null
       },
       {
-        "id": "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "architecture:residual-postnorm:4368429a",
-        "source_parent": "model/70:4:composite:1/19:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 24,
-            "end_line": 24,
-            "column": 50,
-            "end_column": 52,
-            "symbol": "ForkUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
         "kind": "compute",
         "label": "softmax",
@@ -3671,6 +3607,16 @@
         "runtime_evidence": [],
         "operator": "softmax",
         "function_target": "torch.softmax",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "scores"
+            }
+          ],
+          "kwargs": {
+            "dim": -1
+          }
+        },
         "reason": null
       },
       {
@@ -3725,6 +3671,17 @@
         "runtime_evidence": [],
         "operator": "matmul",
         "function_target": "torch.matmul",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "probabilities"
+            },
+            {
+              "unresolved": "v"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -3757,7 +3714,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/26:25:compute:1",
         "kind": "compute",
         "label": "add",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3783,7 +3740,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/26:29:compute:1",
         "kind": "compute",
         "label": "out · Linear",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3806,13 +3763,19 @@
         "operator": "linear",
         "module_path": "first.out",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/16:19:parameter:1",
         "kind": "parameter",
         "label": "out.parameters",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3839,7 +3802,7 @@
         "id": "model/70:4:composite:1/19:4:composite:1/26:15:compute:1",
         "kind": "compute",
         "label": "norm · LayerNorm",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3862,13 +3825,18 @@
         "operator": "normalization",
         "module_path": "first.norm",
         "framework_type": "torch.nn.LayerNorm",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/17:20:parameter:1",
         "kind": "parameter",
         "label": "norm.parameters",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source_parent": "model/70:4:composite:1/19:4:composite:1",
         "source": [
           {
@@ -3947,7 +3915,7 @@
         "id": "model/70:4:composite:1/35:4:composite:1",
         "kind": "composite",
         "label": "piece",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -3969,7 +3937,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "piece",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "BrokenCell"
       },
       {
         "id": "model/70:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -4052,7 +4021,13 @@
         "operator": "linear",
         "module_path": "piece.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -4107,6 +4082,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.a(x)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -4162,7 +4145,13 @@
         "operator": "linear",
         "module_path": "piece.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -4217,6 +4206,14 @@
         "runtime_evidence": [],
         "operator": "activation",
         "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.b(state)"
+            }
+          ],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -4301,7 +4298,7 @@
         "id": "model/70:4:composite:1/72:8:value-alias:1",
         "kind": "value-alias",
         "label": "gated",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -4327,7 +4324,7 @@
         "id": "model/70:4:composite:1/73:27:compute:1",
         "kind": "compute",
         "label": "sequence · RNN",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -4351,14 +4348,20 @@
         "module_path": "sequence",
         "framework_type": "torch.nn.RNN",
         "constructor": {
-          "batch_first": true
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {
+            "batch_first": true
+          }
         }
       },
       {
         "id": "model/70:4:composite:1/73:8:value-alias:1",
         "kind": "value-alias",
         "label": "sequence",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -4384,7 +4387,7 @@
         "id": "model/70:4:composite:1/73:18:value-alias:1",
         "kind": "value-alias",
         "label": "hidden",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -4410,7 +4413,7 @@
         "id": "model/70:4:composite:1/49:4:composite:1",
         "kind": "composite",
         "label": "route",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -4432,7 +4435,8 @@
         "runtime_evidence": [],
         "semantic_type": "source-module",
         "module_path": "route",
-        "constructor": {}
+        "constructor": {},
+        "source_class": "RoutedUnit"
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -4488,7 +4492,13 @@
         "operator": "linear",
         "module_path": "route.router",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            2
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/45:22:parameter:1",
@@ -4518,32 +4528,6 @@
         "identity_status": "declared-scope; sharing-unresolved"
       },
       {
-        "id": "model/70:4:composite:1/49:4:composite:1/50:52:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "model/70:4:composite:1/49:4:composite:1",
-        "source_parent": "model/70:4:composite:1/49:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 50,
-            "end_line": 50,
-            "column": 52,
-            "end_column": 54,
-            "symbol": "RoutedUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
         "kind": "compute",
         "label": "softmax",
@@ -4569,6 +4553,16 @@
         "runtime_evidence": [],
         "operator": "softmax",
         "function_target": "torch.softmax",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.router(x)"
+            }
+          ],
+          "kwargs": {
+            "dim": -1
+          }
+        },
         "reason": null
       },
       {
@@ -4598,32 +4592,6 @@
         "slot": null
       },
       {
-        "id": "model/70:4:composite:1/49:4:composite:1/51:55:compute:1",
-        "kind": "compute",
-        "label": "unary",
-        "parent": "model/70:4:composite:1/49:4:composite:1",
-        "source_parent": "model/70:4:composite:1/49:4:composite:1",
-        "source": [
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 51,
-            "end_line": 51,
-            "column": 55,
-            "end_column": 57,
-            "symbol": "RoutedUnit.forward",
-            "expression": "-1"
-          }
-        ],
-        "evidence_status": "static-only",
-        "granularity": "atomic",
-        "glyph": {
-          "shape": "rounded-rect",
-          "fill": "#dceffc"
-        },
-        "runtime_evidence": [],
-        "operator": "unary"
-      },
-      {
         "id": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
         "kind": "compute",
         "label": "topk",
@@ -4649,6 +4617,17 @@
         "runtime_evidence": [],
         "operator": "top-k",
         "function_target": "torch.topk",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "weights"
+            },
+            1
+          ],
+          "kwargs": {
+            "dim": -1
+          }
+        },
         "reason": null
       },
       {
@@ -4781,6 +4760,10 @@
         "runtime_evidence": [],
         "operator": "reduce",
         "function_target": "indices.sum",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
         "reason": null
       },
       {
@@ -4840,7 +4823,13 @@
         "operator": "linear",
         "module_path": "route.b",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/47:17:parameter:1",
@@ -4952,7 +4941,13 @@
         "operator": "linear",
         "module_path": "route.a",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/46:17:parameter:1",
@@ -5089,7 +5084,7 @@
         "id": "model/70:4:composite:1/74:8:value-alias:1",
         "kind": "value-alias",
         "label": "routed",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -5135,13 +5130,14 @@
           "fill": "#dceffc"
         },
         "runtime_evidence": [],
-        "operator": "structure"
+        "operator": "structure",
+        "structure_kind": "tuple"
       },
       {
         "id": "model/70:4:composite:1/75:15:compute:2",
         "kind": "compute",
         "label": "add",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -5167,7 +5163,7 @@
         "id": "model/70:4:composite:1/75:15:compute:3",
         "kind": "compute",
         "label": "finish · Linear",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -5190,13 +5186,19 @@
         "operator": "linear",
         "module_path": "finish",
         "framework_type": "torch.nn.Linear",
-        "constructor": {}
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
       },
       {
         "id": "model/70:4:composite:1/68:22:parameter:1",
         "kind": "parameter",
         "label": "finish.parameters",
-        "parent": "architecture:residual:dd2d53ee",
+        "parent": "architecture:residual:76b17fbe",
         "source_parent": "model/70:4:composite:1",
         "source": [
           {
@@ -5316,7 +5318,7 @@
         ],
         "boundary_ports": [
           {
-            "id": "e00035",
+            "id": "e00032",
             "direction": "input",
             "source": "model/70:4:composite:1/35:4:composite:1/37:29:compute:1",
             "source_port": "out",
@@ -5325,7 +5327,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00039",
+            "id": "e00036",
             "direction": "input",
             "source": "model/70:4:composite:1/35:4:composite:1/38:27:compute:1",
             "source_port": "out",
@@ -5334,7 +5336,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00043",
+            "id": "e00040",
             "direction": "output",
             "source": "model/70:4:composite:1/35:4:composite:1/39:15:compute:1",
             "source_port": "out",
@@ -5348,7 +5350,7 @@
         "id": "architecture:scaled-attention-like:7922ae4e",
         "kind": "composite",
         "label": "Scaled attention-like",
-        "parent": "architecture:residual-postnorm:4368429a",
+        "parent": "architecture:residual-postnorm:c374666e",
         "source": [
           {
             "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
@@ -5435,7 +5437,7 @@
         ],
         "boundary_ports": [
           {
-            "id": "e00013",
+            "id": "e00011",
             "direction": "input",
             "source": "model/70:4:composite:1/19:4:composite:1/20:8:value-alias:1",
             "source_port": "out",
@@ -5444,7 +5446,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00014",
+            "id": "e00012",
             "direction": "input",
             "source": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
             "source_port": "out",
@@ -5455,15 +5457,6 @@
           {
             "id": "e00018",
             "direction": "input",
-            "source": "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
-            "source_port": "out",
-            "target": "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
-            "target_port": "kw:dim",
-            "evidence": "source-dependency"
-          },
-          {
-            "id": "e00021",
-            "direction": "input",
             "source": "model/70:4:composite:1/19:4:composite:1/22:8:value-alias:1",
             "source_port": "out",
             "target": "model/70:4:composite:1/19:4:composite:1/25:16:compute:1",
@@ -5471,7 +5464,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00025",
+            "id": "e00022",
             "direction": "output",
             "source": "model/70:4:composite:1/19:4:composite:1/25:8:value-alias:1",
             "source_port": "out",
@@ -5482,7 +5475,7 @@
         ]
       },
       {
-        "id": "architecture:residual-postnorm:4368429a",
+        "id": "architecture:residual-postnorm:c374666e",
         "kind": "composite",
         "label": "Residual · Post-Norm",
         "parent": "model/70:4:composite:1/19:4:composite:1",
@@ -5570,15 +5563,6 @@
           },
           {
             "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 24,
-            "end_line": 24,
-            "column": 50,
-            "end_column": 52,
-            "symbol": "ForkUnit.forward",
-            "expression": "-1"
-          },
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
             "line": 20,
             "end_line": 20,
             "column": 12,
@@ -5603,24 +5587,6 @@
             "end_column": 21,
             "symbol": "ForkUnit.forward",
             "expression": "self.b(x)"
-          },
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 23,
-            "end_line": 23,
-            "column": 45,
-            "end_column": 47,
-            "symbol": "ForkUnit.forward",
-            "expression": "-2"
-          },
-          {
-            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
-            "line": 23,
-            "end_line": 23,
-            "column": 49,
-            "end_column": 51,
-            "symbol": "ForkUnit.forward",
-            "expression": "-1"
           },
           {
             "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
@@ -5722,7 +5688,7 @@
           "fill": "#e9f1ff"
         },
         "presentation_only": true,
-        "finding": "architecture:residual-postnorm:4368429a",
+        "finding": "architecture:residual-postnorm:c374666e",
         "canonical_members": [
           "model/70:4:composite:1/19:4:composite:1/20:12:compute:1",
           "model/70:4:composite:1/19:4:composite:1/13:17:parameter:1",
@@ -5733,10 +5699,7 @@
           "model/70:4:composite:1/19:4:composite:1/22:12:compute:1",
           "model/70:4:composite:1/19:4:composite:1/15:17:parameter:1",
           "model/70:4:composite:1/19:4:composite:1/22:8:value-alias:1",
-          "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
           "model/70:4:composite:1/19:4:composite:1/26:25:compute:1",
           "model/70:4:composite:1/19:4:composite:1/26:29:compute:1",
           "model/70:4:composite:1/19:4:composite:1/16:19:parameter:1",
@@ -5779,7 +5742,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00023",
+            "id": "e00020",
             "direction": "input",
             "source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
             "source_port": "out",
@@ -5788,7 +5751,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00029",
+            "id": "e00026",
             "direction": "output",
             "source": "model/70:4:composite:1/19:4:composite:1/26:15:compute:1",
             "source_port": "out",
@@ -5799,7 +5762,7 @@
         ]
       },
       {
-        "id": "architecture:residual:dd2d53ee",
+        "id": "architecture:residual:76b17fbe",
         "kind": "composite",
         "label": "Residual",
         "parent": "model/70:4:composite:1",
@@ -5904,7 +5867,7 @@
           "fill": "#e9f1ff"
         },
         "presentation_only": true,
-        "finding": "architecture:residual:dd2d53ee",
+        "finding": "architecture:residual:76b17fbe",
         "canonical_members": [
           "model/70:4:composite:1/35:4:composite:1",
           "model/70:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -5927,10 +5890,8 @@
           "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
           "model/70:4:composite:1/49:4:composite:1/50:32:compute:1",
           "model/70:4:composite:1/49:4:composite:1/45:22:parameter:1",
-          "model/70:4:composite:1/49:4:composite:1/50:52:compute:1",
           "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
           "model/70:4:composite:1/49:4:composite:1/50:8:value-alias:1",
-          "model/70:4:composite:1/49:4:composite:1/51:55:compute:1",
           "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
           "model/70:4:composite:1/49:4:composite:1/51:8:value-alias:1",
           "model/70:4:composite:1/49:4:composite:1/51:18:value-alias:1",
@@ -5955,7 +5916,7 @@
         ],
         "boundary_ports": [
           {
-            "id": "e00031",
+            "id": "e00028",
             "direction": "input",
             "source": "model/70:4:composite:1/71:8:value-alias:1",
             "source_port": "out",
@@ -5964,7 +5925,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00032",
+            "id": "e00029",
             "direction": "input",
             "source": "model/70:4:composite:1/70:25:interface:1",
             "source_port": "out",
@@ -5973,7 +5934,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00078",
+            "id": "e00073",
             "direction": "input",
             "source": "model/70:4:composite:1/71:8:value-alias:1",
             "source_port": "out",
@@ -5982,7 +5943,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00079",
+            "id": "e00074",
             "direction": "output",
             "source": "model/70:4:composite:1/75:15:compute:2",
             "source_port": "out",
@@ -5991,7 +5952,7 @@
             "evidence": "source-dependency"
           },
           {
-            "id": "e00080",
+            "id": "e00075",
             "direction": "output",
             "source": "model/70:4:composite:1/73:18:value-alias:1",
             "source_port": "out",
@@ -6103,31 +6064,13 @@
         "id": "e00010"
       },
       {
-        "source": "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-        "target": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "arg:0",
-        "evidence": "source-dependency",
-        "id": "e00011"
-      },
-      {
-        "source": "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
-        "target": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "arg:1",
-        "evidence": "source-dependency",
-        "id": "e00012"
-      },
-      {
         "source": "model/70:4:composite:1/19:4:composite:1/20:8:value-alias:1",
         "target": "model/70:4:composite:1/19:4:composite:1/23:17:compute:2",
         "kind": "data",
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00013"
+        "id": "e00011"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
@@ -6136,7 +6079,7 @@
         "source_port": "out",
         "target_port": "arg:1",
         "evidence": "source-dependency",
-        "id": "e00014"
+        "id": "e00012"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:17:compute:2",
@@ -6145,7 +6088,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00015"
+        "id": "e00013"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:17:compute:1",
@@ -6154,7 +6097,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00016"
+        "id": "e00014"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/23:8:value-alias:1",
@@ -6163,16 +6106,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00017"
-      },
-      {
-        "source": "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
-        "target": "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "kw:dim",
-        "evidence": "source-dependency",
-        "id": "e00018"
+        "id": "e00015"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
@@ -6181,7 +6115,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00019"
+        "id": "e00016"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/24:8:value-alias:1",
@@ -6190,7 +6124,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00020"
+        "id": "e00017"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/22:8:value-alias:1",
@@ -6199,7 +6133,7 @@
         "source_port": "out",
         "target_port": "arg:1",
         "evidence": "source-dependency",
-        "id": "e00021"
+        "id": "e00018"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/25:16:compute:1",
@@ -6208,7 +6142,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00022"
+        "id": "e00019"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
@@ -6217,7 +6151,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00023"
+        "id": "e00020"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/16:19:parameter:1",
@@ -6226,7 +6160,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00024"
+        "id": "e00021"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/25:8:value-alias:1",
@@ -6235,7 +6169,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00025"
+        "id": "e00022"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:29:compute:1",
@@ -6244,7 +6178,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00026"
+        "id": "e00023"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/17:20:parameter:1",
@@ -6253,7 +6187,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00027"
+        "id": "e00024"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:25:compute:1",
@@ -6262,7 +6196,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00028"
+        "id": "e00025"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:15:compute:1",
@@ -6271,7 +6205,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00029"
+        "id": "e00026"
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/26:8:interface:1",
@@ -6280,7 +6214,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00030"
+        "id": "e00027"
       },
       {
         "source": "model/70:4:composite:1/71:8:value-alias:1",
@@ -6289,7 +6223,7 @@
         "source_port": "out",
         "target_port": "x",
         "evidence": "source-dependency",
-        "id": "e00031"
+        "id": "e00028"
       },
       {
         "source": "model/70:4:composite:1/70:25:interface:1",
@@ -6298,7 +6232,7 @@
         "source_port": "out",
         "target_port": "state",
         "evidence": "source-dependency",
-        "id": "e00032"
+        "id": "e00029"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -6307,7 +6241,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00033"
+        "id": "e00030"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -6316,7 +6250,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00034"
+        "id": "e00031"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/37:29:compute:1",
@@ -6325,7 +6259,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00035"
+        "id": "e00032"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/37:15:compute:1",
@@ -6334,7 +6268,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00036"
+        "id": "e00033"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -6343,7 +6277,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00037"
+        "id": "e00034"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/35:25:interface:1",
@@ -6352,7 +6286,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00038"
+        "id": "e00035"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/38:27:compute:1",
@@ -6361,7 +6295,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00039"
+        "id": "e00036"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/38:16:compute:1",
@@ -6370,7 +6304,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00040"
+        "id": "e00037"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/37:8:value-alias:1",
@@ -6379,7 +6313,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00041"
+        "id": "e00038"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/38:8:value-alias:1",
@@ -6388,7 +6322,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00042"
+        "id": "e00039"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/39:15:compute:1",
@@ -6397,7 +6331,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00043"
+        "id": "e00040"
       },
       {
         "source": "model/70:4:composite:1/35:4:composite:1/39:8:interface:1",
@@ -6406,7 +6340,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00044"
+        "id": "e00041"
       },
       {
         "source": "model/70:4:composite:1/72:8:value-alias:1",
@@ -6415,25 +6349,25 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00045"
+        "id": "e00042"
       },
       {
         "source": "model/70:4:composite:1/73:27:compute:1",
         "target": "model/70:4:composite:1/73:8:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "0",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00046"
+        "id": "e00043"
       },
       {
         "source": "model/70:4:composite:1/73:27:compute:1",
         "target": "model/70:4:composite:1/73:18:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "1",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00047"
+        "id": "e00044"
       },
       {
         "source": "model/70:4:composite:1/73:8:value-alias:1",
@@ -6442,7 +6376,7 @@
         "source_port": "out",
         "target_port": "x",
         "evidence": "source-dependency",
-        "id": "e00048"
+        "id": "e00045"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/45:22:parameter:1",
@@ -6451,7 +6385,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00049"
+        "id": "e00046"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -6460,7 +6394,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00050"
+        "id": "e00047"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/50:32:compute:1",
@@ -6469,16 +6403,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00051"
-      },
-      {
-        "source": "model/70:4:composite:1/49:4:composite:1/50:52:compute:1",
-        "target": "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "kw:dim",
-        "evidence": "source-dependency",
-        "id": "e00052"
+        "id": "e00048"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
@@ -6487,7 +6412,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00053"
+        "id": "e00049"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/50:8:value-alias:1",
@@ -6496,34 +6421,25 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00054"
-      },
-      {
-        "source": "model/70:4:composite:1/49:4:composite:1/51:55:compute:1",
-        "target": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
-        "kind": "data",
-        "source_port": "out",
-        "target_port": "kw:dim",
-        "evidence": "source-dependency",
-        "id": "e00055"
+        "id": "e00050"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
         "target": "model/70:4:composite:1/49:4:composite:1/51:8:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "0",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00056"
+        "id": "e00051"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
         "target": "model/70:4:composite:1/49:4:composite:1/51:18:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "1",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00057"
+        "id": "e00052"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:18:value-alias:1",
@@ -6532,7 +6448,7 @@
         "source_port": "out",
         "target_port": "receiver",
         "evidence": "source-dependency",
-        "id": "e00058"
+        "id": "e00053"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:compute:2",
@@ -6541,7 +6457,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00059"
+        "id": "e00054"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:compute:1",
@@ -6550,7 +6466,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00060"
+        "id": "e00055"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
@@ -6559,7 +6475,7 @@
         "source_port": "out",
         "target_port": "true",
         "evidence": "source-dependency",
-        "id": "e00061"
+        "id": "e00056"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/47:17:parameter:1",
@@ -6568,7 +6484,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00062"
+        "id": "e00057"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -6577,7 +6493,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00063"
+        "id": "e00058"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/55:16:compute:1",
@@ -6586,7 +6502,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00064"
+        "id": "e00059"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
@@ -6595,7 +6511,7 @@
         "source_port": "out",
         "target_port": "false",
         "evidence": "source-dependency",
-        "id": "e00065"
+        "id": "e00060"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/46:17:parameter:1",
@@ -6604,7 +6520,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00066"
+        "id": "e00061"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -6613,7 +6529,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00067"
+        "id": "e00062"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/57:16:compute:1",
@@ -6622,7 +6538,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00068"
+        "id": "e00063"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:1/55:12:value-alias:1",
@@ -6635,7 +6551,7 @@
           "branch": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
           "outcome": "true"
         },
-        "id": "e00069"
+        "id": "e00064"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:composite:2/57:12:value-alias:1",
@@ -6648,7 +6564,7 @@
           "branch": "model/70:4:composite:1/49:4:composite:1/54:11:control:1",
           "outcome": "false"
         },
-        "id": "e00070"
+        "id": "e00065"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/54:8:value-alias:1",
@@ -6657,7 +6573,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00071"
+        "id": "e00066"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/51:8:value-alias:1",
@@ -6666,7 +6582,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00072"
+        "id": "e00067"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/58:15:compute:1",
@@ -6675,7 +6591,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00073"
+        "id": "e00068"
       },
       {
         "source": "model/70:4:composite:1/49:4:composite:1/58:8:interface:1",
@@ -6684,7 +6600,7 @@
         "source_port": "out",
         "target_port": "value",
         "evidence": "source-dependency",
-        "id": "e00074"
+        "id": "e00069"
       },
       {
         "source": "model/70:4:composite:1/68:22:parameter:1",
@@ -6693,7 +6609,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "framework-contract",
-        "id": "e00075"
+        "id": "e00070"
       },
       {
         "source": "model/70:4:composite:1/74:8:value-alias:1",
@@ -6702,7 +6618,7 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00076"
+        "id": "e00071"
       },
       {
         "source": "model/70:4:composite:1/75:15:compute:3",
@@ -6711,7 +6627,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00077"
+        "id": "e00072"
       },
       {
         "source": "model/70:4:composite:1/71:8:value-alias:1",
@@ -6720,7 +6636,7 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00078"
+        "id": "e00073"
       },
       {
         "source": "model/70:4:composite:1/75:15:compute:2",
@@ -6729,7 +6645,7 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00079"
+        "id": "e00074"
       },
       {
         "source": "model/70:4:composite:1/73:18:value-alias:1",
@@ -6738,7 +6654,7 @@
         "source_port": "out",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00080"
+        "id": "e00075"
       },
       {
         "source": "model/70:4:composite:1/75:15:compute:1",
@@ -6747,7 +6663,7 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00081"
+        "id": "e00076"
       }
     ],
     "findings": [
@@ -6771,13 +6687,13 @@
           "matmul → scale → softmax → matmul operand path; Q/K/V and head identities are not asserted"
         ],
         "excluded": [],
-        "rule_version": "architecture-rules/1",
+        "rule_version": "architecture-rules/3",
         "evidence_scope": "source-dependencies",
         "presentation": "group",
         "parent": "model/70:4:composite:1/19:4:composite:1"
       },
       {
-        "id": "architecture:residual-postnorm:4368429a",
+        "id": "architecture:residual-postnorm:c374666e",
         "rule": "residual-postnorm",
         "label": "Residual · Post-Norm",
         "members": [
@@ -6786,13 +6702,10 @@
           "model/70:4:composite:1/19:4:composite:1/24:24:compute:1",
           "model/70:4:composite:1/19:4:composite:1/22:12:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:17:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/24:50:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:17:compute:2",
           "model/70:4:composite:1/19:4:composite:1/20:12:compute:1",
           "model/70:4:composite:1/19:4:composite:1/23:33:compute:1",
           "model/70:4:composite:1/19:4:composite:1/21:12:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/23:45:compute:1",
-          "model/70:4:composite:1/19:4:composite:1/23:49:compute:1",
           "model/70:4:composite:1/19:4:composite:1/26:25:compute:1",
           "model/70:4:composite:1/19:4:composite:1/26:15:compute:1"
         ],
@@ -6809,7 +6722,7 @@
         "excluded": [
           "model/70:4:composite:1/19:4:composite:1/19:22:interface:1"
         ],
-        "rule_version": "architecture-rules/1",
+        "rule_version": "architecture-rules/3",
         "evidence_scope": "source-dependencies",
         "presentation": "group",
         "parent": "model/70:4:composite:1/19:4:composite:1"
@@ -6832,13 +6745,13 @@
           "sigmoid output is an explicit operand of multiplication; no LSTM claim"
         ],
         "excluded": [],
-        "rule_version": "architecture-rules/1",
+        "rule_version": "architecture-rules/3",
         "evidence_scope": "source-dependencies",
         "presentation": "group",
         "parent": "model/70:4:composite:1/35:4:composite:1"
       },
       {
-        "id": "architecture:residual:dd2d53ee",
+        "id": "architecture:residual:76b17fbe",
         "rule": "residual",
         "label": "Residual",
         "members": [
@@ -6848,9 +6761,7 @@
           "model/70:4:composite:1/49:4:composite:1/51:8:value-alias:1",
           "model/70:4:composite:1/49:4:composite:1/51:28:compute:1",
           "model/70:4:composite:1/49:4:composite:1/50:18:compute:1",
-          "model/70:4:composite:1/49:4:composite:1/51:55:compute:1",
           "model/70:4:composite:1/49:4:composite:1/50:32:compute:1",
-          "model/70:4:composite:1/49:4:composite:1/50:52:compute:1",
           "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
           "model/70:4:composite:1/73:8:value-alias:1",
           "model/70:4:composite:1/73:27:compute:1",
@@ -6875,7 +6786,7 @@
         "excluded": [
           "model/70:4:composite:1/19:4:composite:1/26:15:compute:1"
         ],
-        "rule_version": "architecture-rules/1",
+        "rule_version": "architecture-rules/3",
         "evidence_scope": "source-dependencies",
         "presentation": "group",
         "parent": "model/70:4:composite:1"
@@ -6891,50 +6802,58 @@
     "bounds": {
       "x": -28,
       "y": -30,
-      "w": 928,
-      "h": 2002
+      "w": 1680,
+      "h": 856
     },
     "nodes": [
       {
         "id": "model/70:4:composite:1",
         "x": 32,
         "y": 30,
-        "w": 480,
-        "h": 1882,
+        "w": 1560,
+        "h": 736,
         "expanded": true,
+        "header": 74,
         "cyclic": false
       },
       {
         "id": "model/70:4:composite:1/70:22:interface:1",
-        "x": 122,
-        "y": 104,
+        "x": 64,
+        "y": 323,
         "w": 130,
         "h": 42,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 0,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/70:25:interface:1",
-        "x": 292,
-        "y": 104,
+        "x": 234,
+        "y": 323,
         "w": 130,
         "h": 42,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 0,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1",
-        "x": 118,
-        "y": 222,
+        "x": 440,
+        "y": 136,
         "w": 308,
         "h": 416,
         "expanded": true,
-        "cyclic": false
+        "header": 74,
+        "cyclic": false,
+        "topological_rank": 1,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
-        "x": 207,
-        "y": 296,
+        "x": 529,
+        "y": 210,
         "w": 130,
         "h": 42,
         "expanded": false,
@@ -6942,17 +6861,17 @@
       },
       {
         "id": "model/70:4:composite:1/19:4:composite:1/26:8:interface:1",
-        "x": 207,
-        "y": 564,
+        "x": 529,
+        "y": 478,
         "w": 130,
         "h": 42,
         "expanded": false,
         "cyclic": false
       },
       {
-        "id": "architecture:residual-postnorm:4368429a",
-        "x": 150,
-        "y": 414,
+        "id": "architecture:residual-postnorm:c374666e",
+        "x": 472,
+        "y": 328,
         "w": 244,
         "h": 74,
         "expanded": false,
@@ -6960,94 +6879,115 @@
       },
       {
         "id": "model/70:4:composite:1/75:15:compute:1",
-        "x": 162,
-        "y": 1688,
+        "x": 1082,
+        "y": 660,
         "w": 220,
         "h": 74,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 3,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/75:8:interface:1",
-        "x": 207,
-        "y": 1838,
+        "x": 529,
+        "y": 676,
         "w": 130,
         "h": 42,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 4,
+        "arrangement": "folded-ranks"
       },
       {
-        "id": "architecture:residual:dd2d53ee",
-        "x": 64,
-        "y": 714,
-        "w": 416,
-        "h": 898,
+        "id": "architecture:residual:76b17fbe",
+        "x": 824,
+        "y": 104,
+        "w": 736,
+        "h": 480,
         "expanded": true,
-        "cyclic": false
+        "header": 74,
+        "cyclic": false,
+        "topological_rank": 2,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/35:4:composite:1",
-        "x": 150,
-        "y": 788,
+        "x": 856,
+        "y": 178,
         "w": 244,
         "h": 74,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 0,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/73:27:compute:1",
-        "x": 162,
-        "y": 938,
+        "x": 1242,
+        "y": 178,
         "w": 220,
         "h": 74,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 1,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/73:8:value-alias:1",
-        "x": 96,
-        "y": 1088,
+        "x": 1176,
+        "y": 339,
         "w": 156,
         "h": 52,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 2,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/73:18:value-alias:1",
-        "x": 292,
-        "y": 1088,
+        "x": 1372,
+        "y": 339,
         "w": 156,
         "h": 52,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 2,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/49:4:composite:1",
-        "x": 150,
-        "y": 1216,
+        "x": 856,
+        "y": 328,
         "w": 244,
         "h": 74,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 3,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/75:15:compute:2",
-        "x": 240,
-        "y": 1516,
+        "x": 1320,
+        "y": 483,
         "w": 64,
         "h": 64,
         "symbol": "+",
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 5,
+        "arrangement": "folded-ranks"
       },
       {
         "id": "model/70:4:composite:1/75:15:compute:3",
-        "x": 162,
-        "y": 1366,
+        "x": 868,
+        "y": 478,
         "w": 220,
         "h": 74,
         "expanded": false,
-        "cyclic": false
+        "cyclic": false,
+        "topological_rank": 4,
+        "arrangement": "folded-ranks"
       }
     ],
     "edges": [
@@ -7068,32 +7008,32 @@
         "route": {
           "points": [
             {
-              "x": 187,
-              "y": 146
+              "x": 129,
+              "y": 323
             },
             {
-              "x": 187,
-              "y": 280
+              "x": 129,
+              "y": 268
             },
             {
-              "x": 272,
-              "y": 280
+              "x": 561.3333333333334,
+              "y": 268
             },
             {
-              "x": 272,
-              "y": 296
+              "x": 561.3333333333334,
+              "y": 252
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "top",
+          "target_side": "bottom"
         }
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
-        "target": "architecture:residual-postnorm:4368429a",
+        "target": "architecture:residual-postnorm:c374666e",
         "kind": "data",
         "source_port": "out",
         "target_port": "arg:0",
@@ -7108,20 +7048,20 @@
         "route": {
           "points": [
             {
-              "x": 242.6,
-              "y": 338
+              "x": 577.6666666666666,
+              "y": 252
             },
             {
-              "x": 242.6,
-              "y": 398
+              "x": 577.6666666666666,
+              "y": 312
             },
             {
-              "x": 208.4,
-              "y": 398
+              "x": 530.4,
+              "y": 312
             },
             {
-              "x": 208.4,
-              "y": 414
+              "x": 530.4,
+              "y": 328
             }
           ],
           "ok": true,
@@ -7133,7 +7073,7 @@
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
-        "target": "architecture:residual-postnorm:4368429a",
+        "target": "architecture:residual-postnorm:c374666e",
         "kind": "data",
         "source_port": "out",
         "target_port": "arg:0",
@@ -7148,20 +7088,20 @@
         "route": {
           "points": [
             {
-              "x": 262.2,
-              "y": 338
+              "x": 594,
+              "y": 252
             },
             {
-              "x": 262.2,
-              "y": 398
+              "x": 594,
+              "y": 312
             },
             {
-              "x": 250.8,
-              "y": 398
+              "x": 572.8,
+              "y": 312
             },
             {
-              "x": 250.8,
-              "y": 414
+              "x": 572.8,
+              "y": 328
             }
           ],
           "ok": true,
@@ -7173,7 +7113,7 @@
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
-        "target": "architecture:residual-postnorm:4368429a",
+        "target": "architecture:residual-postnorm:c374666e",
         "kind": "data",
         "source_port": "out",
         "target_port": "arg:0",
@@ -7188,20 +7128,20 @@
         "route": {
           "points": [
             {
-              "x": 281.8,
-              "y": 338
+              "x": 610.3333333333334,
+              "y": 252
             },
             {
-              "x": 281.8,
-              "y": 398
+              "x": 610.3333333333334,
+              "y": 312
             },
             {
-              "x": 293.2,
-              "y": 398
+              "x": 615.2,
+              "y": 312
             },
             {
-              "x": 293.2,
-              "y": 414
+              "x": 615.2,
+              "y": 328
             }
           ],
           "ok": true,
@@ -7213,14 +7153,14 @@
       },
       {
         "source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
-        "target": "architecture:residual-postnorm:4368429a",
+        "target": "architecture:residual-postnorm:c374666e",
         "kind": "data",
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00023",
+        "id": "e00020",
         "originals": [
-          "e00023"
+          "e00020"
         ],
         "canonical_source": "model/70:4:composite:1/19:4:composite:1/19:22:interface:1",
         "canonical_target": "model/70:4:composite:1/19:4:composite:1/26:25:compute:1",
@@ -7228,20 +7168,20 @@
         "route": {
           "points": [
             {
-              "x": 301.4,
-              "y": 338
+              "x": 626.6666666666666,
+              "y": 252
             },
             {
-              "x": 301.4,
-              "y": 398
+              "x": 626.6666666666666,
+              "y": 312
             },
             {
-              "x": 335.6,
-              "y": 398
+              "x": 657.6,
+              "y": 312
             },
             {
-              "x": 335.6,
-              "y": 414
+              "x": 657.6,
+              "y": 328
             }
           ],
           "ok": true,
@@ -7252,15 +7192,15 @@
         }
       },
       {
-        "source": "architecture:residual-postnorm:4368429a",
+        "source": "architecture:residual-postnorm:c374666e",
         "target": "model/70:4:composite:1/19:4:composite:1/26:8:interface:1",
         "kind": "interface-binding",
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00029",
+        "id": "e00026",
         "originals": [
-          "e00029"
+          "e00026"
         ],
         "canonical_source": "model/70:4:composite:1/19:4:composite:1/26:15:compute:1",
         "canonical_target": "model/70:4:composite:1/19:4:composite:1/26:8:interface:1",
@@ -7268,12 +7208,20 @@
         "route": {
           "points": [
             {
-              "x": 272,
-              "y": 488
+              "x": 594,
+              "y": 402
             },
             {
-              "x": 272,
-              "y": 564
+              "x": 594,
+              "y": 462
+            },
+            {
+              "x": 577.6666666666666,
+              "y": 462
+            },
+            {
+              "x": 577.6666666666666,
+              "y": 478
             }
           ],
           "ok": true,
@@ -7290,10 +7238,10 @@
         "source_port": "out",
         "target_port": "x",
         "evidence": "source-dependency",
-        "id": "e00031",
+        "id": "e00028",
         "originals": [
-          "e00030",
-          "e00031"
+          "e00027",
+          "e00028"
         ],
         "canonical_source": "model/70:4:composite:1/71:8:value-alias:1",
         "canonical_target": "model/70:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -7301,27 +7249,35 @@
         "route": {
           "points": [
             {
-              "x": 255.66666666666666,
-              "y": 606
+              "x": 610.3333333333334,
+              "y": 478
             },
             {
-              "x": 255.66666666666666,
-              "y": 772
+              "x": 610.3333333333334,
+              "y": 462
             },
             {
-              "x": 236.66666666666666,
-              "y": 772
+              "x": 846,
+              "y": 462
             },
             {
-              "x": 236.66666666666666,
-              "y": 788
+              "x": 846,
+              "y": 268
+            },
+            {
+              "x": 942.6666666666666,
+              "y": 268
+            },
+            {
+              "x": 942.6666666666666,
+              "y": 252
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "top",
+          "target_side": "bottom"
         }
       },
       {
@@ -7331,9 +7287,9 @@
         "source_port": "out",
         "target_port": "state",
         "evidence": "source-dependency",
-        "id": "e00032",
+        "id": "e00029",
         "originals": [
-          "e00032"
+          "e00029"
         ],
         "canonical_source": "model/70:4:composite:1/70:25:interface:1",
         "canonical_target": "model/70:4:composite:1/35:4:composite:1/35:25:interface:1",
@@ -7341,35 +7297,35 @@
         "route": {
           "points": [
             {
-              "x": 357,
-              "y": 146
+              "x": 299,
+              "y": 323
             },
             {
-              "x": 357,
-              "y": 162
+              "x": 299,
+              "y": 126
             },
             {
-              "x": 436,
-              "y": 162
+              "x": 854,
+              "y": 126
             },
             {
-              "x": 436,
-              "y": 772
+              "x": 854,
+              "y": 268
             },
             {
-              "x": 307.3333333333333,
-              "y": 772
+              "x": 1013.3333333333333,
+              "y": 268
             },
             {
-              "x": 307.3333333333333,
-              "y": 788
+              "x": 1013.3333333333333,
+              "y": 252
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "top",
+          "target_side": "bottom"
         }
       },
       {
@@ -7379,10 +7335,10 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00045",
+        "id": "e00042",
         "originals": [
-          "e00044",
-          "e00045"
+          "e00041",
+          "e00042"
         ],
         "canonical_source": "model/70:4:composite:1/72:8:value-alias:1",
         "canonical_target": "model/70:4:composite:1/73:27:compute:1",
@@ -7390,31 +7346,31 @@
         "route": {
           "points": [
             {
-              "x": 272,
-              "y": 862
+              "x": 1100,
+              "y": 215
             },
             {
-              "x": 272,
-              "y": 938
+              "x": 1242,
+              "y": 215
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "right",
+          "target_side": "left"
         }
       },
       {
         "source": "model/70:4:composite:1/73:27:compute:1",
         "target": "model/70:4:composite:1/73:8:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "0",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00046",
+        "id": "e00043",
         "originals": [
-          "e00046"
+          "e00043"
         ],
         "canonical_source": "model/70:4:composite:1/73:27:compute:1",
         "canonical_target": "model/70:4:composite:1/73:8:value-alias:1",
@@ -7422,20 +7378,20 @@
         "route": {
           "points": [
             {
-              "x": 240.66666666666666,
-              "y": 1012
+              "x": 1320.6666666666667,
+              "y": 252
             },
             {
-              "x": 240.66666666666666,
-              "y": 1072
+              "x": 1320.6666666666667,
+              "y": 323
             },
             {
-              "x": 174,
-              "y": 1072
+              "x": 1254,
+              "y": 323
             },
             {
-              "x": 174,
-              "y": 1088
+              "x": 1254,
+              "y": 339
             }
           ],
           "ok": true,
@@ -7449,12 +7405,12 @@
         "source": "model/70:4:composite:1/73:27:compute:1",
         "target": "model/70:4:composite:1/73:18:value-alias:1",
         "kind": "alias",
-        "source_port": "out",
+        "source_port": "1",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00047",
+        "id": "e00044",
         "originals": [
-          "e00047"
+          "e00044"
         ],
         "canonical_source": "model/70:4:composite:1/73:27:compute:1",
         "canonical_target": "model/70:4:composite:1/73:18:value-alias:1",
@@ -7462,20 +7418,20 @@
         "route": {
           "points": [
             {
-              "x": 303.3333333333333,
-              "y": 1012
+              "x": 1383.3333333333333,
+              "y": 252
             },
             {
-              "x": 303.3333333333333,
-              "y": 1072
+              "x": 1383.3333333333333,
+              "y": 323
             },
             {
-              "x": 370,
-              "y": 1072
+              "x": 1450,
+              "y": 323
             },
             {
-              "x": 370,
-              "y": 1088
+              "x": 1450,
+              "y": 339
             }
           ],
           "ok": true,
@@ -7492,9 +7448,9 @@
         "source_port": "out",
         "target_port": "x",
         "evidence": "source-dependency",
-        "id": "e00048",
+        "id": "e00045",
         "originals": [
-          "e00048"
+          "e00045"
         ],
         "canonical_source": "model/70:4:composite:1/73:8:value-alias:1",
         "canonical_target": "model/70:4:composite:1/49:4:composite:1/49:22:interface:1",
@@ -7502,27 +7458,19 @@
         "route": {
           "points": [
             {
-              "x": 174,
-              "y": 1140
+              "x": 1176,
+              "y": 365
             },
             {
-              "x": 174,
-              "y": 1200
-            },
-            {
-              "x": 272,
-              "y": 1200
-            },
-            {
-              "x": 272,
-              "y": 1216
+              "x": 1100,
+              "y": 365
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "left",
+          "target_side": "right"
         }
       },
       {
@@ -7532,10 +7480,10 @@
         "source_port": "out",
         "target_port": "arg:0",
         "evidence": "source-dependency",
-        "id": "e00076",
+        "id": "e00071",
         "originals": [
-          "e00074",
-          "e00076"
+          "e00069",
+          "e00071"
         ],
         "canonical_source": "model/70:4:composite:1/74:8:value-alias:1",
         "canonical_target": "model/70:4:composite:1/75:15:compute:3",
@@ -7543,12 +7491,12 @@
         "route": {
           "points": [
             {
-              "x": 272,
-              "y": 1290
+              "x": 978,
+              "y": 402
             },
             {
-              "x": 272,
-              "y": 1366
+              "x": 978,
+              "y": 478
             }
           ],
           "ok": true,
@@ -7565,9 +7513,9 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00077",
+        "id": "e00072",
         "originals": [
-          "e00077"
+          "e00072"
         ],
         "canonical_source": "model/70:4:composite:1/75:15:compute:3",
         "canonical_target": "model/70:4:composite:1/75:15:compute:2",
@@ -7575,27 +7523,27 @@
         "route": {
           "points": [
             {
-              "x": 272,
-              "y": 1440
+              "x": 1088,
+              "y": 515
             },
             {
-              "x": 272,
-              "y": 1500.4475744901354
+              "x": 1104,
+              "y": 515
             },
             {
-              "x": 266.6666666666667,
-              "y": 1500.4475744901354
+              "x": 1104,
+              "y": 509
             },
             {
-              "x": 266.6666666666667,
-              "y": 1516.4475744901354
+              "x": 1320.5675327089966,
+              "y": 509
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "right",
+          "target_side": "left"
         }
       },
       {
@@ -7605,10 +7553,10 @@
         "source_port": "out",
         "target_port": "2",
         "evidence": "source-dependency",
-        "id": "e00078",
+        "id": "e00073",
         "originals": [
-          "e00030",
-          "e00078"
+          "e00027",
+          "e00073"
         ],
         "canonical_source": "model/70:4:composite:1/71:8:value-alias:1",
         "canonical_target": "model/70:4:composite:1/75:15:compute:2",
@@ -7616,35 +7564,35 @@
         "route": {
           "points": [
             {
-              "x": 288.3333333333333,
-              "y": 606
+              "x": 659,
+              "y": 499
             },
             {
-              "x": 288.3333333333333,
-              "y": 622
+              "x": 675,
+              "y": 499
             },
             {
-              "x": 458,
-              "y": 622
+              "x": 675,
+              "y": 468
             },
             {
-              "x": 458,
-              "y": 1500.4475744901354
+              "x": 1304.5675327089966,
+              "y": 468
             },
             {
-              "x": 277.3333333333333,
-              "y": 1500.4475744901354
+              "x": 1304.5675327089966,
+              "y": 521
             },
             {
-              "x": 277.3333333333333,
-              "y": 1516.4475744901354
+              "x": 1320.5675327089966,
+              "y": 521
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "right",
+          "target_side": "left"
         }
       },
       {
@@ -7654,9 +7602,9 @@
         "source_port": "out",
         "target_port": "0",
         "evidence": "source-dependency",
-        "id": "e00079",
+        "id": "e00074",
         "originals": [
-          "e00079"
+          "e00074"
         ],
         "canonical_source": "model/70:4:composite:1/75:15:compute:2",
         "canonical_target": "model/70:4:composite:1/75:15:compute:1",
@@ -7664,20 +7612,20 @@
         "route": {
           "points": [
             {
-              "x": 272,
-              "y": 1580
+              "x": 1352,
+              "y": 547
             },
             {
-              "x": 272,
-              "y": 1672
+              "x": 1352,
+              "y": 644
             },
             {
-              "x": 240.66666666666666,
-              "y": 1672
+              "x": 1160.6666666666667,
+              "y": 644
             },
             {
-              "x": 240.66666666666666,
-              "y": 1688
+              "x": 1160.6666666666667,
+              "y": 660
             }
           ],
           "ok": true,
@@ -7694,9 +7642,9 @@
         "source_port": "out",
         "target_port": "1",
         "evidence": "source-dependency",
-        "id": "e00080",
+        "id": "e00075",
         "originals": [
-          "e00080"
+          "e00075"
         ],
         "canonical_source": "model/70:4:composite:1/73:18:value-alias:1",
         "canonical_target": "model/70:4:composite:1/75:15:compute:1",
@@ -7704,28 +7652,20 @@
         "route": {
           "points": [
             {
-              "x": 370,
-              "y": 1140
+              "x": 1450,
+              "y": 391
             },
             {
-              "x": 370,
-              "y": 1156
+              "x": 1450,
+              "y": 644
             },
             {
-              "x": 404,
-              "y": 1156
+              "x": 1223.3333333333333,
+              "y": 644
             },
             {
-              "x": 404,
-              "y": 1672
-            },
-            {
-              "x": 303.3333333333333,
-              "y": 1672
-            },
-            {
-              "x": 303.3333333333333,
-              "y": 1688
+              "x": 1223.3333333333333,
+              "y": 660
             }
           ],
           "ok": true,
@@ -7742,9 +7682,9 @@
         "source_port": "out",
         "target_port": "in",
         "evidence": "source-dependency",
-        "id": "e00081",
+        "id": "e00076",
         "originals": [
-          "e00081"
+          "e00076"
         ],
         "canonical_source": "model/70:4:composite:1/75:15:compute:1",
         "canonical_target": "model/70:4:composite:1/75:8:interface:1",
@@ -7752,19 +7692,19 @@
         "route": {
           "points": [
             {
-              "x": 272,
-              "y": 1762
+              "x": 1082,
+              "y": 697
             },
             {
-              "x": 272,
-              "y": 1838
+              "x": 659,
+              "y": 697
             }
           ],
           "ok": true,
           "reason": null,
           "feedback": false,
-          "source_side": "bottom",
-          "target_side": "top"
+          "source_side": "left",
+          "target_side": "right"
         }
       }
     ],
@@ -7774,91 +7714,86 @@
         "e00002",
         "e00005",
         "e00008",
-        "e00023",
+        "e00020",
+        "e00026",
+        "e00028",
         "e00029",
-        "e00031",
-        "e00032",
+        "e00042",
+        "e00043",
+        "e00044",
         "e00045",
-        "e00046",
-        "e00047",
-        "e00048",
-        "e00076",
-        "e00077",
-        "e00078",
-        "e00079",
-        "e00080",
-        "e00081"
+        "e00071",
+        "e00072",
+        "e00073",
+        "e00074",
+        "e00075",
+        "e00076"
       ],
       "internal": [
         "e00010",
         "e00011",
         "e00012",
         "e00013",
-        "e00014",
         "e00015",
         "e00017",
         "e00018",
-        "e00020",
-        "e00021",
+        "e00022",
+        "e00023",
         "e00025",
-        "e00026",
-        "e00028",
-        "e00034",
+        "e00031",
+        "e00032",
         "e00035",
+        "e00036",
         "e00038",
         "e00039",
-        "e00041",
-        "e00042",
-        "e00043",
+        "e00040",
+        "e00047",
+        "e00048",
         "e00050",
         "e00051",
         "e00052",
+        "e00053",
         "e00054",
         "e00055",
         "e00056",
-        "e00057",
         "e00058",
-        "e00059",
         "e00060",
-        "e00061",
-        "e00063",
+        "e00062",
+        "e00064",
         "e00065",
+        "e00066",
         "e00067",
-        "e00069",
-        "e00070",
-        "e00071",
-        "e00072",
-        "e00073"
+        "e00068"
       ],
       "excluded": [],
       "contracted": [
         "e00003",
         "e00006",
         "e00009",
+        "e00014",
         "e00016",
         "e00019",
-        "e00022",
-        "e00030",
-        "e00036",
-        "e00040",
-        "e00044",
-        "e00053",
-        "e00064",
-        "e00068",
-        "e00074"
+        "e00027",
+        "e00033",
+        "e00037",
+        "e00041",
+        "e00049",
+        "e00059",
+        "e00063",
+        "e00069"
       ],
       "attached": [
         "e00001",
         "e00004",
         "e00007",
+        "e00021",
         "e00024",
-        "e00027",
-        "e00033",
-        "e00037",
-        "e00049",
-        "e00062",
-        "e00066",
-        "e00075"
+        "e00030",
+        "e00034",
+        "e00046",
+        "e00057",
+        "e00061",
+        "e00070"
       ]
     }
   },

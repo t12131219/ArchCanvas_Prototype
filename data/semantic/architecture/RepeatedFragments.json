@@ -44,7 +44,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "RepeatedFragments"
     },
     {
       "id": "model/138:4:composite:1/138:22:interface:1",
@@ -126,7 +127,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "one",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "BrokenCell"
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:1/35:22:interface:1",
@@ -209,7 +211,13 @@
       "operator": "linear",
       "module_path": "one.a",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:1/32:17:parameter:1",
@@ -264,6 +272,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.a(x)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -319,7 +335,13 @@
       "operator": "linear",
       "module_path": "one.b",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:1/33:17:parameter:1",
@@ -374,6 +396,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.b(state)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -506,7 +536,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "two",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "BrokenCell"
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:2/35:22:interface:1",
@@ -589,7 +620,13 @@
       "operator": "linear",
       "module_path": "two.a",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:2/32:17:parameter:1",
@@ -644,6 +681,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.a(x)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -699,7 +744,13 @@
       "operator": "linear",
       "module_path": "two.b",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:2/33:17:parameter:1",
@@ -754,6 +805,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.b(state)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -886,7 +945,8 @@
       "runtime_evidence": [],
       "semantic_type": "source-module",
       "module_path": "three",
-      "constructor": {}
+      "constructor": {},
+      "source_class": "BrokenCell"
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:3/35:22:interface:1",
@@ -969,7 +1029,13 @@
       "operator": "linear",
       "module_path": "three.a",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:3/32:17:parameter:1",
@@ -1024,6 +1090,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.a(x)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -1079,7 +1153,13 @@
       "operator": "linear",
       "module_path": "three.b",
       "framework_type": "torch.nn.Linear",
-      "constructor": {}
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
     },
     {
       "id": "model/138:4:composite:1/35:4:composite:3/33:17:parameter:1",
@@ -1134,6 +1214,14 @@
       "runtime_evidence": [],
       "operator": "activation",
       "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.b(state)"
+          }
+        ],
+        "kwargs": {}
+      },
       "reason": null
     },
     {
@@ -1638,7 +1726,8 @@
   "limitations": [
     "Static edges express source dependencies, not observed tensor bindings.",
     "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
     "Notebook cells are parsed as data; notebook setup/training cells are never executed."
   ],
-  "ir_digest": "289302f2d0a7ad435343b834382eaa72f17e73373f4718baebedb502f36b6dd2"
+  "ir_digest": "e00a3a32086e87eb8b5a3504aba1c715597ef36ad61c43e5e98f72c79d6092fc"
 }

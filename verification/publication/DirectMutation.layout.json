@@ -1,0 +1,1812 @@
+{
+  "schema": "archcanvas-architecture-document/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "DirectMutation",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+      "class": "DirectMutation",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+        "cell": null,
+        "sha256": "8b3a6f39d02c66d95922eed882c8a1d452c7321339f80cee7d824ef8a2309071",
+        "unit_sha256": "8b3a6f39d02c66d95922eed882c8a1d452c7321339f80cee7d824ef8a2309071"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/115:4:composite:1",
+        "kind": "composite",
+        "label": "DirectMutation",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 115,
+            "end_line": 120,
+            "column": 4,
+            "end_column": 38,
+            "symbol": "DirectMutation.forward",
+            "expression": "def forward(self, x, mask):\n    alias = x\n    before = x.shape\n    alias.masked_fill_(mask, 0)\n    after = x.shape\n    return (x, alias, before, after)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "DirectMutation"
+      },
+      {
+        "id": "model/115:4:composite:1/115:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 115,
+            "end_line": 115,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "DirectMutation.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/115:4:composite:1/115:25:interface:1",
+        "kind": "interface",
+        "label": "mask",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 115,
+            "end_line": 115,
+            "column": 25,
+            "end_column": 29,
+            "symbol": "DirectMutation.forward",
+            "expression": "mask"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "mask"
+      },
+      {
+        "id": "model/115:4:composite:1/116:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "alias",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 116,
+            "end_line": 116,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "DirectMutation.forward",
+            "expression": "alias"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/115:4:composite:1/117:17:compute:1",
+        "kind": "compute",
+        "label": "x.shape",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 117,
+            "end_line": 117,
+            "column": 17,
+            "end_column": 24,
+            "symbol": "DirectMutation.forward",
+            "expression": "x.shape"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "x.shape"
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/117:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "before",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 117,
+            "end_line": 117,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "DirectMutation.forward",
+            "expression": "before"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "compute",
+        "label": "masked_fill_",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 118,
+            "end_line": 118,
+            "column": 8,
+            "end_column": 35,
+            "symbol": "DirectMutation.forward",
+            "expression": "alias.masked_fill_(mask, 0)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mask",
+        "function_target": "alias.masked_fill_",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "mask"
+            },
+            0
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "mutable": true,
+        "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+      },
+      {
+        "id": "model/115:4:composite:1/119:16:compute:1",
+        "kind": "compute",
+        "label": "x.shape",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 119,
+            "end_line": 119,
+            "column": 16,
+            "end_column": 23,
+            "symbol": "DirectMutation.forward",
+            "expression": "x.shape"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "x.shape"
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/119:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "after",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 119,
+            "end_line": 119,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "DirectMutation.forward",
+            "expression": "after"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "compute",
+        "label": "structured value",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 120,
+            "end_line": 120,
+            "column": 15,
+            "end_column": 38,
+            "symbol": "DirectMutation.forward",
+            "expression": "(x, alias, before, after)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "structure",
+        "structure_kind": "tuple"
+      },
+      {
+        "id": "model/115:4:composite:1/120:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 120,
+            "end_line": 120,
+            "column": 8,
+            "end_column": 38,
+            "symbol": "DirectMutation.forward",
+            "expression": "return (x, alias, before, after)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/115:4:composite:1/115:22:interface:1",
+        "target": "model/115:4:composite:1/116:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/115:4:composite:1/115:22:interface:1",
+        "target": "model/115:4:composite:1/117:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/115:4:composite:1/117:17:compute:1",
+        "target": "model/115:4:composite:1/117:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/115:4:composite:1/116:8:value-alias:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/115:4:composite:1/115:25:interface:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/115:4:composite:1/116:8:value-alias:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/119:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/115:4:composite:1/119:16:compute:1",
+        "target": "model/115:4:composite:1/119:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/115:4:composite:1/117:8:value-alias:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/115:4:composite:1/119:8:value-alias:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "3",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/115:4:composite:1/120:15:compute:1",
+        "target": "model/115:4:composite:1/120:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      }
+    ],
+    "branches": [],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [
+      {
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+        "line": 118,
+        "kind": "mutation-alias-coverage-unresolved"
+      }
+    ],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "26132be18798214308b984634b948b551e2599a81d509c9becbfc550f90b66bb"
+  },
+  "state": {
+    "mode": "source",
+    "view": "publication",
+    "details": false,
+    "foldSerial": true,
+    "offsets": {},
+    "open": [
+      "model/115:4:composite:1"
+    ]
+  },
+  "architecture": {
+    "schema": "archcanvas-architecture/1",
+    "rule_version": "architecture-rules/2",
+    "canonical_digest": "26132be18798214308b984634b948b551e2599a81d509c9becbfc550f90b66bb",
+    "nodes": [
+      {
+        "id": "model/115:4:composite:1",
+        "kind": "composite",
+        "label": "DirectMutation",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 115,
+            "end_line": 120,
+            "column": 4,
+            "end_column": 38,
+            "symbol": "DirectMutation.forward",
+            "expression": "def forward(self, x, mask):\n    alias = x\n    before = x.shape\n    alias.masked_fill_(mask, 0)\n    after = x.shape\n    return (x, alias, before, after)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "DirectMutation",
+        "paper": {
+          "title": "DirectMutation",
+          "caption": "Module",
+          "lines": [
+            "DirectMutation"
+          ],
+          "captions": [
+            "Module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/115:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 115,
+            "end_line": 115,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "DirectMutation.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/115:25:interface:1",
+        "kind": "interface",
+        "label": "mask",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 115,
+            "end_line": 115,
+            "column": 25,
+            "end_column": 29,
+            "symbol": "DirectMutation.forward",
+            "expression": "mask"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "mask",
+        "paper": {
+          "title": "mask",
+          "caption": "",
+          "lines": [
+            "mask"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/116:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "alias",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 116,
+            "end_line": 116,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "DirectMutation.forward",
+            "expression": "alias"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "alias",
+          "caption": "Value",
+          "lines": [
+            "alias"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/117:17:compute:1",
+        "kind": "compute",
+        "label": "x.shape",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 117,
+            "end_line": 117,
+            "column": 17,
+            "end_column": 24,
+            "symbol": "DirectMutation.forward",
+            "expression": "x.shape"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "x.shape"
+        },
+        "paper": {
+          "title": "x.shape",
+          "caption": "attribute",
+          "lines": [
+            "x.shape"
+          ],
+          "captions": [
+            "attribute"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/117:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "before",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 117,
+            "end_line": 117,
+            "column": 8,
+            "end_column": 14,
+            "symbol": "DirectMutation.forward",
+            "expression": "before"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "before",
+          "caption": "Value",
+          "lines": [
+            "before"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "compute",
+        "label": "masked_fill_",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 118,
+            "end_line": 118,
+            "column": 8,
+            "end_column": 35,
+            "symbol": "DirectMutation.forward",
+            "expression": "alias.masked_fill_(mask, 0)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mask",
+        "function_target": "alias.masked_fill_",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "mask"
+            },
+            0
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "mutable": true,
+        "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved",
+        "paper": {
+          "title": "masked_fill_",
+          "caption": "mask · In-place update",
+          "lines": [
+            "masked_fill_"
+          ],
+          "captions": [
+            "mask · In-place update"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/119:16:compute:1",
+        "kind": "compute",
+        "label": "x.shape",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 119,
+            "end_line": 119,
+            "column": 16,
+            "end_column": 23,
+            "symbol": "DirectMutation.forward",
+            "expression": "x.shape"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "x.shape"
+        },
+        "paper": {
+          "title": "x.shape",
+          "caption": "attribute",
+          "lines": [
+            "x.shape"
+          ],
+          "captions": [
+            "attribute"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/119:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "after",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 119,
+            "end_line": 119,
+            "column": 8,
+            "end_column": 13,
+            "symbol": "DirectMutation.forward",
+            "expression": "after"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "after",
+          "caption": "Value",
+          "lines": [
+            "after"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "compute",
+        "label": "structured value",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 120,
+            "end_line": 120,
+            "column": 15,
+            "end_column": 38,
+            "symbol": "DirectMutation.forward",
+            "expression": "(x, alias, before, after)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "structure",
+        "structure_kind": "tuple",
+        "paper": {
+          "title": "Pack values",
+          "caption": "",
+          "lines": [
+            "Pack values"
+          ],
+          "captions": [],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/115:4:composite:1/120:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/115:4:composite:1",
+        "source_parent": "model/115:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+            "line": 120,
+            "end_line": 120,
+            "column": 8,
+            "end_column": 38,
+            "symbol": "DirectMutation.forward",
+            "expression": "return (x, alias, before, after)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/115:4:composite:1/115:22:interface:1",
+        "target": "model/115:4:composite:1/116:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/115:4:composite:1/115:22:interface:1",
+        "target": "model/115:4:composite:1/117:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/115:4:composite:1/117:17:compute:1",
+        "target": "model/115:4:composite:1/117:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/115:4:composite:1/116:8:value-alias:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/115:4:composite:1/115:25:interface:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/115:4:composite:1/116:8:value-alias:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/119:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/115:4:composite:1/119:16:compute:1",
+        "target": "model/115:4:composite:1/119:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/115:4:composite:1/117:8:value-alias:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/115:4:composite:1/119:8:value-alias:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "3",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/115:4:composite:1/120:15:compute:1",
+        "target": "model/115:4:composite:1/120:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      }
+    ],
+    "findings": [],
+    "limitations": [
+      "Local dependency patterns do not certify arbitrary-input behavior.",
+      "Unknown operations, tuple slots, conditional joins and loop templates remain explicit.",
+      "No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names."
+    ],
+    "publication": {
+      "schema": "archcanvas-publication-plan/1",
+      "structural_regions": 0
+    }
+  },
+  "publication": {
+    "schema": "archcanvas-publication/1",
+    "focus": "model/115:4:composite:1",
+    "auto": true,
+    "open": [
+      "model/115:4:composite:1"
+    ],
+    "budget": 12,
+    "boundary": [],
+    "paper_width_mm": 180,
+    "fit_page": true,
+    "min_font_pt": 8,
+    "unknowns": 0
+  },
+  "layout": {
+    "bounds": {
+      "x": 4,
+      "y": 2,
+      "w": 556,
+      "h": 666
+    },
+    "nodes": [
+      {
+        "id": "model/115:4:composite:1",
+        "x": 32,
+        "y": 30,
+        "title": "DirectMutation",
+        "caption": "Module",
+        "lines": [
+          "DirectMutation"
+        ],
+        "captions": [
+          "Module"
+        ],
+        "font": 16,
+        "fill": "#f1f4fa",
+        "stroke": "#62748c",
+        "category": "module",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 500,
+        "h": 610,
+        "expanded": true,
+        "header": 66,
+        "cyclic": false
+      },
+      {
+        "id": "model/115:4:composite:1/115:22:interface:1",
+        "x": 114,
+        "y": 96,
+        "title": "x",
+        "caption": "",
+        "lines": [
+          "x"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/115:4:composite:1/115:25:interface:1",
+        "x": 296,
+        "y": 96,
+        "title": "mask",
+        "caption": "",
+        "lines": [
+          "mask"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/115:4:composite:1/117:17:compute:1",
+        "x": 56,
+        "y": 200,
+        "title": "x.shape",
+        "caption": "attribute",
+        "lines": [
+          "x.shape"
+        ],
+        "captions": [
+          "attribute"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/115:4:composite:1/118:8:compute:1",
+        "x": 296,
+        "y": 200,
+        "title": "masked_fill_",
+        "caption": "mask · In-place update",
+        "lines": [
+          "masked_fill_"
+        ],
+        "captions": [
+          "mask · In-place update"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/115:4:composite:1/119:16:compute:1",
+        "x": 176,
+        "y": 324,
+        "title": "x.shape",
+        "caption": "attribute",
+        "lines": [
+          "x.shape"
+        ],
+        "captions": [
+          "attribute"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/115:4:composite:1/120:15:compute:1",
+        "x": 176,
+        "y": 448,
+        "title": "Pack values",
+        "caption": "",
+        "lines": [
+          "Pack values"
+        ],
+        "captions": [],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/115:4:composite:1/120:8:interface:1",
+        "x": 205,
+        "y": 572,
+        "title": "return",
+        "caption": "",
+        "lines": [
+          "return"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/115:4:composite:1/115:22:interface:1",
+        "target": "model/115:4:composite:1/117:17:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00001",
+        "originals": [
+          "e00001"
+        ],
+        "canonical_source": "model/115:4:composite:1/115:22:interface:1",
+        "canonical_target": "model/115:4:composite:1/117:17:compute:1",
+        "resolved_source": "model/115:4:composite:1/115:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 160.5,
+              "y": 140
+            },
+            {
+              "x": 160.5,
+              "y": 184
+            },
+            {
+              "x": 162,
+              "y": 184
+            },
+            {
+              "x": 162,
+              "y": 200
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/115:22:interface:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00003",
+        "originals": [
+          "e00000",
+          "e00003"
+        ],
+        "canonical_source": "model/115:4:composite:1/116:8:value-alias:1",
+        "canonical_target": "model/115:4:composite:1/118:8:compute:1",
+        "resolved_source": "model/115:4:composite:1/115:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 191,
+              "y": 140
+            },
+            {
+              "x": 191,
+              "y": 184
+            },
+            {
+              "x": 357,
+              "y": 184
+            },
+            {
+              "x": 357,
+              "y": 200
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/115:25:interface:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00004",
+        "originals": [
+          "e00004"
+        ],
+        "canonical_source": "model/115:4:composite:1/115:25:interface:1",
+        "canonical_target": "model/115:4:composite:1/118:8:compute:1",
+        "resolved_source": "model/115:4:composite:1/115:25:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 373,
+              "y": 140
+            },
+            {
+              "x": 373,
+              "y": 184
+            },
+            {
+              "x": 402,
+              "y": 184
+            },
+            {
+              "x": 402,
+              "y": 200
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/115:22:interface:1",
+        "target": "model/115:4:composite:1/118:8:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00005",
+        "originals": [
+          "e00000",
+          "e00005"
+        ],
+        "canonical_source": "model/115:4:composite:1/116:8:value-alias:1",
+        "canonical_target": "model/115:4:composite:1/118:8:compute:1",
+        "resolved_source": "model/115:4:composite:1/115:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 221.5,
+              "y": 140
+            },
+            {
+              "x": 221.5,
+              "y": 156
+            },
+            {
+              "x": 447,
+              "y": 156
+            },
+            {
+              "x": 447,
+              "y": 200
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/119:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00006",
+        "originals": [
+          "e00006"
+        ],
+        "canonical_source": "model/115:4:composite:1/118:8:compute:1",
+        "canonical_target": "model/115:4:composite:1/119:16:compute:1",
+        "resolved_source": "model/115:4:composite:1/118:8:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 357,
+              "y": 264
+            },
+            {
+              "x": 357,
+              "y": 308
+            },
+            {
+              "x": 282,
+              "y": 308
+            },
+            {
+              "x": 282,
+              "y": 324
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00008",
+        "originals": [
+          "e00008"
+        ],
+        "canonical_source": "model/115:4:composite:1/118:8:compute:1",
+        "canonical_target": "model/115:4:composite:1/120:15:compute:1",
+        "resolved_source": "model/115:4:composite:1/118:8:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 402,
+              "y": 264
+            },
+            {
+              "x": 402,
+              "y": 396
+            },
+            {
+              "x": 228,
+              "y": 396
+            },
+            {
+              "x": 228,
+              "y": 448
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/118:8:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00009",
+        "originals": [
+          "e00009"
+        ],
+        "canonical_source": "model/115:4:composite:1/118:8:compute:1",
+        "canonical_target": "model/115:4:composite:1/120:15:compute:1",
+        "resolved_source": "model/115:4:composite:1/118:8:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 447,
+              "y": 264
+            },
+            {
+              "x": 447,
+              "y": 420
+            },
+            {
+              "x": 264,
+              "y": 420
+            },
+            {
+              "x": 264,
+              "y": 448
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/117:17:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00010",
+        "originals": [
+          "e00002",
+          "e00010"
+        ],
+        "canonical_source": "model/115:4:composite:1/117:8:value-alias:1",
+        "canonical_target": "model/115:4:composite:1/120:15:compute:1",
+        "resolved_source": "model/115:4:composite:1/117:17:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 162,
+              "y": 264
+            },
+            {
+              "x": 162,
+              "y": 408
+            },
+            {
+              "x": 300,
+              "y": 408
+            },
+            {
+              "x": 300,
+              "y": 448
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/119:16:compute:1",
+        "target": "model/115:4:composite:1/120:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "3",
+        "evidence": "source-dependency",
+        "id": "e00011",
+        "originals": [
+          "e00007",
+          "e00011"
+        ],
+        "canonical_source": "model/115:4:composite:1/119:8:value-alias:1",
+        "canonical_target": "model/115:4:composite:1/120:15:compute:1",
+        "resolved_source": "model/115:4:composite:1/119:16:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 282,
+              "y": 388
+            },
+            {
+              "x": 282,
+              "y": 432
+            },
+            {
+              "x": 336,
+              "y": 432
+            },
+            {
+              "x": 336,
+              "y": 448
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/115:4:composite:1/120:15:compute:1",
+        "target": "model/115:4:composite:1/120:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00012",
+        "originals": [
+          "e00012"
+        ],
+        "canonical_source": "model/115:4:composite:1/120:15:compute:1",
+        "canonical_target": "model/115:4:composite:1/120:8:interface:1",
+        "resolved_source": "model/115:4:composite:1/120:15:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 282,
+              "y": 512
+            },
+            {
+              "x": 282,
+              "y": 572
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      }
+    ],
+    "edge_accounting": {
+      "visible": [
+        "e00001",
+        "e00003",
+        "e00004",
+        "e00005",
+        "e00006",
+        "e00008",
+        "e00009",
+        "e00010",
+        "e00011",
+        "e00012"
+      ],
+      "internal": [],
+      "excluded": [],
+      "contracted": [
+        "e00000",
+        "e00002",
+        "e00007"
+      ],
+      "attached": []
+    },
+    "node_accounting": {
+      "visible": [
+        "model/115:4:composite:1",
+        "model/115:4:composite:1/115:22:interface:1",
+        "model/115:4:composite:1/115:25:interface:1",
+        "model/115:4:composite:1/117:17:compute:1",
+        "model/115:4:composite:1/118:8:compute:1",
+        "model/115:4:composite:1/119:16:compute:1",
+        "model/115:4:composite:1/120:15:compute:1",
+        "model/115:4:composite:1/120:8:interface:1"
+      ],
+      "collapsed": [],
+      "contracted": [
+        "model/115:4:composite:1/116:8:value-alias:1",
+        "model/115:4:composite:1/117:8:value-alias:1",
+        "model/115:4:composite:1/119:8:value-alias:1"
+      ],
+      "attached": [],
+      "excluded": []
+    },
+    "representatives": {
+      "model/115:4:composite:1": "model/115:4:composite:1",
+      "model/115:4:composite:1/115:22:interface:1": "model/115:4:composite:1/115:22:interface:1",
+      "model/115:4:composite:1/115:25:interface:1": "model/115:4:composite:1/115:25:interface:1",
+      "model/115:4:composite:1/116:8:value-alias:1": "model/115:4:composite:1",
+      "model/115:4:composite:1/117:17:compute:1": "model/115:4:composite:1/117:17:compute:1",
+      "model/115:4:composite:1/117:8:value-alias:1": "model/115:4:composite:1",
+      "model/115:4:composite:1/118:8:compute:1": "model/115:4:composite:1/118:8:compute:1",
+      "model/115:4:composite:1/119:16:compute:1": "model/115:4:composite:1/119:16:compute:1",
+      "model/115:4:composite:1/119:8:value-alias:1": "model/115:4:composite:1",
+      "model/115:4:composite:1/120:15:compute:1": "model/115:4:composite:1/120:15:compute:1",
+      "model/115:4:composite:1/120:8:interface:1": "model/115:4:composite:1/120:8:interface:1"
+    },
+    "labels": []
+  },
+  "diagnostics": {
+    "route_failures": [],
+    "publication": {
+      "schema": "publication-quality/1",
+      "min_print_font_pt": 11.93,
+      "target_min_font_pt": 8,
+      "requested_width_mm": 180,
+      "width_mm": 180,
+      "height_mm": 215.6,
+      "route_failures": [],
+      "unplaced_port_labels": [],
+      "line_geometry": {
+        "crossings": 7,
+        "overlapping_paths": []
+      },
+      "issues": []
+    }
+  }
+}

@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'frame-ownership':
+        if stage == 'role-frontier':
+            from summarize_role_frontier import main as summarize_stage
+        elif stage == 'frame-ownership':
             from summarize_frame_ownership import main as summarize_stage
         elif stage == 'inline-sequences':
             from summarize_inline_sequences import main as summarize_stage

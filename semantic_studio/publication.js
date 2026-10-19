@@ -210,11 +210,19 @@
     const literalOperands=n.syntax?.type==='BinOp'?['left','right'].filter(side=>Object.hasOwn(n.syntax.fields[side]||{},'literal')).map(side=>side+' operand: '+n.syntax.fields[side].literal):[];
     if(literalOperands.length)caption=literalOperands.join(' · ');
     const symbol=n.kind==='compute'&&!n.mutable&&!literalOperands.length&&(['add','mult','mul'].includes(n.operator)||/^aten\.(add|mul)\./.test(n.operator||''))?(n.operator==='add'||n.operator.startsWith('aten.add.')?'+':'×'):null;
+    if(n.role_annotations?.length&&!['opaque','control'].includes(n.kind)&&!n.mutable&&!n.condition&&!n.identity_display&&!n.observed_calls){
+      const roles=[...new Set(n.role_annotations.map(r=>r.role))],specific=roles.filter(r=>r!=='output');
+      const names=(specific.length?specific:roles).map(r=>r.split('.').at(-1).replaceAll('_',' '));
+      const role=[...new Set(names)].slice(0,2).join(' / ');
+      const operation=n.framework_type?.split('.').at(-1)||n.operator;
+      title=role;if(operation)caption=operation+(caption?' · '+caption:'');
+      else if(n.contract_roles)caption=n.label;
+    }
     const maxWidth=n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
     const lines=wrap(title,n.kind==='composite'?maxWidth-20:maxWidth,font),captions=caption?wrap(caption,maxWidth,13):[];
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
       w:symbol?48:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
-    if(n.content_inventory&&!n.identity_display){
+    if(n.content_inventory&&!n.identity_display&&!n.role_annotations?.length){
       const summary=inventoryCaption(n.content_inventory,opaque,captions.length,maxWidth);
       if(summary){n.paper.caption=summary.text;n.paper.captions=summary.lines;n.paper.caption_scope='unit-inventory';n.paper.layout_caption_rows=captions.length;
         n.paper.inventory_summary={shown_terms:summary.shown_terms,omitted_kinds:summary.omitted_kinds};}
@@ -564,6 +572,7 @@
   function inlinePlan(ir,base){if(!inlinePlans.has(ir)){const engine=root.SemanticSequenceFrontier||(typeof require==='function'?require('./sequence-frontier.js'):null);inlinePlans.set(ir,engine.build(ir,base));}return inlinePlans.get(ir);}
   function project(ir,state,E){
     const canvas=state.paperMedium==='canvas';
+    if(canvas&&state.paperGranularity==='roles'&&state.paperCompact==null)state={...state,paperCompact:true};
     const mode=state.mode||'source',originalPlan=plan(ir),originalIdx=index(originalPlan);
     const relationNode=state.paperRelation?.startsWith('node:')?state.paperRelation.slice(5):originalPlan.relation_graph?.relations.find(r=>r.id===state.paperRelation)?.node;
     const observed=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return true;id=originalIdx.nodes.get(id)?.parent;}return false;};
@@ -591,10 +600,13 @@
       homogeneous:repeat.homogeneous,parameter_sharing:repeat.parameter_sharing,
       structural_group:structuralGroup,
       scope:'one concrete instance; other instances remain in the canonical IR; output equality not asserted'}:null;
-    const granularity=['overview','modules','semantic','detailed'].includes(state.paperGranularity)?state.paperGranularity:'overview';
+    const granularity=['overview','modules','semantic','roles','detailed'].includes(state.paperGranularity)?state.paperGranularity:'overview';
     const focused=focusPlan(ir,base,focus);
     if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);
-    const idx=index(focused.plan),pol=policy(ir,focus,focused.inside),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,detailed:28})[granularity]));
+    const roleEngine=canvas&&granularity==='roles'&&!local?(root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null)):null;
+    const roleFrontier=roleEngine?.compile({plan:focused.plan,focus});
+    if(roleFrontier){focused.plan=roleFrontier.plan;const all=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,all);}
+    const idx=index(focused.plan),pol=policy(ir,focus,focused.inside),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
     if(structuralGroup)decorate(idx.nodes.get(focus),idx);
     // Input/output interfaces of a focused panel are real, named boundaries.
     for(const port of focused.boundary)if(!port.presentation)pol.bindings.delete(port.port_node);
@@ -629,7 +641,7 @@
         const sourceWrapper=id=>{const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(eligible).map(id=>idx.nodes.get(id));return ['source-function','source-module'].includes(n.semantic_type)&&!n.semantic_contracts?.length&&kids.some(n=>n.kind==='composite')&&kids.every(n=>['interface','composite','state','buffer'].includes(n.kind));};
         const cost=id=>idx.nodes.get(id).kind==='interface'?.25:1;
         const used=leaves.reduce((s,id)=>s+cost(id),0);
-        const candidate=containers.filter(id=>{const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(eligible);return !['boundary-interface-group','dependency-band','dependency-panel','serial-repeat'].includes(n.semantic_type)&&(containers.length===1||wrapper(id)||sourceWrapper(id))&&used+kids.reduce((s,id)=>s+cost(id),0)-cost(id)<=budget;}).sort((a,b)=>{
+        const candidate=containers.filter(id=>{if(roleFrontier?.ownerOf(id)&&!roleFrontier.open.has(id))return false;const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(eligible);return !['boundary-interface-group','dependency-band','dependency-panel','serial-repeat'].includes(n.semantic_type)&&(containers.length===1||wrapper(id)||sourceWrapper(id))&&used+kids.reduce((s,id)=>s+cost(id),0)-cost(id)<=budget;}).sort((a,b)=>{
           const score=id=>{const n=idx.nodes.get(id);return (n.semantic_type==='sequential'?10:0)+(n.semantic_type==='structural-region'?-10:0)-(idx.children.get(id)||[]).filter(eligible).length;};return score(b)-score(a);
         })[0];
         if(!candidate)break;
@@ -645,19 +657,27 @@
       if(granularity!=='overview'){
         const frontier=()=>{const leaves=[],todo=[focus];for(let i=0;i<todo.length;i++){const id=todo[i];if(!eligible(id))continue;if(open.includes(id))todo.push(...idx.children.get(id)||[]);else leaves.push(id);}return leaves;};
         const cost=id=>idx.nodes.get(id).kind==='interface'?.25:1;
-        const blocked=n=>granularity==='semantic'&&n.semantic_contracts?.length||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
-        const scopeOf=id=>{let at=idx.nodes.get(id)?.parent;while(at){if(idx.nodes.get(at)?.sequence_frontier)return at;at=idx.nodes.get(at)?.parent;}return null;};
+        const blocked=n=>(roleFrontier?.ownerOf(n.id)?!roleFrontier.open.has(n.id):['semantic','roles'].includes(granularity)&&n.semantic_contracts?.length)||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
+        const scopeOf=id=>{let at=idx.nodes.get(id)?.parent;while(at){if(idx.nodes.get(at)?.sequence_frontier||roleFrontier?.owners.has(at))return at;at=idx.nodes.get(at)?.parent;}return null;};
         const usedIn=scope=>{const seen=new Set();return frontier().reduce((total,id)=>{const localScope=scopeOf(id);if(scope)return total+(localScope===scope?cost(id):0);if(localScope){if(seen.has(localScope))return total;seen.add(localScope);return total+1;}return total+cost(id);},0);};
+        const localUsed=scope=>{
+          if(!roleFrontier)return usedIn(scope);
+          const seen=new Set();return frontier().reduce((total,id)=>{
+            let localScope=scopeOf(id);if(localScope===scope)return total+cost(id);
+            while(localScope&&scopeOf(localScope)!==scope)localScope=scopeOf(localScope);
+            if(!localScope||seen.has(localScope))return total;seen.add(localScope);return total+1;
+          },0);
+        };
         const candidates=frontier().filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible));
         const queue=candidates.slice();
         for(let i=0;i<queue.length&&i<256;i++){
-          const id=queue[i],kids=(idx.children.get(id)||[]).filter(eligible),scope=scopeOf(id),used=usedIn(scope);
+          const id=queue[i],kids=(idx.children.get(id)||[]).filter(eligible),scope=scopeOf(id),used=localUsed(scope);
           // A proved sequence is one unit in its parent's frontier, with its
           // own bounded local detail budget. Concrete suffixes stay folded.
-          const delta=idx.nodes.get(id).sequence_frontier?0:kids.reduce((s,id)=>s+cost(id),0)-cost(id);
-          if(used+delta>budget)continue;
+          const delta=idx.nodes.get(id).sequence_frontier||roleFrontier?.owners.has(id)?0:kids.reduce((s,id)=>s+cost(id),0)-cost(id);
+          if(used+delta>budget||roleFrontier?.owners.has(id)&&kids.reduce((s,id)=>s+cost(id),0)>budget)continue;
           open.push(id);
-          if(granularity==='detailed'||granularity==='semantic')queue.push(...kids.filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
+          if(granularity==='detailed'||granularity==='semantic'||granularity==='roles')queue.push(...kids.filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
         }
       }
     }
@@ -702,6 +722,7 @@
       projected.publication.medium='canvas';
       projected.publication.inline_sequences=base.publication?.inline_sequences||null;
       projected.publication.frame_ownership=projected.frame_ownership||[];
+      if(roleFrontier)projected.publication.role_frontier=roleEngine.receipt(roleFrontier,projected);
       projected.publication.canvas_limits={width_px:limit('width_px',8192,512,16384),height_px:limit('height_px',16384,512,32768),
         area_px2:limit('area_px2',16777216,262144,67108864),nodes:limit('nodes',512,16,2048),edges:limit('edges',2048,16,8192)};
     }

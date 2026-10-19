@@ -16,7 +16,7 @@
   function nodeTitle(n,idx){
     const uses=n.boundary_uses||[];
     const contents=n.content_inventory;
-    return [n.label,...(n.frame_ownership||[]).map(r=>'Source ownership: '+r.label+' ['+r.node+'] · '+r.kind+' · '+r.scope),...(n.source_label?['Source label: '+n.source_label]:[]),
+    return [n.label,...(n.role_annotations||[]).map(r=>'Certified role: '+r.role+' · '+r.certificate+' · '+r.scope),...(n.frame_ownership||[]).map(r=>'Source ownership: '+r.label+' ['+r.node+'] · '+r.kind+' · '+r.scope),...(n.source_label?['Source label: '+n.source_label]:[]),
       ...(n.contract_evidence||[]).flatMap(c=>[c.rule+': '+c.scope,...c.proof,'Not asserted: '+c.not_asserted.join('; ')]),
       ...(n.observed_calls?[`${n.observed_calls.observations.length} observed calls; ${n.observed_calls.basis}`]:[]),
       ...(contents?['Contents of extracted units (unordered; parameter sharing not asserted):',
@@ -151,7 +151,7 @@
     // local: rejected routes must not leak into the cache or reservations.
     const refinement={attempts:0,accepted:[],before_crossings:best.quality.line_geometry.crossings,before_contacts:best.quality.line_geometry.unrelated_contacts.length};
     const segments=routes=>routes.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
-    if((best.quality.line_geometry.crossings||best.quality.line_geometry.unrelated_contacts.length)&&graph.edges.length<=64){
+    if((best.quality.line_geometry.crossings||best.quality.line_geometry.unrelated_contacts.length)&&graph.edges.length<=128){
       const context=graph.positions.context,strategy=best.quality.route_strategy;
       context.portOrder=strategy.startsWith('neighbors')?'neighbors':'canonical';
       context.ancestorPorts=strategy.includes('-header-')?'header':'boundary';
@@ -163,7 +163,7 @@
       // An ambiguous contact costs twice an explicit overpass: replacing one
       // false junction with one crossing improves interpretation. Retain the
       // one-crossing ceiling and require a smaller weighted conflict count.
-      for(const phase of ['crossings','contacts','separation']){
+      for(const phase of (graph.edges.length<=64?['crossings','contacts','separation']:['contacts','separation'])){
       const separation=phase==='separation',crossingCeiling=Math.min(baseline.quality.line_geometry.crossings,best.quality.line_geometry.crossings+1);
       for(let pass=0;pass<(separation?1:2);pass++){
         let improved=false;

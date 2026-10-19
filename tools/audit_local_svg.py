@@ -79,13 +79,15 @@ def main():
         OUT = ROOT / 'verification/symbolic-values/current'
     if '--canvas' in sys.argv:
         OUT = ROOT / 'verification/canvas-medium/current'
+    if '--roles' in sys.argv:
+        OUT = ROOT / 'verification/role-frontier/current'
     if '--frames' in sys.argv:
         OUT = ROOT / 'verification/frame-ownership/current'
     if '--inline' in sys.argv:
         OUT = ROOT / 'verification/inline-sequences/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
-    if '--inline' in sys.argv or '--frames' in sys.argv:
+    if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv:
         sys.path.insert(0, str(ROOT))
         from semantic_adapter.schema import validate_ir
         extraction = json.loads((ROOT / report['extraction']).read_text())
@@ -127,7 +129,7 @@ def main():
         assert hashlib.sha256(source.read_bytes()).hexdigest() == row['svg_sha256']
         document = json.loads((OUT / row['document']).read_text())
         canonical = {e['id']: e for e in document['ir']['edges']}
-        if '--inline' in sys.argv or '--frames' in sys.argv:
+        if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv:
             # JS JSON serialization normalizes 1.0 to 1. Python's existing
             # digest preserves that spelling. Validate the hashed source IR,
             # then independently compare every transported fact by JSON value;
@@ -164,7 +166,7 @@ def main():
                 cuts = [e for e in document['ir']['edges'] if (e['source'] in members) != (e['target'] in members)]
                 assert cuts == n['boundary_ports'], 'suffix lost or modified a canonical boundary'
         tree = ET.parse(source)
-        if '--canvas' in sys.argv or '--inline' in sys.argv or '--frames' in sys.argv:
+        if '--canvas' in sys.argv or '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv:
             assert hashlib.sha256((ROOT / row['input']).read_bytes()).hexdigest() == row['input_sha256']
             assert hashlib.sha256((OUT / row['document']).read_bytes()).hexdigest() == row['document_sha256']
             q = row['quality']
@@ -181,7 +183,7 @@ def main():
                 assert set(values) == {v['id'] for v in document['ir'][key]}
         nodes = {e.attrib['data-node-id']: e for e in tree.iter() if 'data-node-id' in e.attrib}
         paths = {e.attrib['data-edge-id']: e for e in tree.iter() if 'data-edge-id' in e.attrib}
-        if '--frames' in sys.argv:
+        if '--frames' in sys.argv or '--roles' in sys.argv:
             owners = document['layout'].get('frame_ownership', [])
             assert owners == row['frame_ownership'] == document['publication'].get('frame_ownership', [])
             planned = {n['id']: n for n in document['architecture']['nodes']}
@@ -203,6 +205,25 @@ def main():
                 else:
                     assert record['kind'] == 'source-owner'
                     assert owner['semantic_type'] in ['source-module', 'source-function']
+        if '--roles' in sys.argv and row.get('role_frontier'):
+            frontier = row['role_frontier']
+            assert frontier == document['publication']['role_frontier']
+            certificates = {c['id']: c for c in document['ir'].get('semantic_contracts', [])}
+            for role in frontier['roles']:
+                cert = certificates[role['certificate']]
+                value = cert['roles']
+                for key in role['role'].split('.'):
+                    value = value[int(key)] if isinstance(value, list) else value[key]
+                assert value == role['node']
+                assert role['scope'] == cert['scope']
+                if role['status'] in ['exposed', 'boundary']:
+                    assert role['frontier_node'] == role['visible_node'] and role['visible_node'] in nodes
+                    if role['location'] == 'internal':
+                        assert role['role'] in ''.join(nodes[role['visible_node']].find('{http://www.w3.org/2000/svg}title').itertext())
+                        assert role['certificate'] in ''.join(nodes[role['visible_node']].find('{http://www.w3.org/2000/svg}title').itertext())
+                if role['status'] == 'exposed':
+                    assert role['node'] == role['frontier_node']
+            assert not row['quality']['line_geometry']['unrelated_contacts'], 'ambiguous contacts remain in a role view'
         assert len(nodes) == row['nodes']
         assert len(paths) == row['edges']
         measured = {p['id']: p for p in document['layout']['nodes']}

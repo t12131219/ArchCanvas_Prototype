@@ -147,3 +147,5 @@ Linux x86-64 的 Bubblewrap 隔离 network/user/pid/mount，模型源目录和�
 本轮整图序列前沿、语义边界预设及端口对齐规则见 [inline-sequence-frontier.md](inline-sequence-frontier.md)；其中单独记录尚未收敛的参考图差异和跨语言摘要限制。
 
 通用画布中的来源外框简化与恢复规则见 [frame-ownership.md](frame-ownership.md)。该规则只改变展示归属，语义角色与参考图的对应关系仍需单独验收。
+
+通用角色关系粒度见 [role-frontier.md](role-frontier.md)：只消费已有证书角色，保留未知与嵌套契约边界；整体视觉对齐目标尚未完成。

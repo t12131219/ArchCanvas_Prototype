@@ -606,6 +606,9 @@
     const roleEngine=canvas&&granularity==='roles'&&!local?(root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null)):null;
     const roleFrontier=roleEngine?.compile({plan:focused.plan,focus});
     if(roleFrontier){focused.plan=roleFrontier.plan;const all=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,all);}
+    const expressionEngine=roleFrontier?(root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null)):null;
+    const expressions=expressionEngine?.compile({plan:focused.plan,focus});
+    const frontierScopes=new Set(roleFrontier?.owners||[]);
     const idx=index(focused.plan),pol=policy(ir,focus,focused.inside),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
     if(structuralGroup)decorate(idx.nodes.get(focus),idx);
     // Input/output interfaces of a focused panel are real, named boundaries.
@@ -658,7 +661,7 @@
         const frontier=()=>{const leaves=[],todo=[focus];for(let i=0;i<todo.length;i++){const id=todo[i];if(!eligible(id))continue;if(open.includes(id))todo.push(...idx.children.get(id)||[]);else leaves.push(id);}return leaves;};
         const cost=id=>idx.nodes.get(id).kind==='interface'?.25:1;
         const blocked=n=>(roleFrontier?.ownerOf(n.id)?!roleFrontier.open.has(n.id):['semantic','roles'].includes(granularity)&&n.semantic_contracts?.length)||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
-        const scopeOf=id=>{let at=idx.nodes.get(id)?.parent;while(at){if(idx.nodes.get(at)?.sequence_frontier||roleFrontier?.owners.has(at))return at;at=idx.nodes.get(at)?.parent;}return null;};
+        const scopeOf=id=>{let at=idx.nodes.get(id)?.parent;while(at){if(idx.nodes.get(at)?.sequence_frontier||frontierScopes.has(at))return at;at=idx.nodes.get(at)?.parent;}return null;};
         const usedIn=scope=>{const seen=new Set();return frontier().reduce((total,id)=>{const localScope=scopeOf(id);if(scope)return total+(localScope===scope?cost(id):0);if(localScope){if(seen.has(localScope))return total;seen.add(localScope);return total+1;}return total+cost(id);},0);};
         const localUsed=scope=>{
           if(!roleFrontier)return usedIn(scope);
@@ -674,12 +677,13 @@
           const id=queue[i],kids=(idx.children.get(id)||[]).filter(eligible),scope=scopeOf(id),used=localUsed(scope);
           // A proved sequence is one unit in its parent's frontier, with its
           // own bounded local detail budget. Concrete suffixes stay folded.
-          const delta=idx.nodes.get(id).sequence_frontier||roleFrontier?.owners.has(id)?0:kids.reduce((s,id)=>s+cost(id),0)-cost(id);
-          if(used+delta>budget||roleFrontier?.owners.has(id)&&kids.reduce((s,id)=>s+cost(id),0)>budget)continue;
+          const delta=idx.nodes.get(id).sequence_frontier||frontierScopes.has(id)?0:kids.reduce((s,id)=>s+cost(id),0)-cost(id);
+          if(used+delta>budget||frontierScopes.has(id)&&kids.reduce((s,id)=>s+cost(id),0)>budget)continue;
           open.push(id);
           if(granularity==='detailed'||granularity==='semantic'||granularity==='roles')queue.push(...kids.filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
         }
       }
+      if(expressions)open=expressionEngine.select(expressions,{plan:focused.plan,focus,open,budget,eligible,budgetScopes:frontierScopes});
     }
     if(local)open=state.paperCompact&&local.minimal_open?local.minimal_open:local.open;
     // A closed module owns its interface. Contracting that interface would
@@ -723,6 +727,7 @@
       projected.publication.inline_sequences=base.publication?.inline_sequences||null;
       projected.publication.frame_ownership=projected.frame_ownership||[];
       if(roleFrontier)projected.publication.role_frontier=roleEngine.receipt(roleFrontier,projected);
+      if(expressions)projected.publication.local_expressions=expressionEngine.receipt(expressions,projected);
       projected.publication.canvas_limits={width_px:limit('width_px',8192,512,16384),height_px:limit('height_px',16384,512,32768),
         area_px2:limit('area_px2',16777216,262144,67108864),nodes:limit('nodes',512,16,2048),edges:limit('edges',2048,16,8192)};
     }

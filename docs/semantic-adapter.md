@@ -149,3 +149,5 @@ Linux x86-64 的 Bubblewrap 隔离 network/user/pid/mount，模型源目录和�
 通用画布中的来源外框简化与恢复规则见 [frame-ownership.md](frame-ownership.md)。该规则只改变展示归属，语义角色与参考图的对应关系仍需单独验收。
 
 通用角色关系粒度见 [role-frontier.md](role-frontier.md)：只消费已有证书角色，保留未知与嵌套契约边界；整体视觉对齐目标尚未完成。
+
+通用角色前沿现按独立局部关系补充必要展开路径，并在最终路由和标签检查后审核表达兑现；详见 [local-expressions.md](local-expressions.md)。本轮仍未达到专用参考的整体语义与视觉组织。

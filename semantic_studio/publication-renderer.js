@@ -298,6 +298,10 @@
     E.auditConstraintRoutes(g,chosen.prepared.routes);
     g.expression_goals=Goals.build(ir,g.architecture);
     g.expression_coverage=Goals.evaluate(g.expression_goals,g,chosen.prepared);
+    if(g.publication.local_expressions){
+      const expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
+      expressions.verify(g.publication.local_expressions,g,chosen.prepared);
+    }
     return chosen;
   }
   function render(ir,state){

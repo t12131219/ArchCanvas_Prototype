@@ -36,6 +36,8 @@
     const relations=projection.architecture?.relation_graph?.relations||[],receipts=projection.constraint_receipts||[];
     const local=relations.filter(r=>r.node===id||r.members.includes(id));
     if(local.length)$('details').insertAdjacentHTML('beforeend','<details><summary>局部关系与未证明属性</summary><pre>'+esc(JSON.stringify(local,null,2))+'</pre></details>');
+    const expressions=projection.publication?.local_expressions?.requests.filter(r=>r.targets.some(t=>t.visible_node===id)||r.scope===id)||[];
+    if(expressions.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部表达与暂缓原因</summary><pre>'+esc(JSON.stringify(expressions,null,2))+'</pre></details>');
     for(const relation of local.filter(r=>['gated-product','gated-join','state-interface','unknown-boundary','conditional-join','selection'].includes(r.type))){const button=document.createElement('button');button.textContent='查看关系详图 · '+relation.type;button.onclick=()=>{snapshot();state.view='publication';$('view').value=state.view;state.paperRelation=relation.id;state.paperAuto=true;state.paperGranularity='detailed';state.offsets={};render();fit();persist();syncPaperControls();};$('details').append(button);}
     const constraints=receipts.filter(r=>r.visible_node===id||r.mapping.some(b=>b.visible_source===id||b.visible_target===id));
     if(constraints.length)$('details').insertAdjacentHTML('beforeend','<details><summary>当前画面的关系约束</summary><pre>'+esc(JSON.stringify(constraints,null,2))+'</pre></details>');

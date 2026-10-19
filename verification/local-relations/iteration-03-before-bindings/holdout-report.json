@@ -1,0 +1,351 @@
+{
+  "schema": "local-holdout-regression/1",
+  "freeze_sha256": "abd56600b75118772821c7234a680209f01ca3fd1df4ff202a7b7a01f974d863",
+  "implementation_sha256": {
+    "semantic_studio/presentation-regions.js": "2dbb35a6abfc4eac3266ac235b4d5305a4b6e2b68d2488655dca26822bd17770",
+    "semantic_studio/local-relations.js": "84b217175bc1dae9f64dc19a0506b1d5a4a8bbe559f1ddf157d5c26150e109c6",
+    "semantic_studio/relation-constraints.js": "6b466fee6a381f5ee2d917d26362ab1717867757f75eb1db33a5354249d99b20",
+    "semantic_studio/expression-goals.js": "44d73a3ae22dfe4cf992983bccbece107477ae9375e04a83116379a709fd09b2",
+    "semantic_studio/architecture.js": "dcccfefc4949deb14cf2fac4e001868802ed13cf80e21f063a5b616aaf873ec8",
+    "semantic_studio/semantic-engine.js": "abcea8b9b0933743f7a411427b87077933155cbd96099dbbe310ba1e4edef211",
+    "semantic_studio/architecture-layout.js": "68d98c5511e4f374169115a3b42a540a168a4cf66248f18fb4f448d756a3a49d",
+    "semantic_studio/publication.js": "e8c28f75042ca0637054c875081c3f4157781915f483c280ad2f2ea977b8ae13",
+    "semantic_studio/publication-renderer.js": "f26a17ddb21c9f52566e2d4839a7599c833da87a1b4be3765a5e8b0276157817",
+    "semantic_studio/app.js": "441d30d9989cb3424e25e646ff7e58760772ebaed5b4cdec5457cf0ef440f115",
+    "semantic_studio/index.html": "8560fcf26eff98de33564cccc0cb3f0dcbe646d93ce2ba03229c4635a560d71e",
+    "tools/export_publication.cjs": "fef4d9ad6291dd7f26490dda9e17512a65c4b8ba9c4807c173ea958550a7ed40",
+    "tools/audit_local_relations.cjs": "ecefb2ba626842659bceccb2f221d89be3463e6e847a47fa4cad2444894d9bf9"
+  },
+  "auditor_sha256": "6df24894c96d19904317b1623645c88b77d478af07cdbca4a36a7dd9f25b944b",
+  "baseline_report_sha256": "6789e9945df38da459ab47c709f9f7f0297e492f68c727f829062ad765e007a2",
+  "runtime_executed": false,
+  "scope": "Regression after the first held-out evaluation. Original failures are retained in iteration-02; these inputs are now development cases. A fresh held-out evaluation remains required.",
+  "rows": [
+    {
+      "name": "ConditionalCarry",
+      "svg": "ConditionalCarry-holdout.svg",
+      "document": "ConditionalCarry-holdout.layout.json",
+      "svg_sha256": "fc7d597624e61307d42e73023a606510c12e4a338ad6ad25382822a234a402a7",
+      "document_sha256": "105b3139cd88d9fc352709214bd91266b0e785a4f22f783b08f02b2c96769b81",
+      "nodes": 15,
+      "edges": 17,
+      "quality": {
+        "schema": "publication-quality/1",
+        "route_strategy": "canonical-short",
+        "wire_length": 4704,
+        "min_print_font_pt": 8.08,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 141.27970749542962,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 4,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": []
+      },
+      "relation_counts": {
+        "linear-transform": 4,
+        "join": 1,
+        "state-interface": 1,
+        "conditional-region": 2,
+        "conditional-join": 1,
+        "gated-product": 1,
+        "arithmetic": 1,
+        "unknown-boundary": 1,
+        "source-uses": 2
+      },
+      "semantic_checks_pass": true,
+      "source": {
+        "name": "ConditionalCarry",
+        "entry": "ConditionalCarry",
+        "source": "tests/semantic_fixtures/local_holdout.py",
+        "source_sha256": "4f64f96428dbb311d9e38e071af157e37e66ca4a9de776b775a2c6e5a697f517",
+        "ir": "ConditionalCarry.json",
+        "ir_sha256": "83c1a6b46869c028e2c6455d3f745e2cc1d8898e4f52062e72dae4c277900081",
+        "nodes": 34,
+        "edges": 36,
+        "runtime_executed": false
+      },
+      "before": {
+        "directory": "../iteration-02",
+        "svg": "ConditionalCarry-holdout.svg",
+        "document": "ConditionalCarry-holdout.layout.json",
+        "quality": {
+          "schema": "publication-quality/1",
+          "route_strategy": "canonical-long",
+          "wire_length": 4618,
+          "min_print_font_pt": 8.08,
+          "target_min_font_pt": 8,
+          "requested_width_mm": 180,
+          "width_mm": 141.27970749542962,
+          "height_mm": 240,
+          "route_failures": [],
+          "unplaced_port_labels": [],
+          "line_geometry": {
+            "crossings": 5,
+            "overlapping_paths": [
+              {
+                "edges": [
+                  "e00030",
+                  "e00034"
+                ],
+                "length": 290,
+                "same_value": true
+              }
+            ],
+            "unrelated_contacts": []
+          },
+          "issues": []
+        }
+      },
+      "atlas": {
+        "directory": "heldout/ConditionalCarry",
+        "panels": 5,
+        "complete": true,
+        "quality_pass": true,
+        "unfulfilled_goals": []
+      }
+    },
+    {
+      "name": "SharedMismatch",
+      "svg": "SharedMismatch-holdout.svg",
+      "document": "SharedMismatch-holdout.layout.json",
+      "svg_sha256": "2dc735485effd3177b0af80a47a337659c6c271871baf4e3c53ec93da2697b84",
+      "document_sha256": "ee7e93a5660f33f94ea4b2945ee94528b856ab2ca0f2df4010b568f23f5c5d27",
+      "nodes": 14,
+      "edges": 15,
+      "quality": {
+        "schema": "publication-quality/1",
+        "route_strategy": "neighbors-clear-short",
+        "wire_length": 4992,
+        "min_print_font_pt": 8.23,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 180,
+        "height_mm": 219.8,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 8,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": []
+      },
+      "relation_counts": {
+        "linear-transform": 3,
+        "axis-normalization": 1,
+        "selection": 1,
+        "unknown-boundary": 1,
+        "state-interface": 1,
+        "conditional-region": 2,
+        "join": 1,
+        "conditional-join": 1,
+        "arithmetic": 1
+      },
+      "semantic_checks_pass": true,
+      "source": {
+        "name": "SharedMismatch",
+        "entry": "SharedMismatch",
+        "source": "tests/semantic_fixtures/local_holdout.py",
+        "source_sha256": "4f64f96428dbb311d9e38e071af157e37e66ca4a9de776b775a2c6e5a697f517",
+        "ir": "SharedMismatch.json",
+        "ir_sha256": "611f178aca0b302d5102d5bcfe2482a892ee330dc1f410e2be31b78297b65dcd",
+        "nodes": 32,
+        "edges": 33,
+        "runtime_executed": false
+      },
+      "before": {
+        "directory": "../iteration-02",
+        "svg": "SharedMismatch-holdout.svg",
+        "document": "SharedMismatch-holdout.layout.json",
+        "quality": {
+          "schema": "publication-quality/1",
+          "route_strategy": "neighbors-clear-short",
+          "wire_length": 11979.3,
+          "min_print_font_pt": 6.79,
+          "target_min_font_pt": 8,
+          "requested_width_mm": 180,
+          "width_mm": 169.5852534562212,
+          "height_mm": 240,
+          "route_failures": [],
+          "unplaced_port_labels": [],
+          "line_geometry": {
+            "crossings": 11,
+            "overlapping_paths": [
+              {
+                "edges": [
+                  "e00007",
+                  "e00017"
+                ],
+                "length": 70,
+                "same_value": false
+              },
+              {
+                "edges": [
+                  "e00007",
+                  "e00031"
+                ],
+                "length": 252,
+                "same_value": false
+              },
+              {
+                "edges": [
+                  "e00019",
+                  "e00023"
+                ],
+                "length": 70,
+                "same_value": false
+              }
+            ],
+            "unrelated_contacts": [
+              {
+                "edges": [
+                  "e00007",
+                  "e00017"
+                ],
+                "x": 122,
+                "y": 718
+              },
+              {
+                "edges": [
+                  "e00007",
+                  "e00017"
+                ],
+                "x": 122,
+                "y": 788
+              },
+              {
+                "edges": [
+                  "e00007",
+                  "e00031"
+                ],
+                "x": 374,
+                "y": 680
+              },
+              {
+                "edges": [
+                  "e00007",
+                  "e00031"
+                ],
+                "x": 122,
+                "y": 680
+              },
+              {
+                "edges": [
+                  "e00019",
+                  "e00023"
+                ],
+                "x": 866,
+                "y": 718
+              },
+              {
+                "edges": [
+                  "e00019",
+                  "e00023"
+                ],
+                "x": 866,
+                "y": 788
+              }
+            ]
+          },
+          "issues": [
+            "font-below-8pt",
+            "edge-path-overlap"
+          ]
+        }
+      },
+      "atlas": {
+        "directory": "heldout/SharedMismatch",
+        "panels": 5,
+        "complete": true,
+        "quality_pass": true,
+        "unfulfilled_goals": []
+      }
+    },
+    {
+      "name": "EarlyBoundary",
+      "svg": "EarlyBoundary-holdout.svg",
+      "document": "EarlyBoundary-holdout.layout.json",
+      "svg_sha256": "2596e8ed9e8fc5e03db99876790c5db11c42409abc569413db49eb597d064e70",
+      "document_sha256": "40641a7260e127265d86e8954e0301538839000912062c9e04c3d1976f539985",
+      "nodes": 14,
+      "edges": 15,
+      "quality": {
+        "schema": "publication-quality/1",
+        "route_strategy": "neighbors-long",
+        "wire_length": 4986,
+        "min_print_font_pt": 8.79,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 148.389662027833,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 3,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": []
+      },
+      "relation_counts": {
+        "linear-transform": 1,
+        "iteration-template": 1,
+        "conditional-region": 2,
+        "unknown-boundary": 4,
+        "gated-product": 1,
+        "arithmetic": 1,
+        "source-uses": 2
+      },
+      "semantic_checks_pass": true,
+      "source": {
+        "name": "EarlyBoundary",
+        "entry": "EarlyBoundary",
+        "source": "tests/semantic_fixtures/local_holdout.py",
+        "source_sha256": "4f64f96428dbb311d9e38e071af157e37e66ca4a9de776b775a2c6e5a697f517",
+        "ir": "EarlyBoundary.json",
+        "ir_sha256": "6bdfa6b6363b13590a4ea0ead7907f3d740c9cb2c929106a326bf75d6267f1db",
+        "nodes": 24,
+        "edges": 22,
+        "runtime_executed": false
+      },
+      "before": {
+        "directory": "../iteration-02",
+        "svg": "EarlyBoundary-holdout.svg",
+        "document": "EarlyBoundary-holdout.layout.json",
+        "quality": {
+          "schema": "publication-quality/1",
+          "route_strategy": "neighbors-long",
+          "wire_length": 4986,
+          "min_print_font_pt": 8.79,
+          "target_min_font_pt": 8,
+          "requested_width_mm": 180,
+          "width_mm": 148.389662027833,
+          "height_mm": 240,
+          "route_failures": [],
+          "unplaced_port_labels": [],
+          "line_geometry": {
+            "crossings": 3,
+            "overlapping_paths": [],
+            "unrelated_contacts": []
+          },
+          "issues": []
+        }
+      },
+      "atlas": {
+        "directory": "heldout/EarlyBoundary",
+        "panels": 4,
+        "complete": true,
+        "quality_pass": true,
+        "unfulfilled_goals": []
+      }
+    }
+  ],
+  "quality_pass": true,
+  "unresolved_panels": []
+}

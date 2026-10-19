@@ -15,6 +15,7 @@ class Module:
     identity: str
     evidence: list
     allocation: str = 'constructor-object; parameter-sharing-unresolved'
+    reference: str = ''
 
 
 @dataclass
@@ -27,11 +28,21 @@ class Collection:
 class Construction:
     LIMIT = 16
 
-    def __init__(self, analyzer, unit, owner, constants, objects, path):
+    def __init__(self, analyzer, unit, owner, constants, objects, path, reference_prefix='entry'):
         self.a, self.u, self.path, self.owner = analyzer, unit, path, owner
+        self.reference_prefix = reference_prefix
         self.constants, self.objects = dict(constants), dict(objects or {})
         self.blocked = set()
         if owner is None:
+            return
+        from .analyzer import text
+        if any(self.a.resolve(text(base)) not in {'torch.nn.Module', 'object'} for base in owner.bases):
+            self.objects.clear()
+            return
+        hooks = {'__getattribute__', '__getattr__', '__setattr__', '__new__'}
+        if any(isinstance(n, ast.FunctionDef) and (n.name in hooks or n.decorator_list)
+               for n in owner.body):
+            self.objects.clear()
             return
         init = next((n for n in owner.body if isinstance(n, ast.FunctionDef) and n.name == '__init__'), None)
         if init is None:
@@ -80,13 +91,21 @@ class Construction:
                 if obj is not None:
                     invalid.add(id(obj))
             if isinstance(n, ast.Call):
+                methods = {m.name for m in owner.body if isinstance(m, ast.FunctionDef)}
+                target = text(n.func)
+                queries = {'parameters', 'named_parameters', 'buffers', 'named_buffers',
+                           'modules', 'named_modules', 'children', 'named_children'} if any(
+                               self.a.resolve(text(base)) == 'torch.nn.Module' for base in owner.bases) else set()
+                if target.startswith('self.') and target[5:] not in methods | queries:
+                    invalid.update(id(o) for o in self.objects.values() if isinstance(o, (Module, Collection)))
                 for arg in [*n.args, *(k.value for k in n.keywords)]:
                     obj = self.objects.get(text(arg))
                     if isinstance(obj, Collection):
                         invalid.add(id(obj))
-                    # An escaping owner can mutate any of its collections.
+                    # An escaping owner can replace module bindings as well as
+                    # collections. No later selection certificate survives it.
                     if text(arg) == 'self':
-                        invalid.update(id(o) for o in self.objects.values() if isinstance(o, Collection))
+                        invalid.update(id(o) for o in self.objects.values() if isinstance(o, (Module, Collection)))
         self.objects = {key: obj for key, obj in self.objects.items() if id(obj) not in invalid}
 
     def walk_helpers(self, fn):
@@ -104,6 +123,11 @@ class Construction:
 
     def identity(self, name):
         return '.'.join(filter(None, [self.path, name.removeprefix('self.')]))
+
+    def reference(self, identity, allocation):
+        # A binding name can be assigned two different allocations. Include
+        # owner generation and allocation position, while aliases reuse Module.
+        return f'{self.reference_prefix}|{identity}@{self.u["path"]}:{allocation.lineno}:{allocation.col_offset}'
 
     def get(self, name):
         return self.objects.get(name)
@@ -160,7 +184,7 @@ class Construction:
                     hooks = {'__deepcopy__', '__copy__', '__reduce__', '__reduce_ex__', '__getstate__', '__setstate__'}
                     if any(isinstance(m, ast.FunctionDef) and m.name in hooks for entries in self.a.definitions.values() for _, c in entries if isinstance(c, ast.ClassDef) for m in c.body):
                         return None
-                return replace(obj, identity=identity, evidence=obj.evidence + evidence, allocation='default-deepcopy')
+                return replace(obj, identity=identity, reference=self.reference(identity, n), evidence=obj.evidence + evidence, allocation='default-deepcopy')
             return None
         if target == 'torch.nn.ModuleList' and len(n.args) == 1 and not n.keywords:
             expr = n.args[0]
@@ -198,7 +222,8 @@ class Construction:
             # Retain only module references actually used as constructor arguments.
             refs = {text(a): objects[text(a)] for a in [*n.args, *(k.value for k in n.keywords)] if text(a) in objects and isinstance(objects[text(a)], (Module, Collection))}
             return Module(n, dict(constants), refs, identity, evidence,
-                          'fresh-framework-construction' if known else 'constructor-object; parameter-sharing-unresolved')
+                          'fresh-framework-construction' if known else 'constructor-object; parameter-sharing-unresolved',
+                          self.reference(identity, n))
         return None
 
     def serial_loop(self, statement, fn):

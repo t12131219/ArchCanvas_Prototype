@@ -1,0 +1,1830 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "Stack",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+    "class": "Stack",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+      "cell": null,
+      "sha256": "c5de48a74891728cd29d75912aea409aa72cfa7f76beb7296a676ea66684696d",
+      "unit_sha256": "c5de48a74891728cd29d75912aea409aa72cfa7f76beb7296a676ea66684696d"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/89:4:composite:1",
+      "kind": "composite",
+      "label": "Stack",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 89,
+          "end_line": 92,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "Stack.forward",
+          "expression": "def forward(self, x):\n    for part in self.parts:\n        x = part(x)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "Stack"
+    },
+    {
+      "id": "model/89:4:composite:1/89:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1",
+      "source_parent": "model/89:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 89,
+          "end_line": 89,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1",
+      "kind": "composite",
+      "label": "Repeated block × 2",
+      "parent": "model/89:4:composite:1",
+      "source_parent": "model/89:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 90,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "for part in self.parts:\n    x = part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "serial-repeat",
+      "repeat_contract": {
+        "rule_version": "bounded-module-sequence/1",
+        "count": 2,
+        "state": "x",
+        "iterator": "part",
+        "collection": "self.parts",
+        "instances": [
+          "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:36",
+          "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:50"
+        ],
+        "module_sharing": "independent",
+        "parameter_sharing": "unresolved",
+        "homogeneous": true,
+        "allocation_evidence": [
+          "constructor-object; parameter-sharing-unresolved",
+          "constructor-object; parameter-sharing-unresolved"
+        ],
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 21,
+            "end_column": 64,
+            "symbol": "constructor",
+            "expression": "nn.ModuleList([ReturnUnit(), ReturnUnit()])"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 36,
+            "end_column": 48,
+            "symbol": "constructor",
+            "expression": "ReturnUnit()"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 50,
+            "end_column": 62,
+            "symbol": "constructor",
+            "expression": "ReturnUnit()"
+          }
+        ],
+        "scope": "fixed construction; straight serial body; all instances retained",
+        "not_asserted": [
+          "output equivalence between layers",
+          "arbitrary constructor side effects"
+        ],
+        "structure": {
+          "rule_version": "local-structure/1",
+          "scope": "modeled source graph and exact boundary slots; ordered operations",
+          "instances": [
+            {
+              "status": "proved",
+              "fingerprint": "2a81647a2372fea86304184ad1001a39c8741e8085526cbee5371b3707993804",
+              "structure": {
+                "operations": [
+                  {
+                    "operation": {
+                      "kind": "interface",
+                      "operator": null,
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": null,
+                      "value": null,
+                      "structure_kind": null,
+                      "invocation_constant": {
+                        "value": false,
+                        "scope": "literal argument or default of this source invocation; other paths retained"
+                      }
+                    },
+                    "bindings": [],
+                    "conditions": []
+                  },
+                  {
+                    "operation": {
+                      "kind": "control",
+                      "operator": "if",
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": null,
+                      "value": null,
+                      "structure_kind": null
+                    },
+                    "bindings": [
+                      {
+                        "kind": "control",
+                        "port": "in",
+                        "source": [
+                          "local",
+                          0,
+                          "out"
+                        ],
+                        "condition": null
+                      }
+                    ],
+                    "conditions": []
+                  },
+                  {
+                    "operation": {
+                      "kind": "compute",
+                      "operator": "structure",
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": {
+                        "type": "Tuple",
+                        "fields": {
+                          "elts": [
+                            {
+                              "operand": ".elts:0"
+                            },
+                            {
+                              "operand": ".elts:1"
+                            }
+                          ]
+                        }
+                      },
+                      "value": null,
+                      "structure_kind": "tuple"
+                    },
+                    "bindings": [
+                      {
+                        "kind": "value",
+                        "port": "0",
+                        "source": [
+                          "external",
+                          0
+                        ],
+                        "condition": null
+                      },
+                      {
+                        "kind": "value",
+                        "port": "1",
+                        "source": [
+                          "external",
+                          0
+                        ],
+                        "condition": null
+                      }
+                    ],
+                    "conditions": [
+                      {
+                        "branch": [
+                          "local",
+                          1,
+                          "out"
+                        ],
+                        "outcome": "true"
+                      }
+                    ]
+                  },
+                  {
+                    "operation": {
+                      "kind": "interface",
+                      "operator": null,
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": null,
+                      "value": null,
+                      "structure_kind": null,
+                      "normal_returns": {
+                        "constants": {
+                          "1": false
+                        },
+                        "selected_input": "1",
+                        "scope": "normal-return paths of this invocation; source alternatives retained"
+                      }
+                    },
+                    "bindings": [
+                      {
+                        "kind": "value",
+                        "port": "0",
+                        "source": [
+                          "local",
+                          2,
+                          "out"
+                        ],
+                        "condition": null
+                      },
+                      {
+                        "kind": "value",
+                        "port": "1",
+                        "source": [
+                          "external",
+                          0
+                        ],
+                        "condition": null
+                      }
+                    ],
+                    "conditions": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "source": [
+                      "local",
+                      3,
+                      "out"
+                    ],
+                    "kind": "value",
+                    "condition": null
+                  }
+                ],
+                "inputs": 1
+              },
+              "node_mapping": {
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:30:interface:1": 0,
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1": 1,
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1": 2,
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:4:interface:1": 3
+              },
+              "boundary_edges": [
+                "e00000",
+                "e00013"
+              ],
+              "members": [
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/44:22:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:30:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:2",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/45:8:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1"
+              ],
+              "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+              "index": 0
+            },
+            {
+              "status": "proved",
+              "fingerprint": "2a81647a2372fea86304184ad1001a39c8741e8085526cbee5371b3707993804",
+              "structure": {
+                "operations": [
+                  {
+                    "operation": {
+                      "kind": "interface",
+                      "operator": null,
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": null,
+                      "value": null,
+                      "structure_kind": null,
+                      "invocation_constant": {
+                        "value": false,
+                        "scope": "literal argument or default of this source invocation; other paths retained"
+                      }
+                    },
+                    "bindings": [],
+                    "conditions": []
+                  },
+                  {
+                    "operation": {
+                      "kind": "control",
+                      "operator": "if",
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": null,
+                      "value": null,
+                      "structure_kind": null
+                    },
+                    "bindings": [
+                      {
+                        "kind": "control",
+                        "port": "in",
+                        "source": [
+                          "local",
+                          0,
+                          "out"
+                        ],
+                        "condition": null
+                      }
+                    ],
+                    "conditions": []
+                  },
+                  {
+                    "operation": {
+                      "kind": "compute",
+                      "operator": "structure",
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": {
+                        "type": "Tuple",
+                        "fields": {
+                          "elts": [
+                            {
+                              "operand": ".elts:0"
+                            },
+                            {
+                              "operand": ".elts:1"
+                            }
+                          ]
+                        }
+                      },
+                      "value": null,
+                      "structure_kind": "tuple"
+                    },
+                    "bindings": [
+                      {
+                        "kind": "value",
+                        "port": "0",
+                        "source": [
+                          "external",
+                          0
+                        ],
+                        "condition": null
+                      },
+                      {
+                        "kind": "value",
+                        "port": "1",
+                        "source": [
+                          "external",
+                          0
+                        ],
+                        "condition": null
+                      }
+                    ],
+                    "conditions": [
+                      {
+                        "branch": [
+                          "local",
+                          1,
+                          "out"
+                        ],
+                        "outcome": "true"
+                      }
+                    ]
+                  },
+                  {
+                    "operation": {
+                      "kind": "interface",
+                      "operator": null,
+                      "framework_type": null,
+                      "function": null,
+                      "constructor": null,
+                      "arguments": {},
+                      "syntax": null,
+                      "value": null,
+                      "structure_kind": null,
+                      "normal_returns": {
+                        "constants": {
+                          "1": false
+                        },
+                        "selected_input": "1",
+                        "scope": "normal-return paths of this invocation; source alternatives retained"
+                      }
+                    },
+                    "bindings": [
+                      {
+                        "kind": "value",
+                        "port": "0",
+                        "source": [
+                          "local",
+                          2,
+                          "out"
+                        ],
+                        "condition": null
+                      },
+                      {
+                        "kind": "value",
+                        "port": "1",
+                        "source": [
+                          "external",
+                          0
+                        ],
+                        "condition": null
+                      }
+                    ],
+                    "conditions": []
+                  }
+                ],
+                "outputs": [
+                  {
+                    "source": [
+                      "local",
+                      3,
+                      "out"
+                    ],
+                    "kind": "value",
+                    "condition": null
+                  }
+                ],
+                "inputs": 1
+              },
+              "node_mapping": {
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:30:interface:1": 0,
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1": 1,
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1": 2,
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:4:interface:1": 3
+              },
+              "boundary_edges": [
+                "e00013",
+                "e00026"
+              ],
+              "members": [
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/44:22:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:30:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:2",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/45:8:interface:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1"
+              ],
+              "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+              "index": 1
+            }
+          ],
+          "groups": [
+            {
+              "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+              "indices": [
+                0,
+                1
+              ],
+              "instances": [
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2"
+              ],
+              "status": "proved",
+              "fingerprint": "2a81647a2372fea86304184ad1001a39c8741e8085526cbee5371b3707993804"
+            }
+          ],
+          "homogeneous": true,
+          "not_asserted": [
+            "numerical equivalence",
+            "parameter equality or stability",
+            "purity",
+            "runtime count",
+            "time axis",
+            "arbitrary graph isomorphism"
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "kind": "composite",
+      "label": "Layer 1",
+      "parent": "model/89:4:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 90,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "for part in self.parts:\n    x = part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "repeat-instance",
+      "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:36",
+      "repeat_index": 0
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+      "kind": "composite",
+      "label": "part",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 44,
+          "end_line": 45,
+          "column": 4,
+          "end_column": 27,
+          "symbol": "ReturnUnit.forward",
+          "expression": "def forward(self, x: Tensor):\n    return self.part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "parts.0",
+      "constructor": {},
+      "source_class": "ReturnUnit",
+      "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:36",
+      "module_binding": {
+        "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:36",
+        "selection": "part",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 36,
+            "end_column": 48,
+            "symbol": "constructor",
+            "expression": "ReturnUnit()"
+          }
+        ],
+        "allocation": "constructor-object; parameter-sharing-unresolved",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/44:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 44,
+          "end_line": 44,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "ReturnUnit.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "kind": "composite",
+      "label": "self.part",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 42,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "part",
+          "expression": "def part(self, x: Tensor, detailed=False):\n    if detailed:\n        return (x, x)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "parts.0",
+      "constructor": {},
+      "source_class": null,
+      "module_identity": "parts.0"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 39,
+          "column": 19,
+          "end_column": 28,
+          "symbol": "part",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:30:interface:1",
+      "kind": "interface",
+      "label": "detailed",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 39,
+          "column": 30,
+          "end_column": 38,
+          "symbol": "part",
+          "expression": "detailed"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "detailed",
+      "source_constant_input": {
+        "value": false,
+        "scope": "literal argument or default of this source invocation; other paths retained"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "kind": "control",
+      "label": "detailed",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 40,
+          "end_line": 40,
+          "column": 11,
+          "end_column": 19,
+          "symbol": "part",
+          "expression": "detailed"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 40,
+          "end_line": 41,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "if detailed:\n    return (x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 19,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "(x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 12,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "return (x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 40,
+          "end_line": 41,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "if detailed:\n    return (x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "part",
+          "expression": "return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "kind": "interface",
+      "label": "outputs / conditional returns",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 42,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "part",
+          "expression": "def part(self, x: Tensor, detailed=False):\n    if detailed:\n        return (x, x)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output",
+      "return_selection": {
+        "selected": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+        "call_constants": {
+          "detailed": false
+        },
+        "scope": "normal-return paths of this invocation; source alternatives retained"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/45:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ReturnUnit.forward",
+          "expression": "return self.part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 91,
+          "end_line": 91,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "Stack.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "kind": "composite",
+      "label": "Layer 2",
+      "parent": "model/89:4:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 90,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "for part in self.parts:\n    x = part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "repeat-instance",
+      "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:50",
+      "repeat_index": 1
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+      "kind": "composite",
+      "label": "part",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 44,
+          "end_line": 45,
+          "column": 4,
+          "end_column": 27,
+          "symbol": "ReturnUnit.forward",
+          "expression": "def forward(self, x: Tensor):\n    return self.part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "parts.1",
+      "constructor": {},
+      "source_class": "ReturnUnit",
+      "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:50",
+      "module_binding": {
+        "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:50",
+        "selection": "part",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 50,
+            "end_column": 62,
+            "symbol": "constructor",
+            "expression": "ReturnUnit()"
+          }
+        ],
+        "allocation": "constructor-object; parameter-sharing-unresolved",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/44:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 44,
+          "end_line": 44,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "ReturnUnit.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "kind": "composite",
+      "label": "self.part",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 42,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "part",
+          "expression": "def part(self, x: Tensor, detailed=False):\n    if detailed:\n        return (x, x)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "parts.1",
+      "constructor": {},
+      "source_class": null,
+      "module_identity": "parts.1"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 39,
+          "column": 19,
+          "end_column": 28,
+          "symbol": "part",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:30:interface:1",
+      "kind": "interface",
+      "label": "detailed",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 39,
+          "column": 30,
+          "end_column": 38,
+          "symbol": "part",
+          "expression": "detailed"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "detailed",
+      "source_constant_input": {
+        "value": false,
+        "scope": "literal argument or default of this source invocation; other paths retained"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "kind": "control",
+      "label": "detailed",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 40,
+          "end_line": 40,
+          "column": 11,
+          "end_column": 19,
+          "symbol": "part",
+          "expression": "detailed"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 40,
+          "end_line": 41,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "if detailed:\n    return (x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 19,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "(x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 12,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "return (x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 40,
+          "end_line": 41,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "part",
+          "expression": "if detailed:\n    return (x, x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "part",
+          "expression": "return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "kind": "interface",
+      "label": "outputs / conditional returns",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 39,
+          "end_line": 42,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "part",
+          "expression": "def part(self, x: Tensor, detailed=False):\n    if detailed:\n        return (x, x)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output",
+      "return_selection": {
+        "selected": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+        "call_constants": {
+          "detailed": false
+        },
+        "scope": "normal-return paths of this invocation; source alternatives retained"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/45:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ReturnUnit.forward",
+          "expression": "return self.part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 91,
+          "end_line": 91,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "Stack.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:12:state:1",
+      "kind": "state",
+      "label": "part · module reference",
+      "parent": "model/89:4:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 90,
+          "end_line": 90,
+          "column": 12,
+          "end_column": 16,
+          "symbol": "Stack.forward",
+          "expression": "part"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "role": "module-reference",
+      "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py:88:50"
+    },
+    {
+      "id": "model/89:4:composite:1/92:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1",
+      "source_parent": "model/89:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+          "line": 92,
+          "end_line": 92,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "Stack.forward",
+          "expression": "return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/89:4:composite:1/89:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/44:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/44:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:30:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/45:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/45:8:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/44:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/44:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:30:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:19:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:19:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:8:composite:1/41:12:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/42:8:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/39:4:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/45:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/45:8:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+      "target": "model/89:4:composite:1/92:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+      "line": 40,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/44:4:composite:1/39:4:composite:1/40:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/normal-returns.py",
+      "line": 40,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "b37223c537ccf759d094386cf07429737af29cdf099dfb552b7f3c4bc129aaee"
+}

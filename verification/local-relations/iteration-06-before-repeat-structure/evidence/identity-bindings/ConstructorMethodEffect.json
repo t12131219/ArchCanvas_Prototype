@@ -1,0 +1,367 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ConstructorMethodEffect",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+    "class": "ConstructorMethodEffect",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+      "cell": null,
+      "sha256": "6ec427a953ddf43fbad538d09e751f8c85afee6ffdc3c5ce9e498790d6e5cd0b",
+      "unit_sha256": "6ec427a953ddf43fbad538d09e751f8c85afee6ffdc3c5ce9e498790d6e5cd0b"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/44:4:composite:1",
+      "kind": "composite",
+      "label": "ConstructorMethodEffect",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 44,
+          "end_line": 45,
+          "column": 4,
+          "end_column": 44,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "def forward(self, x, y):\n    return self.first(x) + self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ConstructorMethodEffect"
+    },
+    {
+      "id": "model/44:4:composite:1/44:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 44,
+          "end_line": 44,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/44:4:composite:1/44:25:interface:1",
+      "kind": "interface",
+      "label": "y",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 44,
+          "end_line": 44,
+          "column": 25,
+          "end_column": 26,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "y"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "y"
+    },
+    {
+      "id": "model/44:4:composite:1/45:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 15,
+          "end_column": 44,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "self.first(x) + self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add"
+    },
+    {
+      "id": "model/44:4:composite:1/45:15:compute:2",
+      "kind": "compute",
+      "label": "first · Linear",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 15,
+          "end_column": 28,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "self.first(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "first",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/44:4:composite:1/41:21:parameter:1",
+      "kind": "parameter",
+      "label": "first.parameters",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 21,
+          "end_column": 36,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "nn.Linear(8, 8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "first",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/44:4:composite:1/45:31:compute:1",
+      "kind": "compute",
+      "label": "first · Linear",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 31,
+          "end_column": 44,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "first",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/44:4:composite:1/41:21:parameter:2",
+      "kind": "parameter",
+      "label": "first.parameters",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 41,
+          "end_line": 41,
+          "column": 21,
+          "end_column": 36,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "nn.Linear(8, 8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "first",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/44:4:composite:1/45:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/44:4:composite:1",
+      "source_parent": "model/44:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_effects.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 8,
+          "end_column": 44,
+          "symbol": "ConstructorMethodEffect.forward",
+          "expression": "return self.first(x) + self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/44:4:composite:1/41:21:parameter:1",
+      "target": "model/44:4:composite:1/45:15:compute:2",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/44:4:composite:1/44:22:interface:1",
+      "target": "model/44:4:composite:1/45:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/44:4:composite:1/45:15:compute:2",
+      "target": "model/44:4:composite:1/45:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/44:4:composite:1/41:21:parameter:2",
+      "target": "model/44:4:composite:1/45:31:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00003"
+    },
+    {
+      "source": "model/44:4:composite:1/44:25:interface:1",
+      "target": "model/44:4:composite:1/45:31:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/44:4:composite:1/45:31:compute:1",
+      "target": "model/44:4:composite:1/45:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/44:4:composite:1/45:15:compute:1",
+      "target": "model/44:4:composite:1/45:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "d37b74977700f110e3cdf18aec8d6c1eaac7bc31ea070817754278261995551f"
+}

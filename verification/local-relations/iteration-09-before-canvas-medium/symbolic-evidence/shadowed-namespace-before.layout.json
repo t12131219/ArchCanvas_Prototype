@@ -1,0 +1,2643 @@
+{
+  "schema": "archcanvas-architecture-document/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "Stack",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+      "class": "Stack",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+        "cell": null,
+        "sha256": "4ad74b5f208e8ad1c84e5f496c4ec908a4b2b0c87c22f95cdf47c0ed4e113a36",
+        "unit_sha256": "4ad74b5f208e8ad1c84e5f496c4ec908a4b2b0c87c22f95cdf47c0ed4e113a36"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/89:4:composite:1",
+        "kind": "composite",
+        "label": "Stack",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 89,
+            "end_line": 92,
+            "column": 4,
+            "end_column": 16,
+            "symbol": "Stack.forward",
+            "expression": "def forward(self, x):\n    for part in self.parts:\n        x = part(x)\n    return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "Stack"
+      },
+      {
+        "id": "model/89:4:composite:1/89:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/89:4:composite:1",
+        "source_parent": "model/89:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 89,
+            "end_line": 89,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1",
+        "kind": "composite",
+        "label": "Serial sequence · 2",
+        "parent": "model/89:4:composite:1",
+        "source_parent": "model/89:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 91,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "serial-repeat",
+        "repeat_contract": {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 2,
+          "state": "x",
+          "iterator": "part",
+          "collection": "self.parts",
+          "instances": [
+            "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+            "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "unresolved",
+          "homogeneous": false,
+          "allocation_evidence": [
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 21,
+              "end_column": 78,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([ShadowedNamespace(), ShadowedNamespace()])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 36,
+              "end_column": 55,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 57,
+              "end_column": 76,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ],
+          "structure": {
+            "rule_version": "local-structure/1",
+            "scope": "modeled source graph and exact boundary slots; ordered operations",
+            "instances": [
+              {
+                "status": "unresolved",
+                "reason": "unresolved configuration",
+                "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "index": 0
+              },
+              {
+                "status": "unresolved",
+                "reason": "unresolved configuration",
+                "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+                "index": 1
+              }
+            ],
+            "groups": [
+              {
+                "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "indices": [
+                  0
+                ],
+                "instances": [
+                  "model/89:4:composite:1/90:8:composite:1/90:8:composite:1"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              },
+              {
+                "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+                "indices": [
+                  1
+                ],
+                "instances": [
+                  "model/89:4:composite:1/90:8:composite:1/90:8:composite:2"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              }
+            ],
+            "homogeneous": false,
+            "not_asserted": [
+              "numerical equivalence",
+              "parameter equality or stability",
+              "purity",
+              "runtime count",
+              "time axis",
+              "arbitrary graph isomorphism"
+            ]
+          }
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "kind": "composite",
+        "label": "Layer 1",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 91,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+        "repeat_index": 0
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 82,
+            "column": 4,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "def forward(self, torch):\n    return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.0",
+        "constructor": {},
+        "source_class": "ShadowedNamespace",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+        "module_binding": {
+          "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 36,
+              "end_column": 55,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "kind": "interface",
+        "label": "torch",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 81,
+            "column": 22,
+            "end_column": 27,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "torch"
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "kind": "compute",
+        "label": "torch.float32",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 15,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "torch.float32"
+        },
+        "syntax": {
+          "type": "Attribute",
+          "fields": {
+            "value": {
+              "operand": ".value"
+            },
+            "attr": "float32"
+          }
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 8,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 91,
+            "end_line": 91,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "Stack.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "kind": "composite",
+        "label": "Layer 2",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 91,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57",
+        "repeat_index": 1
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 82,
+            "column": 4,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "def forward(self, torch):\n    return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.1",
+        "constructor": {},
+        "source_class": "ShadowedNamespace",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57",
+        "module_binding": {
+          "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 57,
+              "end_column": 76,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "kind": "interface",
+        "label": "torch",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 81,
+            "column": 22,
+            "end_column": 27,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "torch"
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "kind": "compute",
+        "label": "torch.float32",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 15,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "torch.float32"
+        },
+        "syntax": {
+          "type": "Attribute",
+          "fields": {
+            "value": {
+              "operand": ".value"
+            },
+            "attr": "float32"
+          }
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 8,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 91,
+            "end_line": 91,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "Stack.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:12:state:1",
+        "kind": "state",
+        "label": "part · module reference",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 90,
+            "column": 12,
+            "end_column": 16,
+            "symbol": "Stack.forward",
+            "expression": "part"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#fbe8d3"
+        },
+        "runtime_evidence": [],
+        "role": "module-reference",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57"
+      },
+      {
+        "id": "model/89:4:composite:1/92:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/89:4:composite:1",
+        "source_parent": "model/89:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 92,
+            "end_line": 92,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "Stack.forward",
+            "expression": "return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/89:4:composite:1/89:22:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "torch",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "torch",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "target": "model/89:4:composite:1/92:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      }
+    ],
+    "branches": [],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "3b7d3c59f3e209173b8c09d030830703da8d2d72a2108d1cda8c1766e8b2bef8"
+  },
+  "state": {
+    "paperFocus": "model/89:4:composite:1/90:8:composite:1",
+    "paperRepresentative": true,
+    "paperGranularity": "modules",
+    "view": "publication"
+  },
+  "architecture": {
+    "schema": "archcanvas-architecture/1",
+    "rule_version": "architecture-rules/4",
+    "canonical_digest": "3b7d3c59f3e209173b8c09d030830703da8d2d72a2108d1cda8c1766e8b2bef8",
+    "nodes": [
+      {
+        "id": "model/89:4:composite:1",
+        "kind": "composite",
+        "label": "Stack",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 89,
+            "end_line": 92,
+            "column": 4,
+            "end_column": 16,
+            "symbol": "Stack.forward",
+            "expression": "def forward(self, x):\n    for part in self.parts:\n        x = part(x)\n    return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "Stack",
+        "paper": {
+          "title": "Stack",
+          "caption": "Source module",
+          "lines": [
+            "Stack"
+          ],
+          "captions": [
+            "Source module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/89:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/89:4:composite:1",
+        "source_parent": "model/89:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 89,
+            "end_line": 89,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1",
+        "kind": "composite",
+        "label": "Serial sequence · 2",
+        "parent": "model/89:4:composite:1",
+        "source_parent": "model/89:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 91,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "serial-repeat",
+        "repeat_contract": {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 2,
+          "state": "x",
+          "iterator": "part",
+          "collection": "self.parts",
+          "instances": [
+            "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+            "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "unresolved",
+          "homogeneous": false,
+          "allocation_evidence": [
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 21,
+              "end_column": 78,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([ShadowedNamespace(), ShadowedNamespace()])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 36,
+              "end_column": 55,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 57,
+              "end_column": 76,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ],
+          "structure": {
+            "rule_version": "local-structure/1",
+            "scope": "modeled source graph and exact boundary slots; ordered operations",
+            "instances": [
+              {
+                "status": "unresolved",
+                "reason": "unresolved configuration",
+                "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "index": 0
+              },
+              {
+                "status": "unresolved",
+                "reason": "unresolved configuration",
+                "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+                "index": 1
+              }
+            ],
+            "groups": [
+              {
+                "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "indices": [
+                  0
+                ],
+                "instances": [
+                  "model/89:4:composite:1/90:8:composite:1/90:8:composite:1"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              },
+              {
+                "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+                "indices": [
+                  1
+                ],
+                "instances": [
+                  "model/89:4:composite:1/90:8:composite:1/90:8:composite:2"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              }
+            ],
+            "homogeneous": false,
+            "not_asserted": [
+              "numerical equivalence",
+              "parameter equality or stability",
+              "purity",
+              "runtime count",
+              "time axis",
+              "arbitrary graph isomorphism"
+            ]
+          }
+        },
+        "paper": {
+          "title": "Serial sequence · 2",
+          "caption": "0 modeled groups · 2 unclassified elements · 2 source calls · parameters unresolved",
+          "lines": [
+            "Serial sequence ·",
+            "2"
+          ],
+          "captions": [
+            "0 modeled groups · 2",
+            "unclassified elements · 2",
+            "source calls · parameters",
+            "unresolved"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 126
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "kind": "composite",
+        "label": "Layer 1",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 91,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+        "repeat_index": 0,
+        "paper": {
+          "title": "Layer 1",
+          "caption": "Instance 1 of 2 · parameters unresolved",
+          "lines": [
+            "Layer 1"
+          ],
+          "captions": [
+            "Instance 1 of 2 ·",
+            "parameters unresolved"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 82,
+            "column": 4,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "def forward(self, torch):\n    return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.0",
+        "constructor": {},
+        "source_class": "ShadowedNamespace",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+        "module_binding": {
+          "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 36,
+              "end_column": 55,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "paper": {
+          "title": "part",
+          "caption": "ShadowedNamespace · Source module",
+          "lines": [
+            "part"
+          ],
+          "captions": [
+            "ShadowedNamespace ·",
+            "Source module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "kind": "interface",
+        "label": "torch",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 81,
+            "column": 22,
+            "end_column": 27,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "torch",
+        "paper": {
+          "title": "torch",
+          "caption": "",
+          "lines": [
+            "torch"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "kind": "compute",
+        "label": "torch.float32",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 15,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "torch.float32"
+        },
+        "syntax": {
+          "type": "Attribute",
+          "fields": {
+            "value": {
+              "operand": ".value"
+            },
+            "attr": "float32"
+          }
+        },
+        "paper": {
+          "title": "torch.float32",
+          "caption": "attribute",
+          "lines": [
+            "torch.float32"
+          ],
+          "captions": [
+            "attribute"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 8,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 91,
+            "end_line": 91,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "Stack.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "x",
+          "caption": "Value",
+          "lines": [
+            "x"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "kind": "composite",
+        "label": "Layer 2",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 91,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57",
+        "repeat_index": 1,
+        "paper": {
+          "title": "Layer 2",
+          "caption": "Instance 2 of 2 · parameters unresolved",
+          "lines": [
+            "Layer 2"
+          ],
+          "captions": [
+            "Instance 2 of 2 ·",
+            "parameters unresolved"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 82,
+            "column": 4,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "def forward(self, torch):\n    return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.1",
+        "constructor": {},
+        "source_class": "ShadowedNamespace",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57",
+        "module_binding": {
+          "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 57,
+              "end_column": 76,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "paper": {
+          "title": "part",
+          "caption": "ShadowedNamespace · Source module",
+          "lines": [
+            "part"
+          ],
+          "captions": [
+            "ShadowedNamespace ·",
+            "Source module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "kind": "interface",
+        "label": "torch",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 81,
+            "end_line": 81,
+            "column": 22,
+            "end_column": 27,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "torch",
+        "paper": {
+          "title": "torch",
+          "caption": "",
+          "lines": [
+            "torch"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "kind": "compute",
+        "label": "torch.float32",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 15,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "value": {
+          "unresolved": "torch.float32"
+        },
+        "syntax": {
+          "type": "Attribute",
+          "fields": {
+            "value": {
+              "operand": ".value"
+            },
+            "attr": "float32"
+          }
+        },
+        "paper": {
+          "title": "torch.float32",
+          "caption": "attribute",
+          "lines": [
+            "torch.float32"
+          ],
+          "captions": [
+            "attribute"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 82,
+            "end_line": 82,
+            "column": 8,
+            "end_column": 28,
+            "symbol": "ShadowedNamespace.forward",
+            "expression": "return torch.float32"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 91,
+            "end_line": 91,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "Stack.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "x",
+          "caption": "Value",
+          "lines": [
+            "x"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:12:state:1",
+        "kind": "state",
+        "label": "part · module reference",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "source_parent": "model/89:4:composite:1/90:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 90,
+            "end_line": 90,
+            "column": 12,
+            "end_column": 16,
+            "symbol": "Stack.forward",
+            "expression": "part"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#fbe8d3"
+        },
+        "runtime_evidence": [],
+        "role": "module-reference",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57",
+        "paper": {
+          "title": "part · module reference",
+          "caption": "state",
+          "lines": [
+            "part · module",
+            "reference"
+          ],
+          "captions": [
+            "state"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 78
+        }
+      },
+      {
+        "id": "model/89:4:composite:1/92:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/89:4:composite:1",
+        "source_parent": "model/89:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 92,
+            "end_line": 92,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "Stack.forward",
+            "expression": "return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "paper:port:744948ad",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "kind": "interface",
+        "role": "input",
+        "label": "x",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 89,
+            "end_line": 89,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "Stack.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00000",
+        "canonical_endpoint": "model/89:4:composite:1/89:22:interface:1",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "paper:port:6c493c15",
+        "parent": "model/89:4:composite:1/90:8:composite:1",
+        "kind": "interface",
+        "role": "output",
+        "label": "return",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 92,
+            "end_line": 92,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "Stack.forward",
+            "expression": "return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00008",
+        "canonical_endpoint": "model/89:4:composite:1/92:8:interface:1",
+        "boundary_value": {
+          "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+          "source_port": "out",
+          "identity_scope": "extracted-graph",
+          "tensor_equality": "not-asserted"
+        },
+        "boundary_uses": [
+          {
+            "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+            "target": "model/89:4:composite:1/92:8:interface:1",
+            "kind": "interface-binding",
+            "source_port": "out",
+            "target_port": "in",
+            "evidence": "source-dependency",
+            "id": "e00008"
+          }
+        ],
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/89:4:composite:1/89:22:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "torch",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "torch",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "target": "model/89:4:composite:1/92:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      }
+    ],
+    "findings": [],
+    "relation_graph": {
+      "schema": "local-relations/1",
+      "relations": [],
+      "canonical_nodes": 17,
+      "canonical_edges": 9,
+      "limitations": [
+        "Local relationships may overlap; no family label selects a rule.",
+        "Unknown effects are unresolved; no identity proof crosses their computation."
+      ]
+    },
+    "semantic_contracts": [],
+    "design_constraints": [
+      {
+        "kind": "serial-sequence",
+        "node": "model/89:4:composite:1/90:8:composite:1",
+        "rule_version": "bounded-module-sequence/1",
+        "count": 2,
+        "state": "x",
+        "iterator": "part",
+        "collection": "self.parts",
+        "instances": [
+          "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+          "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57"
+        ],
+        "module_sharing": "independent",
+        "parameter_sharing": "unresolved",
+        "homogeneous": false,
+        "allocation_evidence": [
+          "constructor-object; parameter-sharing-unresolved",
+          "constructor-object; parameter-sharing-unresolved"
+        ],
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 21,
+            "end_column": 78,
+            "symbol": "constructor",
+            "expression": "nn.ModuleList([ShadowedNamespace(), ShadowedNamespace()])"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 36,
+            "end_column": 55,
+            "symbol": "constructor",
+            "expression": "ShadowedNamespace()"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 57,
+            "end_column": 76,
+            "symbol": "constructor",
+            "expression": "ShadowedNamespace()"
+          }
+        ],
+        "scope": "fixed construction; straight serial body; all instances retained",
+        "not_asserted": [
+          "output equivalence between layers",
+          "arbitrary constructor side effects"
+        ],
+        "structure": {
+          "rule_version": "local-structure/1",
+          "scope": "modeled source graph and exact boundary slots; ordered operations",
+          "instances": [
+            {
+              "status": "unresolved",
+              "reason": "unresolved configuration",
+              "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+              "index": 0
+            },
+            {
+              "status": "unresolved",
+              "reason": "unresolved configuration",
+              "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+              "index": 1
+            }
+          ],
+          "groups": [
+            {
+              "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+              "indices": [
+                0
+              ],
+              "instances": [
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1"
+              ],
+              "status": "unresolved",
+              "fingerprint": null
+            },
+            {
+              "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+              "indices": [
+                1
+              ],
+              "instances": [
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2"
+              ],
+              "status": "unresolved",
+              "fingerprint": null
+            }
+          ],
+          "homogeneous": false,
+          "not_asserted": [
+            "numerical equivalence",
+            "parameter equality or stability",
+            "purity",
+            "runtime count",
+            "time axis",
+            "arbitrary graph isomorphism"
+          ]
+        }
+      }
+    ],
+    "limitations": [
+      "Local dependency patterns do not certify arbitrary-input behavior.",
+      "Unknown operations, tuple slots, conditional joins and loop templates remain explicit.",
+      "No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names."
+    ],
+    "publication": {
+      "schema": "archcanvas-publication-plan/1",
+      "structural_regions": 0,
+      "boundary_plans": []
+    }
+  },
+  "publication": {
+    "schema": "archcanvas-publication/1",
+    "focus": "model/89:4:composite:1/90:8:composite:1",
+    "requested_focus": "model/89:4:composite:1/90:8:composite:1",
+    "relation": null,
+    "representative": null,
+    "granularity": "modules",
+    "auto": true,
+    "open": [
+      "model/89:4:composite:1/90:8:composite:1"
+    ],
+    "budget": 20,
+    "boundary": [
+      {
+        "source": "model/89:4:composite:1/89:22:interface:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "torch",
+        "evidence": "source-dependency",
+        "id": "e00000",
+        "direction": "input",
+        "port_node": "paper:port:744948ad",
+        "visible_node": "paper:port:744948ad"
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "target": "model/89:4:composite:1/92:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00008",
+        "direction": "output",
+        "port_node": "paper:port:6c493c15",
+        "visible_node": "paper:port:6c493c15"
+      }
+    ],
+    "wire_bundles": [],
+    "configuration_arithmetic": [],
+    "paper_width_mm": 180,
+    "fit_page": true,
+    "min_font_pt": 8,
+    "unknowns": 0
+  },
+  "expression_goals": {
+    "schema": "expression-goals/1",
+    "goals": [
+      {
+        "id": "goal:node:model/89:4:composite:1/89:22:interface:1",
+        "kind": "external-interface",
+        "focus_node": "model/89:4:composite:1/89:22:interface:1",
+        "core": [
+          "model/89:4:composite:1/89:22:interface:1"
+        ],
+        "edges": [],
+        "direction": "input",
+        "priority": 1,
+        "expression": "computation-structure"
+      },
+      {
+        "id": "goal:node:model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "kind": "computation",
+        "focus_node": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "core": [
+          "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1"
+        ],
+        "edges": [],
+        "direction": null,
+        "priority": 1,
+        "expression": "computation-structure"
+      },
+      {
+        "id": "goal:node:model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "kind": "computation",
+        "focus_node": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "core": [
+          "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1"
+        ],
+        "edges": [],
+        "direction": null,
+        "priority": 1,
+        "expression": "computation-structure"
+      },
+      {
+        "id": "goal:node:model/89:4:composite:1/92:8:interface:1",
+        "kind": "external-interface",
+        "focus_node": "model/89:4:composite:1/92:8:interface:1",
+        "core": [
+          "model/89:4:composite:1/92:8:interface:1"
+        ],
+        "edges": [
+          "e00008"
+        ],
+        "direction": "output",
+        "priority": 1,
+        "expression": "computation-structure"
+      }
+    ]
+  },
+  "expression_coverage": [
+    {
+      "goal": "goal:node:model/89:4:composite:1/89:22:interface:1",
+      "kind": "external-interface",
+      "expression": "computation-structure",
+      "status": "unfulfilled",
+      "missing_nodes": [
+        "model/89:4:composite:1/89:22:interface:1"
+      ],
+      "missing_edges": [],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": []
+    },
+    {
+      "goal": "goal:node:model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+      "kind": "computation",
+      "expression": "computation-structure",
+      "status": "unfulfilled",
+      "missing_nodes": [
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1"
+      ],
+      "missing_edges": [],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": []
+    },
+    {
+      "goal": "goal:node:model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+      "kind": "computation",
+      "expression": "computation-structure",
+      "status": "unfulfilled",
+      "missing_nodes": [
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1"
+      ],
+      "missing_edges": [],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": []
+    },
+    {
+      "goal": "goal:node:model/89:4:composite:1/92:8:interface:1",
+      "kind": "external-interface",
+      "expression": "computation-structure",
+      "status": "unfulfilled",
+      "missing_nodes": [
+        "model/89:4:composite:1/92:8:interface:1"
+      ],
+      "missing_edges": [],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": [
+        "e00008"
+      ]
+    }
+  ],
+  "layout": {
+    "bounds": {
+      "x": 4,
+      "y": 2,
+      "w": 316,
+      "h": 644
+    },
+    "nodes": [
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1",
+        "x": 32,
+        "y": 30,
+        "title": "Serial sequence · 2",
+        "caption": "0 modeled groups · 2 unclassified elements · 2 source calls · parameters unresolved",
+        "lines": [
+          "Serial sequence ·",
+          "2"
+        ],
+        "captions": [
+          "0 modeled groups · 2",
+          "unclassified elements · 2",
+          "source calls · parameters",
+          "unresolved"
+        ],
+        "font": 16,
+        "fill": "#f1f4fa",
+        "stroke": "#62748c",
+        "category": "module",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 260,
+        "h": 588,
+        "expanded": true,
+        "header": 148,
+        "protected_header_height": 118,
+        "design_gutter": 0,
+        "cyclic": false
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "x": 56,
+        "y": 282,
+        "title": "Layer 1",
+        "caption": "Instance 1 of 2 · parameters unresolved",
+        "lines": [
+          "Layer 1"
+        ],
+        "captions": [
+          "Instance 1 of 2 ·",
+          "parameters unresolved"
+        ],
+        "font": 16,
+        "fill": "#f1f4fa",
+        "stroke": "#62748c",
+        "category": "module",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 74,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "x": 56,
+        "y": 416,
+        "title": "Layer 2",
+        "caption": "Instance 2 of 2 · parameters unresolved",
+        "lines": [
+          "Layer 2"
+        ],
+        "captions": [
+          "Instance 2 of 2 ·",
+          "parameters unresolved"
+        ],
+        "font": 16,
+        "fill": "#f1f4fa",
+        "stroke": "#62748c",
+        "category": "module",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 74,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:744948ad",
+        "x": 85,
+        "y": 178,
+        "title": "x",
+        "caption": "",
+        "lines": [
+          "x"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:6c493c15",
+        "x": 85,
+        "y": 550,
+        "title": "return",
+        "caption": "",
+        "lines": [
+          "return"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "paper:port:744948ad",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "torch",
+        "evidence": "source-dependency",
+        "id": "e00000",
+        "originals": [
+          "e00000"
+        ],
+        "canonical_source": "model/89:4:composite:1/89:22:interface:1",
+        "canonical_target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "resolved_source": "model/89:4:composite:1/89:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 162,
+              "y": 222
+            },
+            {
+              "x": 162,
+              "y": 282
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "torch",
+        "evidence": "source-dependency",
+        "id": "e00004",
+        "originals": [
+          "e00003",
+          "e00004"
+        ],
+        "canonical_source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "canonical_target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "resolved_source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 162,
+              "y": 356
+            },
+            {
+              "x": 162,
+              "y": 416
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+        "target": "paper:port:6c493c15",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00008",
+        "originals": [
+          "e00007",
+          "e00008"
+        ],
+        "canonical_source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+        "canonical_target": "model/89:4:composite:1/92:8:interface:1",
+        "resolved_source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 162,
+              "y": 490
+            },
+            {
+              "x": 162,
+              "y": 550
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      }
+    ],
+    "edge_accounting": {
+      "visible": [
+        "e00000",
+        "e00004",
+        "e00008"
+      ],
+      "internal": [
+        "e00001",
+        "e00002",
+        "e00005",
+        "e00006"
+      ],
+      "excluded": [],
+      "contracted": [
+        "e00003",
+        "e00007"
+      ],
+      "attached": []
+    },
+    "node_accounting": {
+      "visible": [
+        "model/89:4:composite:1/90:8:composite:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:2"
+      ],
+      "collapsed": [
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1"
+      ],
+      "contracted": [
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+        "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1"
+      ],
+      "attached": [
+        "model/89:4:composite:1/90:8:composite:1/90:12:state:1"
+      ],
+      "excluded": [
+        "model/89:4:composite:1",
+        "model/89:4:composite:1/89:22:interface:1",
+        "model/89:4:composite:1/92:8:interface:1"
+      ]
+    },
+    "representatives": {
+      "model/89:4:composite:1/90:8:composite:1": "model/89:4:composite:1/90:8:composite:1",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/81:22:interface:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:15:compute:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/81:4:composite:1/82:8:interface:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:2": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/81:22:interface:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:15:compute:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/81:4:composite:1/82:8:interface:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "model/89:4:composite:1/90:8:composite:1/90:12:state:1": "model/89:4:composite:1/90:8:composite:1"
+    },
+    "labels": [],
+    "constraint_receipts": [
+      {
+        "id": "constraint:design:model/89:4:composite:1/90:8:composite:1:serial-sequence",
+        "type": "serial-sequence",
+        "node": "model/89:4:composite:1/90:8:composite:1",
+        "members": [],
+        "evidence": {
+          "certificate": null,
+          "scope": "source-contract"
+        },
+        "strength": "soft",
+        "endpoints": [],
+        "properties": {
+          "kind": "serial-sequence",
+          "node": "model/89:4:composite:1/90:8:composite:1",
+          "rule_version": "bounded-module-sequence/1",
+          "count": 2,
+          "state": "x",
+          "iterator": "part",
+          "collection": "self.parts",
+          "instances": [
+            "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:36",
+            "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py:88:57"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "unresolved",
+          "homogeneous": false,
+          "allocation_evidence": [
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 21,
+              "end_column": 78,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([ShadowedNamespace(), ShadowedNamespace()])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 36,
+              "end_column": 55,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/shadowed-namespace.py",
+              "line": 88,
+              "end_line": 88,
+              "column": 57,
+              "end_column": 76,
+              "symbol": "constructor",
+              "expression": "ShadowedNamespace()"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ],
+          "structure": {
+            "rule_version": "local-structure/1",
+            "scope": "modeled source graph and exact boundary slots; ordered operations",
+            "instances": [
+              {
+                "status": "unresolved",
+                "reason": "unresolved configuration",
+                "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "index": 0
+              },
+              {
+                "status": "unresolved",
+                "reason": "unresolved configuration",
+                "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+                "index": 1
+              }
+            ],
+            "groups": [
+              {
+                "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+                "indices": [
+                  0
+                ],
+                "instances": [
+                  "model/89:4:composite:1/90:8:composite:1/90:8:composite:1"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              },
+              {
+                "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+                "indices": [
+                  1
+                ],
+                "instances": [
+                  "model/89:4:composite:1/90:8:composite:1/90:8:composite:2"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              }
+            ],
+            "homogeneous": false,
+            "not_asserted": [
+              "numerical equivalence",
+              "parameter equality or stability",
+              "purity",
+              "runtime count",
+              "time axis",
+              "arbitrary graph isomorphism"
+            ]
+          }
+        },
+        "visible_node": "model/89:4:composite:1/90:8:composite:1",
+        "status": "deferred",
+        "reason": "legacy declaration; geometry has no unified handler yet",
+        "mapping": [],
+        "endpoint_preservation": {
+          "drawn": 0,
+          "total": 0
+        }
+      }
+    ]
+  },
+  "diagnostics": {
+    "route_failures": [],
+    "publication": {
+      "schema": "publication-quality/1",
+      "route_strategy": "canonical-short",
+      "wire_length": 180,
+      "min_print_font_pt": 13.73,
+      "target_min_font_pt": 8,
+      "requested_width_mm": 180,
+      "width_mm": 117.7639751552795,
+      "height_mm": 240,
+      "route_failures": [],
+      "unplaced_port_labels": [],
+      "line_geometry": {
+        "crossings": 0,
+        "overlapping_paths": [],
+        "unrelated_contacts": []
+      },
+      "issues": []
+    },
+    "routing": {
+      "selected": "canonical-short",
+      "baseline_crossings": 0,
+      "refinement": {
+        "attempts": 0,
+        "accepted": [],
+        "before_crossings": 0,
+        "before_contacts": 0,
+        "after_crossings": 0,
+        "after_contacts": 0
+      },
+      "candidates": [
+        {
+          "strategy": "canonical-short",
+          "crossings": 0,
+          "issues": [],
+          "wire_length": 180,
+          "min_print_font_pt": 13.73,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        }
+      ]
+    }
+  }
+}

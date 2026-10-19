@@ -25,6 +25,16 @@ class ArchitectureAdapterTests(unittest.TestCase):
             for item in value['sources']:
                 item['path'] = item['physical'] = source.name
             for node in value['nodes']:
+                # This frozen fixture checks historical computation/topology.
+                # New selection certificates have independent identity tests.
+                node.pop('module_binding', None)
+                node.pop('module_identity', None)
+                node.pop('syntax', None)
+                for field in ['source_framework_module', 'source_framework_function', 'source_tensor_annotation',
+                              'source_scalar_cast', 'attribute_name', 'symbolic_value', 'source_constant_input',
+                              'exception_signature', 'module_resource', 'module_resource_binding',
+                              'resource_framework_type', 'resource_constructor', 'framework_value_import']:
+                    node.pop(field, None)
                 for item in node['source']:
                     item['file'] = source.name
             return value
@@ -194,7 +204,12 @@ class ArchitectureAdapterTests(unittest.TestCase):
         incoming = [e for e in ir['edges'] if e['target'] == phis[0]['id']]
         self.assertEqual({e['condition']['outcome'] for e in incoming}, {'true', 'false'})
         joins = [n['label'] for n in ir['nodes'] if n.get('reason') == 'iteration-binding-unresolved']
-        self.assertEqual(joins, ['i · loop-carried value', 'y · loop-carried value'])
+        self.assertEqual(joins, ['i · loop-carried value'])
+        loop = next(n for n in ir['nodes'] if n.get('iteration_contract'))
+        binding, = loop['iteration_contract']['bindings']
+        self.assertEqual(binding['name'], 'y')
+        self.assertEqual(binding['initial'], phis[0]['id'])
+        self.assertTrue(any(e['target'] == binding['entry'] and e['target_port'] == 'backedge' for e in ir['edges']))
 
     def test_rebinding_invalidates_attribute_cache_and_annotation_only_does_not_assign(self):
         ir = analyze(ROOT / 'tests/semantic_fixtures/local_composition.py', 'VersionedReads')
@@ -213,7 +228,9 @@ class ArchitectureAdapterTests(unittest.TestCase):
         self.assertEqual(len(set(sources)), 3)
         by = {n['id']: n for n in ir['nodes']}
         self.assertEqual(by[sources[1]]['operator'], 'phi')
-        self.assertEqual(by[sources[2]]['reason'], 'iteration-binding-unresolved')
+        self.assertEqual(by[sources[2]]['role'], 'iteration-exit')
+        loop = next(n for n in ir['nodes'] if n.get('iteration_contract'))
+        self.assertEqual(loop['iteration_contract']['bindings'][0]['exit'], sources[2])
 
     def test_merge_order_and_digest_are_stable_across_python_hash_seeds(self):
         code = ("from semantic_adapter.analyzer import analyze; "

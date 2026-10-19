@@ -1,0 +1,1063 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>MixedCircuit · 架构图册</title><style>body{font:16px Arial,sans-serif;line-height:1.5;color:#293746;background:#eef1f5;margin:24px auto;max-width:1120px;padding:0 20px}article{background:#fff;border:1px solid #d7dfe8;border-radius:8px;padding:24px;margin:24px 0}object{display:block;width:100%;height:720px;margin-top:20px}a{color:#365e8b}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}nav{display:flex;gap:12px;flex-wrap:wrap}@media print{body{background:white}article{break-before:page}object{height:230mm}}</style><h1>MixedCircuit · 架构图册</h1><p>按实际依赖生成总览与模块详图。无节点的线条交叉表示跨越；未知操作保留虚线边框和来源。字号和路径检查仅衡量已提取结构的部分绘图质量。</p><p>57 个原始节点 · 62 条原始依赖 · 1 个未知操作 · 19/19 个图面</p><nav><a href="#panel-0">MixedCircuit</a><a href="#panel-1">piece</a><a href="#panel-2">true</a><a href="#panel-3">false</a><a href="#panel-4">Sigmoid gate</a><a href="#panel-5">Scaled attention-like</a><a href="#panel-6">Stage 01</a><a href="#panel-7">Stage 02</a><a href="#panel-8">Stage 03</a><a href="#panel-9">Stage 04</a><a href="#panel-10">Stage 05</a><a href="#panel-11">conditional-join · selected · branch join</a><a href="#panel-12">conditional-region · true</a><a href="#panel-13">conditional-region · false</a><a href="#panel-14">external-interface · x</a><a href="#panel-15">external-interface · side</a><a href="#panel-16">external-interface · initial</a><a href="#panel-17">external-interface · flag</a><a href="#panel-18">computation · structured value</a></nav><article id="panel-0"><h2>MixedCircuit</h2><p>模型总览 · 5.92 pt · 110.8 × 240 mm · 需调整：font-below-8pt</p><nav><a href="#panel-6">Stage 01</a> · <a href="#panel-7">Stage 02</a> · <a href="#panel-8">Stage 03</a> · <a href="#panel-9">Stage 04</a> · <a href="#panel-10">Stage 05</a></nav><object type="image/svg+xml" data="000-overview.svg" aria-label="MixedCircuit"></object><p><a href="000-overview.svg">矢量 SVG</a> · <a href="000-overview.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>0 条原始边界依赖</summary><pre>[]</pre></details></article><article id="panel-1"><h2>piece</h2><p>模块详图 · 11.93 pt · 180 × 181.9 mm · 通过当前几何与字号检查</p><nav><a href="#panel-8">上层模块</a> · <a href="#panel-4">Sigmoid gate</a></nav><object type="image/svg+xml" data="001-piece.svg" aria-label="piece"></object><p><a href="001-piece.svg">矢量 SVG</a> · <a href="001-piece.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>3 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/38:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:22:interface:1&quot;,
+    &quot;kind&quot;: &quot;interface-binding&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;x&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00024&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:22:interface:1&quot;,
+    &quot;visible_node&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:22:interface:1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:25:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:25:interface:1&quot;,
+    &quot;kind&quot;: &quot;interface-binding&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;side&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00025&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:25:interface:1&quot;,
+    &quot;visible_node&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:25:interface:1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/16:4:composite:1/19:8:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/39:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;value&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00037&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;model/34:4:composite:1/16:4:composite:1/19:8:interface:1&quot;,
+    &quot;visible_node&quot;: &quot;model/34:4:composite:1/16:4:composite:1/19:8:interface:1&quot;
+  }
+]</pre></details></article><article id="panel-2"><h2>true</h2><p>模块详图 · 15.08 pt · 180 × 186.5 mm · 通过当前几何与字号检查</p><nav><a href="#panel-9">上层模块</a> · </nav><object type="image/svg+xml" data="002-true.svg" aria-label="true"></object><p><a href="002-true.svg">矢量 SVG</a> · <a href="002-true.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>3 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00043&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:e405bf1a&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:e405bf1a&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00045&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:de05b5a8&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:de05b5a8&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;true&quot;
+    },
+    &quot;id&quot;: &quot;e00051&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:5e02ad91&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:5e02ad91&quot;
+  }
+]</pre></details></article><article id="panel-3"><h2>false</h2><p>模块详图 · 15.08 pt · 180 × 186.5 mm · 通过当前几何与字号检查</p><nav><a href="#panel-9">上层模块</a> · </nav><object type="image/svg+xml" data="003-false.svg" aria-label="false"></object><p><a href="003-false.svg">矢量 SVG</a> · <a href="003-false.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>3 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00047&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:a42d859&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:a42d859&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00049&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:1442e817&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:1442e817&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;false&quot;
+    },
+    &quot;id&quot;: &quot;e00052&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:f451ecf&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:f451ecf&quot;
+  }
+]</pre></details></article><article id="panel-4"><h2>Sigmoid gate</h2><p>模块详图 · 11.93 pt · 180 × 176.8 mm · 通过当前几何与字号检查</p><nav><a href="#panel-1">上层模块</a> · </nav><object type="image/svg+xml" data="004-Sigmoid-gate.svg" aria-label="Sigmoid gate"></object><p><a href="004-Sigmoid-gate.svg">矢量 SVG</a> · <a href="004-Sigmoid-gate.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>3 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/16:4:composite:1/17:29:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/17:15:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00028&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:4dc199c5&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:4dc199c5&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/16:4:composite:1/18:28:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/18:17:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00032&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:51bf617a&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:51bf617a&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/16:4:composite:1/19:15:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/19:8:interface:1&quot;,
+    &quot;kind&quot;: &quot;interface-binding&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00036&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:4dbf5b2e&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:4dbf5b2e&quot;
+  }
+]</pre></details></article><article id="panel-5"><h2>Scaled attention-like</h2><p>模块详图 · 10.66 pt · 180 × 238.5 mm · 通过当前几何与字号检查</p><nav><a href="#panel-8">上层模块</a> · </nav><object type="image/svg+xml" data="005-Scaled-attention-like.svg" aria-label="Scaled attention-like"></object><p><a href="005-Scaled-attention-like.svg">矢量 SVG</a> · <a href="005-Scaled-attention-like.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>4 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/36:17:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00013&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:39f644d1&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:39f644d1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/36:33:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/36:17:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00014&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:3af64664&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:3af64664&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:14:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/38:28:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00020&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:a8fdaf53&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:a8fdaf53&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/38:28:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/38:16:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00022&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:aafdb279&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:aafdb279&quot;
+  }
+]</pre></details></article><article id="panel-6"><h2>Stage 01</h2><p>模块详图 · 11.93 pt · 180 × 198.1 mm · 通过当前几何与字号检查</p><nav><a href="#panel-0">上层模块</a> · </nav><object type="image/svg+xml" data="006-Stage-01.svg" aria-label="Stage 01"></object><p><a href="006-Stage-01.svg">矢量 SVG</a> · <a href="006-Stage-01.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>9 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/25:17:parameter:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:2&quot;,
+    &quot;kind&quot;: &quot;parameter-read&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;framework-contract&quot;,
+    &quot;id&quot;: &quot;e00000&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;model/34:4:composite:1/35:18:compute:2&quot;,
+    &quot;presentation&quot;: &quot;attached-resource&quot;,
+    &quot;visible_node&quot;: &quot;model/34:4:composite:1/35:18:compute:2&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:22:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00001&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:28708bbf&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:28708bbf&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:18:compute:2&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00002&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:29708d52&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:29708d52&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/26:17:parameter:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:29:compute:1&quot;,
+    &quot;kind&quot;: &quot;parameter-read&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;framework-contract&quot;,
+    &quot;id&quot;: &quot;e00003&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;model/34:4:composite:1/35:29:compute:1&quot;,
+    &quot;presentation&quot;: &quot;attached-resource&quot;,
+    &quot;visible_node&quot;: &quot;model/34:4:composite:1/35:29:compute:1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:22:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:29:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00004&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:28708bbf&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:28708bbf&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:29:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00005&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:24708573&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:24708573&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/27:17:parameter:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:40:compute:1&quot;,
+    &quot;kind&quot;: &quot;parameter-read&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;framework-contract&quot;,
+    &quot;id&quot;: &quot;e00006&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;model/34:4:composite:1/35:40:compute:1&quot;,
+    &quot;presentation&quot;: &quot;attached-resource&quot;,
+    &quot;visible_node&quot;: &quot;model/34:4:composite:1/35:40:compute:1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:25:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:40:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00007&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:26708899&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:26708899&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:40:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;2&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00008&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:2f7096c4&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:2f7096c4&quot;
+  }
+]</pre></details></article><article id="panel-7"><h2>Stage 02</h2><p>模块详图 · 10.43 pt · 157.4 × 240 mm · 通过当前几何与字号检查</p><nav><a href="#panel-0">上层模块</a> · </nav><object type="image/svg+xml" data="007-Stage-02.svg" aria-label="Stage 02"></object><p><a href="007-Stage-02.svg">矢量 SVG</a> · <a href="007-Stage-02.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>11 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:18:compute:2&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00002&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:7e841b13&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:7e841b13&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:29:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00005&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:838422f2&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:838422f2&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:40:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;2&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00008&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:88842ad1&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:88842ad1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;0&quot;,
+    &quot;target_port&quot;: &quot;0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00009&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:8784293e&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:8784293e&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:11:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;1&quot;,
+    &quot;target_port&quot;: &quot;1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00010&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:7a81d630&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:7a81d630&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:18:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:14:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;2&quot;,
+    &quot;target_port&quot;: &quot;2&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00011&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:7b81d7c3&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:7b81d7c3&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:11:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/36:33:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;receiver&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00012&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:7c81d956&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:7c81d956&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/36:33:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/36:17:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00014&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:7e81dc7c&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:7e81dc7c&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:40:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00042&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:168e04b7&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:168e04b7&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00043&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:158e0324&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:158e0324&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00047&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:118dfcd8&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:118dfcd8&quot;
+  }
+]</pre></details></article><article id="panel-8"><h2>Stage 03</h2><p>模块详图 · 10.66 pt · 180 × 204.3 mm · 通过当前几何与字号检查</p><nav><a href="#panel-0">上层模块</a> · <a href="#panel-1">piece</a> · <a href="#panel-5">Scaled attention-like</a></nav><object type="image/svg+xml" data="008-Stage-03.svg" aria-label="Stage 03"></object><p><a href="008-Stage-03.svg">矢量 SVG</a> · <a href="008-Stage-03.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>8 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/36:17:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00013&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:bddfa610&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:bddfa610&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/36:33:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/36:17:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00014&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:c4dfb115&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:c4dfb115&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/35:14:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/38:28:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00020&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:c6e1f2d2&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:c6e1f2d2&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/28:22:parameter:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/38:16:compute:1&quot;,
+    &quot;kind&quot;: &quot;parameter-read&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;framework-contract&quot;,
+    &quot;id&quot;: &quot;e00021&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;model/34:4:composite:1/38:16:compute:1&quot;,
+    &quot;presentation&quot;: &quot;attached-resource&quot;,
+    &quot;visible_node&quot;: &quot;model/34:4:composite:1/38:16:compute:1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/38:16:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/38:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;value&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00023&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:c5e1f13f&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:c5e1f13f&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/38:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:22:interface:1&quot;,
+    &quot;kind&quot;: &quot;interface-binding&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;x&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00024&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:c2e1ec86&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:c2e1ec86&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:25:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:25:interface:1&quot;,
+    &quot;kind&quot;: &quot;interface-binding&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;side&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00025&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:c3e1ee19&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:c3e1ee19&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/16:4:composite:1/19:8:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/39:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;value&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00037&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:d1e442ba&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:d1e442ba&quot;
+  }
+]</pre></details></article><article id="panel-9"><h2>Stage 04</h2><p>模块详图 · 10.38 pt · 180 × 206.7 mm · 通过当前几何与字号检查</p><nav><a href="#panel-0">上层模块</a> · <a href="#panel-2">true</a> · <a href="#panel-3">false</a></nav><object type="image/svg+xml" data="009-Stage-04.svg" aria-label="Stage 04"></object><p><a href="009-Stage-04.svg">矢量 SVG</a> · <a href="009-Stage-04.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>10 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/39:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/40:26:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00038&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:4347d462&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:4347d462&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:31:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/40:26:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00039&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:4447d5f5&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:4447d5f5&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:26:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;0&quot;,
+    &quot;target_port&quot;: &quot;0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00040&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:bd4f5035&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:bd4f5035&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:26:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/40:18:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;1&quot;,
+    &quot;target_port&quot;: &quot;1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00041&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:bc4f4ea2&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:bc4f4ea2&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00043&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:ba4f4b7c&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:ba4f4b7c&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00045&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:b84f4856&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:b84f4856&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00047&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:ba4f4b7c&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:ba4f4b7c&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00049&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:b84f4856&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:b84f4856&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;true&quot;
+    },
+    &quot;id&quot;: &quot;e00051&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:b84d09bf&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:b84d09bf&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;false&quot;
+    },
+    &quot;id&quot;: &quot;e00052&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:b94d0b52&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:b94d0b52&quot;
+  }
+]</pre></details></article><article id="panel-10"><h2>Stage 05</h2><p>模块详图 · 10.66 pt · 180 × 208.9 mm · 通过当前几何与字号检查</p><nav><a href="#panel-0">上层模块</a> · </nav><object type="image/svg+xml" data="010-Stage-05.svg" aria-label="Stage 05"></object><p><a href="010-Stage-05.svg">矢量 SVG</a> · <a href="010-Stage-05.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>7 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;true&quot;
+    },
+    &quot;id&quot;: &quot;e00051&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:1c1b16ab&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:1c1b16ab&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;false&quot;
+    },
+    &quot;id&quot;: &quot;e00052&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:1d1b183e&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:1d1b183e&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:25:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/45:18:opaque:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00054&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:1f1b1b64&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:1f1b1b64&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/45:18:opaque:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/45:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;alias&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;value&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00055&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:201b1cf7&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:201b1cf7&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/45:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/46:15:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00056&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:211b1e8a&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:211b1e8a&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/38:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/46:15:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;2&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00057&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:221b201d&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:221b201d&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/46:15:compute:2&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/46:15:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00058&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:131b0880&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:131b0880&quot;
+  }
+]</pre></details></article><article id="panel-11"><h2>conditional-join · selected · branch join</h2><p>模块详图 · 10.17 pt · 180 × 226.4 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="011-conditional-join-selected-branch-join.svg" aria-label="conditional-join · selected · branch join"></object><p><a href="011-conditional-join-selected-branch-join.svg">矢量 SVG</a> · <a href="011-conditional-join-selected-branch-join.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>4 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:40:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00042&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:fd5b028e&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:fd5b028e&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00045&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:5b0747&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:5b0747&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00049&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:5b0747&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:5b0747&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/45:18:opaque:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00053&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:fe5d42b8&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:fe5d42b8&quot;
+  }
+]</pre></details></article><article id="panel-12"><h2>conditional-region · true</h2><p>模块详图 · 12.15 pt · 180 × 230.8 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="012-conditional-region-true.svg" aria-label="conditional-region · true"></object><p><a href="012-conditional-region-true.svg">矢量 SVG</a> · <a href="012-conditional-region-true.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>4 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:40:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00042&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:ed355a6f&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:ed355a6f&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00045&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:ea3555b6&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:ea3555b6&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00047&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:e8355290&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:e8355290&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:1/42:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;true&quot;
+    },
+    &quot;id&quot;: &quot;e00051&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:6a324d9f&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:6a324d9f&quot;
+  }
+]</pre></details></article><article id="panel-13"><h2>conditional-region · false</h2><p>模块详图 · 12.15 pt · 180 × 230.8 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="013-conditional-region-false.svg" aria-label="conditional-region · false"></object><p><a href="013-conditional-region-false.svg">矢量 SVG</a> · <a href="013-conditional-region-false.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>4 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:40:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00042&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:492f3c98&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:492f3c98&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;true&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00043&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:4a2f3e2b&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:4a2f3e2b&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:23:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00049&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:442f34b9&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:442f34b9&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/41:8:composite:2/44:12:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:8:value-alias:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;false&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;condition&quot;: {
+      &quot;branch&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+      &quot;outcome&quot;: &quot;false&quot;
+    },
+    &quot;id&quot;: &quot;e00052&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:d332546d&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:d332546d&quot;
+  }
+]</pre></details></article><article id="panel-14"><h2>external-interface · x</h2><p>模块详图 · 24.75 pt · 180 × 227 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="014-external-interface-x.svg" aria-label="external-interface · x"></object><p><a href="014-external-interface-x.svg">矢量 SVG</a> · <a href="014-external-interface-x.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>2 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:22:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:18:compute:2&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00001&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:6b3cb593&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:6b3cb593&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:22:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:29:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00004&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:6b3cb593&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:6b3cb593&quot;
+  }
+]</pre></details></article><article id="panel-15"><h2>external-interface · side</h2><p>模块详图 · 15.08 pt · 180 × 138.3 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="015-external-interface-side.svg" aria-label="external-interface · side"></object><p><a href="015-external-interface-side.svg">矢量 SVG</a> · <a href="015-external-interface-side.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>3 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:25:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/35:40:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00007&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:6c516cc1&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:6c516cc1&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:25:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/16:4:composite:1/16:25:interface:1&quot;,
+    &quot;kind&quot;: &quot;interface-binding&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;side&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00025&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:de569d65&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:de569d65&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:25:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/45:18:opaque:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00054&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:6c516cc1&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:6c516cc1&quot;
+  }
+]</pre></details></article><article id="panel-16"><h2>external-interface · initial</h2><p>模块详图 · 21.68 pt · 180 × 190.6 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="016-external-interface-initial.svg" aria-label="external-interface · initial"></object><p><a href="016-external-interface-initial.svg">矢量 SVG</a> · <a href="016-external-interface-initial.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>1 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:31:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/40:26:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;arg:1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00039&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:263bc99c&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:263bc99c&quot;
+  }
+]</pre></details></article><article id="panel-17"><h2>external-interface · flag</h2><p>模块详图 · 24.75 pt · 180 × 217.6 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="017-external-interface-flag.svg" aria-label="external-interface · flag"></object><p><a href="017-external-interface-flag.svg">矢量 SVG</a> · <a href="017-external-interface-flag.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>1 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/34:40:interface:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/41:11:control:1&quot;,
+    &quot;kind&quot;: &quot;control&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00042&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:ecb0b952&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:ecb0b952&quot;
+  }
+]</pre></details></article><article id="panel-18"><h2>computation · structured value</h2><p>模块详图 · 10.66 pt · 180 × 129.6 mm · 通过当前几何与字号检查</p><nav></nav><object type="image/svg+xml" data="018-computation-structured-value.svg" aria-label="computation · structured value"></object><p><a href="018-computation-structured-value.svg">矢量 SVG</a> · <a href="018-computation-structured-value.layout.json">布局、源码证据与完整节点/边记录</a></p><details><summary>4 条原始边界依赖</summary><pre>[
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/46:15:compute:2&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/46:15:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;0&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00058&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:86fc2ebe&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:86fc2ebe&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/40:18:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/46:15:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;1&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00059&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:87fc3051&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:87fc3051&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/39:8:value-alias:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/46:15:compute:1&quot;,
+    &quot;kind&quot;: &quot;data&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;2&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00060&quot;,
+    &quot;direction&quot;: &quot;input&quot;,
+    &quot;port_node&quot;: &quot;paper:port:98fa0c7d&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:98fa0c7d&quot;
+  },
+  {
+    &quot;source&quot;: &quot;model/34:4:composite:1/46:15:compute:1&quot;,
+    &quot;target&quot;: &quot;model/34:4:composite:1/46:8:interface:1&quot;,
+    &quot;kind&quot;: &quot;interface-binding&quot;,
+    &quot;source_port&quot;: &quot;out&quot;,
+    &quot;target_port&quot;: &quot;in&quot;,
+    &quot;evidence&quot;: &quot;source-dependency&quot;,
+    &quot;id&quot;: &quot;e00061&quot;,
+    &quot;direction&quot;: &quot;output&quot;,
+    &quot;port_node&quot;: &quot;paper:port:97fa0aea&quot;,
+    &quot;visible_node&quot;: &quot;paper:port:97fa0aea&quot;
+  }
+]</pre></details></article></html>

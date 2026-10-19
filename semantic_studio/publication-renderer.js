@@ -3,10 +3,16 @@
   'use strict';
   const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
   const P=root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
+  const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
   const css=`.publication text{font-family:Arial,'Noto Sans SC',sans-serif;fill:#293746} .paper-edge{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:1;stroke-dasharray:none}.paper-edge-halo{fill:none;stroke:white;stroke-width:5;stroke-linejoin:round;pointer-events:none}.paper-edge.control{stroke-dasharray:5 4}.paper-port-label{font-size:13px;font-weight:500;fill:#526170}.paper-title{font-weight:600}.paper-caption{fill:#66717f;font-size:13px}`;
   const defs=`<marker id="paper-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto"><path d="M1 1 L9 5 L1 9Z" fill="#5d6b7a" stroke="none"/></marker>`;
   const path=points=>points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
+  // Canvas legibility is measured at the SVG's native CSS scale. Print
+  // estimates remain informational there and must not choose its frontier.
+  const fontMetric=q=>q.medium==='canvas'?q.min_canvas_font_px:q.min_print_font_pt;
+  const fontFloor=q=>q.medium==='canvas'?12:8;
+  const areaMetric=q=>q.medium==='canvas'?q.native_width_px*q.native_height_px:q.width_mm*q.height_mm;
   function nodeTitle(n,idx){
     const uses=n.boundary_uses||[];
     const contents=n.content_inventory;
@@ -65,13 +71,13 @@
         for(const f of [.5,.3,.7,.15,.85]){const x=a.x+(b.x-a.x)*f,y=a.y+(b.y-a.y)*f;
           // A short dogleg may still have enough free space around it. Let
           // obstacle checks decide whether the whole label fits beside it.
-          if(a.y===b.y)candidates.push({x:x-w/2,y:y-h-4,w,h},{x:x-w/2,y:y+4,w,h});
-          if(a.x===b.x&&len>=h+8)candidates.push({x:x+8,y:y-h/2,w,h},{x:x-w-8,y:y-h/2,w,h});
+          if(a.y===b.y)candidates.push({x:x-w/2,y:y-h-4,w,h},{x:x-w/2,y:y+4,w,h},{x:x-w/2,y:y-h/2,w,h,knockout:true});
+          if(a.x===b.x&&len>=h+4)candidates.push({x:x+8,y:y-h/2,w,h},{x:x-w-8,y:y-h/2,w,h});
         }
         // A label may interrupt its own straight edge with a white knockout.
         // This keeps long branch labels between nearby parallel paths instead
         // of pushing them across another edge. End positions permit staggering.
-        if(a.x===b.x&&len>=h+8)for(const f of [(h/2+4)/len,1-(h/2+4)/len,.5]){
+        if(a.x===b.x&&len>=h+4)for(const f of [(h/2+4)/len,1-(h/2+4)/len,.5]){
           const y=a.y+(b.y-a.y)*f;candidates.push({x:a.x-w/2,y:y-h/2,w,h,knockout:true});
         }
       }
@@ -101,13 +107,26 @@
     // Width is a maximum column width. Small tall circuits should use less
     // column width instead of being enlarged to 20pt text and a second page.
     const physicalWidth=graph.publication.fit_page?Math.min(graph.publication.paper_width_mm,240*b.w/totalH):graph.publication.paper_width_mm;
-    const printScale=physicalWidth/25.4*72/b.w,minFontPt=Math.min(...graph.nodes.map(n=>n.paper.captions.length?13:n.paper.font),...(labeling.placed.length||noteLines.length?[13]:[]))*printScale;
+    const minNativeFont=Math.min(...graph.nodes.map(n=>n.paper.captions.length?13:n.paper.font),...(labeling.placed.length||noteLines.length?[13]:[]));
+    const printScale=physicalWidth/25.4*72/b.w,minFontPt=minNativeFont*printScale;
     const wireLength=routes.reduce((s,e)=>s+e.route.points.slice(1).reduce((s,p,i)=>s+Math.abs(p.x-e.route.points[i].x)+Math.abs(p.y-e.route.points[i].y),0),0);
     const quality={schema:'publication-quality/1',route_strategy:strategy,wire_length:Number(wireLength.toFixed(1)),min_print_font_pt:Number(minFontPt.toFixed(2)),target_min_font_pt:8,
       requested_width_mm:graph.publication.paper_width_mm,width_mm:physicalWidth,height_mm:Number((physicalWidth*totalH/b.w).toFixed(1)),
       route_failures:failures,unplaced_port_labels:labeling.suppressed,line_geometry:lineGeometry(routes),issues:[]};
-    if(minFontPt<8)quality.issues.push('font-below-8pt');
-    if(quality.height_mm>245)quality.issues.push('figure-taller-than-245mm');
+    if(graph.publication.medium==='canvas'){
+      const limits=graph.publication.canvas_limits;
+      Object.assign(quality,{schema:'publication-quality/2',medium:'canvas',scale_scope:'native-svg-css-pixels; viewport zoom is separate',
+        native_width_px:b.w,native_height_px:totalH,min_canvas_font_px:minNativeFont,target_min_canvas_font_px:12,canvas_limits:limits});
+      if(minNativeFont<12)quality.issues.push('canvas-font-below-12px');
+      if(b.w>limits.width_px)quality.issues.push('canvas-width-budget');
+      if(totalH>limits.height_px)quality.issues.push('canvas-height-budget');
+      if(b.w*totalH>limits.area_px2)quality.issues.push('canvas-area-budget');
+      if(graph.nodes.length>limits.nodes)quality.issues.push('canvas-node-budget');
+      if(graph.edges.length>limits.edges)quality.issues.push('canvas-edge-budget');
+    }else{
+      if(minFontPt<8)quality.issues.push('font-below-8pt');
+      if(quality.height_mm>245)quality.issues.push('figure-taller-than-245mm');
+    }
     if(failures.length)quality.issues.push('route-failure');
     if(quality.line_geometry.overlapping_paths.some(p=>!p.same_value))quality.issues.push('edge-path-overlap');
     if(labeling.suppressed.length)quality.issues.push('port-label-requires-note');
@@ -123,7 +142,7 @@
         trials.push(trial);
         // Reduce crossings only while preserving each baseline quality gate.
         // Physical scale and label placement are checked after route bounds.
-        if(q.issues.some(issue=>!baseline.quality.issues.includes(issue))||q.route_failures.length>baseline.quality.route_failures.length||q.unplaced_port_labels.length>baseline.quality.unplaced_port_labels.length||q.min_print_font_pt<Math.min(8,baseline.quality.min_print_font_pt))continue;
+        if(q.issues.some(issue=>!baseline.quality.issues.includes(issue))||q.route_failures.length>baseline.quality.route_failures.length||q.unplaced_port_labels.length>baseline.quality.unplaced_port_labels.length||fontMetric(q)<Math.min(fontFloor(q),fontMetric(baseline.quality)))continue;
         if(q.issues.length<b.issues.length||q.issues.length===b.issues.length&&(q.line_geometry.crossings<b.line_geometry.crossings||q.line_geometry.crossings===b.line_geometry.crossings&&q.wire_length<b.wire_length*.99))best=trial;
       }
     }
@@ -141,7 +160,9 @@
       // to improve the crossing count at the same time.
       // A final bounded pass may replace ambiguous contacts by one additional
       // explicit overpass. Keep the ordinary monotone repairs first, and only
-      // accept a strictly smaller combined conflict count within that ceiling.
+      // An ambiguous contact costs twice an explicit overpass: replacing one
+      // false junction with one crossing improves interpretation. Retain the
+      // one-crossing ceiling and require a smaller weighted conflict count.
       for(const phase of ['crossings','contacts','separation']){
       const separation=phase==='separation',crossingCeiling=Math.min(baseline.quality.line_geometry.crossings,best.quality.line_geometry.crossings+1);
       for(let pass=0;pass<(separation?1:2);pass++){
@@ -157,16 +178,16 @@
           const policies=phase!=='crossings'?[[180,16],[540,16],[540,12],[540,8]]:[[180,16],[540,16]];
           for(const [crossingCost,stubLength]of policies){
             const current=best.routes.find(e=>e.id===edge.id);
-            context.routeCache=new Map();context.reserved=segments(best.routes.filter(e=>e.id!==edge.id));context.crossingCost=crossingCost;context.contactCost=crossingCost;context.stubLength=stubLength;
+            context.routeCache=new Map();context.reserved=segments(best.routes.filter(e=>e.id!==edge.id));context.crossingCost=crossingCost;context.contactCost=crossingCost*(phase==='crossings'?1:2);context.stubLength=stubLength;
             const route=E.route(current,graph.positions);refinement.attempts++;
             if(!route.ok)continue;
             const candidate=evaluateRoutes(graph,best.routes.map(e=>e.id===edge.id?{...e,route}:e),strategy),q=candidate.quality,b=best.quality;
             const contactPairs=new Set(b.line_geometry.unrelated_contacts.map(c=>JSON.stringify(c.edges)));
             if(q.line_geometry.unrelated_contacts.some(c=>!contactPairs.has(JSON.stringify(c.edges))))continue;
             const extraCrossings=q.line_geometry.crossings-b.line_geometry.crossings;
-            if(extraCrossings>0&&(!separation||q.line_geometry.crossings>crossingCeiling||extraCrossings>=b.line_geometry.unrelated_contacts.length-q.line_geometry.unrelated_contacts.length))continue;
+            if(extraCrossings>0&&(!separation||q.line_geometry.crossings>crossingCeiling||extraCrossings>=2*(b.line_geometry.unrelated_contacts.length-q.line_geometry.unrelated_contacts.length)))continue;
             if(score(q.line_geometry)>=score(b.line_geometry)||q.line_geometry.unrelated_contacts.length>b.line_geometry.unrelated_contacts.length||q.issues.some(issue=>!b.issues.includes(issue))||q.issues.length>b.issues.length||
-              q.route_failures.length>b.route_failures.length||q.unplaced_port_labels.length>b.unplaced_port_labels.length||q.min_print_font_pt<Math.min(8,b.min_print_font_pt))continue;
+              q.route_failures.length>b.route_failures.length||q.unplaced_port_labels.length>b.unplaced_port_labels.length||fontMetric(q)<Math.min(fontFloor(q),fontMetric(b)))continue;
             refinement.accepted.push({phase,edge:edge.id,crossing_cost:crossingCost,stub_length:stubLength,crossings:[b.line_geometry.crossings,q.line_geometry.crossings],contacts:[b.line_geometry.unrelated_contacts.length,q.line_geometry.unrelated_contacts.length],...(extraCrossings>0?{tradeoff:'contacts-to-crossings'}:{})});
             best=candidate;improved=true;break;
           }
@@ -194,7 +215,8 @@
     const canonical=e.bundle_members?'':` data-canonical-source="${esc(e.canonical_source)}" data-canonical-target="${esc(e.canonical_target)}"`;
     const title=e.bundle_members?e.bundle_members.map(m=>`${m.id}: ${m.canonical_source}[${m.source_port}] → ${m.canonical_target}[${m.target_port}]`).join('\n'):e.source_port+' → '+e.target_port+' · '+e.evidence;
     const design=e.design_route?` data-design-route="${esc(e.design_route.kind)}" data-design-certificate="${esc(e.design_route.certificate)}"`:'';
-    return `<path class="paper-edge-halo" d="${d}"/><path class="edge paper-edge ${e.kind==='control'?'control':''}" data-edge-id="${esc(e.id)}" data-route-valid="${e.route.ok}"${canonical}${bundle}${design} d="${d}" stroke="${color}" marker-end="url(#paper-arrow)"><title>${esc(title)}</title></path>`;
+    const ports=` data-source-port="${esc(e.source_port)}" data-target-port="${esc(e.target_port)}" data-semantic-bindings="${esc(JSON.stringify(e.semantic_bindings||[]))}"`;
+    return `<path class="paper-edge-halo" d="${d}"/><path class="edge paper-edge ${e.kind==='control'?'control':''}" data-edge-id="${esc(e.id)}" data-route-valid="${e.route.ok}"${canonical}${bundle}${design}${ports} d="${d}" stroke="${color}" marker-end="url(#paper-arrow)"><title>${esc(title)}</title></path>`;
   }
   function labelBody(label){return `<g class="paper-label" data-label-edge="${esc(label.edge)}"><rect x="${label.x}" y="${label.y}" width="${label.w}" height="${label.h}" rx="4" fill="#fff" fill-opacity=".96"/><text x="${label.x+6}" y="${label.y+16}" class="paper-port-label">${esc(label.text)}</text></g>`;}
   function prepareLabels(ir,state){
@@ -207,7 +229,7 @@
     for(const gap of [60,84,112]){
       const trialGraph=E.project(ir,{...state,view:'publication',paperLabelGapY:gap}),trial=prepare(trialGraph),q=trial.quality,b=prepared.quality;
       const accepted=q.unplaced_port_labels.length<b.unplaced_port_labels.length&&q.issues.every(issue=>baseline.issues.includes(issue))&&
-        q.min_print_font_pt>=Math.min(8,baseline.min_print_font_pt)&&q.route_failures.length<=baseline.route_failures.length&&
+        fontMetric(q)>=Math.min(fontFloor(q),fontMetric(baseline))&&q.route_failures.length<=baseline.route_failures.length&&
         q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length;
       candidates.push({gap_y:gap,unplaced_labels:q.unplaced_port_labels.length,min_print_font_pt:q.min_print_font_pt,
         issues:q.issues,crossings:q.line_geometry.crossings,contacts:q.line_geometry.unrelated_contacts.length,accepted});
@@ -229,8 +251,8 @@
     const accepted=q.line_geometry.crossings<b.line_geometry.crossings&&
       q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
       q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
-      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.min_print_font_pt>=b.min_print_font_pt&&
-      q.width_mm*q.height_mm<=b.width_mm*b.height_mm*1.1&&q.wire_length<=b.wire_length*1.1;
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      areaMetric(q)<=areaMetric(b)*1.1&&q.wire_length<=b.wire_length*1.1;
     const chosen=accepted?trial:baseline;
     const metrics=q=>({crossings:q.line_geometry.crossings,contacts:q.line_geometry.unrelated_contacts.length,
       issues:q.issues,min_print_font_pt:q.min_print_font_pt,unplaced_labels:q.unplaced_port_labels.length,
@@ -239,9 +261,13 @@
       selected:accepted?'consumer':'earliest',max_area_ratio:1.1,max_wire_ratio:1.1};
     return chosen;
   }
-  function prepareFigure(ir,state={}){
+  function selectFigure(ir,state={}){
     let chosen=prepareTopology(ir,state);
     const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
+    // A zoomable canvas keeps the requested semantic frontier. Route/resource
+    // failures remain explicit; silently replacing it with an overview is not
+    // a repair. Single-page print selection below has its own policy.
+    if(chosen.graph.publication.medium==='canvas')return chosen;
     if(state.paperAuto===false||Object.keys(state.offsets||{}).length||!chosen.prepared.quality.issues.length)return chosen;
     const attempts=[];
     // Semantic presets are bounded by measured print readability. Detail that
@@ -250,10 +276,12 @@
     const profiles=[{paperCompact:true},
       ...(granularity==='detailed'?[{paperGranularity:'modules',paperBudget:Math.min(requested,20)}]:[]),
       ...(granularity!=='overview'?[{paperGranularity:'overview',paperBudget:Math.min(requested,12)}]:[]),
+      ...(granularity!=='overview'?[{paperGranularity:'overview',paperBudget:Math.min(requested,12),paperCompact:true}]:[]),
       ...[...new Set([Math.floor(requested*.65),12,8,6,4])].filter(n=>n<requested&&n>=4).map(paperBudget=>({paperBudget}))];
     for(const profile of profiles){
       const candidate=prepareTopology(ir,{...state,...profile}),q=candidate.prepared.quality,b=chosen.prepared.quality;
-      const accepted=q.issues.length<b.issues.length&&q.route_failures.length<=b.route_failures.length&&
+      const improves=q.issues.length<b.issues.length||q.issues.length===b.issues.length&&q.min_print_font_pt>b.min_print_font_pt+.2&&q.line_geometry.crossings<=b.line_geometry.crossings;
+      const accepted=improves&&q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
         q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.min_print_font_pt>=Math.min(8,b.min_print_font_pt)&&
         q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length;
       attempts.push({budget:profile.paperBudget??requested,granularity:profile.paperGranularity||granularity,compact:!!profile.paperCompact,issues:q.issues,min_font_pt:q.min_print_font_pt,accepted});
@@ -265,16 +293,26 @@
       deferred_panels:chosen.graph.nodes.filter(n=>n.kind==='composite'&&!chosen.graph.positions.get(n.id).expanded&&(chosen.graph.idx.children.get(n.id)||[]).length).map(n=>n.id)};
     return chosen;
   }
+  function prepareFigure(ir,state={}){
+    const chosen=selectFigure(ir,state),g=chosen.graph;
+    E.auditConstraintRoutes(g,chosen.prepared.routes);
+    g.expression_goals=Goals.build(ir,g.architecture);
+    g.expression_coverage=Goals.evaluate(g.expression_goals,g,chosen.prepared);
+    return chosen;
+  }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};const {graph:g,prepared}=prepareFigure(ir,state),{bounds:b,routes,labeling,quality}=prepared;
+    const expressionGoals=g.expression_goals,expressionCoverage=g.expression_coverage;
     const frames=[],nodes=[];
-    for(const n of E.drawingOrder(g.nodes,g.idx)){const p=g.positions.get(n.id),body=`<g class="node" data-node-id="${esc(n.id)}" data-id="${esc(n.id)}" transform="translate(${p.x},${p.y})"><title>${esc(nodeTitle(n,g.idx))}</title>${nodeBody(n,p)}</g>`;(p.expanded?frames:nodes).push(body);}
+    for(const n of E.drawingOrder(g.nodes,g.idx)){const p=g.positions.get(n.id),body=`<g class="node" data-node-id="${esc(n.id)}" data-id="${esc(n.id)}"${n.identity_display?` data-identity="${esc(JSON.stringify(n.identity_display))}"`:''} transform="translate(${p.x},${p.y})"><title>${esc(nodeTitle(n,g.idx))}</title>${nodeBody(n,p)}</g>`;(p.expanded?frames:nodes).push(body);}
     // Crossing halos express overpasses, never junctions. Separate canonical
     // edges and terminals remain individually inspectable in the vector file.
     const {notes,noteLines,totalH}=prepared;
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" class="publication" width="${quality.width_mm}mm" height="${quality.width_mm*totalH/b.w}mm" viewBox="${b.x} ${b.y} ${b.w} ${totalH}" role="img" aria-label="${esc(ir.title)}"><title>${esc(ir.title)} · architecture</title><desc>Source-backed architecture; unresolved regions remain explicit. Crossings without a node are not junctions. ${esc(notes.join('; '))}</desc><metadata>${esc(JSON.stringify({schema:'archcanvas-publication/1',canonical_digest:ir.ir_digest,quality}))}</metadata><style>${css}</style><defs>${defs}</defs><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${totalH}" fill="#fff"/><g id="frames">${frames.join('')}</g><g id="edges">${routes.map(edgeBody).join('')}</g><g id="nodes">${nodes.join('')}</g><g id="port-labels">${labeling.placed.map(labelBody).join('')}</g>${noteLines.length?`<text x="${b.x+14}" y="${b.y+b.h+20}" class="paper-port-label">${noteLines.map((line,i)=>`<tspan x="${b.x+14}" dy="${i?17:0}">${esc(line)}</tspan>`).join('')}</text>`:''}</svg>\n`;
-    return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,
-      layout:{bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,labels:labeling.placed},
+    const dimensions=quality.medium==='canvas'?`width="${b.w}px" height="${totalH}px"`:`width="${quality.width_mm}mm" height="${quality.width_mm*totalH/b.w}mm"`;
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" class="publication" ${dimensions} viewBox="${b.x} ${b.y} ${b.w} ${totalH}" role="img" aria-label="${esc(ir.title)}"><title>${esc(ir.title)} · architecture</title><desc>Source-backed architecture; unresolved regions remain explicit. Crossings without a node are not junctions. ${esc(notes.join('; '))}</desc><metadata>${esc(JSON.stringify({schema:'archcanvas-publication/1',canonical_digest:ir.ir_digest,quality}))}</metadata><style>${css}</style><defs>${defs}</defs><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${totalH}" fill="#fff"/><g id="frames">${frames.join('')}</g><g id="edges">${routes.map(edgeBody).join('')}</g><g id="nodes">${nodes.join('')}</g><g id="port-labels">${labeling.placed.map(labelBody).join('')}</g>${noteLines.length?`<text x="${b.x+14}" y="${b.y+b.h+20}" class="paper-port-label">${noteLines.map((line,i)=>`<tspan x="${b.x+14}" dy="${i?17:0}">${esc(line)}</tspan>`).join('')}</text>`:''}</svg>\n`;
+    return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
+      layout:{bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,labels:labeling.placed,constraint_receipts:g.constraint_receipts,
+        ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
   const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,prepareFigure,render,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;

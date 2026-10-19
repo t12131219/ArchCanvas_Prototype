@@ -78,6 +78,14 @@ def validate_ir(ir):
     for motif in ir.get('motifs', []):
         if not set(motif['members']) <= by.keys() or not motif.get('evidence'):
             errors.append('invalid motif: ' + motif['id'])
+    from .iteration import validate_contracts
+    errors.extend(validate_contracts(nodes, ir.get('edges', [])))
+    from .identity import validate as validate_identities
+    errors.extend(validate_identities(nodes, ir.get('edges', [])))
+    from .symbolic_values import validate as validate_values
+    errors.extend(validate_values(nodes, ir.get('edges', [])))
+    from .structure import validate as validate_structure
+    errors.extend(validate_structure(nodes, ir.get('edges', [])))
     certificates = {c['id']: c for c in ir.get('semantic_contracts', [])}
     if certificates and ir.get('semantic_contract_basis') != source_graph_digest(ir):
         errors.append('semantic certificates refer to a different source graph')

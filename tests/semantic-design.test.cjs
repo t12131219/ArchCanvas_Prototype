@@ -5,6 +5,9 @@ const root=path.resolve(__dirname,'..');
 // Source-derived fixtures are reproduced by tools/audit_semantic_design.py.
 // Their actual CPU receipts are retained, rather than synthesizing executions.
 const irs=Object.fromEntries(['ImageResidual','VectorResidual','SameSource','ConditionalResidual','IndependentStack','SharedStack','HeterogeneousStack','SharedStack-runtime'].map(name=>[name,JSON.parse(fs.readFileSync(path.join(root,'verification/semantic-design/current/after',name+'.json')))]));
+// Historical constructor matches no longer certify representatives. Re-extract
+// source sequences so this test exercises the current structural proof.
+for(const name of ['IndependentStack','SharedStack','HeterogeneousStack'])irs[name]=JSON.parse(fs.readFileSync(path.join(root,'verification/local-relations/current/structural-repeats',name+'.json')));
 function accounted(ir,g){for(const [key,items]of [['node_accounting',ir.nodes],['edge_accounting',ir.edges]]){const ids=Object.values(g[key]).flat();assert.equal(new Set(ids).size,ids.length);assert.deepEqual(ids.slice().sort(),items.map(n=>n.id).sort());}}
 function cutsHeader(a,b,p){return a.x===b.x?a.x>p.x&&a.x<p.x+p.w&&Math.max(a.y,b.y)>p.y&&Math.min(a.y,b.y)<p.y+p.protected_header_height:a.y>p.y&&a.y<p.y+p.protected_header_height&&Math.max(a.x,b.x)>p.x&&Math.min(a.x,b.x)<p.x+p.w;}
 

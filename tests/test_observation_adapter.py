@@ -52,6 +52,8 @@ class ObservationAdapterTests(unittest.TestCase):
         original = next(n for n in source['nodes'] if n.get('module_path') == 'first.a')
         duplicate = copy.deepcopy(original)
         duplicate['id'] = 'synthetic-second-source-invocation'
+        duplicate.pop('module_binding', None)
+        duplicate.pop('module_identity', None)
         source['nodes'].append(duplicate)
         # Construction of this synthetic graph needs fresh certificates.
         source.pop('semantic_contracts', None)

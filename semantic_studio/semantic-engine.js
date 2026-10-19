@@ -3,6 +3,7 @@
   'use strict';
   const A=root.SemanticArchitecture||(typeof require==='function'?require('./architecture.js'):null);
   const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
+  const C=root.SemanticRelationConstraints||(typeof require==='function'?require('./relation-constraints.js'):null);
   const clone=x=>JSON.parse(JSON.stringify(x)),plans=new WeakMap();
   function index(ir){
     const nodes=new Map(ir.nodes.map(n=>[n.id,n])),children=new Map();
@@ -36,7 +37,7 @@
       // An explicit presentation policy owns the complete binding set. Adding
       // compact defaults back would erase its focused-boundary exceptions.
       if(!options.bindings&&n.kind==='value-alias'&&n.slot==null&&!n.operator&&ins.length===1&&!ins[0].condition&&['alias','interface-binding'].includes(ins[0].kind))bindings.set(n.id,ins[0]);
-      if(n.kind==='parameter'&&!ins.length&&uses.length&&uses.every(e=>['data','parameter-read'].includes(e.kind)))resources.add(n.id);
+      if(n.kind==='parameter'&&!options.exposedResources?.has(n.id)&&!ins.length&&uses.length&&uses.every(e=>['data','parameter-read'].includes(e.kind)))resources.add(n.id);
     }
     if(options.bindings)for(const [id,edge]of options.bindings)bindings.set(id,edge);
     const metadata=options.metadata||new Set();
@@ -67,8 +68,14 @@
       projected.push({...clone(raw),id:raw.id,source:s,target:t,source_port:port,originals:[...via,raw.id],canonical_source:raw.source,canonical_target:raw.target,resolved_source:resolved,
         ...(bypass&&s===resolved&&t===raw.target?{design_route:{kind:'bypass',certificate:bypass.certificate}}:{})});
     }
+    const edgeAccounting={visible:projected.map(e=>e.id),internal,excluded,contracted,attached};
+    // Mark semantic ports before ribbon selection so state/condition identity
+    // cannot disappear into an otherwise ordinary repeated-context bundle.
+    C.project(plan,projected,rep,edgeAccounting);
     const presented=options.presentEdges?options.presentEdges(projected,idx):projected;
+    const constraintReceipts=C.project(plan,presented,rep,edgeAccounting);
     const positions=L.layout(idx,roots,visible,presented,state.offsets||{},{foldSerial:state.view==='architecture'&&state.foldSerial!==false,...options.layout}),ps=[...positions.values()];
+    C.evaluate(constraintReceipts,positions,presented);
     const left=Math.min(0,...ps.map(p=>p.x-60)),top=Math.min(0,...ps.map(p=>p.y-60));
     const nodeAccounting={visible:[],collapsed:[],contracted:[],attached:[],excluded:[]},representatives={};
     for(const n of ir.nodes){const representative=rep(n.id);let bucket;
@@ -76,10 +83,11 @@
       nodeAccounting[bucket].push(n.id);if(representative)representatives[n.id]=representative;
     }
     return {nodes:plan.nodes.filter(n=>visible.has(n.id)),edges:presented,positions,idx,annotations,architecture:state.view==='architecture'?plan:null,
-      node_accounting:nodeAccounting,representatives,
-      edge_accounting:{visible:projected.map(e=>e.id),internal,excluded,contracted,attached},
+      node_accounting:nodeAccounting,representatives,constraint_receipts:constraintReceipts,
+      edge_accounting:edgeAccounting,
       bounds:{x:left,y:top,w:Math.max(900,...ps.map(p=>p.x+p.w+60))-left,h:Math.max(600,...ps.map(p=>p.y+p.h+60))-top}};
   }
   const route=(e,positions)=>positions.context?.routeCache?.get(e.id)||L.route(e,positions);
-  const api={clone,index,viewIndex,architecture,drawingOrder,validate,project,path:(e,p)=>route(e,p).points.map((v,i)=>`${i?'L':'M'}${v.x},${v.y}`).join(' '),route};root.SemanticEngine=api;if(typeof module!=='undefined')module.exports=api;
+  const auditConstraintRoutes=(g,routes)=>C.auditRoutes(g.constraint_receipts||[],g.positions,routes);
+  const api={clone,index,viewIndex,architecture,drawingOrder,validate,project,auditConstraintRoutes,path:(e,p)=>route(e,p).points.map((v,i)=>`${i?'L':'M'}${v.x},${v.y}`).join(' '),route};root.SemanticEngine=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

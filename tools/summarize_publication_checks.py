@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'semantic-design':
+        if stage == 'local-relations':
+            from summarize_local_relations import main as summarize_stage
+        elif stage == 'semantic-design':
             from summarize_semantic_design import main as summarize_stage
         elif stage == 'configuration':
             from summarize_configuration import main as summarize_stage

@@ -96,6 +96,26 @@ class Analyzer:
                     for alias in n.names: self.imports[alias.asname or alias.name] = alias.name
                 elif isinstance(n, ast.ImportFrom):
                     for alias in n.names: self.imports[alias.asname or alias.name] = (n.module or '') + '.' + alias.name
+        # Module bindings and the current function's lexical bindings are
+        # checked separately: a parameter in another function does not rebind
+        # this function's imported namespace.
+        shadowed = set()
+        def module_bindings(node):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                shadowed.add(node.name); return
+            if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
+                shadowed.add(node.id)
+            for child in ast.iter_child_nodes(node): module_bindings(child)
+        for u in self.units:
+            module_bindings(u['tree'])
+            for n in ast.walk(u['tree']):
+                if isinstance(n, ast.Global): shadowed.update(n.names)
+                if isinstance(n, ast.Attribute) and isinstance(n.ctx, (ast.Store, ast.Del)):
+                    base = n
+                    while isinstance(base, ast.Attribute): base = base.value
+                    if isinstance(base, ast.Name) and base.id in self.imports: shadowed.add(base.id)
+        self.value_imports = {k: v for k, v in self.imports.items() if k not in shadowed}
+        self.value_shadowed = shadowed | self.imports.keys()
         # Notebook setup globals are evidence only; resolve literal assignments,
         # never run dataset/download/optimizer cells.
         self.globals = {}
@@ -120,6 +140,9 @@ class Analyzer:
                 'source': self.evidence(u, n, symbol), 'evidence_status': 'opaque' if kind == 'opaque' else 'static-only',
                 'granularity': 'composite' if kind == 'composite' else 'atomic',
                 'glyph': GLYPHS[kind], 'runtime_evidence': [], **extra}
+        if kind == 'compute' and isinstance(n, ast.expr):
+            from .structure import syntax
+            node['syntax'] = syntax(n)
         self.nodes.append(node)
         self.node_by[identity] = node
         return identity
@@ -140,6 +163,20 @@ class Analyzer:
     def resolve(self, name):
         head, *tail = name.split('.')
         return '.'.join([self.imports.get(head, head), *tail])
+
+    def value_namespace(self, expression, unit):
+        """Check the original expression's lexical namespace, including init/factories."""
+        head = text(expression).split('.')[0]
+        if head not in self.value_imports: return False
+        for fn in ast.walk(unit['tree']):
+            if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) or not (fn.lineno <= expression.lineno <= fn.end_lineno):
+                continue
+            bound = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name) and isinstance(n.ctx, (ast.Store, ast.Del))}
+            bound.update(n.arg for n in ast.walk(fn) if isinstance(n, ast.arg))
+            bound.update(a.asname or a.name.split('.')[0] for n in ast.walk(fn)
+                         if isinstance(n, (ast.Import, ast.ImportFrom)) for a in n.names)
+            if head in bound: return False
+        return True
 
     def module_map(self, cls, values):
         result = {}
@@ -205,7 +242,7 @@ class Analyzer:
                 return copy.deepcopy(bindings[n.id]) if n.id in bindings else n
         return source, Substitute().visit(copy.deepcopy(result)), body[0]
 
-    def call(self, cls_pair, parent, label, actuals, keywords, ctor, depth, module_path='', owner=None, ctor_objects=None, object_identity=None, owner_values=None, function_modules=None, forward_constants=None):
+    def call(self, cls_pair, parent, label, actuals, keywords, ctor, depth, module_path='', owner=None, ctor_objects=None, object_identity=None, owner_values=None, function_modules=None, forward_constants=None, object_reference=None):
         u, cls = cls_pair
         symbol = cls.name + '.forward' if isinstance(cls, ast.ClassDef) else cls.name
         if depth > self.max_depth:
@@ -216,6 +253,12 @@ class Analyzer:
             self.coverage_blockers.extend({'file': u['path'], 'line': n.lineno, 'kind': type(n).__name__} for n in ast.walk(fn) if isinstance(n, (ast.BoolOp, ast.Try, ast.Assert, ast.While, ast.ListComp, ast.DictComp, ast.SetComp, ast.GeneratorExp)) and hasattr(n, 'lineno'))
         if not fn:
             return self.add('opaque', label, parent, u, cls, symbol, reason='no local forward definition')
+        local_shadowed = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name) and isinstance(n.ctx, (ast.Store, ast.Del))}
+        local_shadowed.update(n.arg for n in ast.walk(fn) if isinstance(n, ast.arg))
+        local_shadowed.update(a.asname or a.name.split('.')[0] for n in ast.walk(fn)
+                              if isinstance(n, (ast.Import, ast.ImportFrom)) for a in n.names)
+        value_imports = {k: v for k, v in self.value_imports.items() if k not in local_shadowed}
+        value_shadowed = self.value_shadowed | local_shadowed
         composite = self.add('composite', label, parent, u, fn, symbol,
                              semantic_type='source-module' if is_class else 'source-function', module_path=module_path,
                              constructor=ctor, source_class=cls.name if is_class else None)
@@ -232,7 +275,8 @@ class Analyzer:
         owner = cls if is_class else owner
         modules = self.module_map(owner, values) if owner is not None else {}
         from .construction import Construction, Module
-        construction = Construction(self, u, owner, values, ctor_objects, object_identity if object_identity is not None else module_path)
+        construction = Construction(self, u, owner, values, ctor_objects, object_identity if object_identity is not None else module_path,
+                                    object_reference or 'entry')
         iteration_modules = dict(function_modules or {})
         iteration_paths = {name: spec.identity for name, spec in iteration_modules.items()}
         env = {}
@@ -242,6 +286,10 @@ class Analyzer:
         invocation_values = dict(forward_constants or {})
         for index, arg in enumerate(args):
             node = self.add('interface', arg.arg, composite, u, arg, symbol, role='input', slot=arg.arg)
+            annotation = text(arg.annotation)
+            head, *tail = annotation.split('.')
+            if head in value_imports and '.'.join([value_imports[head], *tail]) == 'torch.Tensor':
+                self.node_by[node]['source_tensor_annotation'] = 'torch.Tensor'
             env[arg.arg] = node
             binding = keywords.get(arg.arg) or (actuals[index] if index < len(actuals) else None)
             self.edge(binding, node, 'interface-binding', arg.arg)
@@ -249,6 +297,9 @@ class Analyzer:
                 default = literal(defaults[arg.arg], {})
                 if default is None or type(default) in (bool, int, float, str):
                     invocation_values[arg.arg] = default
+            if depth > 0 and not binding and arg.arg in invocation_values:
+                self.node_by[node]['source_constant_input'] = {'value': invocation_values[arg.arg],
+                    'scope': 'literal argument or default of this source invocation; other paths retained'}
         returned, write_scopes = [], []
 
         def rebound_target(target, bindings):
@@ -279,6 +330,8 @@ class Analyzer:
                 if key not in bindings:
                     bindings[key] = self.add('state' if n.id not in self.globals else 'buffer', n.id, scope, u, n, symbol,
                                              role='external-value', value=self.globals.get(n.id, {'unresolved': n.id}))
+                    if n.id in value_imports:
+                        self.node_by[bindings[key]]['framework_value_import'] = value_imports[n.id]
                 return bindings[key]
             if isinstance(n, (ast.Tuple, ast.List, ast.Dict)):
                 children = n.values if isinstance(n, ast.Dict) else n.elts
@@ -290,7 +343,18 @@ class Analyzer:
                 key = text(n)
                 if key in bindings: return bindings[key]
                 kind = 'state' if key.startswith('self.') else 'compute'
-                node = self.add(kind, key, scope, u, n, symbol, operator='attribute', value=values.get(key, {'unresolved': key}))
+                node = self.add(kind, key, scope, u, n, symbol, operator='attribute', attribute_name=n.attr,
+                                value=values.get(key, {'unresolved': key}))
+                resource = construction.get(key) if rebound_target(key, bindings) is None else None
+                if isinstance(resource, Module):
+                    qualified = self.resolve(text(resource.call.func))
+                    if self.value_namespace(resource.call.func, u) and qualified.startswith('torch.nn.') and qualified.split('.')[-1] in MODULES:
+                        self.node_by[node].update(resource_framework_type=qualified,
+                            resource_constructor={'args': [literal(a, resource.constants) for a in resource.call.args],
+                                         'kwargs': {k.arg: literal(k.value, resource.constants) for k in resource.call.keywords if k.arg}},
+                            module_resource=True,
+                            module_resource_binding={'reference': resource.reference, 'selection': key,
+                                            'construction_evidence': resource.evidence, 'allocation': resource.allocation})
                 if not key.startswith('self.'): self.edge(expr(n.value, scope, bindings), node)
                 bindings[key] = node
                 return node
@@ -300,10 +364,11 @@ class Analyzer:
                     target = target[:-8]
                 rebound = rebound_target(target, bindings)
                 raw_module = modules.get(target) if rebound is None else None
-                bound_module = iteration_modules.get(target) if rebound is None else None
+                declared_factory = self.factory(raw_module, u)
+                bound_module = (iteration_modules.get(target) or construction.get(target)) if rebound is None else None
                 if bound_module is not None:
                     raw_module = bound_module.call
-                factory = self.factory(raw_module, u)
+                factory = declared_factory or self.factory(raw_module, u)
                 if factory: raw_module = factory[1]
                 receiver = None
                 # Receiver first, then positional and keyword expressions: preserve
@@ -334,7 +399,7 @@ class Analyzer:
                         if isinstance(spec, Module):
                             callable_modules[name] = spec
                     constants = {name: literal(argument, {}) for name, argument in supplied.items() if isinstance(argument, ast.Constant)}
-                    return self.call(helper, scope, target, actuals, kw, ctor, depth + 1, module_path, owner, ctor_objects, object_identity, values, callable_modules, constants)
+                    return self.call(helper, scope, target, actuals, kw, ctor, depth + 1, module_path, owner, ctor_objects, object_identity, values, callable_modules, constants, object_reference)
                 if isinstance(raw_module, ast.Call):
                     display_name = target[5:] if target.startswith('self.') else target
                     bound_module = bound_module or construction.get(target)
@@ -350,10 +415,18 @@ class Analyzer:
                         child_params = [a.arg for a in child_fn.args.args if a.arg != 'self'] if child_fn else []
                         supplied = dict(zip(child_params, n.args)); supplied.update({k.arg: k.value for k in n.keywords if k.arg})
                         constants = {name: literal(argument, {}) for name, argument in supplied.items() if isinstance(argument, ast.Constant)}
-                        return self.call(local, scope, display_name, actuals, kw, v, depth + 1,
+                        before = len(self.nodes)
+                        result = self.call(local, scope, display_name, actuals, kw, v, depth + 1,
                                          child_path, ctor_objects=refs,
-                                         object_identity=bound_module.identity if isinstance(bound_module, Module) and (object_identity is not None or target in iteration_modules) else None,
-                                         forward_constants=constants)
+                                         object_identity=bound_module.identity if isinstance(bound_module, Module) else None,
+                                         forward_constants=constants,
+                                         object_reference=bound_module.reference if isinstance(bound_module, Module) else None)
+                        if isinstance(bound_module, Module) and before < len(self.nodes):
+                            self.nodes[before]['module_binding'] = {
+                                'reference': bound_module.reference, 'selection': target,
+                                'construction_evidence': bound_module.evidence,
+                                'allocation': bound_module.allocation}
+                        return result
                     if short == 'Sequential' and self.resolve(constructor_name).startswith('torch.nn.'):
                         frame = self.add('composite', target[5:], scope, u, n, symbol, semantic_type='sequential', module_path=(module_path + '.' + target[5:]).strip('.'))
                         previous = actuals[0] if actuals else None
@@ -400,6 +473,13 @@ class Analyzer:
                     node = self.add(kind, f'{display_name} · {short}', scope, u, n, symbol, operator=operator,
                                     module_path=(module_path + '.' + display_name).strip('.') if target not in iteration_modules else iteration_paths[target],
                                     framework_type=qualified, constructor={'args': [literal(a, module_values) for a in raw_module.args], 'kwargs': {k.arg: literal(k.value, module_values) for k in raw_module.keywords if k.arg}})
+                    if self.value_namespace(raw_module.func, u):
+                        self.node_by[node]['source_framework_module'] = qualified
+                    if isinstance(bound_module, Module):
+                        self.node_by[node]['module_binding'] = {
+                            'reference': bound_module.reference, 'selection': target,
+                            'construction_evidence': bound_module.evidence,
+                            'allocation': bound_module.allocation}
                     if object_identity is not None or target in iteration_modules:
                         self.node_by[node]['module_identity'] = bound_module.identity if isinstance(bound_module, Module) else (object_identity + '.' + display_name)
                     if factory:
@@ -425,6 +505,10 @@ class Analyzer:
                                     arguments={'args': [literal(a, values) for a in n.args],
                                                'kwargs': {k.arg: literal(k.value, values) for k in n.keywords if k.arg}},
                                     reason=None if known else 'rebound-call-target' if shadowed_callable else 'unresolved-call-target')
+                    if target.split('.')[0] in value_imports:
+                        self.node_by[node]['source_framework_function'] = qualified
+                    if scalar_cast and target not in value_shadowed:
+                        self.node_by[node]['source_scalar_cast'] = target
                 if rebound and (target in modules or target == rebound):
                     self.edge(bindings[rebound], node, target_port='callable')
                 self.edge(receiver, node, target_port='receiver')
@@ -520,6 +604,100 @@ class Analyzer:
             bindings[name] = alias
             if writes is not None: writes.add(name)
 
+        def iteration(statement, scope, bindings):
+            from .iteration import VERSION, loop_names
+            names = loop_names(statement, bindings)
+            if not names:
+                return None
+            # Speculation only lowers source; it never runs Python. A failed
+            # proof restores all generated facts before the ordinary opaque
+            # template is emitted, including IDs and control/effect receipts.
+            checkpoint = (len(self.nodes), len(self.edges), len(self.branches),
+                          len(self.coverage_blockers), dict(self.counts), dict(bindings))
+            region = self.add('composite', 'Iteration', scope, u, statement, symbol,
+                              semantic_type='iteration-region')
+            control = self.add('control', ('for ' + text(statement.target) + ' in ' + text(statement.iter))[:90] if isinstance(statement, ast.For) else 'while ' + text(statement.test)[:80], region, u, statement, symbol,
+                               operator='loop', loop_semantics='source-iteration-bindings; time-axis-and-count-unproved')
+            self.branches.append({'id': control, 'file': u['path'], 'line': statement.lineno, 'kind': 'loop', 'outcomes': ['zero', 'nonzero'], 'path_coverage': 'unresolved'})
+            frame = self.add('composite', 'loop body (source template)', region, u, statement, symbol, semantic_type='loop-template')
+            self.edge(control, frame, 'control')
+            loop_env, entries, initial_edges = dict(bindings), {}, {}
+            for name in names:
+                entry = self.add('state', name + ' · iteration entry', region, u, statement, symbol,
+                                 operator='iteration-phi', role='iteration-entry',
+                                 iteration={'loop': control, 'name': name})
+                entries[name] = entry
+                self.edge(bindings[name], entry, target_port='initial', iteration={'loop': control, 'phase': 'initial'})
+                initial_edges[name] = self.edges[-1]['id']
+                invalidate_reads(name, loop_env)
+                loop_env[name] = entry
+            before_guard = len(self.nodes)
+            predicate = expr(statement.iter if isinstance(statement, ast.For) else statement.test,
+                             scope if isinstance(statement, ast.For) else region,
+                             bindings if isinstance(statement, ast.For) else loop_env)
+            guard_nodes = [n['id'] for n in self.nodes[before_guard:]]
+            self.edge(predicate, control, 'control')
+            guard_edge = self.edges[-1]['id'] if predicate else None
+            loop_writes = set()
+            if isinstance(statement, ast.For):
+                item = self.add('interface', 'iteration item', frame, u, statement.target, symbol,
+                                role='iteration-item', iteration={'loop': control})
+                self.edge(control, item, 'interface-binding', source_port='item', target_port='item')
+                assign(statement.target, item, frame, loop_env, writes=loop_writes)
+            loop_writes.update(statements(statement.body, frame, loop_env))
+            generated = self.nodes[checkpoint[0]:]
+            # A local variable read before its reaching definition must not be
+            # mistaken for an external invariant on the next iteration.
+            assigned = {n.id for child in statement.body for n in ast.walk(child)
+                        if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+            rejected = (guard_edge is None or any(n['kind'] == 'opaque' or n.get('mutable')
+                        or n.get('operator') == 'exception-exit'
+                        or n.get('role') == 'external-value' and n['label'] in assigned
+                        for n in generated) or any(e['kind'] == 'state-write' for e in self.edges[checkpoint[1]:]))
+            if rejected:
+                node_count, edge_count, branch_count, blocker_count, counts, old_bindings = checkpoint
+                for n in self.nodes[node_count:]: self.node_by.pop(n['id'], None)
+                del self.nodes[node_count:]
+                del self.edges[edge_count:]
+                del self.branches[branch_count:]
+                del self.coverage_blockers[blocker_count:]
+                self.counts = counts
+                bindings.clear()
+                bindings.update(old_bindings)
+                return None
+            contract = {'rule_version': VERSION, 'region': region, 'body': frame, 'guard_edge': guard_edge,
+                        'guard_nodes': guard_nodes, 'loop_kind': 'for' if isinstance(statement, ast.For) else 'while',
+                        'scope': 'source-name-bindings; normal-completion; zero-or-more-iterations',
+                        'bindings': [], 'not_asserted': ['time axis', 'fixed count', 'termination',
+                                                       'tensor shape', 'storage identity', 'purity']}
+            for name, entry in entries.items():
+                self.edge(loop_env[name], entry, target_port='backedge', iteration={'loop': control, 'phase': 'normal-completion'})
+                backedge = self.edges[-1]['id']
+                exit_node = self.add('state', name + ' · iteration result', scope, u, statement, symbol,
+                                     operator='iteration-result', role='iteration-exit',
+                                     iteration={'loop': control, 'name': name})
+                self.edge(entry, exit_node, 'interface-binding', target_port='value', iteration={'loop': control, 'phase': 'exit'})
+                exit_edge = self.edges[-1]['id']
+                self.edge(control, exit_node, 'control', target_port='completion', iteration={'loop': control, 'phase': 'completion'})
+                completion_edge = self.edges[-1]['id']
+                reads = [e['id'] for e in self.edges[checkpoint[1]:]
+                         if e['source'] == entry and e['id'] != exit_edge]
+                contract['bindings'].append({'name': name, 'initial': bindings[name], 'entry': entry,
+                    'body_value': loop_env[name], 'exit': exit_node, 'initial_edge': initial_edges[name],
+                    'backedge': backedge, 'exit_edge': exit_edge, 'completion_edge': completion_edge, 'read_edges': reads})
+                invalidate_reads(name, bindings)
+                bindings[name] = exit_node
+            # Variables introduced only inside the body (including the for
+            # target) can be unbound on the zero-iteration path.
+            for name in sorted(loop_writes - entries.keys()):
+                join = self.add('opaque', name + ' · loop-carried value', scope, u, statement, symbol, reason='iteration-binding-unresolved')
+                self.edge(bindings.get(name), join, target_port='initial')
+                self.edge(loop_env.get(name), join, target_port='body')
+                invalidate_reads(name, bindings)
+                bindings[name] = join
+            self.node_by[control]['iteration_contract'] = contract
+            return loop_writes
+
         def statements(body, scope, bindings):
             written = set()
             write_scopes.append(written)
@@ -551,6 +729,15 @@ class Analyzer:
                     # not an unresolved tensor-producing operation.
                     exit_node = self.add('control', 'raise ' + text(statement.exc)[:80], scope, u, statement, symbol,
                                          operator='exception-exit', exception_expression=text(statement.exc))
+                    from .symbolic_values import EXCEPTIONS
+                    if (isinstance(statement.exc, ast.Call) and isinstance(statement.exc.func, ast.Name)
+                            and statement.exc.func.id in EXCEPTIONS - value_shadowed
+                            and not statement.exc.keywords and not any(isinstance(a, ast.Starred) for a in statement.exc.args)
+                            and statement.cause is None):
+                        from .structure import syntax
+                        self.node_by[exit_node]['exception_signature'] = {
+                            'builtin': statement.exc.func.id, 'syntax': syntax(statement.exc),
+                            'scope': 'source exceptional exit; reachability and execution not asserted'}
                     if isinstance(statement.exc, ast.Call):
                         for i, arg in enumerate(statement.exc.args):
                             self.edge(expr(arg, scope, bindings), exit_node, 'control', str(i))
@@ -583,36 +770,41 @@ class Analyzer:
                     serial = construction.serial_loop(statement, fn)
                     if serial and rebound_target(text(statement.iter), bindings) is None:
                         collection, state, iterator = serial
-                        identities = [m.identity for m in collection.elements]
-                        signatures = [(self.resolve(text(m.call.func)), [literal(a, m.constants) for a in m.call.args],
-                                       {k.arg: literal(k.value, m.constants) for k in m.call.keywords if k.arg}) for m in collection.elements]
-                        homogeneous = bool(signatures) and all(s == signatures[0] for s in signatures)
+                        identities = [m.reference for m in collection.elements]
                         sharing = 'independent' if len(set(identities)) == len(identities) else 'shared' if len(set(identities)) == 1 else 'mixed'
                         parameter_sharing = 'shared' if sharing == 'shared' and identities else 'independent' if identities and sharing == 'independent' and all(m.allocation in {'default-deepcopy', 'fresh-framework-construction'} for m in collection.elements) else 'unresolved'
                         contract = {'rule_version': 'bounded-module-sequence/1', 'count': len(identities),
                                     'state': state, 'iterator': iterator, 'collection': text(statement.iter),
                                     'instances': identities, 'module_sharing': sharing, 'parameter_sharing': parameter_sharing,
-                                    'homogeneous': homogeneous,
+                                    'homogeneous': False,
                                     'allocation_evidence': [m.allocation for m in collection.elements],
                                     'construction_evidence': collection.evidence,
                                     'scope': 'fixed construction; straight serial body; all instances retained',
                                     'not_asserted': ['output equivalence between layers', 'arbitrary constructor side effects']}
-                        frame = self.add('composite', ('Repeated block × ' if homogeneous else 'Serial sequence · ') + str(len(identities)), scope, u, statement, symbol,
+                        frame = self.add('composite', 'Serial sequence · ' + str(len(identities)), scope, u, statement, symbol,
                                          semantic_type='serial-repeat', repeat_contract=contract)
                         # A module object is not a tensor carried value. Every concrete
                         # iteration has its own call and exact recurrent tensor binding.
                         for i, module in enumerate(collection.elements):
                             instance = self.add('composite', 'Layer ' + str(i + 1), frame, u, statement, symbol,
-                                                semantic_type='repeat-instance', module_identity=module.identity,
+                                                semantic_type='repeat-instance', module_identity=module.reference,
                                                 repeat_index=i)
                             iteration_modules[iterator] = module
                             iteration_paths[iterator] = '.'.join(filter(None, [module_path, text(statement.iter).removeprefix('self.'), str(i)]))
+                            # A for target is rebound before each concrete call,
+                            # including when an earlier loop used the same name.
+                            invalidate_reads(iterator, bindings)
+                            bindings.pop(iterator, None)
                             statements(statement.body, instance, bindings)
                         if collection.elements:
                             bindings[iterator] = self.add('state', iterator + ' · module reference', frame, u, statement.target, symbol,
                                                          role='module-reference', module_identity=identities[-1])
                             written.add(iterator)
                         written.add(state)
+                        continue
+                    loop_writes = iteration(statement, scope, bindings)
+                    if loop_writes is not None:
+                        written.update(loop_writes)
                         continue
                     control = self.add('control', ('for ' + text(statement.target) + ' in ' + text(statement.iter))[:90] if isinstance(statement, ast.For) else 'while ' + text(statement.test)[:80], scope, u, statement, symbol,
                                        operator='loop', loop_semantics='source-body-template; repetition-and-carried-state-unresolved')
@@ -679,6 +871,12 @@ class Analyzer:
                               'Unresolved calls/loops/external definitions remain explicit opaque boundaries.',
                               'Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.',
                               'Notebook cells are parsed as data; notebook setup/training cells are never executed.']}
+        from .identity import certify
+        certify(self.nodes, self.edges)
+        from .symbolic_values import certify as certify_values
+        certify_values(self.nodes, self.edges)
+        from .structure import certify as certify_structure
+        certify_structure(self.nodes, self.edges)
         from .motifs import recognize
         recognize(ir)
         from .contracts import recognize_contracts

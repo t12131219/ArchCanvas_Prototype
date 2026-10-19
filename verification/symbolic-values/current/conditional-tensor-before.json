@@ -1,0 +1,1803 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "Stack",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+    "class": "Stack",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+      "cell": null,
+      "sha256": "738ca00bc8ea3f708c4b8ab649fcee8a1836d8d0526da29050806c88c0671060",
+      "unit_sha256": "738ca00bc8ea3f708c4b8ab649fcee8a1836d8d0526da29050806c88c0671060"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/89:4:composite:1",
+      "kind": "composite",
+      "label": "Stack",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 89,
+          "end_line": 92,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "Stack.forward",
+          "expression": "def forward(self, x):\n    for part in self.parts:\n        x = part(x)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "Stack"
+    },
+    {
+      "id": "model/89:4:composite:1/89:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1",
+      "source_parent": "model/89:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 89,
+          "end_line": 89,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1",
+      "kind": "composite",
+      "label": "Serial sequence · 2",
+      "parent": "model/89:4:composite:1",
+      "source_parent": "model/89:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 90,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "for part in self.parts:\n    x = part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "serial-repeat",
+      "repeat_contract": {
+        "rule_version": "bounded-module-sequence/1",
+        "count": 2,
+        "state": "x",
+        "iterator": "part",
+        "collection": "self.parts",
+        "instances": [
+          "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:36",
+          "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:57"
+        ],
+        "module_sharing": "independent",
+        "parameter_sharing": "unresolved",
+        "homogeneous": false,
+        "allocation_evidence": [
+          "constructor-object; parameter-sharing-unresolved",
+          "constructor-object; parameter-sharing-unresolved"
+        ],
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 21,
+            "end_column": 78,
+            "symbol": "constructor",
+            "expression": "nn.ModuleList([ConditionalTensor(), ConditionalTensor()])"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 36,
+            "end_column": 55,
+            "symbol": "constructor",
+            "expression": "ConditionalTensor()"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 57,
+            "end_column": 76,
+            "symbol": "constructor",
+            "expression": "ConditionalTensor()"
+          }
+        ],
+        "scope": "fixed construction; straight serial body; all instances retained",
+        "not_asserted": [
+          "output equivalence between layers",
+          "arbitrary constructor side effects"
+        ],
+        "structure": {
+          "rule_version": "local-structure/1",
+          "scope": "modeled source graph and exact boundary slots; ordered operations",
+          "instances": [
+            {
+              "status": "unresolved",
+              "reason": "unresolved configuration",
+              "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+              "index": 0
+            },
+            {
+              "status": "unresolved",
+              "reason": "unresolved configuration",
+              "instance": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+              "index": 1
+            }
+          ],
+          "groups": [
+            {
+              "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+              "indices": [
+                0
+              ],
+              "instances": [
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:1"
+              ],
+              "status": "unresolved",
+              "fingerprint": null
+            },
+            {
+              "representative": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+              "indices": [
+                1
+              ],
+              "instances": [
+                "model/89:4:composite:1/90:8:composite:1/90:8:composite:2"
+              ],
+              "status": "unresolved",
+              "fingerprint": null
+            }
+          ],
+          "homogeneous": false,
+          "not_asserted": [
+            "numerical equivalence",
+            "parameter equality or stability",
+            "purity",
+            "runtime count",
+            "time axis",
+            "arbitrary graph isomorphism"
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "kind": "composite",
+      "label": "Layer 1",
+      "parent": "model/89:4:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 90,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "for part in self.parts:\n    x = part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "repeat-instance",
+      "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:36",
+      "repeat_index": 0
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "kind": "composite",
+      "label": "part",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 49,
+          "end_line": 54,
+          "column": 4,
+          "end_column": 48,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "def forward(self, x: Tensor):\n    if x.dim() > 1:\n        current = x + 1\n    else:\n        current = x - 1\n    return current.to(device=current.device)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "parts.0",
+      "constructor": {},
+      "source_class": "ConditionalTensor",
+      "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:36",
+      "module_binding": {
+        "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:36",
+        "selection": "part",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 36,
+            "end_column": 55,
+            "symbol": "constructor",
+            "expression": "ConditionalTensor()"
+          }
+        ],
+        "allocation": "constructor-object; parameter-sharing-unresolved",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/49:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+      "kind": "control",
+      "label": "x.dim() > 1",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 11,
+          "end_column": 22,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x.dim() > 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:compute:1",
+      "kind": "compute",
+      "label": "compare",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 11,
+          "end_column": 22,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x.dim() > 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "compare",
+      "syntax": {
+        "type": "Compare",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "ops": [
+            {
+              "type": "Gt",
+              "fields": {}
+            }
+          ],
+          "comparators": [
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:compute:2",
+      "kind": "compute",
+      "label": "dim",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 11,
+          "end_column": 18,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x.dim()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.dim",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "if x.dim() > 1:\n    current = x + 1\nelse:\n    current = x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1/51:22:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 22,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x + 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "literal_type": "int",
+            "literal": "1"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1/51:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "current",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 12,
+          "end_column": 19,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "if x.dim() > 1:\n    current = x + 1\nelse:\n    current = x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2/53:22:compute:1",
+      "kind": "compute",
+      "label": "sub",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 22,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sub",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Sub",
+            "fields": {}
+          },
+          "right": {
+            "literal_type": "int",
+            "literal": "1"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2/53:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "current",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 12,
+          "end_column": 19,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "current · branch join",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "if x.dim() > 1:\n    current = x + 1\nelse:\n    current = x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:33:compute:1",
+      "kind": "compute",
+      "label": "current.device",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 33,
+          "end_column": 47,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current.device"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "current.device"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "device"
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:15:compute:1",
+      "kind": "compute",
+      "label": "to",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 15,
+          "end_column": 48,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current.to(device=current.device)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "device-cast",
+      "function_target": "current.to",
+      "arguments": {
+        "args": [],
+        "kwargs": {
+          "device": {
+            "unresolved": "current.device"
+          }
+        }
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": [
+            {
+              "type": "keyword",
+              "fields": {
+                "arg": "device",
+                "value": {
+                  "operand": ".keywords:0.value"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 8,
+          "end_column": 48,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "return current.to(device=current.device)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 91,
+          "end_line": 91,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "Stack.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "kind": "composite",
+      "label": "Layer 2",
+      "parent": "model/89:4:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 90,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Stack.forward",
+          "expression": "for part in self.parts:\n    x = part(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "repeat-instance",
+      "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:57",
+      "repeat_index": 1
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "kind": "composite",
+      "label": "part",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 49,
+          "end_line": 54,
+          "column": 4,
+          "end_column": 48,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "def forward(self, x: Tensor):\n    if x.dim() > 1:\n        current = x + 1\n    else:\n        current = x - 1\n    return current.to(device=current.device)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "parts.1",
+      "constructor": {},
+      "source_class": "ConditionalTensor",
+      "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:57",
+      "module_binding": {
+        "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:57",
+        "selection": "part",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+            "line": 88,
+            "end_line": 88,
+            "column": 57,
+            "end_column": 76,
+            "symbol": "constructor",
+            "expression": "ConditionalTensor()"
+          }
+        ],
+        "allocation": "constructor-object; parameter-sharing-unresolved",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/49:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+      "kind": "control",
+      "label": "x.dim() > 1",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 11,
+          "end_column": 22,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x.dim() > 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:compute:1",
+      "kind": "compute",
+      "label": "compare",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 11,
+          "end_column": 22,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x.dim() > 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "compare",
+      "syntax": {
+        "type": "Compare",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "ops": [
+            {
+              "type": "Gt",
+              "fields": {}
+            }
+          ],
+          "comparators": [
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:compute:2",
+      "kind": "compute",
+      "label": "dim",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 11,
+          "end_column": 18,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x.dim()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.dim",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "if x.dim() > 1:\n    current = x + 1\nelse:\n    current = x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1/51:22:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 22,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x + 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "literal_type": "int",
+            "literal": "1"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1/51:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "current",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 12,
+          "end_column": 19,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "if x.dim() > 1:\n    current = x + 1\nelse:\n    current = x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2/53:22:compute:1",
+      "kind": "compute",
+      "label": "sub",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 22,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sub",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Sub",
+            "fields": {}
+          },
+          "right": {
+            "literal_type": "int",
+            "literal": "1"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2/53:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "current",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 12,
+          "end_column": 19,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "current · branch join",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 50,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "if x.dim() > 1:\n    current = x + 1\nelse:\n    current = x - 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:33:compute:1",
+      "kind": "compute",
+      "label": "current.device",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 33,
+          "end_column": 47,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current.device"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "current.device"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "device"
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:15:compute:1",
+      "kind": "compute",
+      "label": "to",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 15,
+          "end_column": 48,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "current.to(device=current.device)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "device-cast",
+      "function_target": "current.to",
+      "arguments": {
+        "args": [],
+        "kwargs": {
+          "device": {
+            "unresolved": "current.device"
+          }
+        }
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": [
+            {
+              "type": "keyword",
+              "fields": {
+                "arg": "device",
+                "value": {
+                  "operand": ".keywords:0.value"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 8,
+          "end_column": 48,
+          "symbol": "ConditionalTensor.forward",
+          "expression": "return current.to(device=current.device)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 91,
+          "end_line": 91,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "Stack.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:12:state:1",
+      "kind": "state",
+      "label": "part · module reference",
+      "parent": "model/89:4:composite:1/90:8:composite:1",
+      "source_parent": "model/89:4:composite:1/90:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 90,
+          "end_line": 90,
+          "column": 12,
+          "end_column": 16,
+          "symbol": "Stack.forward",
+          "expression": "part"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "role": "module-reference",
+      "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py:88:57"
+    },
+    {
+      "id": "model/89:4:composite:1/92:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/89:4:composite:1",
+      "source_parent": "model/89:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+          "line": 92,
+          "end_line": 92,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "Stack.forward",
+          "expression": "return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/89:4:composite:1/89:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/49:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/49:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:compute:2",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/49:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1/51:22:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1/51:22:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1/51:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/49:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2/53:22:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2/53:22:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2/53:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:1/51:12:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00010"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:composite:2/53:12:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+        "outcome": "false"
+      },
+      "id": "e00011"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:33:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:8:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:33:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:device",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:15:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/54:8:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/91:12:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/49:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/49:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:compute:2",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/49:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1/51:22:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1/51:22:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1/51:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/49:22:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2/53:22:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2/53:22:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2/53:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:1/51:12:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00027"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:composite:2/53:12:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+        "outcome": "false"
+      },
+      "id": "e00028"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:33:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00029"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:8:value-alias:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00030"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:33:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:device",
+      "evidence": "source-dependency",
+      "id": "e00031"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:15:compute:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00032"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/54:8:interface:1",
+      "target": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00033"
+    },
+    {
+      "source": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/91:12:value-alias:1",
+      "target": "model/89:4:composite:1/92:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00034"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:1/49:4:composite:1/50:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+      "line": 50,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    },
+    {
+      "id": "model/89:4:composite:1/90:8:composite:1/90:8:composite:2/49:4:composite:1/50:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/verification/symbolic-values/current/sources/conditional-tensor.py",
+      "line": 50,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "a6212e7a7f83be1b202631f38aa8190acaee786fcfeab220348f0214961c0f63"
+}

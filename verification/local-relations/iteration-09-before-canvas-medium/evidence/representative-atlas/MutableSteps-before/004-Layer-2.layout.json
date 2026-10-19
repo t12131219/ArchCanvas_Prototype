@@ -1,0 +1,3266 @@
+{
+  "schema": "archcanvas-architecture-document/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "MutableSteps",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+      "class": "MutableSteps",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+        "cell": null,
+        "sha256": "d5acf33ac722da4eae29c6d80e8bc487d429a8fb3111b951131750c0d995157f",
+        "unit_sha256": "d5acf33ac722da4eae29c6d80e8bc487d429a8fb3111b951131750c0d995157f"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/162:4:composite:1",
+        "kind": "composite",
+        "label": "MutableSteps",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 162,
+            "end_line": 165,
+            "column": 4,
+            "end_column": 16,
+            "symbol": "MutableSteps.forward",
+            "expression": "def forward(self, x):\n    for part in self.parts:\n        x = part(x)\n    return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "MutableSteps"
+      },
+      {
+        "id": "model/162:4:composite:1/162:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/162:4:composite:1",
+        "source_parent": "model/162:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 162,
+            "end_line": 162,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1",
+        "kind": "composite",
+        "label": "Serial sequence · 2",
+        "parent": "model/162:4:composite:1",
+        "source_parent": "model/162:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 164,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "serial-repeat",
+        "repeat_contract": {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 2,
+          "state": "x",
+          "iterator": "part",
+          "collection": "self.parts",
+          "instances": [
+            "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+            "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "unresolved",
+          "homogeneous": false,
+          "allocation_evidence": [
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 21,
+              "end_column": 70,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([MutableInside(), MutableInside()])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 36,
+              "end_column": 51,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 53,
+              "end_column": 68,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ],
+          "structure": {
+            "rule_version": "local-structure/1",
+            "scope": "modeled source graph and exact boundary slots; ordered operations",
+            "instances": [
+              {
+                "status": "unresolved",
+                "reason": "unknown or mutable computation",
+                "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+                "index": 0
+              },
+              {
+                "status": "unresolved",
+                "reason": "unknown or mutable computation",
+                "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+                "index": 1
+              }
+            ],
+            "groups": [
+              {
+                "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+                "indices": [
+                  0
+                ],
+                "instances": [
+                  "model/162:4:composite:1/163:8:composite:1/163:8:composite:1"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              },
+              {
+                "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+                "indices": [
+                  1
+                ],
+                "instances": [
+                  "model/162:4:composite:1/163:8:composite:1/163:8:composite:2"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              }
+            ],
+            "homogeneous": false,
+            "not_asserted": [
+              "numerical equivalence",
+              "parameter equality or stability",
+              "purity",
+              "runtime count",
+              "time axis",
+              "arbitrary graph isomorphism"
+            ]
+          }
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "kind": "composite",
+        "label": "Layer 1",
+        "parent": "model/162:4:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 164,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+        "repeat_index": 0
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 154,
+            "column": 4,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "def forward(self, x):\n    return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.0",
+        "constructor": {},
+        "source_class": "MutableInside",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+        "module_binding": {
+          "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 36,
+              "end_column": 51,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 153,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "MutableInside.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "kind": "compute",
+        "label": "a · ReLU",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 15,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "module_path": "parts.0.a",
+        "framework_type": "torch.nn.ReLU",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "inplace": true
+          }
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.ReLU",
+        "module_binding": {
+          "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36|parts.0.a@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:151:17",
+          "selection": "self.a",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 151,
+              "end_line": 151,
+              "column": 17,
+              "end_column": 38,
+              "symbol": "constructor",
+              "expression": "nn.ReLU(inplace=True)"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36|parts.0.a@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:151:17",
+        "mutable": true,
+        "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 8,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 164,
+            "end_line": 164,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "MutableSteps.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "kind": "composite",
+        "label": "Layer 2",
+        "parent": "model/162:4:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 164,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53",
+        "repeat_index": 1
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 154,
+            "column": 4,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "def forward(self, x):\n    return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.1",
+        "constructor": {},
+        "source_class": "MutableInside",
+        "module_identity": "parts.1",
+        "module_binding": {
+          "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 53,
+              "end_column": 68,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+          "status": "unresolved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted",
+          "barrier": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 153,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "MutableInside.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "compute",
+        "label": "a · ReLU",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 15,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "module_path": "parts.1.a",
+        "framework_type": "torch.nn.ReLU",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "inplace": true
+          }
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.ReLU",
+        "module_binding": {
+          "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53|parts.1.a@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:151:17",
+          "selection": "self.a",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 151,
+              "end_line": 151,
+              "column": 17,
+              "end_column": 38,
+              "symbol": "constructor",
+              "expression": "nn.ReLU(inplace=True)"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+          "status": "unresolved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted",
+          "barrier": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+        },
+        "module_identity": "parts.1.a",
+        "mutable": true,
+        "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 8,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 164,
+            "end_line": 164,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "MutableSteps.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:12:state:1",
+        "kind": "state",
+        "label": "part · module reference",
+        "parent": "model/162:4:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 163,
+            "column": 12,
+            "end_column": 16,
+            "symbol": "MutableSteps.forward",
+            "expression": "part"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#fbe8d3"
+        },
+        "runtime_evidence": [],
+        "role": "module-reference",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53"
+      },
+      {
+        "id": "model/162:4:composite:1/165:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/162:4:composite:1",
+        "source_parent": "model/162:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 165,
+            "end_line": 165,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "MutableSteps.forward",
+            "expression": "return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/162:4:composite:1/162:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "target": "model/162:4:composite:1/165:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      }
+    ],
+    "branches": [],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [
+      {
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+        "line": 154,
+        "kind": "mutation-alias-coverage-unresolved"
+      },
+      {
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+        "line": 154,
+        "kind": "mutation-alias-coverage-unresolved"
+      }
+    ],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "bc98ac5b25eb4643da717f1cdcf4e0267ff483bc9ee50f90a24badbfe7bfb297"
+  },
+  "state": {
+    "mode": "source",
+    "view": "publication",
+    "paperAuto": true,
+    "offsets": {},
+    "paperFocus": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+    "paperRelation": null
+  },
+  "architecture": {
+    "schema": "archcanvas-architecture/1",
+    "rule_version": "architecture-rules/4",
+    "canonical_digest": "bc98ac5b25eb4643da717f1cdcf4e0267ff483bc9ee50f90a24badbfe7bfb297",
+    "nodes": [
+      {
+        "id": "model/162:4:composite:1",
+        "kind": "composite",
+        "label": "MutableSteps",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 162,
+            "end_line": 165,
+            "column": 4,
+            "end_column": 16,
+            "symbol": "MutableSteps.forward",
+            "expression": "def forward(self, x):\n    for part in self.parts:\n        x = part(x)\n    return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "MutableSteps",
+        "paper": {
+          "title": "MutableSteps",
+          "caption": "Source module",
+          "lines": [
+            "MutableSteps"
+          ],
+          "captions": [
+            "Source module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/162:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/162:4:composite:1",
+        "source_parent": "model/162:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 162,
+            "end_line": 162,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1",
+        "kind": "composite",
+        "label": "Serial sequence · 2",
+        "parent": "model/162:4:composite:1",
+        "source_parent": "model/162:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 164,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "serial-repeat",
+        "repeat_contract": {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 2,
+          "state": "x",
+          "iterator": "part",
+          "collection": "self.parts",
+          "instances": [
+            "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+            "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "unresolved",
+          "homogeneous": false,
+          "allocation_evidence": [
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 21,
+              "end_column": 70,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([MutableInside(), MutableInside()])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 36,
+              "end_column": 51,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 53,
+              "end_column": 68,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ],
+          "structure": {
+            "rule_version": "local-structure/1",
+            "scope": "modeled source graph and exact boundary slots; ordered operations",
+            "instances": [
+              {
+                "status": "unresolved",
+                "reason": "unknown or mutable computation",
+                "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+                "index": 0
+              },
+              {
+                "status": "unresolved",
+                "reason": "unknown or mutable computation",
+                "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+                "index": 1
+              }
+            ],
+            "groups": [
+              {
+                "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+                "indices": [
+                  0
+                ],
+                "instances": [
+                  "model/162:4:composite:1/163:8:composite:1/163:8:composite:1"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              },
+              {
+                "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+                "indices": [
+                  1
+                ],
+                "instances": [
+                  "model/162:4:composite:1/163:8:composite:1/163:8:composite:2"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              }
+            ],
+            "homogeneous": false,
+            "not_asserted": [
+              "numerical equivalence",
+              "parameter equality or stability",
+              "purity",
+              "runtime count",
+              "time axis",
+              "arbitrary graph isomorphism"
+            ]
+          }
+        },
+        "paper": {
+          "title": "Serial sequence · 2",
+          "caption": "0 modeled groups · 2 unclassified elements · 2 source calls · parameters unresolved",
+          "lines": [
+            "Serial sequence ·",
+            "2"
+          ],
+          "captions": [
+            "0 modeled groups · 2",
+            "unclassified elements · 2",
+            "source calls · parameters",
+            "unresolved"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 126
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "kind": "composite",
+        "label": "Layer 1",
+        "parent": "model/162:4:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 164,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+        "repeat_index": 0,
+        "paper": {
+          "title": "Layer 1",
+          "caption": "Instance 1 of 2 · parameters unresolved",
+          "lines": [
+            "Layer 1"
+          ],
+          "captions": [
+            "Instance 1 of 2 ·",
+            "parameters unresolved"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 154,
+            "column": 4,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "def forward(self, x):\n    return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.0",
+        "constructor": {},
+        "source_class": "MutableInside",
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+        "module_binding": {
+          "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 36,
+              "end_column": 51,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "paper": {
+          "title": "part",
+          "caption": "MutableInside · Source module",
+          "lines": [
+            "part"
+          ],
+          "captions": [
+            "MutableInside · Source",
+            "module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 153,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "MutableInside.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "kind": "compute",
+        "label": "a · ReLU",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 15,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "module_path": "parts.0.a",
+        "framework_type": "torch.nn.ReLU",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "inplace": true
+          }
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.ReLU",
+        "module_binding": {
+          "reference": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36|parts.0.a@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:151:17",
+          "selection": "self.a",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 151,
+              "end_line": 151,
+              "column": 17,
+              "end_column": 38,
+              "symbol": "constructor",
+              "expression": "nn.ReLU(inplace=True)"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "module_identity": "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36|parts.0.a@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:151:17",
+        "mutable": true,
+        "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved",
+        "local_relations": [
+          "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+        ],
+        "paper": {
+          "title": "a · ReLU",
+          "caption": "activation · In-place update",
+          "lines": [
+            "a · ReLU"
+          ],
+          "captions": [
+            "activation · In-place",
+            "update"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 8,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 164,
+            "end_line": 164,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "MutableSteps.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "x",
+          "caption": "Value",
+          "lines": [
+            "x"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "kind": "composite",
+        "label": "Layer 2",
+        "parent": "model/162:4:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 164,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "MutableSteps.forward",
+            "expression": "for part in self.parts:\n    x = part(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "repeat-instance",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53",
+        "repeat_index": 1,
+        "paper": {
+          "title": "Layer 2",
+          "caption": "Instance 2 of 2 · parameters unresolved",
+          "lines": [
+            "Layer 2"
+          ],
+          "captions": [
+            "Instance 2 of 2 ·",
+            "parameters unresolved"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "kind": "composite",
+        "label": "part",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 154,
+            "column": 4,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "def forward(self, x):\n    return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "parts.1",
+        "constructor": {},
+        "source_class": "MutableInside",
+        "module_identity": "parts.1",
+        "module_binding": {
+          "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53",
+          "selection": "part",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 53,
+              "end_column": 68,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            }
+          ],
+          "allocation": "constructor-object; parameter-sharing-unresolved",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+          "status": "unresolved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted",
+          "barrier": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+        },
+        "paper": {
+          "title": "part",
+          "caption": "MutableInside · Source module",
+          "lines": [
+            "part"
+          ],
+          "captions": [
+            "MutableInside · Source",
+            "module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 153,
+            "end_line": 153,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "MutableInside.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "compute",
+        "label": "a · ReLU",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 15,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "module_path": "parts.1.a",
+        "framework_type": "torch.nn.ReLU",
+        "constructor": {
+          "args": [],
+          "kwargs": {
+            "inplace": true
+          }
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.ReLU",
+        "module_binding": {
+          "reference": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53|parts.1.a@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:151:17",
+          "selection": "self.a",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 151,
+              "end_line": 151,
+              "column": 17,
+              "end_column": 38,
+              "symbol": "constructor",
+              "expression": "nn.ReLU(inplace=True)"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+          "status": "unresolved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted",
+          "barrier": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+        },
+        "module_identity": "parts.1.a",
+        "mutable": true,
+        "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved",
+        "local_relations": [
+          "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1"
+        ],
+        "paper": {
+          "title": "a · ReLU",
+          "caption": "activation · In-place update",
+          "lines": [
+            "a · ReLU"
+          ],
+          "captions": [
+            "activation · In-place",
+            "update"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 74
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 154,
+            "end_line": 154,
+            "column": 8,
+            "end_column": 24,
+            "symbol": "MutableInside.forward",
+            "expression": "return self.a(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "x",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 164,
+            "end_line": 164,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "MutableSteps.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "x",
+          "caption": "Value",
+          "lines": [
+            "x"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:12:state:1",
+        "kind": "state",
+        "label": "part · module reference",
+        "parent": "model/162:4:composite:1/163:8:composite:1",
+        "source_parent": "model/162:4:composite:1/163:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 163,
+            "end_line": 163,
+            "column": 12,
+            "end_column": 16,
+            "symbol": "MutableSteps.forward",
+            "expression": "part"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#fbe8d3"
+        },
+        "runtime_evidence": [],
+        "role": "module-reference",
+        "module_identity": "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53",
+        "paper": {
+          "title": "part · module reference",
+          "caption": "state",
+          "lines": [
+            "part · module",
+            "reference"
+          ],
+          "captions": [
+            "state"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 78
+        }
+      },
+      {
+        "id": "model/162:4:composite:1/165:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/162:4:composite:1",
+        "source_parent": "model/162:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 165,
+            "end_line": 165,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "MutableSteps.forward",
+            "expression": "return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "paper:port:ab078f6d",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "kind": "interface",
+        "role": "input",
+        "label": "x",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 164,
+            "end_line": 164,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "MutableSteps.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00005",
+        "canonical_endpoint": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "paper:port:ac09cf97",
+        "parent": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "kind": "interface",
+        "role": "output",
+        "label": "return",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 165,
+            "end_line": 165,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "MutableSteps.forward",
+            "expression": "return x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "runtime_evidence": [],
+        "boundary_edge": "e00010",
+        "canonical_endpoint": "model/162:4:composite:1/165:8:interface:1",
+        "boundary_value": {
+          "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+          "source_port": "out",
+          "identity_scope": "extracted-graph",
+          "tensor_equality": "not-asserted"
+        },
+        "boundary_uses": [
+          {
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+            "target": "model/162:4:composite:1/165:8:interface:1",
+            "kind": "interface-binding",
+            "source_port": "out",
+            "target_port": "in",
+            "evidence": "source-dependency",
+            "id": "e00010"
+          }
+        ],
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/162:4:composite:1/162:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "target": "model/162:4:composite:1/165:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      }
+    ],
+    "findings": [],
+    "relation_graph": {
+      "schema": "local-relations/1",
+      "relations": [
+        {
+          "id": "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+          "type": "unknown-boundary",
+          "node": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+          "members": [
+            "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+          ],
+          "bindings": [
+            {
+              "role": "input",
+              "edge": "e00001",
+              "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+              "source_port": "out",
+              "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+              "target_port": "arg:0",
+              "producer": "model/162:4:composite:1/162:22:interface:1",
+              "producer_port": "out",
+              "via": [
+                "e00000"
+              ],
+              "condition_scope": []
+            },
+            {
+              "role": "result",
+              "edge": "e00003",
+              "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+              "source_port": "out",
+              "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+              "target_port": "in",
+              "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+              "producer_port": "out",
+              "via": [],
+              "condition_scope": []
+            }
+          ],
+          "edges": [
+            "e00000",
+            "e00001",
+            "e00003"
+          ],
+          "properties": {
+            "reason": "mutable-operation",
+            "effects": "direct-aliases-only; view-and-external-aliases-unresolved"
+          },
+          "not_asserted": [
+            "purity",
+            "transparency",
+            "storage alias stability"
+          ],
+          "rule_version": "local-relations/1",
+          "evidence_scope": "source-local",
+          "source_scope": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+          "condition_scope": []
+        },
+        {
+          "id": "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+          "type": "unknown-boundary",
+          "node": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+          "members": [
+            "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1"
+          ],
+          "bindings": [
+            {
+              "role": "input",
+              "edge": "e00006",
+              "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+              "source_port": "out",
+              "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+              "target_port": "arg:0",
+              "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+              "producer_port": "out",
+              "via": [
+                "e00005",
+                "e00004",
+                "e00003"
+              ],
+              "condition_scope": []
+            },
+            {
+              "role": "result",
+              "edge": "e00008",
+              "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+              "source_port": "out",
+              "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+              "target_port": "in",
+              "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+              "producer_port": "out",
+              "via": [],
+              "condition_scope": []
+            }
+          ],
+          "edges": [
+            "e00005",
+            "e00004",
+            "e00003",
+            "e00006",
+            "e00008"
+          ],
+          "properties": {
+            "reason": "mutable-operation",
+            "effects": "direct-aliases-only; view-and-external-aliases-unresolved"
+          },
+          "not_asserted": [
+            "purity",
+            "transparency",
+            "storage alias stability"
+          ],
+          "rule_version": "local-relations/1",
+          "evidence_scope": "source-local",
+          "source_scope": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+          "condition_scope": []
+        }
+      ],
+      "canonical_nodes": 17,
+      "canonical_edges": 11,
+      "limitations": [
+        "Local relationships may overlap; no family label selects a rule.",
+        "Unknown effects are unresolved; no identity proof crosses their computation."
+      ]
+    },
+    "semantic_contracts": [],
+    "design_constraints": [
+      {
+        "kind": "serial-sequence",
+        "node": "model/162:4:composite:1/163:8:composite:1",
+        "rule_version": "bounded-module-sequence/1",
+        "count": 2,
+        "state": "x",
+        "iterator": "part",
+        "collection": "self.parts",
+        "instances": [
+          "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+          "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53"
+        ],
+        "module_sharing": "independent",
+        "parameter_sharing": "unresolved",
+        "homogeneous": false,
+        "allocation_evidence": [
+          "constructor-object; parameter-sharing-unresolved",
+          "constructor-object; parameter-sharing-unresolved"
+        ],
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 160,
+            "end_line": 160,
+            "column": 21,
+            "end_column": 70,
+            "symbol": "constructor",
+            "expression": "nn.ModuleList([MutableInside(), MutableInside()])"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 160,
+            "end_line": 160,
+            "column": 36,
+            "end_column": 51,
+            "symbol": "constructor",
+            "expression": "MutableInside()"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+            "line": 160,
+            "end_line": 160,
+            "column": 53,
+            "end_column": 68,
+            "symbol": "constructor",
+            "expression": "MutableInside()"
+          }
+        ],
+        "scope": "fixed construction; straight serial body; all instances retained",
+        "not_asserted": [
+          "output equivalence between layers",
+          "arbitrary constructor side effects"
+        ],
+        "structure": {
+          "rule_version": "local-structure/1",
+          "scope": "modeled source graph and exact boundary slots; ordered operations",
+          "instances": [
+            {
+              "status": "unresolved",
+              "reason": "unknown or mutable computation",
+              "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+              "index": 0
+            },
+            {
+              "status": "unresolved",
+              "reason": "unknown or mutable computation",
+              "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+              "index": 1
+            }
+          ],
+          "groups": [
+            {
+              "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+              "indices": [
+                0
+              ],
+              "instances": [
+                "model/162:4:composite:1/163:8:composite:1/163:8:composite:1"
+              ],
+              "status": "unresolved",
+              "fingerprint": null
+            },
+            {
+              "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+              "indices": [
+                1
+              ],
+              "instances": [
+                "model/162:4:composite:1/163:8:composite:1/163:8:composite:2"
+              ],
+              "status": "unresolved",
+              "fingerprint": null
+            }
+          ],
+          "homogeneous": false,
+          "not_asserted": [
+            "numerical equivalence",
+            "parameter equality or stability",
+            "purity",
+            "runtime count",
+            "time axis",
+            "arbitrary graph isomorphism"
+          ]
+        }
+      }
+    ],
+    "limitations": [
+      "Local dependency patterns do not certify arbitrary-input behavior.",
+      "Unknown operations, tuple slots, conditional joins and loop templates remain explicit.",
+      "No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names."
+    ],
+    "publication": {
+      "schema": "archcanvas-publication-plan/1",
+      "structural_regions": 0,
+      "boundary_plans": []
+    }
+  },
+  "publication": {
+    "schema": "archcanvas-publication/1",
+    "focus": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+    "requested_focus": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+    "relation": null,
+    "representative": {
+      "sequence": "model/162:4:composite:1/163:8:composite:1",
+      "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+      "index": 1,
+      "count": 2,
+      "homogeneous": false,
+      "parameter_sharing": "unresolved",
+      "structural_group": null,
+      "scope": "one concrete instance; other instances remain in the canonical IR; output equality not asserted"
+    },
+    "granularity": "overview",
+    "auto": true,
+    "open": [
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1"
+    ],
+    "budget": 12,
+    "boundary": [
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00005",
+        "direction": "input",
+        "port_node": "paper:port:ab078f6d",
+        "visible_node": "paper:port:ab078f6d"
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "target": "model/162:4:composite:1/165:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00010",
+        "direction": "output",
+        "port_node": "paper:port:ac09cf97",
+        "visible_node": "paper:port:ac09cf97"
+      }
+    ],
+    "wire_bundles": [],
+    "configuration_arithmetic": [],
+    "paper_width_mm": 180,
+    "fit_page": true,
+    "min_font_pt": 8,
+    "unknowns": 0
+  },
+  "expression_goals": {
+    "schema": "expression-goals/1",
+    "goals": [
+      {
+        "id": "goal:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "kind": "unknown-boundary",
+        "relation": "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "focus_node": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "core": [
+          "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+        ],
+        "edges": [
+          "e00001",
+          "e00003"
+        ],
+        "provenance_edges": [
+          "e00000",
+          "e00001",
+          "e00003"
+        ],
+        "identity": null,
+        "priority": 3,
+        "expression": "boundary-summary"
+      },
+      {
+        "id": "goal:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "unknown-boundary",
+        "relation": "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "focus_node": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "core": [
+          "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1"
+        ],
+        "edges": [
+          "e00006",
+          "e00008"
+        ],
+        "provenance_edges": [
+          "e00005",
+          "e00004",
+          "e00003",
+          "e00006",
+          "e00008"
+        ],
+        "identity": null,
+        "priority": 3,
+        "expression": "boundary-summary"
+      },
+      {
+        "id": "goal:node:model/162:4:composite:1/162:22:interface:1",
+        "kind": "external-interface",
+        "focus_node": "model/162:4:composite:1/162:22:interface:1",
+        "core": [
+          "model/162:4:composite:1/162:22:interface:1"
+        ],
+        "edges": [],
+        "direction": "input",
+        "priority": 1,
+        "expression": "computation-structure"
+      },
+      {
+        "id": "goal:node:model/162:4:composite:1/165:8:interface:1",
+        "kind": "external-interface",
+        "focus_node": "model/162:4:composite:1/165:8:interface:1",
+        "core": [
+          "model/162:4:composite:1/165:8:interface:1"
+        ],
+        "edges": [
+          "e00010"
+        ],
+        "direction": "output",
+        "priority": 1,
+        "expression": "computation-structure"
+      }
+    ]
+  },
+  "expression_coverage": [
+    {
+      "goal": "goal:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+      "kind": "unknown-boundary",
+      "expression": "boundary-summary",
+      "status": "unfulfilled",
+      "missing_nodes": [
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+      ],
+      "missing_edges": [
+        "e00001",
+        "e00003"
+      ],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": []
+    },
+    {
+      "goal": "goal:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+      "kind": "unknown-boundary",
+      "expression": "boundary-summary",
+      "status": "fulfilled",
+      "missing_nodes": [],
+      "missing_edges": [],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": [
+        "e00006",
+        "e00010"
+      ]
+    },
+    {
+      "goal": "goal:node:model/162:4:composite:1/162:22:interface:1",
+      "kind": "external-interface",
+      "expression": "computation-structure",
+      "status": "unfulfilled",
+      "missing_nodes": [
+        "model/162:4:composite:1/162:22:interface:1"
+      ],
+      "missing_edges": [],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": []
+    },
+    {
+      "goal": "goal:node:model/162:4:composite:1/165:8:interface:1",
+      "kind": "external-interface",
+      "expression": "computation-structure",
+      "status": "unfulfilled",
+      "missing_nodes": [
+        "model/162:4:composite:1/165:8:interface:1"
+      ],
+      "missing_edges": [],
+      "missing_identity": [],
+      "route_failures": [],
+      "constraint_conflicts": [],
+      "visible_edges": [
+        "e00010"
+      ]
+    }
+  ],
+  "layout": {
+    "bounds": {
+      "x": 4,
+      "y": 2,
+      "w": 364,
+      "h": 682
+    },
+    "nodes": [
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "x": 32,
+        "y": 30,
+        "title": "Layer 2",
+        "caption": "Instance 2 of 2 · parameters unresolved",
+        "lines": [
+          "Layer 2"
+        ],
+        "captions": [
+          "Instance 2 of 2 ·",
+          "parameters unresolved"
+        ],
+        "font": 16,
+        "fill": "#f1f4fa",
+        "stroke": "#62748c",
+        "category": "module",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 308,
+        "h": 626,
+        "expanded": true,
+        "header": 96,
+        "protected_header_height": 66,
+        "design_gutter": 0,
+        "cyclic": false
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "x": 56,
+        "y": 230,
+        "title": "part",
+        "caption": "MutableInside · Source module",
+        "lines": [
+          "part"
+        ],
+        "captions": [
+          "MutableInside · Source",
+          "module"
+        ],
+        "font": 16,
+        "fill": "#f1f4fa",
+        "stroke": "#62748c",
+        "category": "module",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 260,
+        "h": 298,
+        "expanded": true,
+        "header": 96,
+        "protected_header_height": 66,
+        "design_gutter": 0,
+        "cyclic": false
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "x": 109,
+        "y": 326,
+        "title": "x",
+        "caption": "",
+        "lines": [
+          "x"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "x": 80,
+        "y": 430,
+        "title": "a · ReLU",
+        "caption": "activation · In-place update",
+        "lines": [
+          "a · ReLU"
+        ],
+        "captions": [
+          "activation · In-place",
+          "update"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 74,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:ab078f6d",
+        "x": 109,
+        "y": 126,
+        "title": "x",
+        "caption": "",
+        "lines": [
+          "x"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "paper:port:ac09cf97",
+        "x": 109,
+        "y": 588,
+        "title": "return",
+        "caption": "",
+        "lines": [
+          "return"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "paper:port:ab078f6d",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00005",
+        "originals": [
+          "e00005"
+        ],
+        "canonical_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "canonical_target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "resolved_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 186,
+              "y": 170
+            },
+            {
+              "x": 186,
+              "y": 186
+            },
+            {
+              "x": 54,
+              "y": 186
+            },
+            {
+              "x": 54,
+              "y": 310
+            },
+            {
+              "x": 186,
+              "y": 310
+            },
+            {
+              "x": 186,
+              "y": 326
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00006",
+        "originals": [
+          "e00006"
+        ],
+        "canonical_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "canonical_target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "resolved_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "semantic_bindings": [
+          {
+            "constraint": "constraint:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "edge": "e00006",
+            "role": "input"
+          }
+        ],
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 165.66666666666666,
+              "y": 370
+            },
+            {
+              "x": 165.66666666666666,
+              "y": 414
+            },
+            {
+              "x": 156,
+              "y": 414
+            },
+            {
+              "x": 156,
+              "y": 430
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "kind": "state-write",
+        "source_port": "out",
+        "target_port": "previous",
+        "evidence": "source-dependency",
+        "id": "e00007",
+        "originals": [
+          "e00007"
+        ],
+        "canonical_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "canonical_target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "resolved_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 206.33333333333331,
+              "y": 370
+            },
+            {
+              "x": 206.33333333333331,
+              "y": 414
+            },
+            {
+              "x": 216,
+              "y": 414
+            },
+            {
+              "x": 216,
+              "y": 430
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "target": "paper:port:ac09cf97",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00010",
+        "originals": [
+          "e00009",
+          "e00008",
+          "e00010"
+        ],
+        "canonical_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1",
+        "canonical_target": "model/162:4:composite:1/165:8:interface:1",
+        "resolved_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "semantic_bindings": [
+          {
+            "constraint": "constraint:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "edge": "e00008",
+            "role": "result"
+          }
+        ],
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 186,
+              "y": 504
+            },
+            {
+              "x": 186,
+              "y": 588
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      }
+    ],
+    "edge_accounting": {
+      "visible": [
+        "e00005",
+        "e00006",
+        "e00007",
+        "e00010"
+      ],
+      "internal": [],
+      "excluded": [
+        "e00000",
+        "e00001",
+        "e00002",
+        "e00003",
+        "e00004"
+      ],
+      "contracted": [
+        "e00008",
+        "e00009"
+      ],
+      "attached": []
+    },
+    "node_accounting": {
+      "visible": [
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1"
+      ],
+      "collapsed": [],
+      "contracted": [
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1"
+      ],
+      "attached": [],
+      "excluded": [
+        "model/162:4:composite:1",
+        "model/162:4:composite:1/162:22:interface:1",
+        "model/162:4:composite:1/163:8:composite:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+        "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/164:12:value-alias:1",
+        "model/162:4:composite:1/163:8:composite:1/163:12:state:1",
+        "model/162:4:composite:1/165:8:interface:1"
+      ]
+    },
+    "representatives": {
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+      "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/164:12:value-alias:1": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2"
+    },
+    "labels": [],
+    "constraint_receipts": [
+      {
+        "id": "constraint:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "type": "opaque-boundary",
+        "node": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+        "members": [
+          "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1"
+        ],
+        "evidence": {
+          "relation": "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+          "scope": "source-local",
+          "source_scope": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1",
+          "condition_scope": [],
+          "rule_version": "local-relations/1"
+        },
+        "strength": "hard",
+        "endpoints": [
+          {
+            "role": "input",
+            "edge": "e00001",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "target_port": "arg:0",
+            "producer": "model/162:4:composite:1/162:22:interface:1",
+            "producer_port": "out",
+            "via": [
+              "e00000"
+            ],
+            "condition_scope": []
+          },
+          {
+            "role": "result",
+            "edge": "e00003",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+            "target_port": "in",
+            "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "producer_port": "out",
+            "via": [],
+            "condition_scope": []
+          }
+        ],
+        "properties": {
+          "reason": "mutable-operation",
+          "effects": "direct-aliases-only; view-and-external-aliases-unresolved"
+        },
+        "visible_node": null,
+        "status": "deferred",
+        "reason": "outside current evidence or panel scope",
+        "mapping": [
+          {
+            "role": "input",
+            "edge": "e00001",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/153:22:interface:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "target_port": "arg:0",
+            "producer": "model/162:4:composite:1/162:22:interface:1",
+            "producer_port": "out",
+            "via": [
+              "e00000"
+            ],
+            "condition_scope": [],
+            "visible_edges": [],
+            "visible_source": null,
+            "visible_target": null,
+            "status": "excluded"
+          },
+          {
+            "role": "result",
+            "edge": "e00003",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:8:interface:1",
+            "target_port": "in",
+            "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "producer_port": "out",
+            "via": [],
+            "condition_scope": [],
+            "visible_edges": [],
+            "visible_source": null,
+            "visible_target": null,
+            "status": "excluded"
+          }
+        ],
+        "endpoint_preservation": {
+          "drawn": 0,
+          "total": 2
+        }
+      },
+      {
+        "id": "constraint:relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "type": "opaque-boundary",
+        "node": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "members": [
+          "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1"
+        ],
+        "evidence": {
+          "relation": "relation:unknown-boundary:model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+          "scope": "source-local",
+          "source_scope": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1",
+          "condition_scope": [],
+          "rule_version": "local-relations/1"
+        },
+        "strength": "hard",
+        "endpoints": [
+          {
+            "role": "input",
+            "edge": "e00006",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "target_port": "arg:0",
+            "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "producer_port": "out",
+            "via": [
+              "e00005",
+              "e00004",
+              "e00003"
+            ],
+            "condition_scope": []
+          },
+          {
+            "role": "result",
+            "edge": "e00008",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+            "target_port": "in",
+            "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "producer_port": "out",
+            "via": [],
+            "condition_scope": []
+          }
+        ],
+        "properties": {
+          "reason": "mutable-operation",
+          "effects": "direct-aliases-only; view-and-external-aliases-unresolved"
+        },
+        "visible_node": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+        "status": "applied",
+        "reason": "canonical operand, condition and output-slot bindings retained on visible edges",
+        "mapping": [
+          {
+            "role": "input",
+            "edge": "e00006",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "target_port": "arg:0",
+            "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1/153:4:composite:1/154:15:compute:1",
+            "producer_port": "out",
+            "via": [
+              "e00005",
+              "e00004",
+              "e00003"
+            ],
+            "condition_scope": [],
+            "visible_edges": [
+              "e00006"
+            ],
+            "visible_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/153:22:interface:1",
+            "visible_target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "status": "drawn"
+          },
+          {
+            "role": "result",
+            "edge": "e00008",
+            "source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "source_port": "out",
+            "target": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:8:interface:1",
+            "target_port": "in",
+            "producer": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "producer_port": "out",
+            "via": [],
+            "condition_scope": [],
+            "visible_edges": [
+              "e00010"
+            ],
+            "visible_source": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2/153:4:composite:1/154:15:compute:1",
+            "visible_target": "paper:port:ac09cf97",
+            "status": "drawn"
+          }
+        ],
+        "endpoint_preservation": {
+          "drawn": 2,
+          "total": 2
+        },
+        "consumption": "port-bindings"
+      },
+      {
+        "id": "constraint:design:model/162:4:composite:1/163:8:composite:1:serial-sequence",
+        "type": "serial-sequence",
+        "node": "model/162:4:composite:1/163:8:composite:1",
+        "members": [],
+        "evidence": {
+          "certificate": null,
+          "scope": "source-contract"
+        },
+        "strength": "soft",
+        "endpoints": [],
+        "properties": {
+          "kind": "serial-sequence",
+          "node": "model/162:4:composite:1/163:8:composite:1",
+          "rule_version": "bounded-module-sequence/1",
+          "count": 2,
+          "state": "x",
+          "iterator": "part",
+          "collection": "self.parts",
+          "instances": [
+            "entry|parts.0@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:36",
+            "entry|parts.1@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py:160:53"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "unresolved",
+          "homogeneous": false,
+          "allocation_evidence": [
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 21,
+              "end_column": 70,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([MutableInside(), MutableInside()])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 36,
+              "end_column": 51,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/structural_repeats.py",
+              "line": 160,
+              "end_line": 160,
+              "column": 53,
+              "end_column": 68,
+              "symbol": "constructor",
+              "expression": "MutableInside()"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ],
+          "structure": {
+            "rule_version": "local-structure/1",
+            "scope": "modeled source graph and exact boundary slots; ordered operations",
+            "instances": [
+              {
+                "status": "unresolved",
+                "reason": "unknown or mutable computation",
+                "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+                "index": 0
+              },
+              {
+                "status": "unresolved",
+                "reason": "unknown or mutable computation",
+                "instance": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+                "index": 1
+              }
+            ],
+            "groups": [
+              {
+                "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:1",
+                "indices": [
+                  0
+                ],
+                "instances": [
+                  "model/162:4:composite:1/163:8:composite:1/163:8:composite:1"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              },
+              {
+                "representative": "model/162:4:composite:1/163:8:composite:1/163:8:composite:2",
+                "indices": [
+                  1
+                ],
+                "instances": [
+                  "model/162:4:composite:1/163:8:composite:1/163:8:composite:2"
+                ],
+                "status": "unresolved",
+                "fingerprint": null
+              }
+            ],
+            "homogeneous": false,
+            "not_asserted": [
+              "numerical equivalence",
+              "parameter equality or stability",
+              "purity",
+              "runtime count",
+              "time axis",
+              "arbitrary graph isomorphism"
+            ]
+          }
+        },
+        "visible_node": null,
+        "status": "deferred",
+        "reason": "legacy declaration; geometry has no unified handler yet",
+        "mapping": [],
+        "endpoint_preservation": {
+          "drawn": 0,
+          "total": 0
+        }
+      }
+    ]
+  },
+  "diagnostics": {
+    "route_failures": [],
+    "publication": {
+      "schema": "publication-quality/1",
+      "route_strategy": "canonical-short",
+      "wire_length": 643.3,
+      "min_print_font_pt": 12.97,
+      "target_min_font_pt": 8,
+      "requested_width_mm": 180,
+      "width_mm": 128.09384164222874,
+      "height_mm": 240,
+      "route_failures": [],
+      "unplaced_port_labels": [],
+      "line_geometry": {
+        "crossings": 0,
+        "overlapping_paths": [],
+        "unrelated_contacts": []
+      },
+      "issues": []
+    },
+    "routing": {
+      "selected": "canonical-short",
+      "baseline_crossings": 0,
+      "refinement": {
+        "attempts": 0,
+        "accepted": [],
+        "before_crossings": 0,
+        "before_contacts": 0,
+        "after_crossings": 0,
+        "after_contacts": 0
+      },
+      "candidates": [
+        {
+          "strategy": "canonical-short",
+          "crossings": 0,
+          "issues": [],
+          "wire_length": 643.3,
+          "min_print_font_pt": 12.97,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        }
+      ]
+    }
+  }
+}

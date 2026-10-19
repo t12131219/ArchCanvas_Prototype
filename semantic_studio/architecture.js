@@ -3,6 +3,7 @@
  * Unknown operators are boundaries, not invitations to manufacture a template. */
 (function(root){
   'use strict';
+  const Relations=root.SemanticLocalRelations||(typeof require==='function'?require('./local-relations.js'):null);
   const VERSION='architecture-rules/4';
   const copy=x=>JSON.parse(JSON.stringify(x));
   const flow=e=>['data','alias','interface-binding'].includes(e.kind);
@@ -289,7 +290,20 @@
       findings.push({id,rule:'observed-trace-structure',label:group.label,members,roles:{representative:g.representative},
         proof:[g.scope],excluded:[],evidence_scope:'observed-runs',presentation:'group',rule_version:'observation-index/1'});
     }
-    return {schema:'archcanvas-architecture/1',rule_version:VERSION,canonical_digest:ir.ir_digest,nodes,edges:ir.edges.map(copy),findings,
+    const relationGraph=Relations.build(ir,operator);
+    let objectLabel=0;
+    for(const r of relationGraph.relations){
+      if(r.type==='same-object-calls')for(const [i,id]of r.members.entries()){
+        const n=by.get(id);if(n)n.identity_display={relation:r.id,reference:r.properties.reference,
+          label:'Object '+(objectLabel+1),invocation:i+1,count:r.members.length,kind:r.type};
+      }
+      if(r.type==='same-object-calls')objectLabel++;
+      if(r.type==='observed-parameter-aliases'){
+        const n=by.get(r.node);if(n)n.identity_display={relation:r.id,kind:r.type,aliases:copy(r.properties.aliases),run:r.properties.run};
+      }
+    }
+    for(const r of relationGraph.relations){const n=by.get(r.node);if(n)n.local_relations=[...(n.local_relations||[]),r.id];}
+    return {schema:'archcanvas-architecture/1',rule_version:VERSION,canonical_digest:ir.ir_digest,nodes,edges:ir.edges.map(copy),findings,relation_graph:relationGraph,
       semantic_contracts:contracts,design_constraints:design,
       limitations:['Local dependency patterns do not certify arbitrary-input behavior.',
         'Unknown operations, tuple slots, conditional joins and loop templates remain explicit.',

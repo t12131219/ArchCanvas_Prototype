@@ -1,0 +1,1054 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "coupled",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+    "class": "coupled",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+      "cell": null,
+      "sha256": "d7344ccb2a4c036c6ab7c1dbbd6f45e1d1a509c354331904802303df5e35c7da",
+      "unit_sha256": "d7344ccb2a4c036c6ab7c1dbbd6f45e1d1a509c354331904802303df5e35c7da"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/20:0:composite:1",
+      "kind": "composite",
+      "label": "coupled",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 20,
+          "end_line": 24,
+          "column": 0,
+          "end_column": 24,
+          "symbol": "coupled",
+          "expression": "def coupled(x, y, steps):\n    first, second = (x, y)\n    for index in range(steps):\n        first, second = (second, first)\n    return (first, second)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/20:0:composite:1/20:12:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "coupled",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/20:0:composite:1/20:15:interface:1",
+      "kind": "interface",
+      "label": "y",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 15,
+          "end_column": 16,
+          "symbol": "coupled",
+          "expression": "y"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "y"
+    },
+    {
+      "id": "model/20:0:composite:1/20:18:interface:1",
+      "kind": "interface",
+      "label": "steps",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 18,
+          "end_column": 23,
+          "symbol": "coupled",
+          "expression": "steps"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "steps"
+    },
+    {
+      "id": "model/20:0:composite:1/21:20:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 20,
+          "end_column": 24,
+          "symbol": "coupled",
+          "expression": "(x, y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/21:4:value-alias:1",
+      "kind": "value-alias",
+      "label": "first",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 4,
+          "end_column": 9,
+          "symbol": "coupled",
+          "expression": "first"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/20:0:composite:1/21:11:value-alias:1",
+      "kind": "value-alias",
+      "label": "second",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 11,
+          "end_column": 17,
+          "symbol": "coupled",
+          "expression": "second"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1",
+      "kind": "composite",
+      "label": "Iteration",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "iteration-region"
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+      "kind": "control",
+      "label": "for index in range(steps)",
+      "parent": "model/20:0:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "loop",
+      "loop_semantics": "source-iteration-bindings; time-axis-and-count-unproved",
+      "iteration_contract": {
+        "rule_version": "iteration-bindings/1",
+        "region": "model/20:0:composite:1/22:4:composite:1",
+        "body": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+        "guard_edge": "e00008",
+        "guard_nodes": [
+          "model/20:0:composite:1/22:17:compute:1"
+        ],
+        "loop_kind": "for",
+        "scope": "source-name-bindings; normal-completion; zero-or-more-iterations",
+        "bindings": [
+          {
+            "name": "first",
+            "initial": "model/20:0:composite:1/21:4:value-alias:1",
+            "entry": "model/20:0:composite:1/22:4:composite:1/22:4:state:1",
+            "body_value": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:8:value-alias:1",
+            "exit": "model/20:0:composite:1/22:4:state:1",
+            "initial_edge": "e00005",
+            "backedge": "e00015",
+            "exit_edge": "e00016",
+            "completion_edge": "e00017",
+            "read_edges": [
+              "e00012"
+            ]
+          },
+          {
+            "name": "second",
+            "initial": "model/20:0:composite:1/21:11:value-alias:1",
+            "entry": "model/20:0:composite:1/22:4:composite:1/22:4:state:2",
+            "body_value": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:15:value-alias:1",
+            "exit": "model/20:0:composite:1/22:4:state:2",
+            "initial_edge": "e00006",
+            "backedge": "e00018",
+            "exit_edge": "e00019",
+            "completion_edge": "e00020",
+            "read_edges": [
+              "e00011"
+            ]
+          }
+        ],
+        "not_asserted": [
+          "time axis",
+          "fixed count",
+          "termination",
+          "tensor shape",
+          "storage identity",
+          "purity"
+        ]
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "kind": "composite",
+      "label": "loop body (source template)",
+      "parent": "model/20:0:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "loop-template"
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:state:1",
+      "kind": "state",
+      "label": "first · iteration entry",
+      "parent": "model/20:0:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-phi",
+      "role": "iteration-entry",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "name": "first"
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:state:2",
+      "kind": "state",
+      "label": "second · iteration entry",
+      "parent": "model/20:0:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-phi",
+      "role": "iteration-entry",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "name": "second"
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:17:compute:1",
+      "kind": "compute",
+      "label": "range",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 17,
+          "end_column": 29,
+          "symbol": "coupled",
+          "expression": "range(steps)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "range",
+      "function_target": "range",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "steps"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/22:8:interface:1",
+      "kind": "interface",
+      "label": "iteration item",
+      "parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "coupled",
+          "expression": "index"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "iteration-item",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1"
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/22:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "index",
+      "parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "coupled",
+          "expression": "index"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:24:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 24,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "(second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "first",
+      "parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "coupled",
+          "expression": "first"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:15:value-alias:1",
+      "kind": "value-alias",
+      "label": "second",
+      "parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source_parent": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 15,
+          "end_column": 21,
+          "symbol": "coupled",
+          "expression": "second"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:state:1",
+      "kind": "state",
+      "label": "first · iteration result",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-result",
+      "role": "iteration-exit",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "name": "first"
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:state:2",
+      "kind": "state",
+      "label": "second · iteration result",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-result",
+      "role": "iteration-exit",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "name": "second"
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/22:4:opaque:1",
+      "kind": "opaque",
+      "label": "index · loop-carried value",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 22,
+          "end_line": 23,
+          "column": 4,
+          "end_column": 37,
+          "symbol": "coupled",
+          "expression": "for index in range(steps):\n    first, second = (second, first)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/20:0:composite:1/24:11:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 11,
+          "end_column": 24,
+          "symbol": "coupled",
+          "expression": "(first, second)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/20:0:composite:1/24:4:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/20:0:composite:1",
+      "source_parent": "model/20:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 4,
+          "end_column": 24,
+          "symbol": "coupled",
+          "expression": "return (first, second)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/20:0:composite:1/20:12:interface:1",
+      "target": "model/20:0:composite:1/21:20:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/20:0:composite:1/20:15:interface:1",
+      "target": "model/20:0:composite:1/21:20:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/20:0:composite:1/21:20:compute:1",
+      "target": "model/20:0:composite:1/21:4:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/20:0:composite:1/21:20:compute:1",
+      "target": "model/20:0:composite:1/21:11:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/20:0:composite:1/21:4:value-alias:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:state:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "initial",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "initial"
+      },
+      "id": "e00005"
+    },
+    {
+      "source": "model/20:0:composite:1/21:11:value-alias:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:state:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "initial",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "initial"
+      },
+      "id": "e00006"
+    },
+    {
+      "source": "model/20:0:composite:1/20:18:interface:1",
+      "target": "model/20:0:composite:1/22:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/20:0:composite:1/22:17:compute:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/22:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "item",
+      "target_port": "item",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/22:8:interface:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/22:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:state:2",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:24:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:state:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:24:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:24:compute:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:24:compute:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:15:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:8:value-alias:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:state:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "backedge",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "normal-completion"
+      },
+      "id": "e00015"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:state:1",
+      "target": "model/20:0:composite:1/22:4:state:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "exit"
+      },
+      "id": "e00016"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+      "target": "model/20:0:composite:1/22:4:state:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "completion",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "completion"
+      },
+      "id": "e00017"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/23:15:value-alias:1",
+      "target": "model/20:0:composite:1/22:4:composite:1/22:4:state:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "backedge",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "normal-completion"
+      },
+      "id": "e00018"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:state:2",
+      "target": "model/20:0:composite:1/22:4:state:2",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "exit"
+      },
+      "id": "e00019"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+      "target": "model/20:0:composite:1/22:4:state:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "completion",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+        "phase": "completion"
+      },
+      "id": "e00020"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:composite:1/22:4:composite:1/22:8:value-alias:1",
+      "target": "model/20:0:composite:1/22:4:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:state:1",
+      "target": "model/20:0:composite:1/24:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/20:0:composite:1/22:4:state:2",
+      "target": "model/20:0:composite:1/24:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/20:0:composite:1/24:11:compute:1",
+      "target": "model/20:0:composite:1/24:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/20:0:composite:1/22:4:composite:1/22:4:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+      "line": 22,
+      "kind": "loop",
+      "outcomes": [
+        "zero",
+        "nonzero"
+      ],
+      "path_coverage": "unresolved"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "ebaa317b016bf2af796609b26d769925720440c0353f1852be0b768dd6b69d69"
+}

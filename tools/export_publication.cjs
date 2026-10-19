@@ -3,6 +3,8 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const E=require('../semantic_studio/semantic-engine.js'),P=require('../semantic_studio/publication.js'),R=require('../semantic_studio/publication-renderer.js');
+const Goals=require('../semantic_studio/expression-goals.js');
+const Representatives=require('./representative_atlas.cjs');
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function readInput(input){const value=JSON.parse(fs.readFileSync(input));if(['semantic-canvas/1','archcanvas-architecture-document/1'].includes(value.schema))return {ir:value.ir,state:value.state||{}};return {ir:value,state:{}};}
 function exportAtlas(ir,output,options={}){
@@ -10,23 +12,45 @@ function exportAtlas(ir,output,options={}){
   const state={mode:'source',...(options.state||{}),view:'publication',paperAuto:true,offsets:{},paperFocus:null};
   const plan=P.plan(ir),idx=E.index(plan),source=n=>{let id=n.id;while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return false;id=idx.nodes.get(id)?.parent;}return true;};
   const focus=plan.nodes.filter(n=>n.kind==='composite'&&n.parent&&(idx.children.get(n.id)||[]).length&&(state.mode!=='source'||source(n)));
-  const pages=[{id:null,label:ir.title||'Overview'},...focus.map(n=>({id:n.id,label:n.module_path||n.label}))],panels=[],textCards=[];
-  const limits=options.maxPanels==null?pages.length:Math.max(1,Math.floor(options.maxPanels));
-  for(const [i,p]of pages.slice(0,limits).entries()){
+  const goalSet=Goals.build(ir,plan),eligibleGoal=goal=>{const n=idx.nodes.get(goal.focus_node);return n&&(state.mode!=='source'||source(n))&&(state.mode!=='runtime'||!source(n));};
+  goalSet.goals=goalSet.goals.filter(eligibleGoal);
+  const representatives=Representatives.plan(ir,goalSet.goals);
+  goalSet.goals.push(...representatives.boundaries);
+  const representedScopes=representatives.sequences.flatMap(s=>s.rows.filter(r=>r.status==='proved').map(r=>s.closure(r.instance)));
+  const represented=id=>{while(id){if(representedScopes.some(s=>s.has(id)))return true;id=idx.nodes.get(id)?.parent;}return false;};
+  const pages=[{id:null,label:ir.title||'Overview'},...focus.filter(n=>!represented(n.id)).map(n=>({id:n.id,label:n.module_path||n.label})),...representatives.pages],panels=[],textCards=[],fulfilled=new Map();
+  const supplemental=goalSet.goals.slice().sort((a,b)=>b.priority-a.priority||a.id.localeCompare(b.id));
+  const requestedRelations=new Set();
+  const limits=options.maxPanels==null?Infinity:Math.max(1,Math.floor(options.maxPanels));
+  for(let i=0;i<pages.length&&i<limits;i++){
+    const p=pages[i];
     const base=String(i).padStart(3,'0')+'-'+(i===0?'overview':p.label.replace(/[^a-zA-Z0-9_-]+/g,'-').slice(0,60)||'module');
-    const out=R.render(ir,{...state,paperFocus:p.id}),g=out.graph;
+    const out=R.render(ir,{...state,paperFocus:p.id,paperRelation:p.relation||null,paperRepresentative:p.group!=null,paperRepresentativeGroup:p.group??null,paperGranularity:p.relation||p.group!=null?'detailed':state.paperGranularity}),g=out.graph;
+    const boundaryCoverage=Goals.evaluate({goals:representatives.boundaries},g,out.prepared);
+    const receipts=new Map([...g.expression_coverage.filter(c=>goalSet.goals.some(g=>g.id===c.goal)).map(c=>({...c,method:'direct'})),...boundaryCoverage.map(c=>({...c,method:'direct'}))].map(c=>[c.goal,c]));
+    for(const c of Representatives.coverage(representatives,out))if(receipts.get(c.goal)?.status!=='fulfilled')receipts.set(c.goal,c);
+    const coverage=[...receipts.values()];
+    out.document.atlas_expression_coverage=coverage;
     fs.writeFileSync(path.join(output,base+'.svg'),out.svg);
     fs.writeFileSync(path.join(output,base+'.layout.json'),JSON.stringify(out.document,null,2)+'\n');
     if(options.textQA)textCards.push(`<article data-case="${esc(ir.title)}" data-focus="${esc(p.id||'')}"><h2>${esc(p.label)}</h2>${out.svg}</article>`);
-    panels.push({id:p.id||g.publication.focus,label:p.label,overview:i===0,svg:base+'.svg',document:base+'.layout.json',
+    for(const c of coverage)if(c.status==='fulfilled'&&!out.prepared.quality.issues.length){if(!fulfilled.has(c.goal))fulfilled.set(c.goal,[]);fulfilled.get(c.goal).push(base+'.svg');}
+    panels.push({id:p.group!=null?p.id+':structure-group:'+p.group:p.relation||p.id||g.publication.focus,label:p.label,overview:i===0,relation:p.relation||null,representative:g.publication.representative,svg:base+'.svg',document:base+'.layout.json',expression_coverage:coverage,
       nodes:g.nodes.length,edges:g.edges.length,boundary:g.publication.boundary,wire_bundles:g.publication.wire_bundles,quality:out.prepared.quality,
       node_accounting:g.node_accounting,edge_accounting:g.edge_accounting,
       canonical_members:g.nodes.filter(n=>!g.positions.get(n.id).expanded).map(n=>({id:n.id,members:n.canonical_members||[n.id],unknowns:n.paper.unknown_count}))});
+    if(i===pages.length-1)for(const goal of supplemental)if(!fulfilled.has(goal.id)){
+      const relation=goal.relation||'node:'+goal.focus_node;if(requestedRelations.has(relation))continue;requestedRelations.add(relation);
+      pages.push({id:null,relation,label:goal.kind+' · '+(idx.nodes.get(goal.focus_node)?.label||goal.focus_node),goals:[goal.id]});
+    }
   }
-  const implementations=['semantic_studio/branch-regions.js','semantic_studio/publication.js','semantic_studio/publication-renderer.js','semantic_studio/architecture.js','semantic_studio/architecture-layout.js','semantic_studio/semantic-engine.js','tools/export_publication.cjs'];
+  const implementations=['semantic_studio/presentation-regions.js','semantic_studio/local-relations.js','semantic_studio/relation-constraints.js','semantic_studio/expression-goals.js','semantic_studio/branch-regions.js','semantic_studio/publication.js','semantic_studio/publication-renderer.js','semantic_studio/architecture.js','semantic_studio/architecture-layout.js','semantic_studio/semantic-engine.js','tools/representative_atlas.cjs','tools/symbolic_values.cjs','tools/export_publication.cjs'];
+  const expressionGoals=goalSet.goals.map(g=>({...g,panels:fulfilled.get(g.id)||[],status:fulfilled.has(g.id)?'fulfilled':'unfulfilled',coverage_methods:[...new Set(panels.flatMap(p=>p.quality.issues.length?[]:p.expression_coverage.filter(c=>c.goal===g.id&&c.status==='fulfilled').map(c=>c.method)))]}));
   const manifest={schema:'archcanvas-publication-atlas/1',title:ir.title,canonical_digest:ir.ir_digest||null,
     canonical_nodes:ir.nodes.length,canonical_edges:ir.edges.length,unknown_operations:ir.nodes.filter(n=>n.kind==='opaque').map(n=>({id:n.id,label:n.label,reason:n.reason})),
-    complete:pages.length===panels.length,omitted_panels:pages.slice(limits),
+    complete:pages.length===panels.length&&expressionGoals.every(g=>g.status==='fulfilled'),omitted_panels:pages.slice(limits),expression_goals:expressionGoals,
+    unfulfilled_goals:expressionGoals.filter(g=>g.status!=='fulfilled').map(g=>g.id),
+    structural_representatives:{diagnostics:representatives.diagnostics,groups:representatives.pages,scope:'Common local computations only; instance boundaries and identity remain direct obligations.'},
     implementation_sha256:Object.fromEntries(implementations.map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname,'..',file))).digest('hex')])),
     panels,quality_pass:panels.every(p=>p.quality.issues.length===0)};
   manifest.audit_digest=crypto.createHash('sha256').update(JSON.stringify({ir,state,implementation:manifest.implementation_sha256,panels:panels.map(p=>p.id)})).digest('hex');

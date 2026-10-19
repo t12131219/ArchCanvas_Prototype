@@ -1,0 +1,367 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "EscapedOwner",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+    "class": "EscapedOwner",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+      "cell": null,
+      "sha256": "f88f2cc3d36813bd3ebb292efe2b1a3a35d403ac3f049a41963bcd35913286f0",
+      "unit_sha256": "f88f2cc3d36813bd3ebb292efe2b1a3a35d403ac3f049a41963bcd35913286f0"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/82:4:composite:1",
+      "kind": "composite",
+      "label": "EscapedOwner",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 82,
+          "end_line": 83,
+          "column": 4,
+          "end_column": 44,
+          "symbol": "EscapedOwner.forward",
+          "expression": "def forward(self, x, y):\n    return self.first(x) + self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "EscapedOwner"
+    },
+    {
+      "id": "model/82:4:composite:1/82:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 82,
+          "end_line": 82,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "EscapedOwner.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/82:4:composite:1/82:25:interface:1",
+      "kind": "interface",
+      "label": "y",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 82,
+          "end_line": 82,
+          "column": 25,
+          "end_column": 26,
+          "symbol": "EscapedOwner.forward",
+          "expression": "y"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "y"
+    },
+    {
+      "id": "model/82:4:composite:1/83:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 83,
+          "end_line": 83,
+          "column": 15,
+          "end_column": 44,
+          "symbol": "EscapedOwner.forward",
+          "expression": "self.first(x) + self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add"
+    },
+    {
+      "id": "model/82:4:composite:1/83:15:compute:2",
+      "kind": "compute",
+      "label": "first · Linear",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 83,
+          "end_line": 83,
+          "column": 15,
+          "end_column": 28,
+          "symbol": "EscapedOwner.forward",
+          "expression": "self.first(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "first",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/82:4:composite:1/79:21:parameter:1",
+      "kind": "parameter",
+      "label": "first.parameters",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 79,
+          "end_line": 79,
+          "column": 21,
+          "end_column": 36,
+          "symbol": "EscapedOwner.forward",
+          "expression": "nn.Linear(8, 8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "first",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/82:4:composite:1/83:31:compute:1",
+      "kind": "compute",
+      "label": "first · Linear",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 83,
+          "end_line": 83,
+          "column": 31,
+          "end_column": 44,
+          "symbol": "EscapedOwner.forward",
+          "expression": "self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "first",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/82:4:composite:1/79:21:parameter:2",
+      "kind": "parameter",
+      "label": "first.parameters",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 79,
+          "end_line": 79,
+          "column": 21,
+          "end_column": 36,
+          "symbol": "EscapedOwner.forward",
+          "expression": "nn.Linear(8, 8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "first",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/82:4:composite:1/83:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/82:4:composite:1",
+      "source_parent": "model/82:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/identity_bindings.py",
+          "line": 83,
+          "end_line": 83,
+          "column": 8,
+          "end_column": 44,
+          "symbol": "EscapedOwner.forward",
+          "expression": "return self.first(x) + self.first(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/82:4:composite:1/79:21:parameter:1",
+      "target": "model/82:4:composite:1/83:15:compute:2",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/82:4:composite:1/82:22:interface:1",
+      "target": "model/82:4:composite:1/83:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/82:4:composite:1/83:15:compute:2",
+      "target": "model/82:4:composite:1/83:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/82:4:composite:1/79:21:parameter:2",
+      "target": "model/82:4:composite:1/83:31:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00003"
+    },
+    {
+      "source": "model/82:4:composite:1/82:25:interface:1",
+      "target": "model/82:4:composite:1/83:31:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/82:4:composite:1/83:31:compute:1",
+      "target": "model/82:4:composite:1/83:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/82:4:composite:1/83:15:compute:1",
+      "target": "model/82:4:composite:1/83:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "94624fc0a8fd6e3bc7c8eb17021717733e0bbdc3e6ba7e64aed3513e204a6cc5"
+}

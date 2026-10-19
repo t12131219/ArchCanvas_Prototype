@@ -1,0 +1,719 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "accumulate",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+    "class": "accumulate",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+      "cell": null,
+      "sha256": "d7344ccb2a4c036c6ab7c1dbbd6f45e1d1a509c354331904802303df5e35c7da",
+      "unit_sha256": "d7344ccb2a4c036c6ab7c1dbbd6f45e1d1a509c354331904802303df5e35c7da"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/5:0:composite:1",
+      "kind": "composite",
+      "label": "accumulate",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 5,
+          "end_line": 9,
+          "column": 0,
+          "end_column": 16,
+          "symbol": "accumulate",
+          "expression": "def accumulate(x, side, steps):\n    value = x\n    for index in range(steps):\n        value = torch.tanh(value + side)\n    return value"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/5:0:composite:1/5:15:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 5,
+          "end_line": 5,
+          "column": 15,
+          "end_column": 16,
+          "symbol": "accumulate",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/5:0:composite:1/5:18:interface:1",
+      "kind": "interface",
+      "label": "side",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 5,
+          "end_line": 5,
+          "column": 18,
+          "end_column": 22,
+          "symbol": "accumulate",
+          "expression": "side"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "side"
+    },
+    {
+      "id": "model/5:0:composite:1/5:24:interface:1",
+      "kind": "interface",
+      "label": "steps",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 5,
+          "end_line": 5,
+          "column": 24,
+          "end_column": 29,
+          "symbol": "accumulate",
+          "expression": "steps"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "steps"
+    },
+    {
+      "id": "model/5:0:composite:1/6:4:value-alias:1",
+      "kind": "value-alias",
+      "label": "value",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 6,
+          "end_line": 6,
+          "column": 4,
+          "end_column": 9,
+          "symbol": "accumulate",
+          "expression": "value"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:control:1",
+      "kind": "control",
+      "label": "for index in range(steps)",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 8,
+          "column": 4,
+          "end_column": 40,
+          "symbol": "accumulate",
+          "expression": "for index in range(steps):\n    value = torch.tanh(value + side)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "loop",
+      "loop_semantics": "source-iteration-bindings; time-axis-and-count-unproved",
+      "iteration_contract": {
+        "rule_version": "iteration-bindings/1",
+        "body": "model/5:0:composite:1/7:4:composite:1",
+        "guard_edge": "e00004",
+        "guard_nodes": [
+          "model/5:0:composite:1/7:17:compute:1"
+        ],
+        "loop_kind": "for",
+        "scope": "source-name-bindings; normal-completion; zero-or-more-iterations",
+        "bindings": [
+          {
+            "name": "value",
+            "initial": "model/5:0:composite:1/6:4:value-alias:1",
+            "entry": "model/5:0:composite:1/7:4:composite:1/7:4:state:1",
+            "body_value": "model/5:0:composite:1/7:4:composite:1/8:8:value-alias:1",
+            "exit": "model/5:0:composite:1/7:4:state:1",
+            "initial_edge": "e00002",
+            "backedge": "e00011",
+            "exit_edge": "e00012",
+            "read_edges": [
+              "e00007"
+            ]
+          }
+        ],
+        "not_asserted": [
+          "time axis",
+          "fixed count",
+          "termination",
+          "tensor shape",
+          "storage identity",
+          "purity"
+        ]
+      }
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:composite:1",
+      "kind": "composite",
+      "label": "iteration body (source template)",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 8,
+          "column": 4,
+          "end_column": 40,
+          "symbol": "accumulate",
+          "expression": "for index in range(steps):\n    value = torch.tanh(value + side)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "loop-template"
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:composite:1/7:4:state:1",
+      "kind": "state",
+      "label": "value · iteration entry",
+      "parent": "model/5:0:composite:1/7:4:composite:1",
+      "source_parent": "model/5:0:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 8,
+          "column": 4,
+          "end_column": 40,
+          "symbol": "accumulate",
+          "expression": "for index in range(steps):\n    value = torch.tanh(value + side)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-phi",
+      "role": "iteration-entry",
+      "iteration": {
+        "loop": "model/5:0:composite:1/7:4:control:1",
+        "name": "value"
+      }
+    },
+    {
+      "id": "model/5:0:composite:1/7:17:compute:1",
+      "kind": "compute",
+      "label": "range",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 17,
+          "end_column": 29,
+          "symbol": "accumulate",
+          "expression": "range(steps)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "range",
+      "function_target": "range",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "steps"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:composite:1/7:8:interface:1",
+      "kind": "interface",
+      "label": "iteration item",
+      "parent": "model/5:0:composite:1/7:4:composite:1",
+      "source_parent": "model/5:0:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "accumulate",
+          "expression": "index"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "iteration-item",
+      "iteration": {
+        "loop": "model/5:0:composite:1/7:4:control:1"
+      }
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:composite:1/7:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "index",
+      "parent": "model/5:0:composite:1/7:4:composite:1",
+      "source_parent": "model/5:0:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "accumulate",
+          "expression": "index"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:composite:1/8:27:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/5:0:composite:1/7:4:composite:1",
+      "source_parent": "model/5:0:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 27,
+          "end_column": 39,
+          "symbol": "accumulate",
+          "expression": "value + side"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add"
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:composite:1/8:16:compute:1",
+      "kind": "compute",
+      "label": "tanh",
+      "parent": "model/5:0:composite:1/7:4:composite:1",
+      "source_parent": "model/5:0:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 16,
+          "end_column": 40,
+          "symbol": "accumulate",
+          "expression": "torch.tanh(value + side)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "value + side"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:composite:1/8:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "value",
+      "parent": "model/5:0:composite:1/7:4:composite:1",
+      "source_parent": "model/5:0:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "accumulate",
+          "expression": "value"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:state:1",
+      "kind": "state",
+      "label": "value · iteration result",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 8,
+          "column": 4,
+          "end_column": 40,
+          "symbol": "accumulate",
+          "expression": "for index in range(steps):\n    value = torch.tanh(value + side)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-result",
+      "role": "iteration-exit",
+      "iteration": {
+        "loop": "model/5:0:composite:1/7:4:control:1",
+        "name": "value"
+      }
+    },
+    {
+      "id": "model/5:0:composite:1/7:4:opaque:1",
+      "kind": "opaque",
+      "label": "index · loop-carried value",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 7,
+          "end_line": 8,
+          "column": 4,
+          "end_column": 40,
+          "symbol": "accumulate",
+          "expression": "for index in range(steps):\n    value = torch.tanh(value + side)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/5:0:composite:1/9:4:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/5:0:composite:1",
+      "source_parent": "model/5:0:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "accumulate",
+          "expression": "return value"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/5:0:composite:1/5:15:interface:1",
+      "target": "model/5:0:composite:1/6:4:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:control:1",
+      "target": "model/5:0:composite:1/7:4:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/5:0:composite:1/6:4:value-alias:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/7:4:state:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "initial",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/5:0:composite:1/7:4:control:1",
+        "phase": "initial"
+      },
+      "id": "e00002"
+    },
+    {
+      "source": "model/5:0:composite:1/5:24:interface:1",
+      "target": "model/5:0:composite:1/7:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/5:0:composite:1/7:17:compute:1",
+      "target": "model/5:0:composite:1/7:4:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:control:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/7:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "item",
+      "target_port": "item",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:composite:1/7:8:interface:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/7:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:composite:1/7:4:state:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/8:27:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/5:0:composite:1/5:18:interface:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/8:27:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:composite:1/8:27:compute:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/8:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:composite:1/8:16:compute:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/8:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:composite:1/8:8:value-alias:1",
+      "target": "model/5:0:composite:1/7:4:composite:1/7:4:state:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "backedge",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/5:0:composite:1/7:4:control:1",
+        "phase": "normal-completion"
+      },
+      "id": "e00011"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:composite:1/7:4:state:1",
+      "target": "model/5:0:composite:1/7:4:state:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/5:0:composite:1/7:4:control:1",
+        "phase": "exit"
+      },
+      "id": "e00012"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:composite:1/7:8:value-alias:1",
+      "target": "model/5:0:composite:1/7:4:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/5:0:composite:1/7:4:state:1",
+      "target": "model/5:0:composite:1/9:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/5:0:composite:1/7:4:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/iteration_bindings.py",
+      "line": 7,
+      "kind": "loop",
+      "outcomes": [
+        "zero",
+        "nonzero"
+      ],
+      "path_coverage": "unresolved"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "9c280eb63bb9d1dd46a6cb15d364452c72b73181435b4598773218b8c6cede54"
+}

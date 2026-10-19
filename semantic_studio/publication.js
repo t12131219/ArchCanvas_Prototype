@@ -5,6 +5,7 @@
   const A=root.SemanticArchitecture||(typeof require==='function'?require('./architecture.js'):null);
   const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
   const B=root.SemanticBranchRegions||(typeof require==='function'?require('./branch-regions.js'):null);
+  const Regions=root.SemanticPresentationRegions||(typeof require==='function'?require('./presentation-regions.js'):null);
   const plans=new WeakMap(),copy=x=>JSON.parse(JSON.stringify(x));
   const flow=e=>['data','alias','interface-binding'].includes(e.kind);
   const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0).toString(16);};
@@ -92,7 +93,7 @@
     const op=A.operator(n)||'',type=n.semantic_type||'';
     if(n.kind==='opaque')return 'unknown';
     if(n.kind==='interface')return 'interface';
-    if(n.kind==='control'||['conditional-region','loop-template'].includes(type))return 'control';
+    if(n.kind==='control'||['conditional-region','loop-template','iteration-region'].includes(type))return 'control';
     if(type.startsWith('residual')||['add','mult','mul'].includes(op)||['gate','gated-sum'].includes(type))return 'algebra';
     if(['lstm','gru','rnn'].includes(op))return 'recurrent';
     if(op.includes('attention')||type.includes('attention'))return 'attention';
@@ -170,32 +171,48 @@
     const cat=category(n),[fill,stroke]=palette[cat],type=n.semantic_type||n.operator||n.kind;
     const captionsByType={'source-module':'Module','source-function':'Function','sequential':'Sequential','structural-region':'Dependency region','interface':'','value-alias':'Value','structure':'','rnn':'RNN','lstm':'LSTM','gru':'GRU','gated-sum':'2 sigmoid-gated products','residual':'Residual path','residual-prenorm':'Residual · Pre-Norm','residual-postnorm':'Residual · Post-Norm'};
     let title=n.label,caption=configuration(n)||(Object.hasOwn(captionsByType,type)?captionsByType[type]:type);
+    if(n.role==='iteration-entry'){title=n.iteration.name;caption='Current binding';}
+    if(n.role==='iteration-exit'){title=n.iteration.name;caption='Loop result';}
+    if(type==='iteration-region')caption='Source bindings · count unproved';
+    // An extractor's scope-wide pattern annotation is not a certificate that
+    // every computation in the source module implements that pattern. Exact
+    // local findings and contracts supply their own labels below.
+    if(n.kind==='composite'&&n.source_class&&!n.presentation_only&&!n.finding&&!n.contract_roles&&n.module_path!=null)caption='Source module';
+    if(type==='relation-panel')caption='Local relationship · exact interfaces';
+    if(type==='serial-remainder')caption=n.region_summary;
     if(n.contract_roles){
       const r=n.contract_roles;
       caption=type==='multihead-attention'?`${r.heads} heads · ${r.mode==='self'?'same source':r.mode==='cross'?'two sources':'role-bound inputs'}`:type==='feed-forward'?'Linear → activation → Linear':'Operand and axis contract';
     }
-    if(n.repeat_contract){const r=n.repeat_contract;caption=`${r.homogeneous?'Same structure':'Distinct elements'} · ${r.count} calls · parameters ${r.parameter_sharing}`;}
+    if(n.repeat_contract){const r=n.repeat_contract,s=r.structure,unknown=s?.groups.filter(g=>g.status!=='proved').length||0;
+      const summary=s?.rule_version!=='local-structure/1'?'Structure unverified':s.homogeneous?'Same modeled structure':unknown?`${s.groups.length-unknown} modeled groups · ${unknown} unclassified elements`:s.groups.length+' structural groups';
+      caption=`${summary} · ${r.count} source calls · parameters ${r.parameter_sharing}`;}
     if(n.semantic_type==='repeat-instance'){
-      const repeat=idx.nodes.get(n.parent)?.repeat_contract;
+      const parent=idx.nodes.get(n.parent),repeat=parent?.repeat_contract||idx.nodes.get(parent?.sequence_remainder?.sequence)?.repeat_contract;
       if(repeat)caption=`Instance ${n.repeat_index+1} of ${repeat.count} · parameters ${repeat.parameter_sharing}`;
+      if(n.structure_representative)caption+=` · source positions ${n.structure_representative.indices.map(i=>i+1).join(', ')} · structure only`;
     }
     if(n.observation_group)caption='Same observed structure · individual executions retained';
     const sourceClass=n.module_path&&(n.source_class||n.source?.find(s=>s.symbol?.endsWith('.forward')&&s.expression?.startsWith('def forward('))?.symbol.slice(0,-8));
     if(sourceClass&&sourceClass!==title&&!n.contract_roles)caption=sourceClass+(caption&&caption!=='Module'?' · '+caption:'');
     if(n.operator==='structure')title=n.structure_kind==='dict'?'Pack mapping':'Pack values';
     if(n.kind==='compute'&&n.framework_type){const short=n.framework_type.split('.').at(-1);title=n.label.includes(' · ')?n.label.split(' · ')[0]+' · '+short:n.label;}
-    if(['structural-region','branch-region','branch-path','branch-panel','dependency-band','dependency-panel','boundary-interface-group'].includes(n.semantic_type))caption=n.region_summary;
+    if(['structural-region','computation-region','conditional-collection','branch-region','branch-path','branch-panel','dependency-band','dependency-panel','boundary-interface-group'].includes(n.semantic_type))caption=n.region_summary;
     if(n.boundary_caption)caption=n.boundary_caption;
     if(opaque&&n.kind!=='opaque')caption+=(caption?' · ':'')+opaque+' unresolved';
     if(n.kind==='opaque')caption='Unresolved operation';
     if(n.mutable)caption+=(caption?' · ':'')+'In-place update';
     if(n.observed_calls){const observations=n.observed_calls.observations;caption+=(caption?' · ':'')+`${new Set(observations.map(o=>o.run)).size} observed runs`;}
-    const symbol=n.kind==='compute'&&!n.mutable&&(['add','mult','mul'].includes(n.operator)||/^aten\.(add|mul)\./.test(n.operator||''))?(n.operator==='add'||n.operator.startsWith('aten.add.')?'+':'×'):null;
+    if(n.identity_display){const d=n.identity_display;caption+=(caption?' · ':'')+(d.kind==='same-object-calls'?
+      `${d.label} · source call ${d.invocation}/${d.count}`:`Run ${d.run+1} start aliases: ${d.aliases.join(' = ')}`);}
+    const literalOperands=n.syntax?.type==='BinOp'?['left','right'].filter(side=>Object.hasOwn(n.syntax.fields[side]||{},'literal')).map(side=>side+' operand: '+n.syntax.fields[side].literal):[];
+    if(literalOperands.length)caption=literalOperands.join(' · ');
+    const symbol=n.kind==='compute'&&!n.mutable&&!literalOperands.length&&(['add','mult','mul'].includes(n.operator)||/^aten\.(add|mul)\./.test(n.operator||''))?(n.operator==='add'||n.operator.startsWith('aten.add.')?'+':'×'):null;
     const maxWidth=n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
     const lines=wrap(title,n.kind==='composite'?maxWidth-20:maxWidth,font),captions=caption?wrap(caption,maxWidth,13):[];
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
       w:symbol?48:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
-    if(n.content_inventory){
+    if(n.content_inventory&&!n.identity_display){
       const summary=inventoryCaption(n.content_inventory,opaque,captions.length,maxWidth);
       if(summary){n.paper.caption=summary.text;n.paper.captions=summary.lines;n.paper.caption_scope='unit-inventory';n.paper.layout_caption_rows=captions.length;
         n.paper.inventory_summary={shown_terms:summary.shown_terms,omitted_kinds:summary.omitted_kinds};}
@@ -236,10 +253,41 @@
       children.set(parent,[...(children.get(parent)||[]).filter(id=>!closure.has(id)),id]);
       return id;
     }
+    const scopes=plan.nodes.filter(n=>n.kind==='composite').map(n=>n.id);
+    const regionPlans=[];
+    for(const parent of scopes){
+      if(['loop-template','iteration-region','conditional-region'].includes(by.get(parent)?.semantic_type))continue;
+      const selected=Regions.candidates({nodes:plan.nodes,children,parent,edges:ir.edges,relations:plan.relation_graph?.relations||[],
+        resolve:(id,port)=>value(id,port,pol.bindings).id,
+        eligible:id=>!pol.metadata.has(id)&&!pol.bindings.has(id)&&!['interface','parameter'].includes(by.get(id).kind)});
+      if(!selected?.proposals.length)continue;
+      // Existing depth bands remain useful for interwoven computation. Replace
+      // them early when a condition, state, selection or effect boundary needs
+      // protection that a depth rank alone cannot provide. Unknown-only scopes
+      // keep that established topology fallback and their explicit detail goals.
+      if(!selected.proposals.some(c=>c.kind==='conditional-collection')&&!selected.protected.some(p=>p.reasons.some(r=>['state-interface','selection-interface','control','condition','iteration','effects'].includes(r))))continue;
+      for(const candidate of selected.proposals){
+        const conditional=candidate.kind==='conditional-collection',label=conditional?'Conditional alternatives':'Computation region';
+        candidate.id=region(parent,candidate.members.slice(),candidate.kind,label,
+          conditional?'Condition-bound alternatives · exact interfaces':candidate.members.length+' connected units · exact interfaces',
+          {units:candidate.members.slice(),boundary_selection:candidate},
+          ['Presentation boundary selected from local condition, state, effect and dependency facts. All canonical cuts and escaping results remain; no family or purity claim.']);
+        const group=by.get(candidate.id),inside=new Set(group.canonical_members);
+        candidate.canonical_members=group.canonical_members.slice();candidate.boundary_edges=group.boundary_ports.map(e=>e.id);
+        candidate.input_edges=group.boundary_ports.filter(e=>inside.has(e.target)).map(e=>e.id);
+        candidate.output_edges=group.boundary_ports.filter(e=>inside.has(e.source)).map(e=>e.id);
+        candidate.escaping_results=[...new Set(group.boundary_ports.filter(e=>inside.has(e.source)).map(e=>JSON.stringify([e.source,e.source_port])))].map(s=>JSON.parse(s));
+        candidate.internal_edges=ir.edges.filter(e=>inside.has(e.source)&&inside.has(e.target)).length;
+        candidate.cut_edges=group.boundary_ports.length;candidate.cohesion=candidate.internal_edges/Math.max(1,candidate.internal_edges+candidate.cut_edges);
+        group.boundary_selection=candidate;
+        group.content_inventory=inventory(candidate.members,{nodes:by,children});
+      }
+      regionPlans.push(selected);
+    }
+    const protectedScopes=new Set(regionPlans.map(p=>p.parent));
     // Find inner diamonds first, then revisit the enclosing scope so nested
     // diamonds can compose. Input interfaces stay local during this analysis.
     // All existing module boundaries, canonical cuts and unknowns are retained.
-    const scopes=plan.nodes.filter(n=>n.kind==='composite').map(n=>n.id);
     for(const parent of scopes)for(let iteration=0;iteration<32;iteration++){
       const kids=(children.get(parent)||[]).filter(id=>!pol.metadata.has(id)&&!pol.bindings.has(id)&&by.get(id).kind!=='parameter');
       // The general policy contracts local interfaces; restore them as real
@@ -286,7 +334,7 @@
     for(const parent of scopes){
       // A loop body is a source template with carried values across its
       // boundary, not a closed feed-forward scope for depth grouping.
-      if(by.get(parent).semantic_type==='loop-template')continue;
+      if(protectedScopes.has(parent)||['loop-template','iteration-region'].includes(by.get(parent).semantic_type))continue;
       const core=(children.get(parent)||[]).filter(id=>!pol.metadata.has(id)&&!pol.bindings.has(id)&&!['interface','parameter'].includes(by.get(id).kind));
       if(core.length<9)continue;
       const active=new Set(core),adj=new Map(core.map(id=>[id,new Set()])),degree=new Map(core.map(id=>[id,0])),depth=new Map(core.map(id=>[id,0]));
@@ -321,7 +369,7 @@
     const queue=plan.nodes.filter(n=>n.kind==='composite').map(n=>n.id);
     for(let at=0;at<queue.length;at++){
       const parent=queue[at],core=(children.get(parent)||[]).filter(id=>{const n=by.get(id);return !pol.metadata.has(id)&&!pol.bindings.has(id)&&!['interface','parameter'].includes(n.kind);});
-      if(core.length<=10)continue;
+      if(protectedScopes.has(parent)||core.length<=10)continue;
       const coreSet=new Set(core),adj=new Map(core.map(id=>[id,new Set()]));
       for(const e of ir.edges)if(flow(e)||e.kind==='control'){
         const a=owner(value(e.source,e.source_port,pol.bindings).id,parent),b=owner(e.target,parent);
@@ -357,10 +405,48 @@
       if(f?.roles.units)n.content_inventory=inventory(f.roles.units,final);
     }
     for(const n of plan.nodes)decorate(n,final);
-    plan.publication={schema:'archcanvas-publication-plan/1',structural_regions:plan.nodes.filter(n=>n.semantic_type==='structural-region').length};
+    plan.publication={schema:'archcanvas-publication-plan/1',structural_regions:plan.nodes.filter(n=>n.semantic_type==='structural-region').length,boundary_plans:regionPlans};
     return plan;
   }
   function plan(ir){if(!plans.has(ir))plans.set(ir,build(ir));return plans.get(ir);}
+  function relationPanel(ir,base,relationId){
+    let relation=base.relation_graph?.relations.find(r=>r.id===relationId);
+    if(!relation&&relationId.startsWith('node:')){const node=ir.nodes.find(n=>n.id===relationId.slice(5));if(node)relation={id:relationId,type:'computation',members:[node.id],edges:ir.edges.filter(e=>e.source===node.id||e.target===node.id).map(e=>e.id),evidence_scope:node.evidence_status==='runtime-only'?'observed-run':'source-local'};}
+    if(!relation)return null;
+    const canonical=new Map(ir.nodes.map(n=>[n.id,n])),members=new Set(relation.members),edges=new Map(ir.edges.map(e=>[e.id,e]));
+    // A cross-branch relationship must retain the original control enclosure.
+    // Reparenting its calls directly into a detail panel would imply that both
+    // alternatives execute without a condition.
+    for(const id of [...members]){let at=canonical.get(id)?.parent;while(at){const n=canonical.get(at);
+      if(n?.condition?.branch){members.add(at);members.add(n.condition.branch);}at=n?.parent;
+    }}
+    // Include the binding path only when both its producer and consumer are
+    // internal roles. External provenance belongs on exact boundary ports;
+    // pulling its entire chain into this panel obscures the selected relation.
+    for(const b of relation.bindings||[])if(members.has(b.producer)&&members.has(b.target)){
+      members.add(b.source);for(const id of b.via){const e=edges.get(id);if(e){members.add(e.source);members.add(e.target);}}
+    }
+    if(relation.type==='conditional-join')for(const b of relation.bindings){
+      let at=b.source;while(at){const n=canonical.get(at);if(n?.kind==='composite'&&n.condition?.branch===b.condition?.branch&&n.condition?.outcome===b.condition?.outcome){members.add(at);break;}at=n?.parent;}
+    }
+    // A conditional container retains its governed body; selecting it cannot
+    // turn conditional calls into unconditional peer computations.
+    const children=new Map();for(const n of ir.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
+    for(const id of [...members])if(canonical.get(id)?.kind==='composite')for(const child of descendants(id,children))members.add(child);
+    const used=new Set(base.nodes.map(n=>n.id)),id=unique((relation.evidence_scope==='observed-run'?'runtime:paper:relation:':'paper:relation:')+hash(relationId),used),nodes=base.nodes.map(copy);
+    const cuts=ir.edges.filter(e=>members.has(e.source)!==members.has(e.target));
+    for(const n of nodes)if(members.has(n.id))n.parent=members.has(n.parent)?n.parent:id;
+    const frame={id,parent:null,kind:'composite',semantic_type:'relation-panel',label:relation.type.replaceAll('-',' '),source:[],runtime_evidence:[],
+      presentation_only:true,finding:id,canonical_members:[...members],boundary_ports:cuts.map(copy),evidence_status:relation.evidence_scope==='observed-run'?'runtime-only':'static-only',
+      relation:relationId,region_summary:'Local relationship · exact boundary ports'};
+    nodes.push(frame);
+    const p={...base,nodes,findings:[...base.findings,{id,rule:'relation-panel',members:[...members],presentation:'group',evidence_scope:'presentation',proof:['One local relationship; external canonical cuts remain explicit.']}]},idx=index(p);
+    for(const n of nodes.filter(n=>members.has(n.id)||n.id===id))decorate(n,idx);
+    const required=relation.properties?.required_nodes,minimal=new Set([id]);
+    if(required)for(const node of required){let at=idx.nodes.get(node)?.parent;while(at&&at!==id){minimal.add(at);at=idx.nodes.get(at)?.parent;}}
+    return {plan:p,id,open:[id,...nodes.filter(n=>members.has(n.id)&&n.kind==='composite').map(n=>n.id)],
+      minimal_open:required?[...minimal]:null};
+  }
   const wireLabel=edge=>edge.bundle_members.length+(edge.bundle_values===1?' uses':edge.bundle_values===edge.bundle_members.length?' values':' links');
   function presentEdges(edges,idx){
     const groups=new Map(),used=new Set(edges.map(e=>e.id));
@@ -372,8 +458,9 @@
       // value. Retain every invocation/operand instead of drawing N copies
       // across the same closed boundary. Conditional/state edges stay explicit.
       const sharedOutput=b?.boundary_value&&b.boundary_uses?.length>1;
-      if(edge.condition||!flow(edge)||!sharedOutput&&![a,b].some(n=>['branch-panel','branch-region','dependency-band','dependency-panel','serial-repeat'].includes(n?.semantic_type)))continue;
-      const key=JSON.stringify([edge.source,edge.target,edge.kind,edge.evidence]);
+      if(edge.condition||edge.semantic_bindings?.some(b=>['initial-state','final-state','final-state-pair','sequence-input'].includes(b.role))||!flow(edge)||!sharedOutput&&![a,b].some(n=>['computation-region','conditional-collection','branch-panel','branch-region','dependency-band','dependency-panel','serial-repeat','serial-remainder'].includes(n?.semantic_type)))continue;
+      const sequence=edge.semantic_bindings?.some(b=>b.role==='sequence-output');
+      const key=JSON.stringify([edge.source,edge.target,edge.kind,edge.evidence,sequence?[edge.resolved_source,edge.source_port,'sequence-output']:null]);
       if(!groups.has(key))groups.set(key,[]);groups.get(key).push(edge);
     }
     const ribbons=new Map();
@@ -383,7 +470,7 @@
       const ribbon={id,source:first.source,target:first.target,kind:'data-bundle',evidence:first.evidence,
         source_port:'bundle',target_port:'bundle',resolved_source:id,
         originals:members.flatMap(e=>e.originals),bundle_members:members.map(copy),
-        bundle_values:values,tensor_equality:'not-asserted'};
+        bundle_values:values,sequence_output:members.every(m=>m.semantic_bindings?.some(b=>b.role==='sequence-output')),tensor_equality:'not-asserted'};
       for(const member of members)ribbons.set(member.id,ribbon);
     }
     const emitted=new Set();return edges.flatMap(edge=>{const ribbon=ribbons.get(edge.id);if(!ribbon)return [edge];if(emitted.has(ribbon.id))return [];emitted.add(ribbon.id);return [ribbon];});
@@ -410,7 +497,7 @@
         flow(e)&&!e.condition?JSON.stringify([resolved.id,resolved.port,e.kind,e.evidence]):null;
       const shared=!existing&&(input?inputValues.get(valueKey):valueKey&&outputValues.get(valueKey));
       let id=existing?local.id:shared||unique('paper:port:'+hash(focus+'|'+e.id),used);used.add(id);
-      if(!existing&&!shared){const localBinding=input&&local?.kind==='value-alias';
+      if(!existing&&!shared){const localBinding=input&&local?.kind==='value-alias'&&!local.operator;
         const n={id,parent:focus,kind:'interface',role:input?'input':'output',label:localBinding?local.label:!input&&external?.operator==='structure'?'slot '+e.target_port:external?.label||e.source_port,source:(localBinding?local.source:external?.source)||local?.source||[],evidence_status:external?.evidence_status||'static-only',runtime_evidence:[],boundary_edge:e.id,canonical_endpoint:input?e.source:e.target};
         if(!input&&valueKey)n.boundary_value={source:resolved.id,source_port:resolved.port,identity_scope:'extracted-graph',tensor_equality:'not-asserted'};
         if(!input)n.boundary_uses=[];
@@ -471,22 +558,42 @@
     }
     return {plan:p,inside,boundaryReps,boundary};
   }
+  const inlinePlans=new WeakMap();
+  function inlinePlan(ir,base){if(!inlinePlans.has(ir)){const engine=root.SemanticSequenceFrontier||(typeof require==='function'?require('./sequence-frontier.js'):null);inlinePlans.set(ir,engine.build(ir,base));}return inlinePlans.get(ir);}
   function project(ir,state,E){
-    const base=plan(ir),baseIdx=index(base),mode=state.mode||'source';
+    const canvas=state.paperMedium==='canvas';
+    const mode=state.mode||'source',originalPlan=plan(ir),originalIdx=index(originalPlan);
+    const relationNode=state.paperRelation?.startsWith('node:')?state.paperRelation.slice(5):originalPlan.relation_graph?.relations.find(r=>r.id===state.paperRelation)?.node;
+    const observed=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return true;id=originalIdx.nodes.get(id)?.parent;}return false;};
+    const local=relationNode&&(mode==='merged'||(mode==='runtime')===observed(relationNode))?relationPanel(ir,originalPlan,state.paperRelation):null;
+    const inline=canvas&&state.paperSequenceView!=='summary'&&!local;
+    const base=inline?inlinePlan(ir,originalPlan):local?.plan||originalPlan,baseIdx=index(base);
+    if(inline){const all=index(base);for(const n of base.nodes)decorate(n,all);}
     if(mode==='runtime'&&!baseIdx.nodes.has('runtime-observations'))throw Error('当前 IR 没有 CPU 执行轨迹');
     const runtimeNode=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return true;id=baseIdx.nodes.get(id)?.parent;}return false;};
     const allowed=id=>mode==='source'?!runtimeNode(id):mode==='runtime'?runtimeNode(id):true;
     const defaultRoots=mode==='runtime'&&baseIdx.nodes.has('runtime-observations')?['runtime-observations']:baseIdx.children.get(null)||[];
-    let focus=baseIdx.nodes.has(state.paperFocus)&&allowed(state.paperFocus)?state.paperFocus:defaultRoots.find(allowed);
+    let focus=local?.id||(baseIdx.nodes.has(state.paperFocus)&&allowed(state.paperFocus)?state.paperFocus:defaultRoots.find(allowed));
     const requestedFocus=focus;
-    if(state.paperRepresentative&&baseIdx.nodes.get(focus)?.repeat_contract?.homogeneous)
-      focus=(baseIdx.children.get(focus)||[]).find(id=>baseIdx.nodes.get(id).semantic_type==='repeat-instance')||focus;
-    const representativeNode=baseIdx.nodes.get(focus),repeat=baseIdx.nodes.get(representativeNode?.parent)?.repeat_contract;
-    const representative=repeat?{sequence:representativeNode.parent,instance:focus,index:representativeNode.repeat_index,count:repeat.count,
+    const requestedSequence=baseIdx.nodes.get(focus)?.repeat_contract,structure=requestedSequence?.structure;
+    let structuralGroup=null;
+    if(state.paperRepresentative&&structure?.rule_version==='local-structure/1'){
+      const requestedGroup=Number.isInteger(state.paperRepresentativeGroup)?state.paperRepresentativeGroup:structure.homogeneous?0:null;
+      const group=requestedGroup==null?null:structure.groups[requestedGroup];
+      if(group&&group.status==='proved'&&baseIdx.nodes.get(group.representative)?.parent===focus){
+        structuralGroup={...copy(group),group:requestedGroup};focus=group.representative;
+      }
+    }
+    const representativeNode=baseIdx.nodes.get(focus),representativeSequence=baseIdx.nodes.get(ir.nodes.find(n=>n.id===focus)?.parent),repeat=representativeSequence?.repeat_contract;
+    const representative=repeat?{sequence:representativeSequence.id,instance:focus,index:representativeNode.repeat_index,count:repeat.count,
       homogeneous:repeat.homogeneous,parameter_sharing:repeat.parameter_sharing,
+      structural_group:structuralGroup,
       scope:'one concrete instance; other instances remain in the canonical IR; output equality not asserted'}:null;
-    const granularity=['overview','modules','detailed'].includes(state.paperGranularity)?state.paperGranularity:'overview';
-    const focused=focusPlan(ir,base,focus),idx=index(focused.plan),pol=policy(ir,focus,focused.inside),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,detailed:28})[granularity]));
+    const granularity=['overview','modules','semantic','detailed'].includes(state.paperGranularity)?state.paperGranularity:'overview';
+    const focused=focusPlan(ir,base,focus);
+    if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);
+    const idx=index(focused.plan),pol=policy(ir,focus,focused.inside),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,detailed:28})[granularity]));
+    if(structuralGroup)decorate(idx.nodes.get(focus),idx);
     // Input/output interfaces of a focused panel are real, named boundaries.
     for(const port of focused.boundary)if(!port.presentation)pol.bindings.delete(port.port_node);
     for(const cut of focused.boundary.filter(c=>c.direction==='input'&&!c.presentation)){
@@ -496,9 +603,16 @@
       if(target?.kind==='value-alias'&&!target.operator&&incoming.length===1&&!cut.condition&&flow(cut))
         pol.bindings.set(target.id,{...copy(cut),source:cut.port_node,source_port:target.slot??cut.source_port});
     }
-    const eligible=id=>{const n=idx.nodes.get(id);return allowed(id)&&!pol.bindings.has(id)&&!pol.metadata.has(id)&&n.kind!=='parameter';};
-    const options={roots:focus?[focus]:[],bindings:pol.bindings,metadata:pol.metadata,boundaryReps:focused.boundaryReps,presentEdges,
-      layout:{semanticLanes:true,alignForks:true,rankStrategy:state.paperRankStrategy==='consumer'?'consumer':'earliest',foldSerial:state.paperCompact?false:state.foldSerial!==false,nodeSize:n=>({...n.paper,w:n.paper.w,h:n.paper.h}),rankColumns:3,rankColumnsFor:n=>['branch-region','branch-panel','dependency-band','dependency-panel'].includes(n?.semantic_type)?3:null,gapX:28,gapY:state.paperCompact?28:60,foldGapX:36,framePadding:24,frameHeader:n=>Math.max(66,24+n.paper.lines.length*20+(n.paper.layout_caption_rows??n.paper.captions.length)*16),maxWidth:700}};
+    const exposedResources=new Set(local?originalPlan.relation_graph.relations.find(r=>r.id===state.paperRelation)?.properties.required_nodes?.filter(id=>idx.nodes.get(id)?.kind==='parameter')||[]:[]);
+    const eligible=id=>{const n=idx.nodes.get(id);return allowed(id)&&!pol.bindings.has(id)&&!pol.metadata.has(id)&&(n.kind!=='parameter'||exposedResources.has(id));};
+    const options={roots:focus?[focus]:[],bindings:pol.bindings,metadata:pol.metadata,boundaryReps:focused.boundaryReps,presentEdges,exposedResources,
+      layout:{semanticLanes:true,alignForks:true,compoundPorts:inline,rankStrategy:state.paperRankStrategy==='consumer'?'consumer':'earliest',foldSerial:state.paperCompact?false:state.foldSerial!==false,nodeSize:n=>({...n.paper,w:n.paper.w,h:n.paper.h}),rankColumns:3,rankColumnsFor:n=>['branch-region','branch-panel','dependency-band','dependency-panel'].includes(n?.semantic_type)?3:null,gapX:28,gapY:state.paperCompact?28:60,foldGapX:36,framePadding:state.paperCompact?16:24,headerClearance:state.paperCompact?12:20,frameHeader:n=>Math.max(state.paperCompact?56:66,24+n.paper.lines.length*20+(n.paper.layout_caption_rows??n.paper.captions.length)*16),maxWidth:700}};
+    if(state.paperCompact)options.layout.nodeSize=n=>{
+      const a=n.paper,size={...a,w:a.w,h:a.h};
+      if(!a.symbol&&['compute','opaque'].includes(n.kind))size.w=Math.max(180,Math.ceil(Math.max(...a.lines.map(s=>width(s,a.font)),...a.captions.map(s=>width(s,13)))+28));
+      return size;
+    };
+    if(base.publication?.boundary_plans?.some(p=>p.parent===focus))options.layout.inputPlacement='consumer';
     let open=state.paperAuto===false?(state.open||[]):focus?[focus]:[];
     if(state.paperAuto!==false&&focus){
       // Unwrap a single source wrapper when it improves the actual overview.
@@ -525,17 +639,23 @@
       if(granularity!=='overview'){
         const frontier=()=>{const leaves=[],todo=[focus];for(let i=0;i<todo.length;i++){const id=todo[i];if(!eligible(id))continue;if(open.includes(id))todo.push(...idx.children.get(id)||[]);else leaves.push(id);}return leaves;};
         const cost=id=>idx.nodes.get(id).kind==='interface'?.25:1;
-        const blocked=n=>['serial-repeat','repeat-instance','loop-template','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call';
+        const blocked=n=>granularity==='semantic'&&n.semantic_contracts?.length||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
+        const scopeOf=id=>{let at=idx.nodes.get(id)?.parent;while(at){if(idx.nodes.get(at)?.sequence_frontier)return at;at=idx.nodes.get(at)?.parent;}return null;};
+        const usedIn=scope=>{const seen=new Set();return frontier().reduce((total,id)=>{const localScope=scopeOf(id);if(scope)return total+(localScope===scope?cost(id):0);if(localScope){if(seen.has(localScope))return total;seen.add(localScope);return total+1;}return total+cost(id);},0);};
         const candidates=frontier().filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible));
         const queue=candidates.slice();
         for(let i=0;i<queue.length&&i<256;i++){
-          const id=queue[i],kids=(idx.children.get(id)||[]).filter(eligible),used=frontier().reduce((s,id)=>s+cost(id),0);
-          if(used+kids.reduce((s,id)=>s+cost(id),0)-cost(id)>budget)continue;
+          const id=queue[i],kids=(idx.children.get(id)||[]).filter(eligible),scope=scopeOf(id),used=usedIn(scope);
+          // A proved sequence is one unit in its parent's frontier, with its
+          // own bounded local detail budget. Concrete suffixes stay folded.
+          const delta=idx.nodes.get(id).sequence_frontier?0:kids.reduce((s,id)=>s+cost(id),0)-cost(id);
+          if(used+delta>budget)continue;
           open.push(id);
-          if(granularity==='detailed')queue.push(...kids.filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
+          if(granularity==='detailed'||granularity==='semantic')queue.push(...kids.filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
         }
       }
     }
+    if(local)open=state.paperCompact&&local.minimal_open?local.minimal_open:local.open;
     // A closed module owns its interface. Contracting that interface would
     // expose each internal consumer as another, misleading boundary arrow.
     for(const n of ir.nodes)if(n.kind==='interface'&&!open.includes(n.parent))pol.bindings.delete(n.id);
@@ -551,7 +671,7 @@
     // The objective is readable physical scale, independent of module names.
     const fit=g=>{const ps=[...g.positions.values()];if(!ps.length)return 0;const w=Math.max(...ps.map(p=>p.x+p.w))-Math.min(...ps.map(p=>p.x))+56,h=Math.max(...ps.map(p=>p.y+p.h))-Math.min(...ps.map(p=>p.y))+56;return Math.min(widthMm/w,(state.paperFitPage===false?Infinity:240)/h);};
     let best=fit(projected);
-    if(state.paperAuto!==false&&best*13*72/25.4<8.5&&!Object.keys(state.offsets||{}).length){
+    if(!canvas&&state.paperAuto!==false&&best*13*72/25.4<8.5&&!Object.keys(state.offsets||{}).length){
       const baseline=options.layout;
       for(const alternative of [
         {rankColumns:3,gapY:44,maxWidth:700,foldMinRanks:4,foldGain:.98,foldMaxColumns:2},
@@ -567,10 +687,17 @@
     }
     const ps=[...projected.positions.values()];
     if(ps.length){const x=Math.min(...ps.map(p=>p.x))-28,y=Math.min(...ps.map(p=>p.y))-28;projected.bounds={x,y,w:Math.max(...ps.map(p=>p.x+p.w))+28-x,h:Math.max(...ps.map(p=>p.y+p.h))+28-y};}
-    projected.publication={schema:'archcanvas-publication/1',focus,requested_focus:requestedFocus,representative,granularity,auto:state.paperAuto!==false,open,budget,boundary:focused.boundary,
+    projected.publication={schema:'archcanvas-publication/1',focus,requested_focus:requestedFocus,relation:local?state.paperRelation:null,representative,granularity,auto:state.paperAuto!==false,open,budget,boundary:focused.boundary,
       wire_bundles:projected.edges.filter(e=>e.bundle_members).map(e=>({id:e.id,members:e.bundle_members.map(m=>m.id),values:e.bundle_values,tensor_equality:'not-asserted'})),
       configuration_arithmetic:pol.configurationArithmetic.filter(row=>allowed(row.node)),
       paper_width_mm:Math.max(80,Math.min(400,Number(state.paperWidthMm)||180)),fit_page:state.paperFitPage!==false,min_font_pt:8,unknowns:projected.nodes.filter(n=>!projected.positions.get(n.id).expanded).reduce((s,n)=>s+n.paper.unknown_count,0)};
+    if(canvas){
+      const input=state.paperCanvasLimits||{},limit=(key,fallback,min,max)=>Number.isFinite(input[key])?Math.max(min,Math.min(max,input[key])):fallback;
+      projected.publication.medium='canvas';
+      projected.publication.inline_sequences=base.publication?.inline_sequences||null;
+      projected.publication.canvas_limits={width_px:limit('width_px',8192,512,16384),height_px:limit('height_px',16384,512,32768),
+        area_px2:limit('area_px2',16777216,262144,67108864),nodes:limit('nodes',512,16,2048),edges:limit('edges',2048,16,8192)};
+    }
     for(const cut of focused.boundary){let id=cut.port_node;while(id&&!projected.positions.has(id))id=idx.nodes.get(id)?.parent;cut.visible_node=id||null;}
     for(const cut of focused.boundary.filter(c=>c.presentation==='attached-metadata'&&c.visible_node)){
       if([...projected.annotations.values()].some(notes=>notes.some(note=>note.edge.id===cut.id)))continue;
@@ -595,12 +722,17 @@
         // The shared result terminal already states this exact use count.
         // Avoid a duplicate label in its short input channel.
         if(!uses||uses.length!==edge.bundle_members.length||!uses.every(use=>edge.bundle_members.some(m=>m.id===use.id)))
-          edge.paper_labels.push({text:wireLabel(edge),evidence:'Presentation bundle; individual canonical dependencies are retained in bundle_members.'});
+          edge.paper_labels.push({text:(edge.sequence_output?'sequence · ':'')+wireLabel(edge),evidence:'Presentation bundle; individual canonical dependencies are retained in bundle_members.'});
         continue;
       }
       const from=portRoles(original.get(edge.resolved_source),edge.source_port,false),to=portRoles(original.get(edge.canonical_target),edge.target_port,true);
       if(from||to)edge.paper_labels.push({text:[from,to].filter(Boolean).join(' → '),evidence:'torch.nn / torch.topk interface contract'});
       if(edge.condition)edge.paper_labels.push({text:String(edge.condition.outcome),evidence:'source branch condition'});
+      if(edge.target===edge.canonical_target)for(const b of edge.semantic_bindings||[])if(['gate','signal'].includes(b.role))
+        edge.paper_labels.push({text:b.role,evidence:'local sigmoid operand binding',constraint:b.constraint});
+      const iterationRole=edge.semantic_bindings?.find(b=>['iteration-initial','iteration-feedback','iteration-result','iteration-completion'].includes(b.role));
+      if(iterationRole)edge.paper_labels.push({text:({'iteration-initial':'initial binding','iteration-feedback':'next iteration','iteration-result':'loop exit','iteration-completion':'complete'})[iterationRole.role],
+        evidence:'source name binding on normal loop completion; time axis unproved',constraint:iterationRole.constraint});
     }
     for(const f of base.findings.filter(f=>f.rule==='scaled-attention-like')){
       const score=original.get(f.roles.scores),softmax=original.get(f.roles.normalization),operands=(pol.ins.get(score?.id)||[]).filter(flow),dim=softmax?.arguments?.kwargs?.dim??softmax?.arguments?.args?.[1];
@@ -625,5 +757,5 @@
     for(const notes of projected.annotations.values())for(const note of notes)if(proofs.has(note.resource?.id))note.configuration_proof=proofFor(note.resource.id);
     projected.architecture=focused.plan;return projected;
   }
-  const api={plan,project,wrap,width,decorate,configuration,category,palette};root.SemanticPublication=api;if(typeof module!=='undefined')module.exports=api;
+  const api={plan,project,relationPanel,wrap,width,decorate,configuration,category,palette};root.SemanticPublication=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

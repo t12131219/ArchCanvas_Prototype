@@ -98,7 +98,7 @@ def recognize(ir):
         # Control scopes retain their source contract even when their body
         # contains a recognizable local block. Replacing this type would lose
         # loop-carried/conditional boundaries in downstream presentation.
-        if n['kind'] != 'composite' or n.get('motif') or n.get('semantic_type') in {'loop-template', 'conditional-region'}: continue
+        if n['kind'] != 'composite' or n.get('motif') or n.get('semantic_type') in {'loop-template', 'iteration-region', 'conditional-region'}: continue
         ds = descendants(n['id'])
         # A container which merely contains attention is not itself attention.
         # Source call boundaries stay intact; classify the local operation scope.

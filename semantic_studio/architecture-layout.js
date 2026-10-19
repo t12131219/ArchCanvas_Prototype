@@ -12,6 +12,12 @@
   }
   function layout(idx,roots,visible,edges,offsets={},options={}){
     const positions=new Map(),feedback=new Set();
+    const laneOwners=new Map();
+    const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
+    if(options.semanticLanes)for(const e of edges)if(e.design_route?.kind==='bypass'){
+      const targetAnc=new Set(ancestry(e.target)),owner=ancestry(e.source).slice(1).find(id=>targetAnc.has(id));
+      if(owner){e.design_route.owner=owner;laneOwners.set(owner,(laneOwners.get(owner)||0)+1);}
+    }
     const gapX=options.gapX??40,gapY=options.gapY??76;
     function size(n){
       if(options.nodeSize)return options.nodeSize(n);
@@ -43,6 +49,10 @@
       // SCCs are explicitly kept as cycles; they cannot be topologically sorted
       // into a fictional feed-forward chain. Arrange their members side by side.
       const rows=new Map();for(const id of kids){const r=rank[unit.get(id)];if(!rows.has(r))rows.set(r,[]);rows.get(r).push(id);}
+      if(options.alignForks)for(const row of rows.values()){
+        const candidates=row.filter(id=>idx.nodes.get(id)?.kind==='compute'&&!positions.get(id).symbol);
+        for(const id of candidates){const peers=candidates.filter(other=>[...pred.get(id)].some(p=>pred.get(other).has(p)));if(peers.length>1){const w=Math.max(...peers.map(id=>positions.get(id).w));for(const peer of peers)positions.get(peer).w=w;}}
+      }
       const sorted=[...rows.keys()].sort((a,b)=>a-b),order=new Map();
       for(const row of rows.values())row.forEach((id,i)=>order.set(id,i));
       for(let pass=0;pass<6;pass++)for(const r of pass%2?sorted.slice().reverse():sorted){
@@ -67,7 +77,8 @@
       const prefix=options.foldBoundaryRanks&&rows.get(sorted[0])?.length>1?1:0;
       const suffix=options.foldBoundaryRanks&&rows.get(sorted.at(-1))?.length>1?1:0;
       const foldedRanks=sorted.slice(prefix,sorted.length-suffix||undefined);
-      if(options.foldSerial&&sorted.length>=(options.foldMinRanks??5)&&scc.every(group=>group.length===1)&&foldedRanks.every(r=>rows.get(r).length<=(options.foldMaxParallel??2)&&rows.get(r).length<=(rankColumns||Infinity))){
+      const bypassFlow=options.semanticLanes&&edges.some(e=>e.design_route?.kind==='bypass'&&owner(e.target));
+      if(options.foldSerial&&!bypassFlow&&sorted.length>=(options.foldMinRanks??5)&&scc.every(group=>group.length===1)&&foldedRanks.every(r=>rows.get(r).length<=(options.foldMaxParallel??2)&&rows.get(r).length<=(rankColumns||Infinity))){
         const foldGapX=options.foldGapX??gapY;
         const cells=foldedRanks.map(r=>({ids:rows.get(r),w:rowWidths[sorted.indexOf(r)],h:Math.max(...rows.get(r).map(id=>positions.get(id).h))}));
         const topH=prefix?grids[0].h+gapY:0,bottomH=suffix?grids.at(-1).h+gapY:0;
@@ -95,7 +106,7 @@
       return vertical;
     }
     function place(id){const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(c=>visible.has(c)),p={id,x:0,y:0,...size(n),expanded:!!kids.length};positions.set(id,p);
-      if(kids.length){kids.forEach(place);const box=arrange(kids,id),pad=options.framePadding??32,header=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74;p.header=header;p.w=Math.max(options.nodeSize?212:300,box.w+pad*2);p.h=box.h+header+pad;for(const child of kids){positions.get(child).x+=pad;positions.get(child).y+=header;}}
+      if(kids.length){kids.forEach(place);const box=arrange(kids,id),pad=options.framePadding??32,title=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74,header=title+(options.headerClearance??20),gutter=laneOwners.has(id)?28+Math.min(3,laneOwners.get(id))*20:0;p.header=header;p.protected_header_height=title-10;p.design_gutter=gutter;p.w=Math.max(options.nodeSize?212:300,box.w+pad*2+gutter);p.h=box.h+header+pad;for(const child of kids){positions.get(child).x+=pad+gutter;positions.get(child).y+=header;}}
     }
     roots.filter(id=>visible.has(id)).forEach(place);
     arrange(roots.filter(id=>visible.has(id)),null);
@@ -124,6 +135,9 @@
     const headerControl=e.kind==='control'&&context?.ancestorPorts==='header';
     if(startInward)ss=headerControl?'top':'bottom';if(endInward)ts=headerControl?'top':'bottom';
     if(headerControl&&(startInward||endInward))ss=ts='top';
+    const laneOwner=positions.get(e.design_route?.owner);
+    const semanticBypass=e.design_route?.kind==='bypass'&&laneOwner?.design_gutter;
+    if(semanticBypass)ss=ts='left';
     function sideFor(edge,isSource){
       const from=positions.get(edge.source),to=positions.get(edge.target);if(!from||!to)return null;
       const down=to.y>=from.y+from.h,up=from.y>=to.y+to.h;
@@ -134,6 +148,7 @@
       if(edge.source!==edge.target&&from.expanded&&ancestors(edge.target).has(edge.source))sourceSide=header?'top':'bottom';
       if(edge.source!==edge.target&&to.expanded&&ancestors(edge.source).has(edge.target))targetSide=header?'top':'bottom';
       if(header&&edge.source!==edge.target&&(from.expanded&&ancestors(edge.target).has(edge.source)||to.expanded&&ancestors(edge.source).has(edge.target)))sourceSide=targetSide='top';
+      if(edge.design_route?.kind==='bypass'&&positions.get(edge.design_route.owner)?.design_gutter)sourceSide=targetSide='left';
       return isSource?sourceSide:targetSide;
     }
     function port(id,other,isSource,which){
@@ -167,7 +182,9 @@
     const start=point(s.x+sn[0]*stub*(startInward?-1:1),s.y+sn[1]*stub*(startInward?-1:1));
     const end=point(t.x+tn[0]*stub*(endInward?-1:1),t.y+tn[1]*stub*(endInward?-1:1));
     const boxes=[];
-    if(headerControl)for(const [id,p]of positions)if(p.expanded&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.w,h:p.header-10});
+    // Ancestor frames may be crossed at their body boundary, but their titles
+    // remain obstacles for every wire, including ordinary data dependencies.
+    for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.w,h:p.protected_header_height??p.header-10});
     for(const [id,p]of positions){
       if(sourceAnc.has(id)||targetAnc.has(id))continue;
       // The outermost unrelated frame is enough; its children add no obstacles.
@@ -185,6 +202,7 @@
       [start,point(end.x,start.y),end],
       [start,point(start.x,middle),point(end.x,middle),end]
     ];
+    const laneCandidates=semanticBypass?[16,36,56].filter(x=>x<laneOwner.design_gutter).map(dx=>[start,point(laneOwner.x+dx,start.y),point(laneOwner.x+dx,end.y),end]):[];
     const reserved=context?.reserved||[];
     if(reserved.length)for(const delta of [-12,12,-24,24,-40,40]){
       candidates.push([start,point(start.x,middle+delta),point(end.x,middle+delta),end]);
@@ -204,7 +222,7 @@
       }
     }return penalty;}
     const length=ps=>ps.reduce((s,p,i)=>s+(i?Math.abs(p.x-ps[i-1].x)+Math.abs(p.y-ps[i-1].y)+congestion(ps[i-1],p):0),0)+ps.length*12;
-    let best=candidates.filter(clear).sort((a,b)=>length(a)-length(b))[0];
+    let best=laneCandidates.filter(clear).sort((a,b)=>length(a)-length(b))[0]||candidates.filter(clear).sort((a,b)=>length(a)-length(b))[0];
     const crowded=best&&best.some((p,i)=>i&&congestion(best[i-1],p)>100);
     if(!best||crowded){
       // Compressed visibility grid; obstacles contribute only their boundaries.

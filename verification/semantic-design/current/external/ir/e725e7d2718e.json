@@ -1,0 +1,181 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "LightningModel",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/templates/pytorch_lightning/tune_classification_basic.py",
+    "class": "LightningModel",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/templates/pytorch_lightning/tune_classification_basic.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/templates/pytorch_lightning/tune_classification_basic.py",
+      "cell": null,
+      "sha256": "2af3cce8ed0dd0b07ea79d28d2a08500a076205876aa246a6ed9b0bfc23414f1",
+      "unit_sha256": "2af3cce8ed0dd0b07ea79d28d2a08500a076205876aa246a6ed9b0bfc23414f1"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/98:4:composite:1",
+      "kind": "composite",
+      "label": "LightningModel",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/templates/pytorch_lightning/tune_classification_basic.py",
+          "line": 98,
+          "end_line": 99,
+          "column": 4,
+          "end_column": 28,
+          "symbol": "LightningModel.forward",
+          "expression": "def forward(self, x):\n    return self.model(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "LightningModel"
+    },
+    {
+      "id": "model/98:4:composite:1/98:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/98:4:composite:1",
+      "source_parent": "model/98:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/templates/pytorch_lightning/tune_classification_basic.py",
+          "line": 98,
+          "end_line": 98,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "LightningModel.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/98:4:composite:1/99:15:opaque:1",
+      "kind": "opaque",
+      "label": "model",
+      "parent": "model/98:4:composite:1",
+      "source_parent": "model/98:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/templates/pytorch_lightning/tune_classification_basic.py",
+          "line": 99,
+          "end_line": 99,
+          "column": 15,
+          "end_column": 28,
+          "symbol": "LightningModel.forward",
+          "expression": "self.model(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self.model",
+      "function_target": "self.model",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/98:4:composite:1/99:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/98:4:composite:1",
+      "source_parent": "model/98:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/templates/pytorch_lightning/tune_classification_basic.py",
+          "line": 99,
+          "end_line": 99,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "LightningModel.forward",
+          "expression": "return self.model(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/98:4:composite:1/98:22:interface:1",
+      "target": "model/98:4:composite:1/99:15:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/98:4:composite:1/99:15:opaque:1",
+      "target": "model/98:4:composite:1/99:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "d657d00107c6a11b3104f5e6e718cb6604a50f7b188f817ba295d361f41e13eb"
+}

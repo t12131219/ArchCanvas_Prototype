@@ -1,0 +1,1187 @@
+{
+  "schema": "semantic-design-analysis/1",
+  "baseline_git": "bc0e5f3906b52d1aa087e0b158c6cf5ca4934358",
+  "cases": [
+    {
+      "name": "IndependentStack",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+      "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+      "entry": "IndependentStack",
+      "constructor": {},
+      "before": {
+        "nodes": 11,
+        "edges": 9,
+        "opaque": 3
+      },
+      "after": {
+        "nodes": 38,
+        "edges": 31,
+        "opaque": 0
+      },
+      "contracts": {
+        "residual-plain": 3
+      },
+      "sequences": [
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 3,
+          "state": "x",
+          "iterator": "block",
+          "collection": "self.units",
+          "instances": [
+            "units.0",
+            "units.1",
+            "units.2"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "independent",
+          "homogeneous": true,
+          "allocation_evidence": [
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 8,
+              "end_line": 8,
+              "column": 11,
+              "end_column": 69,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([copy.deepcopy(unit) for _ in range(count)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 24,
+              "end_line": 24,
+              "column": 15,
+              "end_column": 26,
+              "symbol": "constructor",
+              "expression": "Cell(width)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 8,
+              "end_line": 8,
+              "column": 26,
+              "end_column": 45,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(unit)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 24,
+              "end_line": 24,
+              "column": 15,
+              "end_column": 26,
+              "symbol": "constructor",
+              "expression": "Cell(width)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 8,
+              "end_line": 8,
+              "column": 26,
+              "end_column": 45,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(unit)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 24,
+              "end_line": 24,
+              "column": 15,
+              "end_column": 26,
+              "symbol": "constructor",
+              "expression": "Cell(width)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 8,
+              "end_line": 8,
+              "column": 26,
+              "end_column": 45,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(unit)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 8,
+              "end_line": 8,
+              "column": 4,
+              "end_column": 69,
+              "symbol": "assemble",
+              "expression": "return nn.ModuleList([copy.deepcopy(unit) for _ in range(count)])"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        }
+      ],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "SharedStack",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+      "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+      "entry": "SharedStack",
+      "constructor": {},
+      "before": {
+        "nodes": 11,
+        "edges": 9,
+        "opaque": 3
+      },
+      "after": {
+        "nodes": 38,
+        "edges": 31,
+        "opaque": 0
+      },
+      "contracts": {
+        "residual-plain": 3
+      },
+      "sequences": [
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 3,
+          "state": "x",
+          "iterator": "block",
+          "collection": "self.units",
+          "instances": [
+            "unit",
+            "unit",
+            "unit"
+          ],
+          "module_sharing": "shared",
+          "parameter_sharing": "shared",
+          "homogeneous": true,
+          "allocation_evidence": [
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 37,
+              "end_line": 37,
+              "column": 21,
+              "end_column": 64,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([unit for _ in range(count)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 36,
+              "end_line": 36,
+              "column": 15,
+              "end_column": 26,
+              "symbol": "constructor",
+              "expression": "Cell(width)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 36,
+              "end_line": 36,
+              "column": 15,
+              "end_column": 26,
+              "symbol": "constructor",
+              "expression": "Cell(width)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 36,
+              "end_line": 36,
+              "column": 15,
+              "end_column": 26,
+              "symbol": "constructor",
+              "expression": "Cell(width)"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        }
+      ],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "ConvStack",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+      "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+      "entry": "ConvStack",
+      "constructor": {},
+      "before": {
+        "nodes": 11,
+        "edges": 9,
+        "opaque": 3
+      },
+      "after": {
+        "nodes": 13,
+        "edges": 7,
+        "opaque": 0
+      },
+      "contracts": {},
+      "sequences": [
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 2,
+          "state": "x",
+          "iterator": "block",
+          "collection": "self.units",
+          "instances": [
+            "units.0",
+            "units.1"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "independent",
+          "homogeneous": true,
+          "allocation_evidence": [
+            "fresh-framework-construction",
+            "fresh-framework-construction"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 107,
+              "end_line": 107,
+              "column": 21,
+              "end_column": 103,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([nn.Conv2d(channels, channels, 3, padding=1) for _ in range(count)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 107,
+              "end_line": 107,
+              "column": 36,
+              "end_column": 79,
+              "symbol": "constructor",
+              "expression": "nn.Conv2d(channels, channels, 3, padding=1)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 107,
+              "end_line": 107,
+              "column": 36,
+              "end_column": 79,
+              "symbol": "constructor",
+              "expression": "nn.Conv2d(channels, channels, 3, padding=1)"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        }
+      ],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "HeterogeneousStack",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+      "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+      "entry": "HeterogeneousStack",
+      "constructor": {},
+      "before": {
+        "nodes": 11,
+        "edges": 9,
+        "opaque": 3
+      },
+      "after": {
+        "nodes": 23,
+        "edges": 16,
+        "opaque": 0
+      },
+      "contracts": {
+        "residual-plain": 1
+      },
+      "sequences": [
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 3,
+          "state": "x",
+          "iterator": "block",
+          "collection": "self.units",
+          "instances": [
+            "units.0",
+            "units.1",
+            "units.2"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "unresolved",
+          "homogeneous": false,
+          "allocation_evidence": [
+            "fresh-framework-construction",
+            "fresh-framework-construction",
+            "constructor-object; parameter-sharing-unresolved"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 48,
+              "end_line": 48,
+              "column": 21,
+              "end_column": 85,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([nn.Linear(width, width), nn.ReLU(), Cell(width)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 48,
+              "end_line": 48,
+              "column": 36,
+              "end_column": 59,
+              "symbol": "constructor",
+              "expression": "nn.Linear(width, width)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 48,
+              "end_line": 48,
+              "column": 61,
+              "end_column": 70,
+              "symbol": "constructor",
+              "expression": "nn.ReLU()"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+              "line": 48,
+              "end_line": 48,
+              "column": 72,
+              "end_column": 83,
+              "symbol": "constructor",
+              "expression": "Cell(width)"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        }
+      ],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "DynamicStack",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+      "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+      "entry": "DynamicStack",
+      "constructor": {},
+      "before": {
+        "nodes": 11,
+        "edges": 9,
+        "opaque": 3
+      },
+      "after": {
+        "nodes": 11,
+        "edges": 9,
+        "opaque": 3
+      },
+      "contracts": {},
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "InterruptedStack",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py",
+      "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+      "entry": "InterruptedStack",
+      "constructor": {},
+      "before": {
+        "nodes": 17,
+        "edges": 14,
+        "opaque": 4
+      },
+      "after": {
+        "nodes": 17,
+        "edges": 14,
+        "opaque": 4
+      },
+      "contracts": {},
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "VectorBlock",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "source_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+      "entry": "VectorBlock",
+      "constructor": {},
+      "before": {
+        "nodes": 9,
+        "edges": 7,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 9,
+        "edges": 7,
+        "opaque": 0
+      },
+      "contracts": {
+        "feed-forward": 1
+      },
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "ImageResidual",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "source_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+      "entry": "ImageResidual",
+      "constructor": {},
+      "before": {
+        "nodes": 13,
+        "edges": 11,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 13,
+        "edges": 11,
+        "opaque": 0
+      },
+      "contracts": {
+        "residual-postnorm": 1
+      },
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "VectorResidual",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "source_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+      "entry": "VectorResidual",
+      "constructor": {},
+      "before": {
+        "nodes": 15,
+        "edges": 13,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 15,
+        "edges": 13,
+        "opaque": 0
+      },
+      "contracts": {
+        "feed-forward": 1,
+        "residual-prenorm": 1
+      },
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "ConditionalResidual",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "source_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+      "entry": "ConditionalResidual",
+      "constructor": {},
+      "before": {
+        "nodes": 16,
+        "edges": 14,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 16,
+        "edges": 14,
+        "opaque": 0
+      },
+      "contracts": {},
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "SameSource",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "source_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+      "entry": "SameSource",
+      "constructor": {},
+      "before": {
+        "nodes": 82,
+        "edges": 87,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 82,
+        "edges": 87,
+        "opaque": 0
+      },
+      "contracts": {
+        "multihead-attention": 1,
+        "scaled-dot-product-attention": 1
+      },
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "TwoSources",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "source_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+      "entry": "TwoSources",
+      "constructor": {},
+      "before": {
+        "nodes": 83,
+        "edges": 87,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 83,
+        "edges": 87,
+        "opaque": 0
+      },
+      "contracts": {
+        "multihead-attention": 1,
+        "scaled-dot-product-attention": 1
+      },
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "GatedMixture",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py",
+      "source_sha256": "eeefe6465e68ed00a42d5795420b2a1db6b1489deab8cfd4a13150c604ebd2c8",
+      "entry": "GatedMixture",
+      "constructor": {},
+      "before": {
+        "nodes": 25,
+        "edges": 27,
+        "opaque": 1
+      },
+      "after": {
+        "nodes": 25,
+        "edges": 27,
+        "opaque": 1
+      },
+      "contracts": {},
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "BranchMosaic",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py",
+      "source_sha256": "b1273c7693c2a2868463d447dc911d714015e39ad8e7c6428c47f6887a4a56ee",
+      "entry": "BranchMosaic",
+      "constructor": {},
+      "before": {
+        "nodes": 41,
+        "edges": 41,
+        "opaque": 1
+      },
+      "after": {
+        "nodes": 41,
+        "edges": 41,
+        "opaque": 1
+      },
+      "contracts": {},
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "ForeignComposition",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
+      "source_sha256": "1c7431ae493dae9e95f72fe39f601957565b0033b273a36aa8e09925d4e9ce08",
+      "entry": "ForeignComposition",
+      "constructor": {},
+      "before": {
+        "nodes": 75,
+        "edges": 77,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 75,
+        "edges": 77,
+        "opaque": 0
+      },
+      "contracts": {
+        "residual-plain": 1,
+        "residual-postnorm": 1
+      },
+      "sequences": [],
+      "runtime_executed_by_this_audit": false,
+      "reused_receipt": {
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/data/semantic/architecture/ForeignComposition-runtime.json",
+        "trace_digest": "377545b01c340bcf565ef0386b81105b53952af6e3bf3592f8d9bce3edc18352",
+        "runs": 4,
+        "note": "unchanged-source/config receipt reused; no new CPU execution",
+        "associations": 15,
+        "unmatched_calls": 0
+      }
+    },
+    {
+      "name": "BrokenCell",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
+      "source_sha256": "1c7431ae493dae9e95f72fe39f601957565b0033b273a36aa8e09925d4e9ce08",
+      "entry": "BrokenCell",
+      "constructor": {},
+      "before": {
+        "nodes": 13,
+        "edges": 11,
+        "opaque": 0
+      },
+      "after": {
+        "nodes": 13,
+        "edges": 11,
+        "opaque": 0
+      },
+      "contracts": {},
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "UnknownFusion",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py",
+      "source_sha256": "1c7431ae493dae9e95f72fe39f601957565b0033b273a36aa8e09925d4e9ce08",
+      "entry": "UnknownFusion",
+      "constructor": {},
+      "before": {
+        "nodes": 21,
+        "edges": 20,
+        "opaque": 1
+      },
+      "after": {
+        "nodes": 21,
+        "edges": 20,
+        "opaque": 1
+      },
+      "contracts": {},
+      "sequences": [],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "comparison-default",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+      "source_sha256": "322b523bb2c142d35888a2ab8283f83fa979fc1c44deedaca2852719762c6dba",
+      "entry": "Transformer",
+      "constructor": {},
+      "before": {
+        "nodes": 89,
+        "edges": 84,
+        "opaque": 6
+      },
+      "after": {
+        "nodes": 3371,
+        "edges": 3663,
+        "opaque": 0
+      },
+      "contracts": {
+        "feed-forward": 12,
+        "multihead-attention": 18,
+        "residual-postnorm": 30,
+        "scaled-dot-product-attention": 18
+      },
+      "sequences": [
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 6,
+          "state": "x",
+          "iterator": "layer",
+          "collection": "self.layers",
+          "instances": [
+            "encoder.layers.0",
+            "encoder.layers.1",
+            "encoder.layers.2",
+            "encoder.layers.3",
+            "encoder.layers.4",
+            "encoder.layers.5"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "independent",
+          "homogeneous": true,
+          "allocation_evidence": [
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 11,
+              "end_column": 67,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 424,
+              "end_line": 424,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "EncoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 424,
+              "end_line": 424,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "EncoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 424,
+              "end_line": 424,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "EncoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 424,
+              "end_line": 424,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "EncoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 424,
+              "end_line": 424,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "EncoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 424,
+              "end_line": 424,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "EncoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 4,
+              "end_column": 67,
+              "symbol": "clones",
+              "expression": "return nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        },
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 6,
+          "state": "x",
+          "iterator": "layer",
+          "collection": "self.layers",
+          "instances": [
+            "decoder.layers.0",
+            "decoder.layers.1",
+            "decoder.layers.2",
+            "decoder.layers.3",
+            "decoder.layers.4",
+            "decoder.layers.5"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "independent",
+          "homogeneous": true,
+          "allocation_evidence": [
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy",
+            "default-deepcopy"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 11,
+              "end_column": 67,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 425,
+              "end_line": 425,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "DecoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 425,
+              "end_line": 425,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "DecoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 425,
+              "end_line": 425,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "DecoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 425,
+              "end_line": 425,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "DecoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 425,
+              "end_line": 425,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "DecoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 425,
+              "end_line": 425,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "DecoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 4,
+              "end_column": 67,
+              "symbol": "clones",
+              "expression": "return nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        }
+      ],
+      "runtime_executed_by_this_audit": false
+    },
+    {
+      "name": "comparison-small",
+      "source": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+      "source_sha256": "322b523bb2c142d35888a2ab8283f83fa979fc1c44deedaca2852719762c6dba",
+      "entry": "Transformer",
+      "constructor": {
+        "src_vocab_size": 16,
+        "tgt_vocab_size": 16,
+        "d_model": 8,
+        "num_heads": 2,
+        "num_encoder_layers": 1,
+        "num_decoder_layers": 1,
+        "d_ff": 16,
+        "dropout": 0.0,
+        "max_len": 8
+      },
+      "before": {
+        "nodes": 89,
+        "edges": 84,
+        "opaque": 6
+      },
+      "after": {
+        "nodes": 626,
+        "edges": 663,
+        "opaque": 0
+      },
+      "contracts": {
+        "feed-forward": 2,
+        "multihead-attention": 3,
+        "residual-postnorm": 5,
+        "scaled-dot-product-attention": 3
+      },
+      "sequences": [
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 1,
+          "state": "x",
+          "iterator": "layer",
+          "collection": "self.layers",
+          "instances": [
+            "encoder.layers.0"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "independent",
+          "homogeneous": true,
+          "allocation_evidence": [
+            "default-deepcopy"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 11,
+              "end_column": 67,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 424,
+              "end_line": 424,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "EncoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 4,
+              "end_column": 67,
+              "symbol": "clones",
+              "expression": "return nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        },
+        {
+          "rule_version": "bounded-module-sequence/1",
+          "count": 1,
+          "state": "x",
+          "iterator": "layer",
+          "collection": "self.layers",
+          "instances": [
+            "decoder.layers.0"
+          ],
+          "module_sharing": "independent",
+          "parameter_sharing": "independent",
+          "homogeneous": true,
+          "allocation_evidence": [
+            "default-deepcopy"
+          ],
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 11,
+              "end_column": 67,
+              "symbol": "constructor",
+              "expression": "nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 425,
+              "end_line": 425,
+              "column": 24,
+              "end_column": 71,
+              "symbol": "constructor",
+              "expression": "DecoderLayer(d_model, num_heads, d_ff, dropout)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 26,
+              "end_column": 47,
+              "symbol": "constructor",
+              "expression": "copy.deepcopy(module)"
+            },
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+              "line": 25,
+              "end_line": 25,
+              "column": 4,
+              "end_column": 67,
+              "symbol": "clones",
+              "expression": "return nn.ModuleList([copy.deepcopy(module) for _ in range(n)])"
+            }
+          ],
+          "scope": "fixed construction; straight serial body; all instances retained",
+          "not_asserted": [
+            "output equivalence between layers",
+            "arbitrary constructor side effects"
+          ]
+        }
+      ],
+      "runtime_executed_by_this_audit": false,
+      "reused_receipt": {
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/data/semantic/transformer-runtime.json",
+        "trace_digest": "15fe48741909bae29324e055879de50375ee96fbfee08946c4c8df997f267061",
+        "runs": 2,
+        "note": "unchanged-source/config receipt reused; no new CPU execution",
+        "associations": 48,
+        "unmatched_calls": 8
+      }
+    }
+  ],
+  "source_files_unchanged": {
+    "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_sequences.py": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+    "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+    "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/gated_composition.py": "eeefe6465e68ed00a42d5795420b2a1db6b1489deab8cfd4a13150c604ebd2c8",
+    "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/local_composition.py": "b1273c7693c2a2868463d447dc911d714015e39ad8e7c6428c47f6887a4a56ee",
+    "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_models.py": "1c7431ae493dae9e95f72fe39f601957565b0033b273a36aa8e09925d4e9ce08",
+    "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py": "322b523bb2c142d35888a2ab8283f83fa979fc1c44deedaca2852719762c6dba"
+  },
+  "models_executed": false,
+  "implementation_sha256": {
+    "semantic_adapter/analyzer.py": "59e97882b782574f536755535ef5b65829e0830cb1e216663a50983cddc194b4",
+    "semantic_adapter/construction.py": "fa8b21ac18869778ac601c3cf82bb9518b62b4d309e7c9de6ded029e9aab932b",
+    "semantic_adapter/contracts.py": "322afe5921c600b73a06cd02c6f9a389f838a2c583efdf350996d9438f563eec",
+    "semantic_adapter/observations.py": "37282cbacba57d517d35d5cb42665a27d725757ab06ab061894577617ac58ff4",
+    "semantic_adapter/schema.py": "6f76a3a9d2fd7a60c16b16ea868852ca8014c73f73d15db074a04b5d697a4188",
+    "semantic_adapter/merge.py": "5a3209a3615767197660a9a33ad2cd699465610bd4ad5a5fe69a426ee76d8246",
+    "semantic_adapter/motifs.py": "771d46c3f67a8602f1559201e1c0867064ef370f44501dc2d804ce2e7e445e85",
+    "semantic_adapter/sources.py": "37e3b3cc10b89107c828bf8245683319ce5c0138f5eb470afddcd22ef2acf54e"
+  },
+  "limits": [
+    "No model-family classification or whole-program equivalence proof.",
+    "Default and small benchmark configurations are separate matched comparisons.",
+    "Zero opaque nodes does not establish execution or branch completeness."
+  ]
+}

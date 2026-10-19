@@ -54,8 +54,9 @@ class SemanticTests(unittest.TestCase):
     def test_local_helper_keeps_module_bindings(self):
         ir = analyze(ROOT / 'snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py', 'Transformer')
         self.assertTrue(any(n.get('operator') == 'embedding' for n in ir['nodes']))
-        self.assertTrue(any(n.get('semantic_type') == 'loop-template' for n in ir['nodes']))
-        self.assertTrue(any(n['kind'] == 'opaque' for n in ir['nodes']))
+        self.assertEqual([n['repeat_contract']['count'] for n in ir['nodes'] if n.get('repeat_contract')], [6, 6])
+        self.assertTrue(any(n.get('operator') == 'exception-exit' for n in ir['nodes']))
+        self.assertFalse(ir['coverage']['complete'])
 
     def test_notebook_cell_identity_and_original_files_read_only(self):
         report = json.loads((ROOT / 'verification/semantic-collections.json').read_text())

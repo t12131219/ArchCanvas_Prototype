@@ -1,0 +1,1321 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ResNet",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+    "class": "ResNet",
+    "cell": 15,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=8",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+      "cell": 8,
+      "sha256": "105e4b7927b14677daab8c41f42058810c513e95c410cf060f0fdd947549353a",
+      "unit_sha256": "c52642d83b2b655050c10c4108555fdffccbeca161ed6326b1a83ab94cefa62a"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=10",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+      "cell": 10,
+      "sha256": "105e4b7927b14677daab8c41f42058810c513e95c410cf060f0fdd947549353a",
+      "unit_sha256": "26d37f31a20df8a66369799679e13b088203d0b16d7de6bdc0fa194a5e3ba4f5"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=12",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+      "cell": 12,
+      "sha256": "105e4b7927b14677daab8c41f42058810c513e95c410cf060f0fdd947549353a",
+      "unit_sha256": "91e70e63566f505a316917dcc570cab67e855810f2111050e56115cd739dac75"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+      "cell": 15,
+      "sha256": "105e4b7927b14677daab8c41f42058810c513e95c410cf060f0fdd947549353a",
+      "unit_sha256": "39c48d6ec2a3435cada815200857db642d18a9162f5f55908a6f962d54fae032"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=16",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+      "cell": 16,
+      "sha256": "105e4b7927b14677daab8c41f42058810c513e95c410cf060f0fdd947549353a",
+      "unit_sha256": "85ee9b8772ea245dac884f2da5526b69442c6e6e8ae07db5f376f57425841d8d"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=18",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+      "cell": 18,
+      "sha256": "105e4b7927b14677daab8c41f42058810c513e95c410cf060f0fdd947549353a",
+      "unit_sha256": "39605d3a258cb4a47009073c8f3f08d7e5e63cd1e9ab55c349c70179be7f0e63"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=20",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb",
+      "cell": 20,
+      "sha256": "105e4b7927b14677daab8c41f42058810c513e95c410cf060f0fdd947549353a",
+      "unit_sha256": "c9b4bb1292214addd298af8ee8a824ecef274570b0391f63a8864c7df227807b"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/100:4:composite:1",
+      "kind": "composite",
+      "label": "ResNet",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 100,
+          "end_line": 115,
+          "column": 4,
+          "end_column": 29,
+          "symbol": "ResNet.forward",
+          "expression": "def forward(self, x):\n    x = self.conv1(x)\n    x = self.bn1(x)\n    x = self.relu(x)\n    x = self.maxpool(x)\n    x = self.layer1(x)\n    x = self.layer2(x)\n    x = self.layer3(x)\n    x = self.layer4(x)\n    x = x.view(x.size(0), -1)\n    logits = self.fc(x)\n    probas = F.softmax(logits, dim=1)\n    return (logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ResNet"
+    },
+    {
+      "id": "model/100:4:composite:1/100:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 100,
+          "end_line": 100,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/100:4:composite:1/101:12:compute:1",
+      "kind": "compute",
+      "label": "conv1 · Conv2d",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 101,
+          "end_line": 101,
+          "column": 12,
+          "end_column": 25,
+          "symbol": "ResNet.forward",
+          "expression": "self.conv1(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv1",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "in_dim"
+          },
+          64
+        ],
+        "kwargs": {
+          "kernel_size": 7,
+          "stride": 2,
+          "padding": 3,
+          "bias": false
+        }
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/62:21:parameter:1",
+      "kind": "parameter",
+      "label": "conv1.parameters",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 62,
+          "end_line": 63,
+          "column": 21,
+          "end_column": 42,
+          "symbol": "ResNet.forward",
+          "expression": "nn.Conv2d(in_dim, 64, kernel_size=7, stride=2, padding=3, bias=False)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv1",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/100:4:composite:1/101:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 101,
+          "end_line": 101,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/102:12:compute:1",
+      "kind": "compute",
+      "label": "bn1 · BatchNorm2d",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 102,
+          "end_line": 102,
+          "column": 12,
+          "end_column": 23,
+          "symbol": "ResNet.forward",
+          "expression": "self.bn1(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "normalization",
+      "module_path": "bn1",
+      "framework_type": "torch.nn.BatchNorm2d",
+      "constructor": {
+        "args": [
+          64
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/64:19:parameter:1",
+      "kind": "parameter",
+      "label": "bn1.parameters",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 64,
+          "end_line": 64,
+          "column": 19,
+          "end_column": 37,
+          "symbol": "ResNet.forward",
+          "expression": "nn.BatchNorm2d(64)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "bn1",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/100:4:composite:1/102:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 102,
+          "end_line": 102,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/103:12:compute:1",
+      "kind": "compute",
+      "label": "relu · ReLU",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 103,
+          "end_line": 103,
+          "column": 12,
+          "end_column": 24,
+          "symbol": "ResNet.forward",
+          "expression": "self.relu(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "relu",
+      "framework_type": "torch.nn.ReLU",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+    },
+    {
+      "id": "model/100:4:composite:1/103:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 103,
+          "end_line": 103,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/104:12:compute:1",
+      "kind": "compute",
+      "label": "maxpool · MaxPool2d",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 104,
+          "end_line": 104,
+          "column": 12,
+          "end_column": 27,
+          "symbol": "ResNet.forward",
+          "expression": "self.maxpool(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "module_path": "maxpool",
+      "framework_type": "torch.nn.MaxPool2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/104:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 104,
+          "end_line": 104,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/106:12:opaque:1",
+      "kind": "opaque",
+      "label": "layer1 · _make_layer",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 106,
+          "end_line": 106,
+          "column": 12,
+          "end_column": 26,
+          "symbol": "ResNet.forward",
+          "expression": "self.layer1(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self._make_layer",
+      "module_path": "layer1",
+      "framework_type": "self._make_layer",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "block"
+          },
+          64,
+          {
+            "unresolved": "layers[0]"
+          }
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/106:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 106,
+          "end_line": 106,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/107:12:opaque:1",
+      "kind": "opaque",
+      "label": "layer2 · _make_layer",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 107,
+          "end_line": 107,
+          "column": 12,
+          "end_column": 26,
+          "symbol": "ResNet.forward",
+          "expression": "self.layer2(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self._make_layer",
+      "module_path": "layer2",
+      "framework_type": "self._make_layer",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "block"
+          },
+          128,
+          {
+            "unresolved": "layers[1]"
+          }
+        ],
+        "kwargs": {
+          "stride": 2
+        }
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/107:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 107,
+          "end_line": 107,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/108:12:opaque:1",
+      "kind": "opaque",
+      "label": "layer3 · _make_layer",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 108,
+          "end_line": 108,
+          "column": 12,
+          "end_column": 26,
+          "symbol": "ResNet.forward",
+          "expression": "self.layer3(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self._make_layer",
+      "module_path": "layer3",
+      "framework_type": "self._make_layer",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "block"
+          },
+          256,
+          {
+            "unresolved": "layers[2]"
+          }
+        ],
+        "kwargs": {
+          "stride": 2
+        }
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/108:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 108,
+          "end_line": 108,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/109:12:opaque:1",
+      "kind": "opaque",
+      "label": "layer4 · _make_layer",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 109,
+          "end_line": 109,
+          "column": 12,
+          "end_column": 26,
+          "symbol": "ResNet.forward",
+          "expression": "self.layer4(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self._make_layer",
+      "module_path": "layer4",
+      "framework_type": "self._make_layer",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "block"
+          },
+          512,
+          {
+            "unresolved": "layers[3]"
+          }
+        ],
+        "kwargs": {
+          "stride": 2
+        }
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/109:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 109,
+          "end_line": 109,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/112:19:compute:1",
+      "kind": "compute",
+      "label": "size",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 112,
+          "end_line": 112,
+          "column": 19,
+          "end_column": 28,
+          "symbol": "ResNet.forward",
+          "expression": "x.size(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.size",
+      "arguments": {
+        "args": [
+          0
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/100:4:composite:1/112:12:compute:1",
+      "kind": "compute",
+      "label": "view",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 112,
+          "end_line": 112,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "ResNet.forward",
+          "expression": "x.view(x.size(0), -1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "x.view",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x.size(0)"
+          },
+          -1
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/100:4:composite:1/112:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 112,
+          "end_line": 112,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "ResNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/113:17:compute:1",
+      "kind": "compute",
+      "label": "fc · Linear",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 113,
+          "end_line": 113,
+          "column": 17,
+          "end_column": 27,
+          "symbol": "ResNet.forward",
+          "expression": "self.fc(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "fc",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          2048,
+          {
+            "unresolved": "num_classes"
+          }
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/100:4:composite:1/73:18:parameter:1",
+      "kind": "parameter",
+      "label": "fc.parameters",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 73,
+          "end_line": 73,
+          "column": 18,
+          "end_column": 46,
+          "symbol": "ResNet.forward",
+          "expression": "nn.Linear(2048, num_classes)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "fc",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/100:4:composite:1/113:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "logits",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 113,
+          "end_line": 113,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "ResNet.forward",
+          "expression": "logits"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/114:17:compute:1",
+      "kind": "compute",
+      "label": "softmax",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 114,
+          "end_line": 114,
+          "column": 17,
+          "end_column": 41,
+          "symbol": "ResNet.forward",
+          "expression": "F.softmax(logits, dim=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "softmax",
+      "function_target": "torch.nn.functional.softmax",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "logits"
+          }
+        ],
+        "kwargs": {
+          "dim": 1
+        }
+      },
+      "reason": null
+    },
+    {
+      "id": "model/100:4:composite:1/114:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "probas",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 114,
+          "end_line": 114,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "ResNet.forward",
+          "expression": "probas"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/100:4:composite:1/115:15:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 115,
+          "end_line": 115,
+          "column": 15,
+          "end_column": 29,
+          "symbol": "ResNet.forward",
+          "expression": "(logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple"
+    },
+    {
+      "id": "model/100:4:composite:1/115:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/100:4:composite:1",
+      "source_parent": "model/100:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+          "line": 115,
+          "end_line": 115,
+          "column": 8,
+          "end_column": 29,
+          "symbol": "ResNet.forward",
+          "expression": "return (logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/100:4:composite:1/62:21:parameter:1",
+      "target": "model/100:4:composite:1/101:12:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/100:4:composite:1/100:22:interface:1",
+      "target": "model/100:4:composite:1/101:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/100:4:composite:1/101:12:compute:1",
+      "target": "model/100:4:composite:1/101:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/100:4:composite:1/64:19:parameter:1",
+      "target": "model/100:4:composite:1/102:12:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00003"
+    },
+    {
+      "source": "model/100:4:composite:1/101:8:value-alias:1",
+      "target": "model/100:4:composite:1/102:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/100:4:composite:1/102:12:compute:1",
+      "target": "model/100:4:composite:1/102:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/100:4:composite:1/102:8:value-alias:1",
+      "target": "model/100:4:composite:1/103:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/100:4:composite:1/102:8:value-alias:1",
+      "target": "model/100:4:composite:1/103:12:compute:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "previous",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/100:4:composite:1/103:12:compute:1",
+      "target": "model/100:4:composite:1/103:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/100:4:composite:1/103:8:value-alias:1",
+      "target": "model/100:4:composite:1/104:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/100:4:composite:1/104:12:compute:1",
+      "target": "model/100:4:composite:1/104:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/100:4:composite:1/104:8:value-alias:1",
+      "target": "model/100:4:composite:1/106:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/100:4:composite:1/106:12:opaque:1",
+      "target": "model/100:4:composite:1/106:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/100:4:composite:1/106:8:value-alias:1",
+      "target": "model/100:4:composite:1/107:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/100:4:composite:1/107:12:opaque:1",
+      "target": "model/100:4:composite:1/107:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/100:4:composite:1/107:8:value-alias:1",
+      "target": "model/100:4:composite:1/108:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/100:4:composite:1/108:12:opaque:1",
+      "target": "model/100:4:composite:1/108:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/100:4:composite:1/108:8:value-alias:1",
+      "target": "model/100:4:composite:1/109:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/100:4:composite:1/109:12:opaque:1",
+      "target": "model/100:4:composite:1/109:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/100:4:composite:1/109:8:value-alias:1",
+      "target": "model/100:4:composite:1/112:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/100:4:composite:1/109:8:value-alias:1",
+      "target": "model/100:4:composite:1/112:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/100:4:composite:1/112:19:compute:1",
+      "target": "model/100:4:composite:1/112:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/100:4:composite:1/112:12:compute:1",
+      "target": "model/100:4:composite:1/112:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/100:4:composite:1/73:18:parameter:1",
+      "target": "model/100:4:composite:1/113:17:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00023"
+    },
+    {
+      "source": "model/100:4:composite:1/112:8:value-alias:1",
+      "target": "model/100:4:composite:1/113:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/100:4:composite:1/113:17:compute:1",
+      "target": "model/100:4:composite:1/113:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/100:4:composite:1/113:8:value-alias:1",
+      "target": "model/100:4:composite:1/114:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/100:4:composite:1/114:17:compute:1",
+      "target": "model/100:4:composite:1/114:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00027"
+    },
+    {
+      "source": "model/100:4:composite:1/113:8:value-alias:1",
+      "target": "model/100:4:composite:1/115:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00028"
+    },
+    {
+      "source": "model/100:4:composite:1/114:8:value-alias:1",
+      "target": "model/100:4:composite:1/115:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00029"
+    },
+    {
+      "source": "model/100:4:composite:1/115:15:compute:1",
+      "target": "model/100:4:composite:1/115:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00030"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=1",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=21",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    }
+  ],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/cnn/cnn-resnet101-cifar10.ipynb#cell=15",
+      "line": 103,
+      "kind": "mutation-alias-coverage-unresolved"
+    }
+  ],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "a8d97e5fe20b4b778d096c6e5a3b020ee49ce0ec3bb9e090a2c438ae385e7ced"
+}

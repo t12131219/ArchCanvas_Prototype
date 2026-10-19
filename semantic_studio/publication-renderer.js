@@ -10,7 +10,10 @@
   function nodeTitle(n,idx){
     const uses=n.boundary_uses||[];
     const contents=n.content_inventory;
-    return [n.label,...(contents?['Contents of extracted units (unordered; parameter sharing not asserted):',
+    return [n.label,...(n.source_label?['Source label: '+n.source_label]:[]),
+      ...(n.contract_evidence||[]).flatMap(c=>[c.rule+': '+c.scope,...c.proof,'Not asserted: '+c.not_asserted.join('; ')]),
+      ...(n.observed_calls?[`${n.observed_calls.observations.length} observed calls; ${n.observed_calls.basis}`]:[]),
+      ...(contents?['Contents of extracted units (unordered; parameter sharing not asserted):',
       ...contents.terms.map(t=>`${t.label} × ${t.count}`),...contents.units.map(u=>`${u.label}: ${u.term} · ${u.evidence_status}`)]:[]),
       ...uses.map(e=>`${e.id}: ${idx.nodes.get(e.target)?.label||e.target} [${e.target_port}] · ${e.evidence}`)].join('\n');
   }
@@ -187,9 +190,11 @@
   }
   function edgeBody(e){
     const d=path(e.route.points),color=!e.route.ok?'#b16d39':e.evidence==='runtime-tensor'?'#347b68':e.kind==='control'?'#aa9256':'#617487';
-    const bundle=e.bundle_members?` data-bundle-members="${esc(JSON.stringify(e.bundle_members.map(m=>m.id)))}" style="stroke-width:3"`:'';
+    const bundle=e.bundle_members?` data-bundle-members="${esc(JSON.stringify(e.bundle_members.map(m=>m.id)))}" data-bundle-endpoints="${esc(JSON.stringify(e.bundle_members.map(m=>({id:m.id,source:m.canonical_source,target:m.canonical_target}))))}" style="stroke-width:3"`:'';
+    const canonical=e.bundle_members?'':` data-canonical-source="${esc(e.canonical_source)}" data-canonical-target="${esc(e.canonical_target)}"`;
     const title=e.bundle_members?e.bundle_members.map(m=>`${m.id}: ${m.canonical_source}[${m.source_port}] → ${m.canonical_target}[${m.target_port}]`).join('\n'):e.source_port+' → '+e.target_port+' · '+e.evidence;
-    return `<path class="paper-edge-halo" d="${d}"/><path class="edge paper-edge ${e.kind==='control'?'control':''}" data-edge-id="${esc(e.id)}" data-route-valid="${e.route.ok}" data-canonical-source="${esc(e.canonical_source)}" data-canonical-target="${esc(e.canonical_target)}"${bundle} d="${d}" stroke="${color}" marker-end="url(#paper-arrow)"><title>${esc(title)}</title></path>`;
+    const design=e.design_route?` data-design-route="${esc(e.design_route.kind)}" data-design-certificate="${esc(e.design_route.certificate)}"`:'';
+    return `<path class="paper-edge-halo" d="${d}"/><path class="edge paper-edge ${e.kind==='control'?'control':''}" data-edge-id="${esc(e.id)}" data-route-valid="${e.route.ok}"${canonical}${bundle}${design} d="${d}" stroke="${color}" marker-end="url(#paper-arrow)"><title>${esc(title)}</title></path>`;
   }
   function labelBody(label){return `<g class="paper-label" data-label-edge="${esc(label.edge)}"><rect x="${label.x}" y="${label.y}" width="${label.w}" height="${label.h}" rx="4" fill="#fff" fill-opacity=".96"/><text x="${label.x+6}" y="${label.y+16}" class="paper-port-label">${esc(label.text)}</text></g>`;}
   function prepareLabels(ir,state){
@@ -213,7 +218,7 @@
       after_unplaced_labels:prepared.quality.unplaced_port_labels.length,candidates};
     return {graph,prepared};
   }
-  function prepareFigure(ir,state={}){
+  function prepareTopology(ir,state={}){
     const baseline=prepareLabels(ir,state),b=baseline.prepared.quality;
     // Evaluate one topology alternative only where routed crossings remain.
     // Each candidate receives the same print fitting, routing and label checks.
@@ -234,10 +239,36 @@
       selected:accepted?'consumer':'earliest',max_area_ratio:1.1,max_wire_ratio:1.1};
     return chosen;
   }
+  function prepareFigure(ir,state={}){
+    let chosen=prepareTopology(ir,state);
+    const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
+    if(state.paperAuto===false||Object.keys(state.offsets||{}).length||!chosen.prepared.quality.issues.length)return chosen;
+    const attempts=[];
+    // Semantic presets are bounded by measured print readability. Detail that
+    // cannot fit remains a named, inspectable module, with its own panel; the
+    // canonical graph and requested preset stay unchanged.
+    const profiles=[{paperCompact:true},
+      ...(granularity==='detailed'?[{paperGranularity:'modules',paperBudget:Math.min(requested,20)}]:[]),
+      ...(granularity!=='overview'?[{paperGranularity:'overview',paperBudget:Math.min(requested,12)}]:[]),
+      ...[...new Set([Math.floor(requested*.65),12,8,6,4])].filter(n=>n<requested&&n>=4).map(paperBudget=>({paperBudget}))];
+    for(const profile of profiles){
+      const candidate=prepareTopology(ir,{...state,...profile}),q=candidate.prepared.quality,b=chosen.prepared.quality;
+      const accepted=q.issues.length<b.issues.length&&q.route_failures.length<=b.route_failures.length&&
+        q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.min_print_font_pt>=Math.min(8,b.min_print_font_pt)&&
+        q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length;
+      attempts.push({budget:profile.paperBudget??requested,granularity:profile.paperGranularity||granularity,compact:!!profile.paperCompact,issues:q.issues,min_font_pt:q.min_print_font_pt,accepted});
+      if(accepted)chosen=candidate;
+      if(!chosen.prepared.quality.issues.length)break;
+    }
+    chosen.prepared.routing.granularity_refinement={requested:granularity,requested_budget:requested,
+      selected:chosen.graph.publication.granularity,selected_budget:chosen.graph.publication.budget,before_issues:base.prepared.quality.issues,attempts,
+      deferred_panels:chosen.graph.nodes.filter(n=>n.kind==='composite'&&!chosen.graph.positions.get(n.id).expanded&&(chosen.graph.idx.children.get(n.id)||[]).length).map(n=>n.id)};
+    return chosen;
+  }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};const {graph:g,prepared}=prepareFigure(ir,state),{bounds:b,routes,labeling,quality}=prepared;
     const frames=[],nodes=[];
-    for(const n of g.nodes){const p=g.positions.get(n.id),body=`<g class="node" data-node-id="${esc(n.id)}" data-id="${esc(n.id)}" transform="translate(${p.x},${p.y})"><title>${esc(nodeTitle(n,g.idx))}</title>${nodeBody(n,p)}</g>`;(p.expanded?frames:nodes).push(body);}
+    for(const n of E.drawingOrder(g.nodes,g.idx)){const p=g.positions.get(n.id),body=`<g class="node" data-node-id="${esc(n.id)}" data-id="${esc(n.id)}" transform="translate(${p.x},${p.y})"><title>${esc(nodeTitle(n,g.idx))}</title>${nodeBody(n,p)}</g>`;(p.expanded?frames:nodes).push(body);}
     // Crossing halos express overpasses, never junctions. Separate canonical
     // edges and terminals remain individually inspectable in the vector file.
     const {notes,noteLines,totalH}=prepared;

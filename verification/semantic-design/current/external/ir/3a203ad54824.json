@@ -1,0 +1,1670 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "Bottleneck",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+    "class": "Bottleneck",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+      "cell": null,
+      "sha256": "6831fb7a4da43a264b1b21cb5d5b60fa9d20fcc5322ec79ab9f888c8bf5cd643",
+      "unit_sha256": "6831fb7a4da43a264b1b21cb5d5b60fa9d20fcc5322ec79ab9f888c8bf5cd643"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/42:4:composite:1",
+      "kind": "composite",
+      "label": "Bottleneck",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 42,
+          "end_line": 62,
+          "column": 4,
+          "end_column": 18,
+          "symbol": "Bottleneck.forward",
+          "expression": "def forward(self, x):\n    residual = x\n    out = self.conv1(x)\n    out = self.bn1(out)\n    out = self.relu(out)\n    out = self.conv2(out)\n    out = self.bn2(out)\n    out = self.relu(out)\n    out = self.conv3(out)\n    out = self.bn3(out)\n    if self.downsample is not None:\n        residual = self.downsample(x)\n    out += residual\n    out = self.relu(out)\n    "
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "Bottleneck"
+    },
+    {
+      "id": "model/42:4:composite:1/42:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "Bottleneck.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/42:4:composite:1/43:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "residual",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 43,
+          "end_line": 43,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "Bottleneck.forward",
+          "expression": "residual"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/45:14:compute:1",
+      "kind": "compute",
+      "label": "conv1 · Conv2d",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 14,
+          "end_column": 27,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.conv1(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv1",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "inplanes"
+          },
+          {
+            "unresolved": "planes"
+          }
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "bias": false
+        }
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/31:21:parameter:1",
+      "kind": "parameter",
+      "label": "conv1.parameters",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 31,
+          "end_line": 31,
+          "column": 21,
+          "end_column": 75,
+          "symbol": "Bottleneck.forward",
+          "expression": "nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv1",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/45:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/46:14:compute:1",
+      "kind": "compute",
+      "label": "bn1 · BatchNorm2d",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 14,
+          "end_column": 27,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.bn1(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "normalization",
+      "module_path": "bn1",
+      "framework_type": "torch.nn.BatchNorm2d",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "planes"
+          }
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/32:19:parameter:1",
+      "kind": "parameter",
+      "label": "bn1.parameters",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 32,
+          "end_line": 32,
+          "column": 19,
+          "end_column": 41,
+          "symbol": "Bottleneck.forward",
+          "expression": "nn.BatchNorm2d(planes)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "bn1",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/46:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/47:14:compute:1",
+      "kind": "compute",
+      "label": "relu · ReLU",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 47,
+          "end_line": 47,
+          "column": 14,
+          "end_column": 28,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "relu",
+      "framework_type": "torch.nn.ReLU",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/47:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 47,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/49:14:compute:1",
+      "kind": "compute",
+      "label": "conv2 · Conv2d",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 14,
+          "end_column": 29,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.conv2(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv2",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "planes"
+          },
+          {
+            "unresolved": "planes"
+          }
+        ],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 1,
+          "padding": 1,
+          "bias": false
+        }
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/33:21:parameter:1",
+      "kind": "parameter",
+      "label": "conv2.parameters",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 33,
+          "end_line": 34,
+          "column": 21,
+          "end_column": 53,
+          "symbol": "Bottleneck.forward",
+          "expression": "nn.Conv2d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv2",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/49:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/50:14:compute:1",
+      "kind": "compute",
+      "label": "bn2 · BatchNorm2d",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 14,
+          "end_column": 27,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.bn2(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "normalization",
+      "module_path": "bn2",
+      "framework_type": "torch.nn.BatchNorm2d",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "planes"
+          }
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/35:19:parameter:1",
+      "kind": "parameter",
+      "label": "bn2.parameters",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 19,
+          "end_column": 41,
+          "symbol": "Bottleneck.forward",
+          "expression": "nn.BatchNorm2d(planes)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "bn2",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/50:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/51:14:compute:1",
+      "kind": "compute",
+      "label": "relu · ReLU",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 14,
+          "end_column": 28,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "relu",
+      "framework_type": "torch.nn.ReLU",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/51:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/53:14:compute:1",
+      "kind": "compute",
+      "label": "conv3 · Conv2d",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 14,
+          "end_column": 29,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.conv3(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv3",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "planes"
+          },
+          {
+            "unresolved": "planes * 4"
+          }
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "bias": false
+        }
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/36:21:parameter:1",
+      "kind": "parameter",
+      "label": "conv3.parameters",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 36,
+          "end_line": 36,
+          "column": 21,
+          "end_column": 77,
+          "symbol": "Bottleneck.forward",
+          "expression": "nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv3",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/53:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/54:14:compute:1",
+      "kind": "compute",
+      "label": "bn3 · BatchNorm2d",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 14,
+          "end_column": 27,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.bn3(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "normalization",
+      "module_path": "bn3",
+      "framework_type": "torch.nn.BatchNorm2d",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "planes * 4"
+          }
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/37:19:parameter:1",
+      "kind": "parameter",
+      "label": "bn3.parameters",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 37,
+          "end_line": 37,
+          "column": 19,
+          "end_column": 45,
+          "symbol": "Bottleneck.forward",
+          "expression": "nn.BatchNorm2d(planes * 4)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "bn3",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/54:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/56:11:control:1",
+      "kind": "control",
+      "label": "self.downsample is not None",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 56,
+          "end_line": 56,
+          "column": 11,
+          "end_column": 38,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.downsample is not None"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/42:4:composite:1/56:11:compute:1",
+      "kind": "compute",
+      "label": "compare",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 56,
+          "end_line": 56,
+          "column": 11,
+          "end_column": 38,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.downsample is not None"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "compare"
+    },
+    {
+      "id": "model/42:4:composite:1/56:11:state:1",
+      "kind": "state",
+      "label": "self.downsample",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 56,
+          "end_line": 56,
+          "column": 11,
+          "end_column": 26,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.downsample"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": null
+    },
+    {
+      "id": "model/42:4:composite:1/56:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 56,
+          "end_line": 57,
+          "column": 8,
+          "end_column": 41,
+          "symbol": "Bottleneck.forward",
+          "expression": "if self.downsample is not None:\n    residual = self.downsample(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/42:4:composite:1/56:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/56:8:composite:1/57:23:opaque:1",
+      "kind": "opaque",
+      "label": "downsample",
+      "parent": "model/42:4:composite:1/56:8:composite:1",
+      "source_parent": "model/42:4:composite:1/56:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 23,
+          "end_column": 41,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.downsample(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self.downsample",
+      "function_target": "self.downsample",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/42:4:composite:1/56:8:composite:1/57:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "residual",
+      "parent": "model/42:4:composite:1/56:8:composite:1",
+      "source_parent": "model/42:4:composite:1/56:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 12,
+          "end_column": 20,
+          "symbol": "Bottleneck.forward",
+          "expression": "residual"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/56:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 56,
+          "end_line": 57,
+          "column": 8,
+          "end_column": 41,
+          "symbol": "Bottleneck.forward",
+          "expression": "if self.downsample is not None:\n    residual = self.downsample(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/42:4:composite:1/56:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/42:4:composite:1/56:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "residual · branch join",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 56,
+          "end_line": 57,
+          "column": 8,
+          "end_column": 41,
+          "symbol": "Bottleneck.forward",
+          "expression": "if self.downsample is not None:\n    residual = self.downsample(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/42:4:composite:1/59:8:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 59,
+          "end_line": 59,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Bottleneck.forward",
+          "expression": "out + residual"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add"
+    },
+    {
+      "id": "model/42:4:composite:1/59:8:opaque:1",
+      "kind": "opaque",
+      "label": "augmented write · out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 59,
+          "end_line": 59,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Bottleneck.forward",
+          "expression": "out += residual"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "augmented-write",
+      "mutable": true,
+      "reason": "inplace-overload-unresolved",
+      "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/59:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 59,
+          "end_line": 59,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/60:14:compute:1",
+      "kind": "compute",
+      "label": "relu · ReLU",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 14,
+          "end_column": 28,
+          "symbol": "Bottleneck.forward",
+          "expression": "self.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "relu",
+      "framework_type": "torch.nn.ReLU",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+    },
+    {
+      "id": "model/42:4:composite:1/60:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Bottleneck.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/42:4:composite:1/62:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/42:4:composite:1",
+      "source_parent": "model/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+          "line": 62,
+          "end_line": 62,
+          "column": 8,
+          "end_column": 18,
+          "symbol": "Bottleneck.forward",
+          "expression": "return out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/42:4:composite:1/42:22:interface:1",
+      "target": "model/42:4:composite:1/43:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/42:4:composite:1/31:21:parameter:1",
+      "target": "model/42:4:composite:1/45:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00001"
+    },
+    {
+      "source": "model/42:4:composite:1/42:22:interface:1",
+      "target": "model/42:4:composite:1/45:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/42:4:composite:1/45:14:compute:1",
+      "target": "model/42:4:composite:1/45:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/42:4:composite:1/32:19:parameter:1",
+      "target": "model/42:4:composite:1/46:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00004"
+    },
+    {
+      "source": "model/42:4:composite:1/45:8:value-alias:1",
+      "target": "model/42:4:composite:1/46:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/42:4:composite:1/46:14:compute:1",
+      "target": "model/42:4:composite:1/46:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/42:4:composite:1/46:8:value-alias:1",
+      "target": "model/42:4:composite:1/47:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/42:4:composite:1/46:8:value-alias:1",
+      "target": "model/42:4:composite:1/47:14:compute:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "previous",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/42:4:composite:1/47:14:compute:1",
+      "target": "model/42:4:composite:1/47:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/42:4:composite:1/33:21:parameter:1",
+      "target": "model/42:4:composite:1/49:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00010"
+    },
+    {
+      "source": "model/42:4:composite:1/47:8:value-alias:1",
+      "target": "model/42:4:composite:1/49:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/42:4:composite:1/49:14:compute:1",
+      "target": "model/42:4:composite:1/49:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/42:4:composite:1/35:19:parameter:1",
+      "target": "model/42:4:composite:1/50:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00013"
+    },
+    {
+      "source": "model/42:4:composite:1/49:8:value-alias:1",
+      "target": "model/42:4:composite:1/50:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/42:4:composite:1/50:14:compute:1",
+      "target": "model/42:4:composite:1/50:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/42:4:composite:1/50:8:value-alias:1",
+      "target": "model/42:4:composite:1/51:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/42:4:composite:1/50:8:value-alias:1",
+      "target": "model/42:4:composite:1/51:14:compute:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "previous",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/42:4:composite:1/51:14:compute:1",
+      "target": "model/42:4:composite:1/51:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/42:4:composite:1/36:21:parameter:1",
+      "target": "model/42:4:composite:1/53:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00019"
+    },
+    {
+      "source": "model/42:4:composite:1/51:8:value-alias:1",
+      "target": "model/42:4:composite:1/53:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/42:4:composite:1/53:14:compute:1",
+      "target": "model/42:4:composite:1/53:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/42:4:composite:1/37:19:parameter:1",
+      "target": "model/42:4:composite:1/54:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00022"
+    },
+    {
+      "source": "model/42:4:composite:1/53:8:value-alias:1",
+      "target": "model/42:4:composite:1/54:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/42:4:composite:1/54:14:compute:1",
+      "target": "model/42:4:composite:1/54:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/42:4:composite:1/56:11:state:1",
+      "target": "model/42:4:composite:1/56:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/42:4:composite:1/56:11:compute:1",
+      "target": "model/42:4:composite:1/56:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/42:4:composite:1/56:11:control:1",
+      "target": "model/42:4:composite:1/56:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00027"
+    },
+    {
+      "source": "model/42:4:composite:1/42:22:interface:1",
+      "target": "model/42:4:composite:1/56:8:composite:1/57:23:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00028"
+    },
+    {
+      "source": "model/42:4:composite:1/56:8:composite:1/57:23:opaque:1",
+      "target": "model/42:4:composite:1/56:8:composite:1/57:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00029"
+    },
+    {
+      "source": "model/42:4:composite:1/56:11:control:1",
+      "target": "model/42:4:composite:1/56:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00030"
+    },
+    {
+      "source": "model/42:4:composite:1/56:8:composite:1/57:12:value-alias:1",
+      "target": "model/42:4:composite:1/56:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/42:4:composite:1/56:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00031"
+    },
+    {
+      "source": "model/42:4:composite:1/43:8:value-alias:1",
+      "target": "model/42:4:composite:1/56:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/42:4:composite:1/56:11:control:1",
+        "outcome": "false"
+      },
+      "id": "e00032"
+    },
+    {
+      "source": "model/42:4:composite:1/54:8:value-alias:1",
+      "target": "model/42:4:composite:1/59:8:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00033"
+    },
+    {
+      "source": "model/42:4:composite:1/56:8:value-alias:1",
+      "target": "model/42:4:composite:1/59:8:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00034"
+    },
+    {
+      "source": "model/42:4:composite:1/59:8:compute:1",
+      "target": "model/42:4:composite:1/59:8:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00035"
+    },
+    {
+      "source": "model/42:4:composite:1/54:8:value-alias:1",
+      "target": "model/42:4:composite:1/59:8:opaque:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "previous",
+      "evidence": "source-dependency",
+      "id": "e00036"
+    },
+    {
+      "source": "model/42:4:composite:1/59:8:opaque:1",
+      "target": "model/42:4:composite:1/59:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00037"
+    },
+    {
+      "source": "model/42:4:composite:1/59:8:value-alias:1",
+      "target": "model/42:4:composite:1/60:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00038"
+    },
+    {
+      "source": "model/42:4:composite:1/59:8:value-alias:1",
+      "target": "model/42:4:composite:1/60:14:compute:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "previous",
+      "evidence": "source-dependency",
+      "id": "e00039"
+    },
+    {
+      "source": "model/42:4:composite:1/60:14:compute:1",
+      "target": "model/42:4:composite:1/60:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00040"
+    },
+    {
+      "source": "model/42:4:composite:1/60:8:value-alias:1",
+      "target": "model/42:4:composite:1/62:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00041"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/42:4:composite:1/56:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+      "line": 56,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    }
+  ],
+  "motifs": [
+    {
+      "id": "motif:add-and-normalization candidate:0",
+      "semantic_type": "add-and-normalization candidate",
+      "members": [
+        "model/42:4:composite:1/42:22:interface:1",
+        "model/42:4:composite:1/43:8:value-alias:1",
+        "model/42:4:composite:1/45:14:compute:1",
+        "model/42:4:composite:1/31:21:parameter:1",
+        "model/42:4:composite:1/45:8:value-alias:1",
+        "model/42:4:composite:1/46:14:compute:1",
+        "model/42:4:composite:1/32:19:parameter:1",
+        "model/42:4:composite:1/46:8:value-alias:1",
+        "model/42:4:composite:1/47:14:compute:1",
+        "model/42:4:composite:1/47:8:value-alias:1",
+        "model/42:4:composite:1/49:14:compute:1",
+        "model/42:4:composite:1/33:21:parameter:1",
+        "model/42:4:composite:1/49:8:value-alias:1",
+        "model/42:4:composite:1/50:14:compute:1",
+        "model/42:4:composite:1/35:19:parameter:1",
+        "model/42:4:composite:1/50:8:value-alias:1",
+        "model/42:4:composite:1/51:14:compute:1",
+        "model/42:4:composite:1/51:8:value-alias:1",
+        "model/42:4:composite:1/53:14:compute:1",
+        "model/42:4:composite:1/36:21:parameter:1",
+        "model/42:4:composite:1/53:8:value-alias:1",
+        "model/42:4:composite:1/54:14:compute:1",
+        "model/42:4:composite:1/37:19:parameter:1",
+        "model/42:4:composite:1/54:8:value-alias:1",
+        "model/42:4:composite:1/56:11:control:1",
+        "model/42:4:composite:1/56:11:compute:1",
+        "model/42:4:composite:1/56:11:state:1",
+        "model/42:4:composite:1/56:8:composite:1",
+        "model/42:4:composite:1/56:8:composite:1/57:23:opaque:1",
+        "model/42:4:composite:1/56:8:composite:1/57:12:value-alias:1",
+        "model/42:4:composite:1/56:8:composite:2",
+        "model/42:4:composite:1/56:8:value-alias:1",
+        "model/42:4:composite:1/59:8:compute:1",
+        "model/42:4:composite:1/59:8:opaque:1",
+        "model/42:4:composite:1/59:8:value-alias:1",
+        "model/42:4:composite:1/60:14:compute:1",
+        "model/42:4:composite:1/60:8:value-alias:1",
+        "model/42:4:composite:1/62:8:interface:1"
+      ],
+      "evidence": [
+        "add + normalization; residual origin unproven"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    }
+  ],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+      "line": 47,
+      "kind": "mutation-alias-coverage-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+      "line": 51,
+      "kind": "mutation-alias-coverage-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+      "line": 59,
+      "kind": "mutation-alias-coverage-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/deterministic_benchmark_utils.py",
+      "line": 60,
+      "kind": "mutation-alias-coverage-unresolved"
+    }
+  ],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "1bf0c6d4aa734f860c796f3f7a3e5ae2b41b6d47128fd3239e36da948227fe43"
+}

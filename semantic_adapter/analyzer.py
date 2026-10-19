@@ -76,7 +76,7 @@ def literal(n, values):
 
 
 class Analyzer:
-    def __init__(self, source, entry, constructor=None, cell=None, max_nodes=1600, max_depth=12):
+    def __init__(self, source, entry, constructor=None, cell=None, max_nodes=8000, max_depth=12):
         self.path = Path(source).resolve()
         self.units, self.diagnostics = units(self.path)
         self.constructor = constructor or {}
@@ -205,7 +205,7 @@ class Analyzer:
                 return copy.deepcopy(bindings[n.id]) if n.id in bindings else n
         return source, Substitute().visit(copy.deepcopy(result)), body[0]
 
-    def call(self, cls_pair, parent, label, actuals, keywords, ctor, depth, module_path='', owner=None):
+    def call(self, cls_pair, parent, label, actuals, keywords, ctor, depth, module_path='', owner=None, ctor_objects=None, object_identity=None, owner_values=None, function_modules=None, forward_constants=None):
         u, cls = cls_pair
         symbol = cls.name + '.forward' if isinstance(cls, ast.ClassDef) else cls.name
         if depth > self.max_depth:
@@ -219,22 +219,36 @@ class Analyzer:
         composite = self.add('composite', label, parent, u, fn, symbol,
                              semantic_type='source-module' if is_class else 'source-function', module_path=module_path,
                              constructor=ctor, source_class=cls.name if is_class else None)
+        if object_identity is not None:
+            self.node_by[composite]['module_identity'] = object_identity
         values = dict(self.globals)
         if is_class:
             init = next((m for m in cls.body if isinstance(m, ast.FunctionDef) and m.name == '__init__'), None)
             if init and init.args.defaults:
                 params = [a.arg for a in init.args.args]
                 values.update({p: literal(a, values) for p, a in zip(params[-len(init.args.defaults):], init.args.defaults)})
+        values.update(owner_values or {})
         values.update(ctor)
         owner = cls if is_class else owner
         modules = self.module_map(owner, values) if owner is not None else {}
+        from .construction import Construction, Module
+        construction = Construction(self, u, owner, values, ctor_objects, object_identity if object_identity is not None else module_path)
+        iteration_modules = dict(function_modules or {})
+        iteration_paths = {name: spec.identity for name, spec in iteration_modules.items()}
         env = {}
         args = [a for a in fn.args.args if a.arg != 'self'] + fn.args.kwonlyargs
+        positional = [a.arg for a in fn.args.args if a.arg != 'self']
+        defaults = dict(zip(positional[-len(fn.args.defaults):], fn.args.defaults)) if fn.args.defaults else {}
+        invocation_values = dict(forward_constants or {})
         for index, arg in enumerate(args):
             node = self.add('interface', arg.arg, composite, u, arg, symbol, role='input', slot=arg.arg)
             env[arg.arg] = node
             binding = keywords.get(arg.arg) or (actuals[index] if index < len(actuals) else None)
             self.edge(binding, node, 'interface-binding', arg.arg)
+            if depth > 0 and not binding and arg.arg not in invocation_values and arg.arg in defaults:
+                default = literal(defaults[arg.arg], {})
+                if default is None or type(default) in (bool, int, float, str):
+                    invocation_values[arg.arg] = default
         returned, write_scopes = [], []
 
         def rebound_target(target, bindings):
@@ -286,6 +300,9 @@ class Analyzer:
                     target = target[:-8]
                 rebound = rebound_target(target, bindings)
                 raw_module = modules.get(target) if rebound is None else None
+                bound_module = iteration_modules.get(target) if rebound is None else None
+                if bound_module is not None:
+                    raw_module = bound_module.call
                 factory = self.factory(raw_module, u)
                 if factory: raw_module = factory[1]
                 receiver = None
@@ -308,15 +325,35 @@ class Analyzer:
                 elif rebound is None and self.definition(target) and isinstance(self.definition(target)[1], ast.FunctionDef):
                     helper = self.definition(target)
                 if helper:
-                    return self.call(helper, scope, target, actuals, kw, ctor, depth + 1, module_path, owner)
+                    params = [a.arg for a in helper[1].args.args if a.arg != 'self']
+                    supplied = dict(zip(params, n.args))
+                    supplied.update({k.arg: k.value for k in n.keywords if k.arg})
+                    callable_modules = {}
+                    for name, argument in supplied.items():
+                        spec = iteration_modules.get(text(argument)) or construction.get(text(argument))
+                        if isinstance(spec, Module):
+                            callable_modules[name] = spec
+                    constants = {name: literal(argument, {}) for name, argument in supplied.items() if isinstance(argument, ast.Constant)}
+                    return self.call(helper, scope, target, actuals, kw, ctor, depth + 1, module_path, owner, ctor_objects, object_identity, values, callable_modules, constants)
                 if isinstance(raw_module, ast.Call):
+                    display_name = target[5:] if target.startswith('self.') else target
+                    bound_module = bound_module or construction.get(target)
+                    module_values = bound_module.constants if isinstance(bound_module, Module) else values
                     constructor_name = text(raw_module.func)
                     short = constructor_name.split('.')[-1]
                     local = self.definition(constructor_name, u['cell']) or self.definition(constructor_name)
                     if local and isinstance(local[1], ast.ClassDef):
-                        v = self.constructor_values(local[1], raw_module, values)
-                        return self.call(local, scope, target[5:], actuals, kw, v, depth + 1,
-                                         (module_path + '.' + target[5:]).strip('.'))
+                        bound = construction.arguments(bound_module, local[1]) if isinstance(bound_module, Module) else None
+                        v, refs = bound if bound is not None else (self.constructor_values(local[1], raw_module, values), {})
+                        child_path = iteration_paths[target] if target in iteration_modules else (module_path + '.' + display_name).strip('.')
+                        child_fn = next((m for m in local[1].body if isinstance(m, ast.FunctionDef) and m.name == 'forward'), None)
+                        child_params = [a.arg for a in child_fn.args.args if a.arg != 'self'] if child_fn else []
+                        supplied = dict(zip(child_params, n.args)); supplied.update({k.arg: k.value for k in n.keywords if k.arg})
+                        constants = {name: literal(argument, {}) for name, argument in supplied.items() if isinstance(argument, ast.Constant)}
+                        return self.call(local, scope, display_name, actuals, kw, v, depth + 1,
+                                         child_path, ctor_objects=refs,
+                                         object_identity=bound_module.identity if isinstance(bound_module, Module) and (object_identity is not None or target in iteration_modules) else None,
+                                         forward_constants=constants)
                     if short == 'Sequential' and self.resolve(constructor_name).startswith('torch.nn.'):
                         frame = self.add('composite', target[5:], scope, u, n, symbol, semantic_type='sequential', module_path=(module_path + '.' + target[5:]).strip('.'))
                         previous = actuals[0] if actuals else None
@@ -360,9 +397,11 @@ class Analyzer:
                     known = qualified.startswith('torch.nn.') and short in MODULES
                     operator = MODULES[short] if known else qualified
                     kind = 'compute' if known else 'opaque'
-                    node = self.add(kind, f'{target[5:]} · {short}', scope, u, n, symbol, operator=operator,
-                                    module_path=(module_path + '.' + target[5:]).strip('.'),
-                                    framework_type=qualified, constructor={'args': [literal(a, values) for a in raw_module.args], 'kwargs': {k.arg: literal(k.value, values) for k in raw_module.keywords if k.arg}})
+                    node = self.add(kind, f'{display_name} · {short}', scope, u, n, symbol, operator=operator,
+                                    module_path=(module_path + '.' + display_name).strip('.') if target not in iteration_modules else iteration_paths[target],
+                                    framework_type=qualified, constructor={'args': [literal(a, module_values) for a in raw_module.args], 'kwargs': {k.arg: literal(k.value, module_values) for k in raw_module.keywords if k.arg}})
+                    if object_identity is not None or target in iteration_modules:
+                        self.node_by[node]['module_identity'] = bound_module.identity if isinstance(bound_module, Module) else (object_identity + '.' + display_name)
                     if factory:
                         self.node_by[node]['source'].extend(self.evidence(factory[0], factory[2], text(modules[target].func)))
                         self.node_by[node]['constructor_factory'] = text(modules[target].func)
@@ -371,15 +410,18 @@ class Analyzer:
                     if known and short in {'Linear', 'Conv1d', 'Conv2d', 'Conv3d', 'Embedding', 'LayerNorm', 'BatchNorm1d', 'BatchNorm2d'}:
                         resource = self.add('parameter', target[5:] + '.parameters', scope, u, raw_module, symbol,
                                             parameter_scope=self.node_by[node]['module_path'], identity_status='declared-scope; sharing-unresolved')
+                        if self.node_by[node].get('module_identity'):
+                            self.node_by[resource]['module_identity'] = self.node_by[node]['module_identity']
                         self.edge(resource, node, 'parameter-read', evidence='framework-contract')
                 else:
                     qualified = self.resolve(target)
                     short = target.split('.')[-1]
                     tensor_method = receiver is not None and short in FUNCTIONS
                     shadowed_callable = rebound and (target in modules or target == rebound)
-                    known = not shadowed_callable and (qualified.startswith(('torch.', 'math.')) or tensor_method or target in {'len', 'range', 'enumerate'}) and short in FUNCTIONS
+                    scalar_cast = target in {'float', 'int', 'bool'} and len(n.args) == 1 and isinstance(n.args[0], ast.Constant) and not n.keywords and not self.definition(target) and target not in bindings
+                    known = not shadowed_callable and ((qualified.startswith(('torch.', 'math.')) or tensor_method or target in {'len', 'range', 'enumerate'}) and short in FUNCTIONS or scalar_cast)
                     node = self.add('compute' if known else 'opaque', short, scope, u, n, symbol,
-                                    operator=FUNCTIONS.get(short, qualified) if known else qualified, function_target=qualified,
+                                    operator='scalar-cast' if scalar_cast else FUNCTIONS.get(short, qualified) if known else qualified, function_target=qualified,
                                     arguments={'args': [literal(a, values) for a in n.args],
                                                'kwargs': {k.arg: literal(k.value, values) for k in n.keywords if k.arg}},
                                     reason=None if known else 'rebound-call-target' if shadowed_callable else 'unresolved-call-target')
@@ -504,6 +546,16 @@ class Analyzer:
                     self.edge(value, output, 'interface-binding')
                     returned.append(output)
                     break
+                elif isinstance(statement, ast.Raise):
+                    # An explicit exceptional exit is known control flow. It is
+                    # not an unresolved tensor-producing operation.
+                    exit_node = self.add('control', 'raise ' + text(statement.exc)[:80], scope, u, statement, symbol,
+                                         operator='exception-exit', exception_expression=text(statement.exc))
+                    if isinstance(statement.exc, ast.Call):
+                        for i, arg in enumerate(statement.exc.args):
+                            self.edge(expr(arg, scope, bindings), exit_node, 'control', str(i))
+                    self.coverage_blockers.append({'file': u['path'], 'line': statement.lineno, 'kind': 'exception-paths-not-verified'})
+                    break
                 elif isinstance(statement, ast.If):
                     control = self.add('control', text(statement.test)[:70], scope, u, statement.test, symbol, operator='if')
                     self.edge(expr(statement.test, scope, bindings), control, 'control')
@@ -528,6 +580,40 @@ class Analyzer:
                         bindings[name] = phi
                     written.update(branch_writes)
                 elif isinstance(statement, (ast.For, ast.While)):
+                    serial = construction.serial_loop(statement, fn)
+                    if serial and rebound_target(text(statement.iter), bindings) is None:
+                        collection, state, iterator = serial
+                        identities = [m.identity for m in collection.elements]
+                        signatures = [(self.resolve(text(m.call.func)), [literal(a, m.constants) for a in m.call.args],
+                                       {k.arg: literal(k.value, m.constants) for k in m.call.keywords if k.arg}) for m in collection.elements]
+                        homogeneous = bool(signatures) and all(s == signatures[0] for s in signatures)
+                        sharing = 'independent' if len(set(identities)) == len(identities) else 'shared' if len(set(identities)) == 1 else 'mixed'
+                        parameter_sharing = 'shared' if sharing == 'shared' and identities else 'independent' if identities and sharing == 'independent' and all(m.allocation in {'default-deepcopy', 'fresh-framework-construction'} for m in collection.elements) else 'unresolved'
+                        contract = {'rule_version': 'bounded-module-sequence/1', 'count': len(identities),
+                                    'state': state, 'iterator': iterator, 'collection': text(statement.iter),
+                                    'instances': identities, 'module_sharing': sharing, 'parameter_sharing': parameter_sharing,
+                                    'homogeneous': homogeneous,
+                                    'allocation_evidence': [m.allocation for m in collection.elements],
+                                    'construction_evidence': collection.evidence,
+                                    'scope': 'fixed construction; straight serial body; all instances retained',
+                                    'not_asserted': ['output equivalence between layers', 'arbitrary constructor side effects']}
+                        frame = self.add('composite', ('Repeated block × ' if homogeneous else 'Serial sequence · ') + str(len(identities)), scope, u, statement, symbol,
+                                         semantic_type='serial-repeat', repeat_contract=contract)
+                        # A module object is not a tensor carried value. Every concrete
+                        # iteration has its own call and exact recurrent tensor binding.
+                        for i, module in enumerate(collection.elements):
+                            instance = self.add('composite', 'Layer ' + str(i + 1), frame, u, statement, symbol,
+                                                semantic_type='repeat-instance', module_identity=module.identity,
+                                                repeat_index=i)
+                            iteration_modules[iterator] = module
+                            iteration_paths[iterator] = '.'.join(filter(None, [module_path, text(statement.iter).removeprefix('self.'), str(i)]))
+                            statements(statement.body, instance, bindings)
+                        if collection.elements:
+                            bindings[iterator] = self.add('state', iterator + ' · module reference', frame, u, statement.target, symbol,
+                                                         role='module-reference', module_identity=identities[-1])
+                            written.add(iterator)
+                        written.add(state)
+                        continue
                     control = self.add('control', ('for ' + text(statement.target) + ' in ' + text(statement.iter))[:90] if isinstance(statement, ast.For) else 'while ' + text(statement.test)[:80], scope, u, statement, symbol,
                                        operator='loop', loop_semantics='source-body-template; repetition-and-carried-state-unresolved')
                     self.branches.append({'id': control, 'file': u['path'], 'line': statement.lineno, 'kind': 'loop', 'outcomes': ['zero', 'nonzero'], 'path_coverage': 'unresolved'})
@@ -555,6 +641,25 @@ class Analyzer:
         if len(returned) == 1: return returned[0]
         output = self.add('interface', 'outputs / conditional returns', composite, u, fn, symbol, role='output')
         for i, value in enumerate(returned): self.edge(value, output, 'interface-binding', str(i))
+        # A call-site default can select one normal return without deleting the
+        # other source paths. Never specialize entry inputs or rebound guards.
+        written_names = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+        safe_values = {k: v for k, v in invocation_values.items() if k not in written_names}
+        def selected_return(body):
+            for statement in body:
+                if isinstance(statement, ast.Return): return statement.lineno
+                if isinstance(statement, ast.If):
+                    if isinstance(statement.test, ast.Name) and statement.test.id in safe_values:
+                        found = selected_return(statement.body if bool(safe_values[statement.test.id]) else statement.orelse)
+                        if found is not None: return found
+                    elif any(isinstance(n, ast.Return) for n in ast.walk(statement)):
+                        return -1
+            return None
+        line = selected_return(fn.body)
+        selected = [r for r in returned if self.node_by[r]['source'][0]['line'] == line]
+        if len(selected) == 1:
+            self.node_by[output]['return_selection'] = {'selected': selected[0], 'call_constants': safe_values,
+                                                       'scope': 'normal-return paths of this invocation; source alternatives retained'}
         return output
 
     def run(self):
@@ -576,6 +681,8 @@ class Analyzer:
                               'Notebook cells are parsed as data; notebook setup/training cells are never executed.']}
         from .motifs import recognize
         recognize(ir)
+        from .contracts import recognize_contracts
+        recognize_contracts(ir)
         return seal(ir)
 
 

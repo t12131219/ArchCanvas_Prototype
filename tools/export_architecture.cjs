@@ -13,7 +13,7 @@ function render(ir,state){
   // Routing corridors may extend beyond the node bounds (feedback in particular).
   for(const e of routes)for(const p of e.route.points){const right=b.x+b.w,bottom=b.y+b.h;b.x=Math.min(b.x,p.x-24);b.y=Math.min(b.y,p.y-24);b.w=Math.max(right,p.x+24)-b.x;b.h=Math.max(bottom,p.y+24)-b.y;}
   const frames=[],leaves=[];
-  for(const n of g.nodes){const p=g.positions.get(n.id),fill=n.glyph?.fill||'#edf2fa',limit=Math.floor((p.w-40)/7.5),label=n.label.length>limit?n.label.slice(0,limit-1)+'…':n.label;
+  for(const n of E.drawingOrder(g.nodes,g.idx)){const p=g.positions.get(n.id),fill=n.glyph?.fill||'#edf2fa',limit=Math.floor((p.w-40)/7.5),label=n.label.length>limit?n.label.slice(0,limit-1)+'…':n.label;
     const shape=n.kind==='control'&&!p.expanded?`<polygon points="16,0 ${p.w-16},0 ${p.w},${p.h/2} ${p.w-16},${p.h} 16,${p.h} 0,${p.h/2}" fill="${fill}" stroke="#92a8c4"/>`:p.symbol?`<circle cx="${p.w/2}" cy="${p.h/2}" r="${p.w/2}" fill="${fill}" stroke="#92a8c4"/>`:`<rect width="${p.w}" height="${p.h}" rx="${p.expanded?12:n.kind==='interface'?28:8}" fill="${p.expanded?'#f7f9fd':fill}" stroke="${n.kind==='opaque'?'#bf6b6b':'#92a8c4'}" ${n.kind==='opaque'?'stroke-dasharray="5 4"':''}/>`;
     const body=`<g data-node-id="${esc(n.id)}" transform="translate(${p.x},${p.y})"><title>${esc(n.label)}</title>${shape}<text x="${p.symbol?p.w/2:12}" y="${p.symbol?p.h/2+8:22}" text-anchor="${p.symbol?'middle':'start'}" font-size="${p.symbol?28:p.h<60?12:14}" font-weight="600">${esc(p.symbol||label)}</text>${p.h>=58&&!p.symbol?`<text x="12" y="46" font-size="10" fill="#7385a0">${esc((n.semantic_type||n.operator||n.kind).slice(0,35))}</text>`:''}</g>`;
     (p.expanded?frames:leaves).push(body);
@@ -26,10 +26,10 @@ function render(ir,state){
 }
 if(require.main===module){
   const [input,output,...options]=process.argv.slice(2);
-  if(!input||!output){console.error('Usage: node tools/export_architecture.cjs input.json output.svg [--mode source|runtime|merged] [--depth 2] [--details] [--view architecture|source|publication] [--linear]');process.exit(2);}
+  if(!input||!output){console.error('Usage: node tools/export_architecture.cjs input.json output.svg [--mode source|runtime|merged] [--depth 2] [--details] [--view architecture|source|publication] [--granularity overview|modules|detailed] [--linear]');process.exit(2);}
   const option=(name,fallback)=>{const i=options.indexOf(name);if(i<0)return fallback;if(!options[i+1])throw Error('missing '+name+' value');return options[i+1];};
-  const state={mode:option('--mode','source'),view:option('--view','architecture'),details:options.includes('--details'),foldSerial:!options.includes('--linear'),offsets:{}},depth=Number(option('--depth','2'));
-  if(!['source','runtime','merged'].includes(state.mode)||!['architecture','source','publication'].includes(state.view)||!Number.isInteger(depth)||depth<0)throw Error('invalid view/mode/depth');
+  const state={mode:option('--mode','source'),view:option('--view','architecture'),paperGranularity:option('--granularity','overview'),details:options.includes('--details'),foldSerial:!options.includes('--linear'),offsets:{}},depth=Number(option('--depth','2'));
+  if(!['source','runtime','merged'].includes(state.mode)||!['architecture','source','publication'].includes(state.view)||!['overview','modules','detailed'].includes(state.paperGranularity)||!Number.isInteger(depth)||depth<0)throw Error('invalid view/mode/depth/granularity');
   const ir=JSON.parse(fs.readFileSync(input));state.open=openToDepth(ir,state,depth);
   if(state.view==='publication'&&options.includes('--depth'))state.paperAuto=false;
   const result=render(ir,state);fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});fs.writeFileSync(output,result.svg);

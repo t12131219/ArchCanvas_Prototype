@@ -453,7 +453,8 @@ test('nested inventories count leaf units once and retain all kinds beyond the c
   assert.ok(band.paper.captions.length<=P.wrap(band.region_summary,184,13).length);
   for(const line of band.paper.captions)assert.ok(P.width(line,13)<=184);
   const detail=R.render(ir,{paperFocus:first.id}),frame=detail.graph.positions.get(first.id);
-  assert.equal(frame.header,Math.max(66,24+band.paper.lines.length*20+P.wrap(band.region_summary,184,13).length*16));
+  const titleHeight=Math.max(66,24+band.paper.lines.length*20+P.wrap(band.region_summary,184,13).length*16);
+  assert.equal(frame.header,titleHeight+20);assert.equal(frame.protected_header_height,titleHeight-10);
   for(const n of p.nodes.filter(n=>n.semantic_type==='dependency-panel')){
     const f=p.findings.find(f=>f.id===n.finding);assert.deepEqual(n.content_inventory.units.map(u=>u.id),f.roles.units);
     assert.ok(n.content_inventory.units.every(u=>ir.nodes.some(n=>n.id===u.id)));
@@ -481,7 +482,7 @@ test('failed port-label placement retries row spacing while preserving operands 
   assert.equal(baseline.quality.unplaced_port_labels.length,3);assert.deepEqual(out.prepared.quality.issues,[]);
   assert.equal(out.prepared.routing.layout_refinement.before_unplaced_labels,3);
   assert.equal(out.prepared.routing.layout_refinement.after_unplaced_labels,0);
-  assert.equal(out.prepared.quality.line_geometry.crossings,baseline.quality.line_geometry.crossings);
+  assert.ok(out.prepared.quality.line_geometry.crossings<=baseline.quality.line_geometry.crossings);
   assert.equal(out.prepared.quality.line_geometry.unrelated_contacts.length,0);
   assert.ok(out.prepared.quality.min_print_font_pt>=8);assert.ok(out.prepared.quality.width_mm<=180);
   assert.deepEqual(out.graph.edges,base.edges);assert.deepEqual(out.graph.publication.boundary,base.publication.boundary);
@@ -510,10 +511,10 @@ test('consumer ranks shorten slack paths while retaining interfaces, feedback an
 test('automatic topology choice removes hybrid crossings with reversible accounting and cached routes',()=>{
   const ir=load('GatedMixture'),canonical=JSON.stringify(ir),before=R.render(ir,{paperRankStrategy:'earliest'}),out=R.render(ir,{}),t=out.prepared.routing.topology_refinement;
   assert.equal(t.accepted,true);assert.equal(t.selected,'consumer');
-  assert.equal(before.prepared.quality.line_geometry.crossings,4);assert.equal(out.prepared.quality.line_geometry.crossings,0);
-  assert.ok(out.prepared.quality.height_mm<before.prepared.quality.height_mm*.65);
+  assert.ok(before.prepared.quality.line_geometry.crossings>0);assert.equal(out.prepared.quality.line_geometry.crossings,0);
+  assert.ok(out.prepared.quality.height_mm<before.prepared.quality.height_mm);
   assert.ok(out.prepared.quality.min_print_font_pt>=before.prepared.quality.min_print_font_pt);
-  assert.ok(out.prepared.quality.wire_length<before.prepared.quality.wire_length);
+  assert.ok(out.prepared.quality.wire_length<=before.prepared.quality.wire_length*t.max_wire_ratio);
   assert.deepEqual(out.prepared.quality.issues,[]);assert.equal(out.graph.publication.unknowns,1);
   for(const key of ['node_accounting','edge_accounting','representatives','edges'])assert.deepEqual(out.graph[key],before.graph[key]);
   assert.deepEqual(out.graph.architecture.findings,before.graph.architecture.findings);

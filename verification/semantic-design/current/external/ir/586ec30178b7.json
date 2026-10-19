@@ -1,0 +1,2080 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "NiN",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+    "class": "NiN",
+    "cell": 24,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=8",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 8,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "a7aef7c9b3f986b8048fc3788ce095bf5326dbc547fe74e2992e3b2f505cd6f9"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=12",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 12,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "7e7d40584094f7a2a27e81f185b38ec00784d289674c51022dff86c933e54996"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=15",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 15,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "3e7781b6f20cf8a9530417fc7c3ee5c465cd1fc85241c345e3baaa4a9ce99de9"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=16",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 16,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "b1bf8fb24b6e919cb3d72ef343a44359c671f0eedd72daaae76bd92cd7908927"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=18",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 18,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "a45527c7279da341af3e507abad2b502274486b212307c58e6206734e058171d"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=20",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 20,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "ec1b4de0b0085402aa2e100e2f7ec1c626c2f202227f54a8cb13c2f05e748f31"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=21",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 21,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "99503780af05b8b361b8767673ca9b17e101922161da0eb5cb9cb485da72a897"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 24,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "abe045f063df822ace3a0266f459eb4b2217b88cdda15adff7ffc21d70c23d10"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=25",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 25,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "1cc08fb6a5074a51a81f68465467ffca4f056d472332f7ba0fcccb56aecf0d09"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=27",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 27,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "16d122cc8806c92d1182dd770de1732bc9db938d5f3f62a0b256c76ecaa7ed8d"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=28",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 28,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "71eace2ac685f63eed36bba027d6947e792f789b53aaa02b57ed06437a2aae1c"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=31",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 31,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "231b693363b755567513b29e10e937c13ee829a942aee50b578f06fca446555f"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=32",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 32,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "1cc08fb6a5074a51a81f68465467ffca4f056d472332f7ba0fcccb56aecf0d09"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=33",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb",
+      "cell": 33,
+      "sha256": "e500297162a597c7ac991e3be763a824001d1f7de4874a49526e6f3320628a8f",
+      "unit_sha256": "2ace7d6505df6e4c17fe4aeeb5b8b1fd86e88195fa9ec7f0e3161af8b9886177"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/38:4:composite:1",
+      "kind": "composite",
+      "label": "NiN",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 38,
+          "end_line": 42,
+          "column": 4,
+          "end_column": 21,
+          "symbol": "NiN.forward",
+          "expression": "def forward(self, x):\n    x = self.classifier(x)\n    logits = x.view(x.size(0), self.num_classes)\n    return logits"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "convolutional network",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "NiN"
+    },
+    {
+      "id": "model/38:4:composite:1/38:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 38,
+          "end_line": 38,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "NiN.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1",
+      "kind": "composite",
+      "label": "classifier",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 39,
+          "end_line": 39,
+          "column": 12,
+          "end_column": 30,
+          "symbol": "NiN.forward",
+          "expression": "self.classifier(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "convolutional network",
+      "module_path": "classifier"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/10:16:compute:1",
+      "kind": "compute",
+      "label": "0: Conv2d",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 10,
+          "end_line": 10,
+          "column": 16,
+          "end_column": 69,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(3, 192, kernel_size=5, stride=1, padding=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.0",
+      "constructor": {
+        "args": [
+          3,
+          192
+        ],
+        "kwargs": {
+          "kernel_size": 5,
+          "stride": 1,
+          "padding": 2
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/11:16:compute:1",
+      "kind": "compute",
+      "label": "1: ReLU",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 11,
+          "end_line": 11,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.1",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/12:16:compute:1",
+      "kind": "compute",
+      "label": "2: Conv2d",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 12,
+          "end_line": 12,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 160, kernel_size=1, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.2",
+      "constructor": {
+        "args": [
+          192,
+          160
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "stride": 1,
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/13:16:compute:1",
+      "kind": "compute",
+      "label": "3: ReLU",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 13,
+          "end_line": 13,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.3",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/14:16:compute:1",
+      "kind": "compute",
+      "label": "4: Conv2d",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 14,
+          "end_line": 14,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(160, 96, kernel_size=1, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.4",
+      "constructor": {
+        "args": [
+          160,
+          96
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "stride": 1,
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/15:16:compute:1",
+      "kind": "compute",
+      "label": "5: ReLU",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 15,
+          "end_line": 15,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.5",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/16:16:compute:1",
+      "kind": "compute",
+      "label": "6: MaxPool2d",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 16,
+          "end_line": 16,
+          "column": 16,
+          "end_column": 64,
+          "symbol": "NiN.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "framework_type": "torch.nn.MaxPool2d",
+      "module_path": "classifier.6",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/17:16:compute:1",
+      "kind": "compute",
+      "label": "7: Dropout",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 17,
+          "end_line": 17,
+          "column": 16,
+          "end_column": 31,
+          "symbol": "NiN.forward",
+          "expression": "nn.Dropout(0.5)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "dropout",
+      "framework_type": "torch.nn.Dropout",
+      "module_path": "classifier.7",
+      "constructor": {
+        "args": [
+          0.5
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/19:16:compute:1",
+      "kind": "compute",
+      "label": "8: Conv2d",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 19,
+          "end_line": 19,
+          "column": 16,
+          "end_column": 70,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(96, 192, kernel_size=5, stride=1, padding=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.8",
+      "constructor": {
+        "args": [
+          96,
+          192
+        ],
+        "kwargs": {
+          "kernel_size": 5,
+          "stride": 1,
+          "padding": 2
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/20:16:compute:1",
+      "kind": "compute",
+      "label": "9: ReLU",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 20,
+          "end_line": 20,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.9",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/21:16:compute:1",
+      "kind": "compute",
+      "label": "10: Conv2d",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 21,
+          "end_line": 21,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=1, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.10",
+      "constructor": {
+        "args": [
+          192,
+          192
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "stride": 1,
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/22:16:compute:1",
+      "kind": "compute",
+      "label": "11: ReLU",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 22,
+          "end_line": 22,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.11",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/23:16:compute:1",
+      "kind": "compute",
+      "label": "12: Conv2d",
+      "parent": "motif:CNN block:5",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 23,
+          "end_line": 23,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=1, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.12",
+      "constructor": {
+        "args": [
+          192,
+          192
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "stride": 1,
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/24:16:compute:1",
+      "kind": "compute",
+      "label": "13: ReLU",
+      "parent": "motif:CNN block:5",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 24,
+          "end_line": 24,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.13",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/25:16:compute:1",
+      "kind": "compute",
+      "label": "14: AvgPool2d",
+      "parent": "motif:CNN block:5",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 25,
+          "end_line": 25,
+          "column": 16,
+          "end_column": 64,
+          "symbol": "NiN.forward",
+          "expression": "nn.AvgPool2d(kernel_size=3, stride=2, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "framework_type": "torch.nn.AvgPool2d",
+      "module_path": "classifier.14",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 2,
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/26:16:compute:1",
+      "kind": "compute",
+      "label": "15: Dropout",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 26,
+          "end_line": 26,
+          "column": 16,
+          "end_column": 31,
+          "symbol": "NiN.forward",
+          "expression": "nn.Dropout(0.5)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "dropout",
+      "framework_type": "torch.nn.Dropout",
+      "module_path": "classifier.15",
+      "constructor": {
+        "args": [
+          0.5
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/28:16:compute:1",
+      "kind": "compute",
+      "label": "16: Conv2d",
+      "parent": "motif:CNN block:6",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 28,
+          "end_line": 28,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=3, stride=1, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.16",
+      "constructor": {
+        "args": [
+          192,
+          192
+        ],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 1,
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/29:16:compute:1",
+      "kind": "compute",
+      "label": "17: ReLU",
+      "parent": "motif:CNN block:6",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 29,
+          "end_line": 29,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.17",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/30:16:compute:1",
+      "kind": "compute",
+      "label": "18: Conv2d",
+      "parent": "motif:CNN block:7",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 30,
+          "end_line": 30,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=1, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.18",
+      "constructor": {
+        "args": [
+          192,
+          192
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "stride": 1,
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/31:16:compute:1",
+      "kind": "compute",
+      "label": "19: ReLU",
+      "parent": "motif:CNN block:7",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 31,
+          "end_line": 31,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.19",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/32:16:compute:1",
+      "kind": "compute",
+      "label": "20: Conv2d",
+      "parent": "motif:CNN block:8",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 32,
+          "end_line": 32,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 10, kernel_size=1, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "classifier.20",
+      "constructor": {
+        "args": [
+          192,
+          10
+        ],
+        "kwargs": {
+          "kernel_size": 1,
+          "stride": 1,
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/33:16:compute:1",
+      "kind": "compute",
+      "label": "21: ReLU",
+      "parent": "motif:CNN block:8",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 33,
+          "end_line": 33,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.21",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/34:16:compute:1",
+      "kind": "compute",
+      "label": "22: AvgPool2d",
+      "parent": "motif:CNN block:8",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 34,
+          "end_line": 34,
+          "column": 16,
+          "end_column": 64,
+          "symbol": "NiN.forward",
+          "expression": "nn.AvgPool2d(kernel_size=8, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "framework_type": "torch.nn.AvgPool2d",
+      "module_path": "classifier.22",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": 8,
+          "stride": 1,
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/39:12:composite:1/39:12:interface:1",
+      "kind": "interface",
+      "label": "out",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source_parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 39,
+          "end_line": 39,
+          "column": 12,
+          "end_column": 30,
+          "symbol": "NiN.forward",
+          "expression": "self.classifier(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/38:4:composite:1/39:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 39,
+          "end_line": 39,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "NiN.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/38:4:composite:1/40:24:compute:1",
+      "kind": "compute",
+      "label": "size",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 40,
+          "end_line": 40,
+          "column": 24,
+          "end_column": 33,
+          "symbol": "NiN.forward",
+          "expression": "x.size(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.size",
+      "arguments": {
+        "args": [
+          0
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/38:4:composite:1/40:35:state:1",
+      "kind": "state",
+      "label": "self.num_classes",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 40,
+          "end_line": 40,
+          "column": 35,
+          "end_column": 51,
+          "symbol": "NiN.forward",
+          "expression": "self.num_classes"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "self.num_classes"
+      }
+    },
+    {
+      "id": "model/38:4:composite:1/40:17:compute:1",
+      "kind": "compute",
+      "label": "view",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 40,
+          "end_line": 40,
+          "column": 17,
+          "end_column": 52,
+          "symbol": "NiN.forward",
+          "expression": "x.view(x.size(0), self.num_classes)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "x.view",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x.size(0)"
+          },
+          {
+            "unresolved": "self.num_classes"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/38:4:composite:1/40:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "logits",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 40,
+          "end_line": 40,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "NiN.forward",
+          "expression": "logits"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/38:4:composite:1/42:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/38:4:composite:1",
+      "source_parent": "model/38:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 42,
+          "end_line": 42,
+          "column": 8,
+          "end_column": 21,
+          "symbol": "NiN.forward",
+          "expression": "return logits"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "motif:CNN block:0",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 10,
+          "end_line": 10,
+          "column": 16,
+          "end_column": 69,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(3, 192, kernel_size=5, stride=1, padding=2)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 11,
+          "end_line": 11,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:0"
+    },
+    {
+      "id": "motif:CNN block:1",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 12,
+          "end_line": 12,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 160, kernel_size=1, stride=1, padding=0)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 13,
+          "end_line": 13,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:1"
+    },
+    {
+      "id": "motif:CNN block:2",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 14,
+          "end_line": 14,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(160, 96, kernel_size=1, stride=1, padding=0)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 15,
+          "end_line": 15,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 16,
+          "end_line": 16,
+          "column": 16,
+          "end_column": 64,
+          "symbol": "NiN.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:2"
+    },
+    {
+      "id": "motif:CNN block:3",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 19,
+          "end_line": 19,
+          "column": 16,
+          "end_column": 70,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(96, 192, kernel_size=5, stride=1, padding=2)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 20,
+          "end_line": 20,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:3"
+    },
+    {
+      "id": "motif:CNN block:4",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 21,
+          "end_line": 21,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=1, stride=1, padding=0)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 22,
+          "end_line": 22,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:4"
+    },
+    {
+      "id": "motif:CNN block:5",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 23,
+          "end_line": 23,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=1, stride=1, padding=0)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 24,
+          "end_line": 24,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 25,
+          "end_line": 25,
+          "column": 16,
+          "end_column": 64,
+          "symbol": "NiN.forward",
+          "expression": "nn.AvgPool2d(kernel_size=3, stride=2, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:5"
+    },
+    {
+      "id": "motif:CNN block:6",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 28,
+          "end_line": 28,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=3, stride=1, padding=1)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 29,
+          "end_line": 29,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:6"
+    },
+    {
+      "id": "motif:CNN block:7",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 30,
+          "end_line": 30,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 192, kernel_size=1, stride=1, padding=0)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 31,
+          "end_line": 31,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:7"
+    },
+    {
+      "id": "motif:CNN block:8",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/38:4:composite:1/39:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 32,
+          "end_line": 32,
+          "column": 16,
+          "end_column": 71,
+          "symbol": "NiN.forward",
+          "expression": "nn.Conv2d(192, 10, kernel_size=1, stride=1, padding=0)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 33,
+          "end_line": 33,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NiN.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+          "line": 34,
+          "end_line": 34,
+          "column": 16,
+          "end_column": 64,
+          "symbol": "NiN.forward",
+          "expression": "nn.AvgPool2d(kernel_size=8, stride=1, padding=0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:8"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/38:4:composite:1/38:22:interface:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/10:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/10:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/11:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00001"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/11:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/12:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00002"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/12:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/13:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00003"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/13:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/14:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00004"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/14:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/15:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00005"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/15:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/16:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00006"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/16:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/17:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00007"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/17:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/19:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00008"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/19:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/20:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00009"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/20:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/21:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00010"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/21:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/22:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00011"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/22:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/23:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00012"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/23:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/24:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00013"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/24:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/25:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00014"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/25:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/26:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00015"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/26:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/28:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00016"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/28:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/29:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00017"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/29:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/30:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00018"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/30:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/31:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00019"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/31:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/32:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00020"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/32:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/33:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00021"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/33:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/34:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00022"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/34:16:compute:1",
+      "target": "model/38:4:composite:1/39:12:composite:1/39:12:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00023"
+    },
+    {
+      "source": "model/38:4:composite:1/39:12:composite:1/39:12:interface:1",
+      "target": "model/38:4:composite:1/39:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/38:4:composite:1/39:8:value-alias:1",
+      "target": "model/38:4:composite:1/40:24:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/38:4:composite:1/39:8:value-alias:1",
+      "target": "model/38:4:composite:1/40:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/38:4:composite:1/40:24:compute:1",
+      "target": "model/38:4:composite:1/40:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00027"
+    },
+    {
+      "source": "model/38:4:composite:1/40:35:state:1",
+      "target": "model/38:4:composite:1/40:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00028"
+    },
+    {
+      "source": "model/38:4:composite:1/40:17:compute:1",
+      "target": "model/38:4:composite:1/40:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00029"
+    },
+    {
+      "source": "model/38:4:composite:1/40:8:value-alias:1",
+      "target": "model/38:4:composite:1/42:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00030"
+    }
+  ],
+  "branches": [],
+  "motifs": [
+    {
+      "id": "motif:CNN block:0",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/10:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/11:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:1",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/12:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/13:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:2",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/14:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/15:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/16:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:3",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/19:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/20:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:4",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/21:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/22:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:5",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/23:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/24:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/25:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:6",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/28:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/29:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:7",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/30:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/31:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:8",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/38:4:composite:1/39:12:composite:1/32:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/33:16:compute:1",
+        "model/38:4:composite:1/39:12:composite:1/34:16:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    }
+  ],
+  "diagnostics": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=1",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    }
+  ],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 11,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 13,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 15,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 20,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 22,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 24,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 29,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 31,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/mechanics/gradient-checkpointing-nin.ipynb#cell=24",
+      "line": 33,
+      "kind": "sequential-mutation-alias-unresolved"
+    }
+  ],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "69cb292cd7e6fb7275f45aa4294e0a12f9d3607a35ad75cf781d955dcb78c6b0"
+}

@@ -1,0 +1,2402 @@
+{
+  "schema": "archcanvas-architecture-document/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "ConditionalResidual",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "class": "ConditionalResidual",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+        "cell": null,
+        "sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+        "unit_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/96:4:composite:1",
+        "kind": "composite",
+        "label": "ConditionalResidual",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 101,
+            "column": 4,
+            "end_column": 20,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "def forward(self, x, other, flag):\n    if flag:\n        y = self.left(x)\n    else:\n        y = self.right(other)\n    return x + y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "ConditionalResidual"
+      },
+      {
+        "id": "model/96:4:composite:1/96:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 96,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/96:4:composite:1/96:25:interface:1",
+        "kind": "interface",
+        "label": "other",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 96,
+            "column": 25,
+            "end_column": 30,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "other"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "other"
+      },
+      {
+        "id": "model/96:4:composite:1/96:32:interface:1",
+        "kind": "interface",
+        "label": "flag",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 96,
+            "column": 32,
+            "end_column": 36,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "flag"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "flag"
+      },
+      {
+        "id": "model/96:4:composite:1/97:11:control:1",
+        "kind": "control",
+        "label": "flag",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 97,
+            "column": 11,
+            "end_column": 15,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "flag"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "diamond",
+          "fill": "#fff0c1"
+        },
+        "runtime_evidence": [],
+        "operator": "if"
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1",
+        "kind": "composite",
+        "label": "true",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 100,
+            "column": 8,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "if flag:\n    y = self.left(x)\nelse:\n    y = self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "conditional-region",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "true"
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "kind": "compute",
+        "label": "left · Linear",
+        "parent": "model/96:4:composite:1/97:8:composite:1",
+        "source_parent": "model/96:4:composite:1/97:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 98,
+            "end_line": 98,
+            "column": 16,
+            "end_column": 28,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "self.left(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "left",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1/93:20:parameter:1",
+        "kind": "parameter",
+        "label": "left.parameters",
+        "parent": "model/96:4:composite:1/97:8:composite:1",
+        "source_parent": "model/96:4:composite:1/97:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 93,
+            "end_line": 93,
+            "column": 20,
+            "end_column": 35,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "left",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "y",
+        "parent": "model/96:4:composite:1/97:8:composite:1",
+        "source_parent": "model/96:4:composite:1/97:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 98,
+            "end_line": 98,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2",
+        "kind": "composite",
+        "label": "false",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 100,
+            "column": 8,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "if flag:\n    y = self.left(x)\nelse:\n    y = self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "conditional-region",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "false"
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "kind": "compute",
+        "label": "right · Linear",
+        "parent": "model/96:4:composite:1/97:8:composite:2",
+        "source_parent": "model/96:4:composite:1/97:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 100,
+            "end_line": 100,
+            "column": 16,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "right",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2/94:21:parameter:1",
+        "kind": "parameter",
+        "label": "right.parameters",
+        "parent": "model/96:4:composite:1/97:8:composite:2",
+        "source_parent": "model/96:4:composite:1/97:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 94,
+            "end_line": 94,
+            "column": 21,
+            "end_column": 36,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "right",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "y",
+        "parent": "model/96:4:composite:1/97:8:composite:2",
+        "source_parent": "model/96:4:composite:1/97:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 100,
+            "end_line": 100,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "y · branch join",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 100,
+            "column": 8,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "if flag:\n    y = self.left(x)\nelse:\n    y = self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "operator": "phi"
+      },
+      {
+        "id": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 101,
+            "end_line": 101,
+            "column": 15,
+            "end_column": 20,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "x + y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add"
+      },
+      {
+        "id": "model/96:4:composite:1/101:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 101,
+            "end_line": 101,
+            "column": 8,
+            "end_column": 20,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "return x + y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/96:4:composite:1/96:32:interface:1",
+        "target": "model/96:4:composite:1/97:11:control:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/96:4:composite:1/97:11:control:1",
+        "target": "model/96:4:composite:1/97:8:composite:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "true",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:1/93:20:parameter:1",
+        "target": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00002"
+      },
+      {
+        "source": "model/96:4:composite:1/96:22:interface:1",
+        "target": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "target": "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/96:4:composite:1/97:11:control:1",
+        "target": "model/96:4:composite:1/97:8:composite:2",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "false",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:2/94:21:parameter:1",
+        "target": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00006"
+      },
+      {
+        "source": "model/96:4:composite:1/96:25:interface:1",
+        "target": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "target": "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "target": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "true",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "true"
+        },
+        "id": "e00009"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1",
+        "target": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "false",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "false"
+        },
+        "id": "e00010"
+      },
+      {
+        "source": "model/96:4:composite:1/96:22:interface:1",
+        "target": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:value-alias:1",
+        "target": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/96:4:composite:1/101:15:compute:1",
+        "target": "model/96:4:composite:1/101:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      }
+    ],
+    "branches": [
+      {
+        "id": "model/96:4:composite:1/97:11:control:1",
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+        "line": 97,
+        "column": 8,
+        "outcomes": [
+          "true",
+          "false"
+        ],
+        "kind": "if"
+      }
+    ],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "39cae177e70e927cc2b977cd452d6eaf58378a3136198f5c8ecd2cf2fae81382"
+  },
+  "state": {
+    "view": "publication"
+  },
+  "architecture": {
+    "schema": "archcanvas-architecture/1",
+    "rule_version": "architecture-rules/3",
+    "canonical_digest": "39cae177e70e927cc2b977cd452d6eaf58378a3136198f5c8ecd2cf2fae81382",
+    "nodes": [
+      {
+        "id": "model/96:4:composite:1",
+        "kind": "composite",
+        "label": "ConditionalResidual",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 101,
+            "column": 4,
+            "end_column": 20,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "def forward(self, x, other, flag):\n    if flag:\n        y = self.left(x)\n    else:\n        y = self.right(other)\n    return x + y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "ConditionalResidual",
+        "paper": {
+          "title": "ConditionalResidual",
+          "caption": "Module",
+          "lines": [
+            "ConditionalResidual"
+          ],
+          "captions": [
+            "Module"
+          ],
+          "font": 16,
+          "fill": "#f1f4fa",
+          "stroke": "#62748c",
+          "category": "module",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/96:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 96,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/96:25:interface:1",
+        "kind": "interface",
+        "label": "other",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 96,
+            "column": 25,
+            "end_column": 30,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "other"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "other",
+        "paper": {
+          "title": "other",
+          "caption": "",
+          "lines": [
+            "other"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/96:32:interface:1",
+        "kind": "interface",
+        "label": "flag",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 96,
+            "end_line": 96,
+            "column": 32,
+            "end_column": 36,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "flag"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "flag",
+        "paper": {
+          "title": "flag",
+          "caption": "",
+          "lines": [
+            "flag"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:11:control:1",
+        "kind": "control",
+        "label": "flag",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 97,
+            "column": 11,
+            "end_column": 15,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "flag"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "diamond",
+          "fill": "#fff0c1"
+        },
+        "runtime_evidence": [],
+        "operator": "if",
+        "paper": {
+          "title": "flag",
+          "caption": "if",
+          "lines": [
+            "flag"
+          ],
+          "captions": [
+            "if"
+          ],
+          "font": 16,
+          "fill": "#fff7dc",
+          "stroke": "#a48c3d",
+          "category": "control",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1",
+        "kind": "composite",
+        "label": "true",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 100,
+            "column": 8,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "if flag:\n    y = self.left(x)\nelse:\n    y = self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "conditional-region",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "true"
+        },
+        "paper": {
+          "title": "true",
+          "caption": "conditional-region",
+          "lines": [
+            "true"
+          ],
+          "captions": [
+            "conditional-region"
+          ],
+          "font": 16,
+          "fill": "#fff7dc",
+          "stroke": "#a48c3d",
+          "category": "control",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "kind": "compute",
+        "label": "left · Linear",
+        "parent": "model/96:4:composite:1/97:8:composite:1",
+        "source_parent": "model/96:4:composite:1/97:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 98,
+            "end_line": 98,
+            "column": 16,
+            "end_column": 28,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "self.left(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "left",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        },
+        "paper": {
+          "title": "left · Linear",
+          "caption": "8 → 8",
+          "lines": [
+            "left · Linear"
+          ],
+          "captions": [
+            "8 → 8"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1/93:20:parameter:1",
+        "kind": "parameter",
+        "label": "left.parameters",
+        "parent": "model/96:4:composite:1/97:8:composite:1",
+        "source_parent": "model/96:4:composite:1/97:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 93,
+            "end_line": 93,
+            "column": 20,
+            "end_column": 35,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "left",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "left.parameters",
+          "caption": "parameter",
+          "lines": [
+            "left.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "y",
+        "parent": "model/96:4:composite:1/97:8:composite:1",
+        "source_parent": "model/96:4:composite:1/97:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 98,
+            "end_line": 98,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "y",
+          "caption": "Value",
+          "lines": [
+            "y"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2",
+        "kind": "composite",
+        "label": "false",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 100,
+            "column": 8,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "if flag:\n    y = self.left(x)\nelse:\n    y = self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "conditional-region",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "false"
+        },
+        "paper": {
+          "title": "false",
+          "caption": "conditional-region",
+          "lines": [
+            "false"
+          ],
+          "captions": [
+            "conditional-region"
+          ],
+          "font": 16,
+          "fill": "#fff7dc",
+          "stroke": "#a48c3d",
+          "category": "control",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "kind": "compute",
+        "label": "right · Linear",
+        "parent": "model/96:4:composite:1/97:8:composite:2",
+        "source_parent": "model/96:4:composite:1/97:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 100,
+            "end_line": 100,
+            "column": 16,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "right",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            8
+          ],
+          "kwargs": {}
+        },
+        "paper": {
+          "title": "right · Linear",
+          "caption": "8 → 8",
+          "lines": [
+            "right · Linear"
+          ],
+          "captions": [
+            "8 → 8"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2/94:21:parameter:1",
+        "kind": "parameter",
+        "label": "right.parameters",
+        "parent": "model/96:4:composite:1/97:8:composite:2",
+        "source_parent": "model/96:4:composite:1/97:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 94,
+            "end_line": 94,
+            "column": 21,
+            "end_column": 36,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "right",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "right.parameters",
+          "caption": "parameter",
+          "lines": [
+            "right.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1",
+        "kind": "value-alias",
+        "label": "y",
+        "parent": "model/96:4:composite:1/97:8:composite:2",
+        "source_parent": "model/96:4:composite:1/97:8:composite:2",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 100,
+            "end_line": 100,
+            "column": 12,
+            "end_column": 13,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "y",
+          "caption": "Value",
+          "lines": [
+            "y"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "y · branch join",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 97,
+            "end_line": 100,
+            "column": 8,
+            "end_column": 33,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "if flag:\n    y = self.left(x)\nelse:\n    y = self.right(other)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "operator": "phi",
+        "paper": {
+          "title": "y · branch join",
+          "caption": "phi",
+          "lines": [
+            "y · branch join"
+          ],
+          "captions": [
+            "phi"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 101,
+            "end_line": 101,
+            "column": 15,
+            "end_column": 20,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "x + y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "paper": {
+          "title": "add",
+          "caption": "add",
+          "lines": [
+            "add"
+          ],
+          "captions": [
+            "add"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": "+",
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "id": "model/96:4:composite:1/101:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/96:4:composite:1",
+        "source_parent": "model/96:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 101,
+            "end_line": 101,
+            "column": 8,
+            "end_column": 20,
+            "symbol": "ConditionalResidual.forward",
+            "expression": "return x + y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/96:4:composite:1/96:32:interface:1",
+        "target": "model/96:4:composite:1/97:11:control:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/96:4:composite:1/97:11:control:1",
+        "target": "model/96:4:composite:1/97:8:composite:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "true",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:1/93:20:parameter:1",
+        "target": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00002"
+      },
+      {
+        "source": "model/96:4:composite:1/96:22:interface:1",
+        "target": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "target": "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/96:4:composite:1/97:11:control:1",
+        "target": "model/96:4:composite:1/97:8:composite:2",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "false",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:2/94:21:parameter:1",
+        "target": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00006"
+      },
+      {
+        "source": "model/96:4:composite:1/96:25:interface:1",
+        "target": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "target": "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "target": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "true",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "true"
+        },
+        "id": "e00009"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1",
+        "target": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "false",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "false"
+        },
+        "id": "e00010"
+      },
+      {
+        "source": "model/96:4:composite:1/96:22:interface:1",
+        "target": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:value-alias:1",
+        "target": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/96:4:composite:1/101:15:compute:1",
+        "target": "model/96:4:composite:1/101:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      }
+    ],
+    "findings": [],
+    "limitations": [
+      "Local dependency patterns do not certify arbitrary-input behavior.",
+      "Unknown operations, tuple slots, conditional joins and loop templates remain explicit.",
+      "No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names."
+    ],
+    "publication": {
+      "schema": "archcanvas-publication-plan/1",
+      "structural_regions": 0
+    }
+  },
+  "publication": {
+    "schema": "archcanvas-publication/1",
+    "focus": "model/96:4:composite:1",
+    "auto": true,
+    "open": [
+      "model/96:4:composite:1"
+    ],
+    "budget": 12,
+    "boundary": [],
+    "wire_bundles": [],
+    "configuration_arithmetic": [],
+    "paper_width_mm": 180,
+    "fit_page": true,
+    "min_font_pt": 8,
+    "unknowns": 0
+  },
+  "layout": {
+    "bounds": {
+      "x": 4,
+      "y": 2,
+      "w": 622,
+      "h": 774
+    },
+    "nodes": [
+      {
+        "id": "model/96:4:composite:1",
+        "x": 32,
+        "y": 30,
+        "title": "ConditionalResidual",
+        "caption": "Module",
+        "lines": [
+          "ConditionalResidual"
+        ],
+        "captions": [
+          "Module"
+        ],
+        "font": 16,
+        "fill": "#f1f4fa",
+        "stroke": "#62748c",
+        "category": "module",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 566,
+        "h": 718,
+        "expanded": true,
+        "header": 66,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/96:22:interface:1",
+        "x": 56,
+        "y": 96,
+        "title": "x",
+        "caption": "",
+        "lines": [
+          "x"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/96:25:interface:1",
+        "x": 420,
+        "y": 96,
+        "title": "other",
+        "caption": "",
+        "lines": [
+          "other"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/96:32:interface:1",
+        "x": 238,
+        "y": 96,
+        "title": "flag",
+        "caption": "",
+        "lines": [
+          "flag"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/97:11:control:1",
+        "x": 209,
+        "y": 200,
+        "title": "flag",
+        "caption": "if",
+        "lines": [
+          "flag"
+        ],
+        "captions": [
+          "if"
+        ],
+        "font": 16,
+        "fill": "#fff7dc",
+        "stroke": "#a48c3d",
+        "category": "control",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:1",
+        "x": 89,
+        "y": 324,
+        "title": "true",
+        "caption": "conditional-region",
+        "lines": [
+          "true"
+        ],
+        "captions": [
+          "conditional-region"
+        ],
+        "font": 16,
+        "fill": "#fff7dc",
+        "stroke": "#a48c3d",
+        "category": "control",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:composite:2",
+        "x": 329,
+        "y": 324,
+        "title": "false",
+        "caption": "conditional-region",
+        "lines": [
+          "false"
+        ],
+        "captions": [
+          "conditional-region"
+        ],
+        "font": 16,
+        "fill": "#fff7dc",
+        "stroke": "#a48c3d",
+        "category": "control",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/97:8:value-alias:1",
+        "x": 209,
+        "y": 448,
+        "title": "y · branch join",
+        "caption": "phi",
+        "lines": [
+          "y · branch join"
+        ],
+        "captions": [
+          "phi"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/101:15:compute:1",
+        "x": 291,
+        "y": 572,
+        "title": "add",
+        "caption": "add",
+        "lines": [
+          "add"
+        ],
+        "captions": [
+          "add"
+        ],
+        "font": 16,
+        "fill": "#f7eef7",
+        "stroke": "#90678e",
+        "category": "algebra",
+        "unknown_count": 0,
+        "symbol": "+",
+        "w": 48,
+        "h": 48,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/96:4:composite:1/101:8:interface:1",
+        "x": 238,
+        "y": 680,
+        "title": "return",
+        "caption": "",
+        "lines": [
+          "return"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/96:4:composite:1/96:32:interface:1",
+        "target": "model/96:4:composite:1/97:11:control:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00000",
+        "originals": [
+          "e00000"
+        ],
+        "canonical_source": "model/96:4:composite:1/96:32:interface:1",
+        "canonical_target": "model/96:4:composite:1/97:11:control:1",
+        "resolved_source": "model/96:4:composite:1/96:32:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 315,
+              "y": 140
+            },
+            {
+              "x": 315,
+              "y": 200
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/97:11:control:1",
+        "target": "model/96:4:composite:1/97:8:composite:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "true",
+        "evidence": "source-dependency",
+        "id": "e00001",
+        "originals": [
+          "e00001"
+        ],
+        "canonical_source": "model/96:4:composite:1/97:11:control:1",
+        "canonical_target": "model/96:4:composite:1/97:8:composite:1",
+        "resolved_source": "model/96:4:composite:1/97:11:control:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 285,
+              "y": 264
+            },
+            {
+              "x": 285,
+              "y": 308
+            },
+            {
+              "x": 225,
+              "y": 308
+            },
+            {
+              "x": 225,
+              "y": 324
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/96:22:interface:1",
+        "target": "model/96:4:composite:1/97:8:composite:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00003",
+        "originals": [
+          "e00003"
+        ],
+        "canonical_source": "model/96:4:composite:1/96:22:interface:1",
+        "canonical_target": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "resolved_source": "model/96:4:composite:1/96:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 112.66666666666666,
+              "y": 140
+            },
+            {
+              "x": 112.66666666666666,
+              "y": 308
+            },
+            {
+              "x": 165,
+              "y": 308
+            },
+            {
+              "x": 165,
+              "y": 324
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/97:11:control:1",
+        "target": "model/96:4:composite:1/97:8:composite:2",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "false",
+        "evidence": "source-dependency",
+        "id": "e00005",
+        "originals": [
+          "e00005"
+        ],
+        "canonical_source": "model/96:4:composite:1/97:11:control:1",
+        "canonical_target": "model/96:4:composite:1/97:8:composite:2",
+        "resolved_source": "model/96:4:composite:1/97:11:control:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 345,
+              "y": 264
+            },
+            {
+              "x": 345,
+              "y": 308
+            },
+            {
+              "x": 405,
+              "y": 308
+            },
+            {
+              "x": 405,
+              "y": 324
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/96:25:interface:1",
+        "target": "model/96:4:composite:1/97:8:composite:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007",
+        "originals": [
+          "e00007"
+        ],
+        "canonical_source": "model/96:4:composite:1/96:25:interface:1",
+        "canonical_target": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "resolved_source": "model/96:4:composite:1/96:25:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 497,
+              "y": 140
+            },
+            {
+              "x": 497,
+              "y": 308
+            },
+            {
+              "x": 465,
+              "y": 308
+            },
+            {
+              "x": 465,
+              "y": 324
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:1",
+        "target": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "true",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "true"
+        },
+        "id": "e00009",
+        "originals": [
+          "e00004",
+          "e00009"
+        ],
+        "canonical_source": "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "canonical_target": "model/96:4:composite:1/97:8:value-alias:1",
+        "resolved_source": "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "paper_labels": [
+          {
+            "text": "true",
+            "evidence": "source branch condition"
+          }
+        ],
+        "route": {
+          "points": [
+            {
+              "x": 195,
+              "y": 388
+            },
+            {
+              "x": 195,
+              "y": 432
+            },
+            {
+              "x": 285,
+              "y": 432
+            },
+            {
+              "x": 285,
+              "y": 448
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:composite:2",
+        "target": "model/96:4:composite:1/97:8:value-alias:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "false",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "model/96:4:composite:1/97:11:control:1",
+          "outcome": "false"
+        },
+        "id": "e00010",
+        "originals": [
+          "e00008",
+          "e00010"
+        ],
+        "canonical_source": "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1",
+        "canonical_target": "model/96:4:composite:1/97:8:value-alias:1",
+        "resolved_source": "model/96:4:composite:1/97:8:composite:2/100:16:compute:1",
+        "paper_labels": [
+          {
+            "text": "false",
+            "evidence": "source branch condition"
+          }
+        ],
+        "route": {
+          "points": [
+            {
+              "x": 435,
+              "y": 388
+            },
+            {
+              "x": 435,
+              "y": 432
+            },
+            {
+              "x": 345,
+              "y": 432
+            },
+            {
+              "x": 345,
+              "y": 448
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/96:22:interface:1",
+        "target": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00011",
+        "originals": [
+          "e00011"
+        ],
+        "canonical_source": "model/96:4:composite:1/96:22:interface:1",
+        "canonical_target": "model/96:4:composite:1/101:15:compute:1",
+        "resolved_source": "model/96:4:composite:1/96:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 153.33333333333331,
+              "y": 140
+            },
+            {
+              "x": 153.33333333333331,
+              "y": 156
+            },
+            {
+              "x": 212,
+              "y": 156
+            },
+            {
+              "x": 212,
+              "y": 94
+            },
+            {
+              "x": 54,
+              "y": 94
+            },
+            {
+              "x": 54,
+              "y": 556.1486082400022
+            },
+            {
+              "x": 312.3333333333333,
+              "y": 556.1486082400022
+            },
+            {
+              "x": 312.3333333333333,
+              "y": 572.1486082400022
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/97:8:value-alias:1",
+        "target": "model/96:4:composite:1/101:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00012",
+        "originals": [
+          "e00012"
+        ],
+        "canonical_source": "model/96:4:composite:1/97:8:value-alias:1",
+        "canonical_target": "model/96:4:composite:1/101:15:compute:1",
+        "resolved_source": "model/96:4:composite:1/97:8:value-alias:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 315,
+              "y": 512
+            },
+            {
+              "x": 315,
+              "y": 556.1486082400022
+            },
+            {
+              "x": 317.6666666666667,
+              "y": 556.1486082400022
+            },
+            {
+              "x": 317.6666666666667,
+              "y": 572.1486082400022
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/96:4:composite:1/101:15:compute:1",
+        "target": "model/96:4:composite:1/101:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00013",
+        "originals": [
+          "e00013"
+        ],
+        "canonical_source": "model/96:4:composite:1/101:15:compute:1",
+        "canonical_target": "model/96:4:composite:1/101:8:interface:1",
+        "resolved_source": "model/96:4:composite:1/101:15:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 315,
+              "y": 620
+            },
+            {
+              "x": 315,
+              "y": 680
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      }
+    ],
+    "edge_accounting": {
+      "visible": [
+        "e00000",
+        "e00001",
+        "e00003",
+        "e00005",
+        "e00007",
+        "e00009",
+        "e00010",
+        "e00011",
+        "e00012",
+        "e00013"
+      ],
+      "internal": [],
+      "excluded": [],
+      "contracted": [
+        "e00004",
+        "e00008"
+      ],
+      "attached": [
+        "e00002",
+        "e00006"
+      ]
+    },
+    "node_accounting": {
+      "visible": [
+        "model/96:4:composite:1",
+        "model/96:4:composite:1/96:22:interface:1",
+        "model/96:4:composite:1/96:25:interface:1",
+        "model/96:4:composite:1/96:32:interface:1",
+        "model/96:4:composite:1/97:11:control:1",
+        "model/96:4:composite:1/97:8:composite:1",
+        "model/96:4:composite:1/97:8:composite:2",
+        "model/96:4:composite:1/97:8:value-alias:1",
+        "model/96:4:composite:1/101:15:compute:1",
+        "model/96:4:composite:1/101:8:interface:1"
+      ],
+      "collapsed": [
+        "model/96:4:composite:1/97:8:composite:1/98:16:compute:1",
+        "model/96:4:composite:1/97:8:composite:2/100:16:compute:1"
+      ],
+      "contracted": [
+        "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1",
+        "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1"
+      ],
+      "attached": [
+        "model/96:4:composite:1/97:8:composite:1/93:20:parameter:1",
+        "model/96:4:composite:1/97:8:composite:2/94:21:parameter:1"
+      ],
+      "excluded": []
+    },
+    "representatives": {
+      "model/96:4:composite:1": "model/96:4:composite:1",
+      "model/96:4:composite:1/96:22:interface:1": "model/96:4:composite:1/96:22:interface:1",
+      "model/96:4:composite:1/96:25:interface:1": "model/96:4:composite:1/96:25:interface:1",
+      "model/96:4:composite:1/96:32:interface:1": "model/96:4:composite:1/96:32:interface:1",
+      "model/96:4:composite:1/97:11:control:1": "model/96:4:composite:1/97:11:control:1",
+      "model/96:4:composite:1/97:8:composite:1": "model/96:4:composite:1/97:8:composite:1",
+      "model/96:4:composite:1/97:8:composite:1/98:16:compute:1": "model/96:4:composite:1/97:8:composite:1",
+      "model/96:4:composite:1/97:8:composite:1/93:20:parameter:1": "model/96:4:composite:1/97:8:composite:1",
+      "model/96:4:composite:1/97:8:composite:1/98:12:value-alias:1": "model/96:4:composite:1/97:8:composite:1",
+      "model/96:4:composite:1/97:8:composite:2": "model/96:4:composite:1/97:8:composite:2",
+      "model/96:4:composite:1/97:8:composite:2/100:16:compute:1": "model/96:4:composite:1/97:8:composite:2",
+      "model/96:4:composite:1/97:8:composite:2/94:21:parameter:1": "model/96:4:composite:1/97:8:composite:2",
+      "model/96:4:composite:1/97:8:composite:2/100:12:value-alias:1": "model/96:4:composite:1/97:8:composite:2",
+      "model/96:4:composite:1/97:8:value-alias:1": "model/96:4:composite:1/97:8:value-alias:1",
+      "model/96:4:composite:1/101:15:compute:1": "model/96:4:composite:1/101:15:compute:1",
+      "model/96:4:composite:1/101:8:interface:1": "model/96:4:composite:1/101:8:interface:1"
+    },
+    "labels": [
+      {
+        "x": 203,
+        "y": 398.5,
+        "w": 41.64,
+        "h": 23,
+        "text": "true",
+        "edge": "e00009"
+      },
+      {
+        "x": 443,
+        "y": 398.5,
+        "w": 45.41,
+        "h": 23,
+        "text": "false",
+        "edge": "e00010"
+      }
+    ]
+  },
+  "diagnostics": {
+    "route_failures": [],
+    "publication": {
+      "schema": "publication-quality/1",
+      "route_strategy": "neighbors-short",
+      "wire_length": 2206.3,
+      "min_print_font_pt": 10.66,
+      "target_min_font_pt": 8,
+      "requested_width_mm": 180,
+      "width_mm": 180,
+      "height_mm": 224,
+      "route_failures": [],
+      "unplaced_port_labels": [],
+      "line_geometry": {
+        "crossings": 0,
+        "overlapping_paths": [],
+        "unrelated_contacts": []
+      },
+      "issues": []
+    },
+    "routing": {
+      "selected": "neighbors-short",
+      "baseline_crossings": 2,
+      "refinement": {
+        "attempts": 4,
+        "accepted": [
+          {
+            "phase": "crossings",
+            "edge": "e00011",
+            "crossing_cost": 540,
+            "stub_length": 16,
+            "crossings": [
+              1,
+              0
+            ],
+            "contacts": [
+              0,
+              0
+            ]
+          }
+        ],
+        "before_crossings": 1,
+        "before_contacts": 0,
+        "after_crossings": 0,
+        "after_contacts": 0
+      },
+      "candidates": [
+        {
+          "strategy": "canonical-short",
+          "crossings": 2,
+          "issues": [],
+          "wire_length": 2035,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-short",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1915,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-long",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1915,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "canonical-long",
+          "crossings": 2,
+          "issues": [],
+          "wire_length": 2035,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-clear-short",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1915,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-clear-long",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1915,
+          "min_print_font_pt": 10.66,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        }
+      ]
+    }
+  }
+}

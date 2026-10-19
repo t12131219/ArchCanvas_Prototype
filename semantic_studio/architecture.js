@@ -3,7 +3,7 @@
  * Unknown operators are boundaries, not invitations to manufacture a template. */
 (function(root){
   'use strict';
-  const VERSION='architecture-rules/3';
+  const VERSION='architecture-rules/4';
   const copy=x=>JSON.parse(JSON.stringify(x));
   const flow=e=>['data','alias','interface-binding'].includes(e.kind);
   const transparent=n=>n&&(n.kind==='interface'||n.kind==='value-alias')&&n.slot==null&&!n.operator;
@@ -216,6 +216,17 @@
       if(members.includes(null)||members.length<2){f.presentation='annotation';continue;}
       const closure=new Set(members.flatMap(id=>[id,...descendants(id)]));
       if(f.excluded.some(id=>closure.has(id))||members.some(id=>by.get(id)?.kind==='opaque')){f.presentation='annotation';continue;}
+      // A source-backed motif may already own this exact computation set.
+      // Attach the stronger finding to that container instead of nesting an
+      // identical semantic enclosure inside it. Canonical ownership survives.
+      const existing=by.get(parent),prior=ir.motifs?.find(m=>m.id===existing?.motif);
+      const computations=ids=>new Set(ids.filter(id=>['compute','opaque'].includes(original.get(id)?.kind)));
+      if(prior){const expected=computations(prior.members),actual=computations(f.members);
+        if(expected.size&&expected.size===actual.size&&[...expected].every(id=>actual.has(id))){
+          existing.source_label=existing.label;existing.label=f.label;existing.semantic_type=f.rule;existing.finding=f.id;
+          f.presentation='annotation';f.presentation_node=parent;f.presentation_reason='Existing source motif owns the same computation set';continue;
+        }
+      }
       const partialOverlap=members.some(id=>{
         const grouped=findings.find(other=>other.id===by.get(id)?.finding);
         return grouped&&!grouped.members.every(id=>f.members.includes(id));
@@ -247,7 +258,39 @@
         target:e.target,target_port:e.target_port,evidence:e.evidence,...(e.condition?{condition:copy(e.condition)}:{})
       }));
     }
+    // Reviewed source contracts annotate existing nodes. They do not replace
+    // canonical topology or select a whole-model template.
+    const contracts=copy(ir.semantic_contracts||[]),design=[];
+    for(const c of contracts){
+      const n=by.get(c.node);if(!n||c.rule_version!=='source-contracts/1'||!c.members.every(id=>original.has(id)))continue;
+      n.semantic_contracts=[...(n.semantic_contracts||[]),c.id];
+      n.contract_evidence=[...(n.contract_evidence||[]),{id:c.id,rule:c.rule,proof:c.proof,scope:c.scope,not_asserted:c.not_asserted}];
+      if(['multihead-attention','scaled-dot-product-attention','feed-forward'].includes(c.rule)){
+        n.source_label=n.label;n.semantic_type=c.rule;
+        n.label=c.rule==='feed-forward'?'Feed-forward':c.rule==='multihead-attention'?'Multi-head attention':'Scaled dot-product attention';
+        n.contract_roles=copy(c.roles);
+      }
+      if(c.rule.startsWith('residual-'))design.push({kind:'bypass',certificate:c.id,...copy(c.roles)});
+      if(c.roles.projections)design.push({kind:'parallel-projections',certificate:c.id,parent:c.node,members:Object.values(c.roles.projections),roles:copy(c.roles.projections)});
+      findings.push({id:c.id,rule:c.rule,label:c.rule,members:c.members,roles:c.roles,proof:c.proof,excluded:[],
+        rule_version:c.rule_version,evidence_scope:'source-contract',presentation:'annotation',certificate:c.id});
+    }
+    for(const n of nodes)if(n.repeat_contract)design.push({kind:'serial-sequence',node:n.id,...copy(n.repeat_contract)});
+    for(const a of ir.observation_index?.module_associations||[]){const n=by.get(a.node);if(n)n.observed_calls=copy(a);}
+    for(const g of ir.observation_index?.trace_groups||[]){
+      if(!g.complete_trace||g.runs.length<2||!g.runs.every(r=>by.has(r.node)))continue;
+      const roots=g.runs.map(r=>by.get(r.node)),parent=roots[0].parent;
+      if(!roots.every(n=>n.parent===parent))continue;
+      const members=roots.flatMap(n=>[n.id,...descendants(n.id)]),id=g.id;
+      const group={id,parent,kind:'composite',label:`Observed variant · ${g.runs.length} runs`,semantic_type:'observed-variant',
+        presentation_only:true,finding:id,source:[],runtime_evidence:roots.flatMap(n=>n.runtime_evidence||[]),evidence_status:'runtime-only',
+        canonical_members:members,boundary_ports:[],observation_group:copy(g),glyph:{shape:'frame',fill:'#e9f4ee'}};
+      nodes.push(group);by.set(id,group);for(const n of roots)n.parent=id;
+      findings.push({id,rule:'observed-trace-structure',label:group.label,members,roles:{representative:g.representative},
+        proof:[g.scope],excluded:[],evidence_scope:'observed-runs',presentation:'group',rule_version:'observation-index/1'});
+    }
     return {schema:'archcanvas-architecture/1',rule_version:VERSION,canonical_digest:ir.ir_digest,nodes,edges:ir.edges.map(copy),findings,
+      semantic_contracts:contracts,design_constraints:design,
       limitations:['Local dependency patterns do not certify arbitrary-input behavior.',
         'Unknown operations, tuple slots, conditional joins and loop templates remain explicit.',
         'No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names.']};

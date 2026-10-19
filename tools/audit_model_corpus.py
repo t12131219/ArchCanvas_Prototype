@@ -24,11 +24,13 @@ def manifest(root):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', type=Path, default=ROOT.parents[1] / 'Source_Code_Project/deeplearning-models-master/deeplearning-models-master')
+    parser.add_argument('--output', type=Path, default=ROOT / 'verification/architecture/corpus')
+    parser.add_argument('--skip-layout', action='store_true', help='extract only; run a selected layout audit separately')
     args = parser.parse_args()
     source = args.source.resolve()
     if not source.is_dir():
         parser.error('source collection is missing')
-    output = ROOT / 'verification/architecture/corpus'
+    output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     before = manifest(source)
     listing = inventory([source])
@@ -58,7 +60,7 @@ def main():
               'sources_read_only': before == after, 'extracted': sum(r['status'] == 'extracted-static' for r in results),
               'opaque': sum(r.get('opaque', 0) for r in results), 'without_opaque': sum(r.get('opaque') == 0 for r in results),
               'implementation_sha256': {name: digest((ROOT / name).read_bytes()) for name in
-                                        ['semantic_adapter/analyzer.py', 'semantic_adapter/motifs.py', 'semantic_adapter/sources.py', 'tools/audit_model_corpus.py']},
+                                        ['semantic_adapter/analyzer.py', 'semantic_adapter/construction.py', 'semantic_adapter/contracts.py', 'semantic_adapter/schema.py', 'semantic_adapter/motifs.py', 'semantic_adapter/sources.py', 'tools/audit_model_corpus.py']},
               'limitations': ['Successful extraction is not complete semantic or runtime support.',
                               'Notebook cell identity is retained; no training, downloads or model initialization is executed.',
                               'External wrappers, dynamic constructor factories and loop binding can remain opaque.'],
@@ -67,7 +69,8 @@ def main():
     save(output / 'extraction.json', report)
     if not report['sources_read_only'] or report['extracted'] != report['candidates']:
         raise SystemExit('source changed or candidate extraction failed; inspect extraction.json')
-    subprocess.run(['node', str(ROOT / 'tools/audit_model_corpus.cjs'), str(output)], cwd=ROOT, check=True)
+    if not args.skip_layout:
+        subprocess.run(['node', str(ROOT / 'tools/audit_model_corpus.cjs'), str(output)], cwd=ROOT, check=True)
     print(json.dumps({k: v for k, v in report.items() if k not in ('results', 'diagnostics', 'limitations')}, ensure_ascii=False))
 
 

@@ -1,0 +1,6067 @@
+{
+  "note": "Recorded isolated CPU executions for original fixtures; test replay reuses evidence, not new executions.",
+  "receipts": {
+    "IndependentStack": {
+      "schema": "semantic-runtime/1",
+      "status": "passed",
+      "model_executed": true,
+      "binding": {
+        "interpreter": "/home/fzg/anaconda3/envs/ArchCanvas/bin/python",
+        "executable_sha256": "d1d72f62ffc60bba301a0a18a9116677733157eb75c2e1aa05be4ddd0631bfb4",
+        "environment": "/home/fzg/anaconda3/envs/ArchCanvas",
+        "source_root": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures",
+        "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+        "spec_digest": "939280e2b51ec7c5242c4c2b9d99aa7680426b13cb44b17d1eee7a1875674f32",
+        "worker_digest": "149550b0e400a1b34081d3becd4452edf86832c19c0b0851b34bca814c401a19",
+        "device": "cpu",
+        "source_generation": {
+          "composed_models.py": "1c7431ae493dae9e95f72fe39f601957565b0033b273a36aa8e09925d4e9ce08",
+          "configuration_composition.py": "99db5a251406b4469f3e6186c9d22cd758018727ebc286ac2052050fb2079a81",
+          "design_compositions.py": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+          "gated_composition.py": "eeefe6465e68ed00a42d5795420b2a1db6b1489deab8cfd4a13150c604ebd2c8",
+          "local_composition.py": "b1273c7693c2a2868463d447dc911d714015e39ad8e7c6428c47f6887a4a56ee",
+          "models.py": "380ba612d236f58d41cd54531a58d296d2f9522da8be3cea50ae6d4567d32834",
+          "module_sequences.py": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346"
+        }
+      },
+      "input_spec": {
+        "schema": "semantic-inputs/1",
+        "constructor": {},
+        "modes": [
+          "eval"
+        ],
+        "export": false,
+        "cases": [
+          {
+            "id": "zeros",
+            "seed": 0,
+            "inputs": {
+              "x": {
+                "shape": [
+                  2,
+                  8
+                ],
+                "dtype": "float32",
+                "fill": "zeros"
+              }
+            }
+          },
+          {
+            "id": "normal",
+            "seed": 7,
+            "inputs": {
+              "x": {
+                "shape": [
+                  2,
+                  8
+                ],
+                "dtype": "float32",
+                "fill": "normal"
+              }
+            }
+          }
+        ]
+      },
+      "isolation": {
+        "status": "passed",
+        "checks": {
+          "namespace_isolation": true,
+          "host_root_hidden": true,
+          "gpu_hidden": true,
+          "network_denied": true,
+          "process_denied": true,
+          "source_readonly": true
+        },
+        "mechanism": "Bubblewrap namespaces + x86-64 seccomp; no network, new tasks or host HOME"
+      },
+      "framework": "2.7.1+cu118",
+      "framework_origin": "/home/fzg/anaconda3/envs/ArchCanvas/lib/python3.11/site-packages/torch/__init__.py",
+      "device": "cpu",
+      "runs": [
+        {
+          "case": "zeros",
+          "mode": "eval",
+          "seed": 0,
+          "status": "passed",
+          "events": [
+            {
+              "id": "op0",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t0",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.0.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op1",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t1",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.0.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op2",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op3",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t2",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.0.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op4",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t3",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.0.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op5",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op6",
+              "operator": "aten.t.default",
+              "module_path": "units.1.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t4",
+                  "producer": "parameter:units.1.first.weight",
+                  "slot": "units.1.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op7",
+              "operator": "aten.addmm.default",
+              "module_path": "units.1.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t5",
+                  "producer": "parameter:units.1.first.bias",
+                  "slot": "units.1.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op8",
+              "operator": "aten.relu.default",
+              "module_path": "units.1",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op9",
+              "operator": "aten.t.default",
+              "module_path": "units.1.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t6",
+                  "producer": "parameter:units.1.last.weight",
+                  "slot": "units.1.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op10",
+              "operator": "aten.addmm.default",
+              "module_path": "units.1.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t7",
+                  "producer": "parameter:units.1.last.bias",
+                  "slot": "units.1.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op11",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.1",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op12",
+              "operator": "aten.t.default",
+              "module_path": "units.2.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.2.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op13",
+              "operator": "aten.addmm.default",
+              "module_path": "units.2.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.2.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op14",
+              "operator": "aten.relu.default",
+              "module_path": "units.2",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op15",
+              "operator": "aten.t.default",
+              "module_path": "units.2.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.2.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op16",
+              "operator": "aten.addmm.default",
+              "module_path": "units.2.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.2.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op17",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.2",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            }
+          ],
+          "module_events": [
+            {
+              "event": "enter",
+              "id": "call0",
+              "path": "",
+              "parent_call": null,
+              "module_type": "module_sequences.IndependentStack",
+              "inputs": []
+            },
+            {
+              "event": "enter",
+              "id": "call1",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call2",
+              "path": "units.0.first",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call4",
+              "path": "units.0.last",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call7",
+              "path": "units.1",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call8",
+              "path": "units.1.first",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.1.first",
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call10",
+              "path": "units.1.last",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.1.last",
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.1",
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call13",
+              "path": "units.2",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call14",
+              "path": "units.2.first",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.2.first",
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call16",
+              "path": "units.2.last",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.2.last",
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.2",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "units.0.first.weight",
+              "aliases": [
+                "units.0.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.first.bias",
+              "aliases": [
+                "units.0.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.weight",
+              "aliases": [
+                "units.0.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.bias",
+              "aliases": [
+                "units.0.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.weight",
+              "aliases": [
+                "units.1.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.bias",
+              "aliases": [
+                "units.1.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.weight",
+              "aliases": [
+                "units.1.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.bias",
+              "aliases": [
+                "units.1.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.weight",
+              "aliases": [
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.bias",
+              "aliases": [
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.weight",
+              "aliases": [
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.bias",
+              "aliases": [
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            }
+          ],
+          "buffers": [],
+          "outputs": [
+            {
+              "id": "t30",
+              "producer": "op17",
+              "slot": 0,
+              "shape": [
+                2,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": false
+            }
+          ],
+          "replay": {
+            "matched": true,
+            "output_digest": "1bc38200926c7c759cf26303adb2f8969288d9fedac9e9e691a1d18064c72bd9"
+          },
+          "branches": [],
+          "capture": {},
+          "truncated": false
+        },
+        {
+          "case": "normal",
+          "mode": "eval",
+          "seed": 7,
+          "status": "passed",
+          "events": [
+            {
+              "id": "op0",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t0",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.0.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op1",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t1",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.0.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op2",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op3",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t2",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.0.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op4",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t3",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.0.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op5",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op6",
+              "operator": "aten.t.default",
+              "module_path": "units.1.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t4",
+                  "producer": "parameter:units.1.first.weight",
+                  "slot": "units.1.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op7",
+              "operator": "aten.addmm.default",
+              "module_path": "units.1.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t5",
+                  "producer": "parameter:units.1.first.bias",
+                  "slot": "units.1.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op8",
+              "operator": "aten.relu.default",
+              "module_path": "units.1",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op9",
+              "operator": "aten.t.default",
+              "module_path": "units.1.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t6",
+                  "producer": "parameter:units.1.last.weight",
+                  "slot": "units.1.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op10",
+              "operator": "aten.addmm.default",
+              "module_path": "units.1.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t7",
+                  "producer": "parameter:units.1.last.bias",
+                  "slot": "units.1.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op11",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.1",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op12",
+              "operator": "aten.t.default",
+              "module_path": "units.2.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.2.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op13",
+              "operator": "aten.addmm.default",
+              "module_path": "units.2.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.2.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op14",
+              "operator": "aten.relu.default",
+              "module_path": "units.2",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op15",
+              "operator": "aten.t.default",
+              "module_path": "units.2.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.2.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op16",
+              "operator": "aten.addmm.default",
+              "module_path": "units.2.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.2.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op17",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.2",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            }
+          ],
+          "module_events": [
+            {
+              "event": "enter",
+              "id": "call0",
+              "path": "",
+              "parent_call": null,
+              "module_type": "module_sequences.IndependentStack",
+              "inputs": []
+            },
+            {
+              "event": "enter",
+              "id": "call1",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call2",
+              "path": "units.0.first",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call4",
+              "path": "units.0.last",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call7",
+              "path": "units.1",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call8",
+              "path": "units.1.first",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.1.first",
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call10",
+              "path": "units.1.last",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.1.last",
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.1",
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call13",
+              "path": "units.2",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call14",
+              "path": "units.2.first",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.2.first",
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call16",
+              "path": "units.2.last",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.2.last",
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.2",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "units.0.first.weight",
+              "aliases": [
+                "units.0.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.first.bias",
+              "aliases": [
+                "units.0.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.weight",
+              "aliases": [
+                "units.0.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.bias",
+              "aliases": [
+                "units.0.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.weight",
+              "aliases": [
+                "units.1.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.bias",
+              "aliases": [
+                "units.1.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.weight",
+              "aliases": [
+                "units.1.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.bias",
+              "aliases": [
+                "units.1.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.weight",
+              "aliases": [
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.bias",
+              "aliases": [
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.weight",
+              "aliases": [
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.bias",
+              "aliases": [
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            }
+          ],
+          "buffers": [],
+          "outputs": [
+            {
+              "id": "t30",
+              "producer": "op17",
+              "slot": 0,
+              "shape": [
+                2,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": false
+            }
+          ],
+          "replay": {
+            "matched": true,
+            "output_digest": "553fabfab41790ed6c5f8e393e38b3628bfb3c9be051aebaaa64dcc7ba937b8f"
+          },
+          "branches": [],
+          "capture": {},
+          "truncated": false
+        }
+      ],
+      "instrumentation": "AST if/ifexp outcomes + nn.Module hooks + TorchDispatchMode ATen operands",
+      "limitations": [
+        "Sample/finite-domain evidence only; not arbitrary Python verification.",
+        "Constructor/init branches observed; loops/exception/short-circuit paths not certified.",
+        "Instrumentation and model share the isolated process; receipts are not adversarial attestation."
+      ],
+      "limits": {
+        "memory_mb": 8192,
+        "cpu_seconds": 45,
+        "max_events": 6000,
+        "wall_seconds": 45
+      },
+      "source_unchanged": true,
+      "finite_domain": {
+        "exhaustive": false,
+        "reason": "no explicit finite input set"
+      },
+      "trace_digest": "fa826068c12ce0b0d7b6ea1c672deb0b67e152f54ef5a917c66885ba0e5e0a68"
+    },
+    "SharedStack": {
+      "schema": "semantic-runtime/1",
+      "status": "passed",
+      "model_executed": true,
+      "binding": {
+        "interpreter": "/home/fzg/anaconda3/envs/ArchCanvas/bin/python",
+        "executable_sha256": "d1d72f62ffc60bba301a0a18a9116677733157eb75c2e1aa05be4ddd0631bfb4",
+        "environment": "/home/fzg/anaconda3/envs/ArchCanvas",
+        "source_root": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures",
+        "source_sha256": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346",
+        "spec_digest": "939280e2b51ec7c5242c4c2b9d99aa7680426b13cb44b17d1eee7a1875674f32",
+        "worker_digest": "149550b0e400a1b34081d3becd4452edf86832c19c0b0851b34bca814c401a19",
+        "device": "cpu",
+        "source_generation": {
+          "composed_models.py": "1c7431ae493dae9e95f72fe39f601957565b0033b273a36aa8e09925d4e9ce08",
+          "configuration_composition.py": "99db5a251406b4469f3e6186c9d22cd758018727ebc286ac2052050fb2079a81",
+          "design_compositions.py": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+          "gated_composition.py": "eeefe6465e68ed00a42d5795420b2a1db6b1489deab8cfd4a13150c604ebd2c8",
+          "local_composition.py": "b1273c7693c2a2868463d447dc911d714015e39ad8e7c6428c47f6887a4a56ee",
+          "models.py": "380ba612d236f58d41cd54531a58d296d2f9522da8be3cea50ae6d4567d32834",
+          "module_sequences.py": "82eefccfe9187aab96f8d48e81c7c778d97c14d2fa4991e881cb36230b956346"
+        }
+      },
+      "input_spec": {
+        "schema": "semantic-inputs/1",
+        "constructor": {},
+        "modes": [
+          "eval"
+        ],
+        "export": false,
+        "cases": [
+          {
+            "id": "zeros",
+            "seed": 0,
+            "inputs": {
+              "x": {
+                "shape": [
+                  2,
+                  8
+                ],
+                "dtype": "float32",
+                "fill": "zeros"
+              }
+            }
+          },
+          {
+            "id": "normal",
+            "seed": 7,
+            "inputs": {
+              "x": {
+                "shape": [
+                  2,
+                  8
+                ],
+                "dtype": "float32",
+                "fill": "normal"
+              }
+            }
+          }
+        ]
+      },
+      "isolation": {
+        "status": "passed",
+        "checks": {
+          "namespace_isolation": true,
+          "host_root_hidden": true,
+          "gpu_hidden": true,
+          "network_denied": true,
+          "process_denied": true,
+          "source_readonly": true
+        },
+        "mechanism": "Bubblewrap namespaces + x86-64 seccomp; no network, new tasks or host HOME"
+      },
+      "framework": "2.7.1+cu118",
+      "framework_origin": "/home/fzg/anaconda3/envs/ArchCanvas/lib/python3.11/site-packages/torch/__init__.py",
+      "device": "cpu",
+      "runs": [
+        {
+          "case": "zeros",
+          "mode": "eval",
+          "seed": 0,
+          "status": "passed",
+          "events": [
+            {
+              "id": "op0",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op1",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op2",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op3",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op4",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op5",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op6",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op7",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op8",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op9",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op10",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op11",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op12",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op13",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op14",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op15",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op16",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op17",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            }
+          ],
+          "module_events": [
+            {
+              "event": "enter",
+              "id": "call0",
+              "path": "",
+              "parent_call": null,
+              "module_type": "module_sequences.SharedStack",
+              "inputs": []
+            },
+            {
+              "event": "enter",
+              "id": "call1",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call2",
+              "path": "units.0.first",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call4",
+              "path": "units.0.last",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call7",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call8",
+              "path": "units.0.first",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call10",
+              "path": "units.0.last",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call13",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call14",
+              "path": "units.0.first",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call16",
+              "path": "units.0.last",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "units.0.first.weight",
+              "aliases": [
+                "units.0.first.weight",
+                "units.1.first.weight",
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.first.bias",
+              "aliases": [
+                "units.0.first.bias",
+                "units.1.first.bias",
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.weight",
+              "aliases": [
+                "units.0.last.weight",
+                "units.1.last.weight",
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.bias",
+              "aliases": [
+                "units.0.last.bias",
+                "units.1.last.bias",
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.weight",
+              "aliases": [
+                "units.0.first.weight",
+                "units.1.first.weight",
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.bias",
+              "aliases": [
+                "units.0.first.bias",
+                "units.1.first.bias",
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.weight",
+              "aliases": [
+                "units.0.last.weight",
+                "units.1.last.weight",
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.bias",
+              "aliases": [
+                "units.0.last.bias",
+                "units.1.last.bias",
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.weight",
+              "aliases": [
+                "units.0.first.weight",
+                "units.1.first.weight",
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.bias",
+              "aliases": [
+                "units.0.first.bias",
+                "units.1.first.bias",
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.weight",
+              "aliases": [
+                "units.0.last.weight",
+                "units.1.last.weight",
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.bias",
+              "aliases": [
+                "units.0.last.bias",
+                "units.1.last.bias",
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            }
+          ],
+          "buffers": [],
+          "outputs": [
+            {
+              "id": "t30",
+              "producer": "op17",
+              "slot": 0,
+              "shape": [
+                2,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": false
+            }
+          ],
+          "replay": {
+            "matched": true,
+            "output_digest": "1bc38200926c7c759cf26303adb2f8969288d9fedac9e9e691a1d18064c72bd9"
+          },
+          "branches": [],
+          "capture": {},
+          "truncated": false
+        },
+        {
+          "case": "normal",
+          "mode": "eval",
+          "seed": 7,
+          "status": "passed",
+          "events": [
+            {
+              "id": "op0",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op1",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call2",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t13",
+                  "producer": "op0",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op2",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op3",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op4",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call4",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t16",
+                  "producer": "op3",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op5",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call1",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op6",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op7",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call8",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t19",
+                  "producer": "op6",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op8",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op9",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op10",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call10",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t22",
+                  "producer": "op9",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op11",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call7",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op12",
+              "operator": "aten.t.default",
+              "module_path": "units.0.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t8",
+                  "producer": "parameter:units.0.first.weight",
+                  "slot": "units.2.first.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op13",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.first",
+              "module_call": "call14",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t9",
+                  "producer": "parameter:units.0.first.bias",
+                  "slot": "units.2.first.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t25",
+                  "producer": "op12",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op14",
+              "operator": "aten.relu.default",
+              "module_path": "units.0",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op15",
+              "operator": "aten.t.default",
+              "module_path": "units.0.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t10",
+                  "producer": "parameter:units.0.last.weight",
+                  "slot": "units.2.last.weight",
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op16",
+              "operator": "aten.addmm.default",
+              "module_path": "units.0.last",
+              "module_call": "call16",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t11",
+                  "producer": "parameter:units.0.last.bias",
+                  "slot": "units.2.last.bias",
+                  "shape": [
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": true
+                },
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t28",
+                  "producer": "op15",
+                  "slot": 0,
+                  "shape": [
+                    8,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            },
+            {
+              "id": "op17",
+              "operator": "aten.add.Tensor",
+              "module_path": "units.0",
+              "module_call": "call13",
+              "source": {
+                "file": "module_sequences.py",
+                "line": 18,
+                "symbol": "Cell.forward"
+              },
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                },
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ],
+              "mutable": false
+            }
+          ],
+          "module_events": [
+            {
+              "event": "enter",
+              "id": "call0",
+              "path": "",
+              "parent_call": null,
+              "module_type": "module_sequences.SharedStack",
+              "inputs": []
+            },
+            {
+              "event": "enter",
+              "id": "call1",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call2",
+              "path": "units.0.first",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t12",
+                  "producer": "input:x",
+                  "slot": "x",
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t14",
+                  "producer": "op1",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call4",
+              "path": "units.0.last",
+              "parent_call": "call1",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t15",
+                  "producer": "op2",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t17",
+                  "producer": "op4",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call7",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call8",
+              "path": "units.0.first",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t18",
+                  "producer": "op5",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t20",
+                  "producer": "op7",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call10",
+              "path": "units.0.last",
+              "parent_call": "call7",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t21",
+                  "producer": "op8",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t23",
+                  "producer": "op10",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call13",
+              "path": "units.0",
+              "parent_call": "call0",
+              "module_type": "module_sequences.Cell",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call14",
+              "path": "units.0.first",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t24",
+                  "producer": "op11",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.first",
+              "outputs": [
+                {
+                  "id": "t26",
+                  "producer": "op13",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "enter",
+              "id": "call16",
+              "path": "units.0.last",
+              "parent_call": "call13",
+              "module_type": "torch.nn.modules.linear.Linear",
+              "inputs": [
+                {
+                  "id": "t27",
+                  "producer": "op14",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0.last",
+              "outputs": [
+                {
+                  "id": "t29",
+                  "producer": "op16",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "units.0",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            },
+            {
+              "event": "exit",
+              "path": "",
+              "outputs": [
+                {
+                  "id": "t30",
+                  "producer": "op17",
+                  "slot": 0,
+                  "shape": [
+                    2,
+                    8
+                  ],
+                  "dtype": "torch.float32",
+                  "device": "cpu",
+                  "requires_grad": false
+                }
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "units.0.first.weight",
+              "aliases": [
+                "units.0.first.weight",
+                "units.1.first.weight",
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.first.bias",
+              "aliases": [
+                "units.0.first.bias",
+                "units.1.first.bias",
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.weight",
+              "aliases": [
+                "units.0.last.weight",
+                "units.1.last.weight",
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.0.last.bias",
+              "aliases": [
+                "units.0.last.bias",
+                "units.1.last.bias",
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.weight",
+              "aliases": [
+                "units.0.first.weight",
+                "units.1.first.weight",
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.first.bias",
+              "aliases": [
+                "units.0.first.bias",
+                "units.1.first.bias",
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.weight",
+              "aliases": [
+                "units.0.last.weight",
+                "units.1.last.weight",
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.1.last.bias",
+              "aliases": [
+                "units.0.last.bias",
+                "units.1.last.bias",
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.weight",
+              "aliases": [
+                "units.0.first.weight",
+                "units.1.first.weight",
+                "units.2.first.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.first.bias",
+              "aliases": [
+                "units.0.first.bias",
+                "units.1.first.bias",
+                "units.2.first.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.weight",
+              "aliases": [
+                "units.0.last.weight",
+                "units.1.last.weight",
+                "units.2.last.weight"
+              ],
+              "shape": [
+                8,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            },
+            {
+              "name": "units.2.last.bias",
+              "aliases": [
+                "units.0.last.bias",
+                "units.1.last.bias",
+                "units.2.last.bias"
+              ],
+              "shape": [
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": true
+            }
+          ],
+          "buffers": [],
+          "outputs": [
+            {
+              "id": "t30",
+              "producer": "op17",
+              "slot": 0,
+              "shape": [
+                2,
+                8
+              ],
+              "dtype": "torch.float32",
+              "device": "cpu",
+              "requires_grad": false
+            }
+          ],
+          "replay": {
+            "matched": true,
+            "output_digest": "553fabfab41790ed6c5f8e393e38b3628bfb3c9be051aebaaa64dcc7ba937b8f"
+          },
+          "branches": [],
+          "capture": {},
+          "truncated": false
+        }
+      ],
+      "instrumentation": "AST if/ifexp outcomes + nn.Module hooks + TorchDispatchMode ATen operands",
+      "limitations": [
+        "Sample/finite-domain evidence only; not arbitrary Python verification.",
+        "Constructor/init branches observed; loops/exception/short-circuit paths not certified.",
+        "Instrumentation and model share the isolated process; receipts are not adversarial attestation."
+      ],
+      "limits": {
+        "memory_mb": 8192,
+        "cpu_seconds": 45,
+        "max_events": 6000,
+        "wall_seconds": 45
+      },
+      "source_unchanged": true,
+      "finite_domain": {
+        "exhaustive": false,
+        "reason": "no explicit finite input set"
+      },
+      "trace_digest": "68662eb1786ed52a3bfbc09f856e161570809a6dd95f57ac3ac977d66f2e8bb7"
+    }
+  }
+}

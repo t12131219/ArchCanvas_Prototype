@@ -17,7 +17,8 @@ for(const item of catalog.models){
     }
   }
 }
-const dir=path.join(root,'verification/architecture');fs.mkdirSync(dir,{recursive:true});
+const outputAt=process.argv.indexOf('--output');if(outputAt>=0&&!process.argv[outputAt+1])throw Error('missing --output directory');
+const dir=path.resolve(root,outputAt>=0?process.argv[outputAt+1]:'verification/architecture');fs.mkdirSync(dir,{recursive:true});
 const hashes=Object.fromEntries(['semantic_studio/architecture.js','semantic_studio/architecture-layout.js','semantic_studio/semantic-engine.js','semantic_adapter/analyzer.py','semantic_adapter/motifs.py','semantic_adapter/merge.py','semantic_studio/app.js','semantic_studio/index.html','semantic_studio/style.css','tools/export_architecture.cjs'].map(file=>[file,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex')]));
 const summary={schema:'architecture-audit/1',models:catalog.models.length,states:results.length,overlap:results.reduce((s,r)=>s+r.overlap,0),failed_routes:results.reduce((s,r)=>s+r.failed_routes.length,0),canonical_ir_unchanged:true,complete_edge_accounting:true,implementation_sha256:hashes,results};
 fs.writeFileSync(path.join(dir,'report.json'),JSON.stringify(summary,null,2)+'\n');

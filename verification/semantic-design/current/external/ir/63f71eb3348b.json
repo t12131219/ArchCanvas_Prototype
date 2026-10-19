@@ -1,0 +1,1234 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "MultilayerPerceptron",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+    "class": "MultilayerPerceptron",
+    "cell": 10,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=6",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 6,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "ef60a68830fd855aacf374e6502885b1cd1ce7f1b5161119a6655767774b298f"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=8",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 8,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "37d83a596a89e5d5c44412a89242528acd22250d8ee9e7ea454ea8e18930ae10"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=9",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 9,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "ddda96ec17d09e2c388d4e9eef90683baf8899f30667113da7519df84e25af20"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 10,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "449ec211302966b4e9da3f377934eafbc8f4473116208cc16b88d75b964a625a"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=12",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 12,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "5689f506e860dc19f7bec009f555ca085fc717ab3b3c7c2dc55d5d8b01f461c8"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=13",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 13,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "19facbb68de590f4c7a211b5ad73c8a657728039976b219b6802a338bd66de67"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=15",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 15,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "e0cfa35771d433fa48bfff6a23fd34892ad523ef058e76bc62baf6703d4a402d"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=16",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 16,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "19facbb68de590f4c7a211b5ad73c8a657728039976b219b6802a338bd66de67"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=18",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 18,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "60d806020b404b1bdeba218791edee194f6d32e1e0b076ae41e6deb2c16bfa8c"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=19",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb",
+      "cell": 19,
+      "sha256": "b3c5fa95b94457cc7860ddf934cc886778afd6aed8e324ff385d7c9f66a5de52",
+      "unit_sha256": "19facbb68de590f4c7a211b5ad73c8a657728039976b219b6802a338bd66de67"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/27:4:composite:1",
+      "kind": "composite",
+      "label": "MultilayerPerceptron",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 27,
+          "end_line": 38,
+          "column": 4,
+          "end_column": 29,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "def forward(self, x):\n    out = self.linear_1(x)\n    out = F.relu(out)\n    out = self.linear_2(out)\n    out = F.relu(out)\n    out = self.linear_3(out)\n    out = F.relu(out)\n    out = self.linear_4(out)\n    out = F.relu(out)\n    logits = self.linear_out(out)\n    probas = F.log_softmax(logits, dim=1)\n    return (logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "MultilayerPerceptron"
+    },
+    {
+      "id": "model/27:4:composite:1/27:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 27,
+          "end_line": 27,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/27:4:composite:1/28:14:compute:1",
+      "kind": "compute",
+      "label": "linear_1 · Linear",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 28,
+          "end_line": 28,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "self.linear_1(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "linear_1",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          784,
+          256
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/27:4:composite:1/11:24:parameter:1",
+      "kind": "parameter",
+      "label": "linear_1.parameters",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 11,
+          "end_line": 11,
+          "column": 24,
+          "end_column": 67,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "torch.nn.Linear(num_features, num_hidden_1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "linear_1",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/27:4:composite:1/28:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 28,
+          "end_line": 28,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/29:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 29,
+          "end_line": 29,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/27:4:composite:1/29:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 29,
+          "end_line": 29,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/30:14:compute:1",
+      "kind": "compute",
+      "label": "linear_2 · Linear",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 30,
+          "end_line": 30,
+          "column": 14,
+          "end_column": 32,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "self.linear_2(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "linear_2",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          256,
+          128
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/27:4:composite:1/14:24:parameter:1",
+      "kind": "parameter",
+      "label": "linear_2.parameters",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 14,
+          "end_line": 14,
+          "column": 24,
+          "end_column": 67,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "torch.nn.Linear(num_hidden_1, num_hidden_2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "linear_2",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/27:4:composite:1/30:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 30,
+          "end_line": 30,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/31:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 31,
+          "end_line": 31,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/27:4:composite:1/31:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 31,
+          "end_line": 31,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/32:14:compute:1",
+      "kind": "compute",
+      "label": "linear_3 · Linear",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 32,
+          "end_line": 32,
+          "column": 14,
+          "end_column": 32,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "self.linear_3(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "linear_3",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          128,
+          64
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/27:4:composite:1/17:24:parameter:1",
+      "kind": "parameter",
+      "label": "linear_3.parameters",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 17,
+          "end_line": 17,
+          "column": 24,
+          "end_column": 67,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "torch.nn.Linear(num_hidden_2, num_hidden_3)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "linear_3",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/27:4:composite:1/32:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 32,
+          "end_line": 32,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/33:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 33,
+          "end_line": 33,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/27:4:composite:1/33:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 33,
+          "end_line": 33,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/34:14:compute:1",
+      "kind": "compute",
+      "label": "linear_4 · Linear",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 34,
+          "end_line": 34,
+          "column": 14,
+          "end_column": 32,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "self.linear_4(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "linear_4",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          64,
+          32
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/27:4:composite:1/20:24:parameter:1",
+      "kind": "parameter",
+      "label": "linear_4.parameters",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 20,
+          "end_line": 20,
+          "column": 24,
+          "end_column": 67,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "torch.nn.Linear(num_hidden_3, num_hidden_4)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "linear_4",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/27:4:composite:1/34:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 34,
+          "end_line": 34,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/35:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 35,
+          "end_line": 35,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/27:4:composite:1/35:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 35,
+          "end_line": 35,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/36:17:compute:1",
+      "kind": "compute",
+      "label": "linear_out · Linear",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 36,
+          "end_line": 36,
+          "column": 17,
+          "end_column": 37,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "self.linear_out(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "linear_out",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          32,
+          10
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/27:4:composite:1/24:26:parameter:1",
+      "kind": "parameter",
+      "label": "linear_out.parameters",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 24,
+          "end_line": 24,
+          "column": 26,
+          "end_column": 68,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "torch.nn.Linear(num_hidden_4, num_classes)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "linear_out",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/27:4:composite:1/36:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "logits",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 36,
+          "end_line": 36,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "logits"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/37:17:compute:1",
+      "kind": "compute",
+      "label": "log_softmax",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 37,
+          "end_line": 37,
+          "column": 17,
+          "end_column": 45,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "F.log_softmax(logits, dim=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "softmax",
+      "function_target": "torch.nn.functional.log_softmax",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "logits"
+          }
+        ],
+        "kwargs": {
+          "dim": 1
+        }
+      },
+      "reason": null
+    },
+    {
+      "id": "model/27:4:composite:1/37:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "probas",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 37,
+          "end_line": 37,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "probas"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/38:15:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 38,
+          "end_line": 38,
+          "column": 15,
+          "end_column": 29,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "(logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple"
+    },
+    {
+      "id": "model/27:4:composite:1/38:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=10",
+          "line": 38,
+          "end_line": 38,
+          "column": 8,
+          "end_column": 29,
+          "symbol": "MultilayerPerceptron.forward",
+          "expression": "return (logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/27:4:composite:1/11:24:parameter:1",
+      "target": "model/27:4:composite:1/28:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/27:4:composite:1/27:22:interface:1",
+      "target": "model/27:4:composite:1/28:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/27:4:composite:1/28:14:compute:1",
+      "target": "model/27:4:composite:1/28:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/27:4:composite:1/28:8:value-alias:1",
+      "target": "model/27:4:composite:1/29:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/27:4:composite:1/29:14:compute:1",
+      "target": "model/27:4:composite:1/29:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/27:4:composite:1/14:24:parameter:1",
+      "target": "model/27:4:composite:1/30:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00005"
+    },
+    {
+      "source": "model/27:4:composite:1/29:8:value-alias:1",
+      "target": "model/27:4:composite:1/30:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/27:4:composite:1/30:14:compute:1",
+      "target": "model/27:4:composite:1/30:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/27:4:composite:1/30:8:value-alias:1",
+      "target": "model/27:4:composite:1/31:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/27:4:composite:1/31:14:compute:1",
+      "target": "model/27:4:composite:1/31:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/27:4:composite:1/17:24:parameter:1",
+      "target": "model/27:4:composite:1/32:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00010"
+    },
+    {
+      "source": "model/27:4:composite:1/31:8:value-alias:1",
+      "target": "model/27:4:composite:1/32:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/27:4:composite:1/32:14:compute:1",
+      "target": "model/27:4:composite:1/32:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/27:4:composite:1/32:8:value-alias:1",
+      "target": "model/27:4:composite:1/33:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/27:4:composite:1/33:14:compute:1",
+      "target": "model/27:4:composite:1/33:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/27:4:composite:1/20:24:parameter:1",
+      "target": "model/27:4:composite:1/34:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00015"
+    },
+    {
+      "source": "model/27:4:composite:1/33:8:value-alias:1",
+      "target": "model/27:4:composite:1/34:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/27:4:composite:1/34:14:compute:1",
+      "target": "model/27:4:composite:1/34:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/27:4:composite:1/34:8:value-alias:1",
+      "target": "model/27:4:composite:1/35:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/27:4:composite:1/35:14:compute:1",
+      "target": "model/27:4:composite:1/35:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/27:4:composite:1/24:26:parameter:1",
+      "target": "model/27:4:composite:1/36:17:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00020"
+    },
+    {
+      "source": "model/27:4:composite:1/35:8:value-alias:1",
+      "target": "model/27:4:composite:1/36:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/27:4:composite:1/36:17:compute:1",
+      "target": "model/27:4:composite:1/36:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/27:4:composite:1/36:8:value-alias:1",
+      "target": "model/27:4:composite:1/37:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/27:4:composite:1/37:17:compute:1",
+      "target": "model/27:4:composite:1/37:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/27:4:composite:1/36:8:value-alias:1",
+      "target": "model/27:4:composite:1/38:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/27:4:composite:1/37:8:value-alias:1",
+      "target": "model/27:4:composite:1/38:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/27:4:composite:1/38:15:compute:1",
+      "target": "model/27:4:composite:1/38:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00027"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=1",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/gradclipping_mlp.ipynb#cell=20",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    }
+  ],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "b571de1a74507e44d1f358d85f9f4dc2ddfd549dc24627003f45bf1fa5184103"
+}

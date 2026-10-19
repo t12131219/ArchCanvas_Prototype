@@ -10,6 +10,10 @@
     return {nodes,children};
   }
   function architecture(ir){if(!plans.has(ir))plans.set(ir,A.build(ir));return plans.get(ir);}
+  function drawingOrder(nodes,idx){
+    const depths=new Map(),depth=id=>{if(!depths.has(id))depths.set(id,idx.nodes.get(id)?.parent?depth(idx.nodes.get(id).parent)+1:0);return depths.get(id);};
+    return nodes.slice().sort((a,b)=>depth(a.id)-depth(b.id));
+  }
   const paper=()=>root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
   function viewIndex(ir,state={}){return index(state.view==='publication'?paper().plan(ir):state.view==='architecture'?architecture(ir):ir);}
   function validate(ir){
@@ -59,7 +63,9 @@
       if(s===t&&!(raw.source===raw.target&&raw.source===s)){internal.push(raw.id);continue;}
       // Do not bundle by module pair: distinct values, operands and conditional
       // alternatives must keep their individual boundary identities.
-      projected.push({...clone(raw),id:raw.id,source:s,target:t,source_port:port,originals:[...via,raw.id],canonical_source:raw.source,canonical_target:raw.target,resolved_source:resolved});
+      const bypass=plan.design_constraints?.find(c=>c.kind==='bypass'&&c.add===raw.target&&c.skip===resolved&&c.skip_slot===port);
+      projected.push({...clone(raw),id:raw.id,source:s,target:t,source_port:port,originals:[...via,raw.id],canonical_source:raw.source,canonical_target:raw.target,resolved_source:resolved,
+        ...(bypass&&s===resolved&&t===raw.target?{design_route:{kind:'bypass',certificate:bypass.certificate}}:{})});
     }
     const presented=options.presentEdges?options.presentEdges(projected,idx):projected;
     const positions=L.layout(idx,roots,visible,presented,state.offsets||{},{foldSerial:state.view==='architecture'&&state.foldSerial!==false,...options.layout}),ps=[...positions.values()];
@@ -75,5 +81,5 @@
       bounds:{x:left,y:top,w:Math.max(900,...ps.map(p=>p.x+p.w+60))-left,h:Math.max(600,...ps.map(p=>p.y+p.h+60))-top}};
   }
   const route=(e,positions)=>positions.context?.routeCache?.get(e.id)||L.route(e,positions);
-  const api={clone,index,viewIndex,architecture,validate,project,path:(e,p)=>route(e,p).points.map((v,i)=>`${i?'L':'M'}${v.x},${v.y}`).join(' '),route};root.SemanticEngine=api;if(typeof module!=='undefined')module.exports=api;
+  const api={clone,index,viewIndex,architecture,drawingOrder,validate,project,path:(e,p)=>route(e,p).points.map((v,i)=>`${i?'L':'M'}${v.x},${v.y}`).join(' '),route};root.SemanticEngine=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -1,5 +1,7 @@
 # 通用 PyTorch 源码语义适配层（实验版）
 
+2026-10-19 更新：当前通用语义契约、受限模块序列、观测索引、语义粒度与版式审核见 [通用语义认证与架构版式](semantic-design.md)。下文既往案例表与历史验证记录保留对应阶段含义，89/651 等旧计数不代表现行抽取结果。
+
 目标契约：**在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。** 若要求任何任意 PyTorch 模型都没有 `opaque`，无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。
 
 这是 `Summary_Merge` 原型新增的独立抽取和展示链路。既有 Transformer 专用适配器、原案例 `01093cc06a87b35a` 与原子副本 `01093cc06a87b35b` 继续保留。新层没有取代专用适配器的 Q/K/V、Post-LN 等严格契约，也没有接入正式 Studio 的模型编辑或源码写回。
@@ -39,7 +41,7 @@ python3 -m http.server 8766 --bind 127.0.0.1 --directory .
 4. 每个输入与模式使用新模型；同种子重新构造模型并重放，检查输出内容摘要一致及浮点张量有限值。此检查不是与参考答案比较，也不证明训练正确性。`train` 指模块训练模式下的 **no_grad forward**，不包含 backward/optimizer。
 5. 可选 `torch.export` 独立保存捕获图/约束或失败原因。导出失败不会抹掉已经观测到的 eager 轨迹。本版没有声称已实现 FX、Profiler 或符号执行。
 6. 合并时核对源码摘要、构造配置和输入规范。源码事实与运行事实分开保存；按源码行关联到多个 ATen 事件只能标为 `source-runtime-associated`，不能视为算子等价证明。未知调用即使本次成功运行，静态 `opaque` 仍保留。
-7. 模式规则引用原节点，不用教材模板替换子图。CNN 根据 convolution → activation（可选 pooling）依赖链生成组合容器；MLP 要求 Linear → activation → Linear 依赖路径；LSTM/GRU/RNN 依靠 PyTorch 框架类型，未猜测内部 gates。Attention 目前为候选：运行时要求实际 matmul → scale → softmax → matmul 路径，rank-4 张量只提供多头形状提示，因此命名为 `attention-like`。尚未证明 Q/K/V 和完整 Encoder 语义。
+7. 模式规则引用原节点，不用教材模板替换子图。CNN 根据 convolution → activation（可选 pooling）依赖链生成组合容器；MLP 要求 Linear → activation → Linear 依赖路径；LSTM/GRU/RNN 依靠 PyTorch 框架类型，未猜测内部 gates。运行时的 matmul → scale → softmax → matmul 候选仍不单凭 rank-4 shape 升级语义；新增源码契约在轴、缩放、投影和分头/合头等前提全部成立时记录局部 Q/K/V 与多头角色，完整家族分类仍未实现。具体范围见新阶段说明。
 8. 模块定义和调用形成父子树，局部模式可以形成中间容器，再递归展开至源码表达式或本次观测到的 ATen 原子。不会把 kernel 内部没有证据的实现再虚构为节点。
 
 ## 原子标准
@@ -71,7 +73,7 @@ python3 -m http.server 8766 --bind 127.0.0.1 --directory .
 
 它**不表示**相同 shape 的所有 Tensor、任意输入长度/配置、所有参数值、框架内部条件或完整 Python 路径组合都被证明。条件两个结果都被观测也不等于穷举所有跨条件路径组合。未满足条件时只报告 `partial` / `not-verified` / `runtime-unavailable` / `runtime-failed`，保留未覆盖项。
 
-本版尚不能自动生成让任意条件都触发的输入。需要用户给出合法输入、构造配置和运行模式。循环展开、动态 shape 族验证、完整跨文件符号解析、复杂 ModuleList 工厂、Python 反射、异常控制流、RL 环境/rollout/损失/更新、传统非 PyTorch ML、自定义 C++/CUDA 与分布式尚未形成通用支持。`environment/objective/update` 领域语义尚未实现。
+本版尚不能自动生成让任意条件都触发的输入。需要用户给出合法输入、构造配置和运行模式。固定构造、直接串行递推的模块序列现可受限解析；任意循环、动态 shape 族验证、完整跨文件符号解析、复杂 ModuleList 工厂、Python 反射、完整异常控制流、RL 环境/rollout/损失/更新、传统非 PyTorch ML、自定义 C++/CUDA 与分布式尚未形成通用支持。`environment/objective/update` 领域语义尚未实现。
 
 ## 构建和验证
 

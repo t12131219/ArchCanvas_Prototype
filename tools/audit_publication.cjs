@@ -5,7 +5,8 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const E=require('../semantic_studio/semantic-engine.js'),P=require('../semantic_studio/publication.js'),R=require('../semantic_studio/publication-renderer.js');
 const root=path.resolve(__dirname,'..'),outputAt=process.argv.indexOf('--output');
 if(outputAt>=0&&!process.argv[outputAt+1])throw Error('missing --output directory');
-const output=path.resolve(root,outputAt>=0?process.argv[outputAt+1]:'verification/publication'),corpus=path.join(root,'verification/architecture/corpus');
+const corpusAt=process.argv.indexOf('--corpus');if(corpusAt>=0&&!process.argv[corpusAt+1])throw Error('missing --corpus directory');
+const output=path.resolve(root,outputAt>=0?process.argv[outputAt+1]:'verification/publication'),corpus=path.resolve(root,corpusAt>=0?process.argv[corpusAt+1]:'verification/architecture/corpus');
 const extraction=JSON.parse(fs.readFileSync(path.join(corpus,'extraction.json'))),results=[],textCards=[],textQA=process.argv.includes('--text-qa');
 fs.mkdirSync(output,{recursive:true});
 const errors=[],branchRegions=[],dependencyBands=[],contentInventories=[];

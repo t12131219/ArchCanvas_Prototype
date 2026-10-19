@@ -1,0 +1,2526 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ConvNet",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+    "class": "ConvNet",
+    "cell": 26,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=8",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 8,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "2dbd4a2a07ae81d33bc7c4ccb3657f98a83a0e7ae82cb8cdbba4f695fc216594"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=10",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 10,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "28ca05cc73e83684f7b87835295e611bc5eb73d6d99c7de285b4488cc4647ce3"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=16",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 16,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "a5cf548c7765165f9f54f332aab048c25c0d32733fef4befdab96f2c203790d6"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=19",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 19,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "b578e4dd5810c2e3f2654c0cd69bff5617cb6c93ceecb5d2a8e346c3d2f1f373"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=21",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 21,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "4b6be89ffcf78abe5f32a3aa612b4f8d99df67119c66cb327c3dbaaf3d1c0697"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=23",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 23,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "a18e07e37aca72b0e9d7e58b6336760a212053c79eab67a1587fbedca97f629b"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 26,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "e08986070afb1cbe5dca57606c7400468810993618f3f696543266574e5291d3"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=29",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 29,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "67a2f1f7e1caba54939bfc172469f868d2ac708ad351731826e4c7e97fbdbaa5"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=31",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 31,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "0b20db3c7437d2b831d2c611db7880d2826916f25d8045994d489774bd7e2f3e"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=33",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 33,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "d92f99a1138bf6129780263a7a03832af4ad49fc960f3c21db8f3b37876c619c"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=34",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 34,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "d54795f5bd55a52b8b1e54a5f1cf65db59d728062b57d3a289fe05bd5b123b6e"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=38",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 38,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "201bc554eea41e86ae33e26d143724e3aec2055b169455c3e8bb4b98f3b6ff6d"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=39",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 39,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "5d65d857fa03c24bdd066e159ac298628a48de84e5c93291351fd966001cd61a"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=40",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 40,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "19facbb68de590f4c7a211b5ad73c8a657728039976b219b6802a338bd66de67"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=42",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 42,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "302c8111c35316b923cad403bf5ed0058fb49153484fcd5c37c430e4f65baade"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=43",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 43,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "19facbb68de590f4c7a211b5ad73c8a657728039976b219b6802a338bd66de67"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=45",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 45,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "2b1e3d5a52c5e5a88a00fd6660b3fbb3847b18414af4d5493ea4cc84e84e352b"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=46",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb",
+      "cell": 46,
+      "sha256": "7b74bd50b121b2ba8ad65d0660ba1f735b9b05443b32159e3dd07712b0a6122c",
+      "unit_sha256": "19facbb68de590f4c7a211b5ad73c8a657728039976b219b6802a338bd66de67"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/77:4:composite:1",
+      "kind": "composite",
+      "label": "ConvNet",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 77,
+          "end_line": 100,
+          "column": 4,
+          "end_column": 29,
+          "symbol": "ConvNet.forward",
+          "expression": "def forward(self, x):\n    out = self.conv_1(x)\n    out = F.relu(out)\n    out = self.pool_1(out)\n    out = self.conv_2(out)\n    out = F.relu(out)\n    out = self.pool_2(out)\n    out = self.conv_3(out)\n    out = F.relu(out)\n    out = self.pool_3(out)\n    out = self.conv_4(out)\n    out = F.relu(out)\n    out = self.pool_4(out)\n    out = self.conv_5(out)\n    out ="
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "convolutional network",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ConvNet"
+    },
+    {
+      "id": "model/77:4:composite:1/77:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 77,
+          "end_line": 77,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "ConvNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/77:4:composite:1/78:14:compute:1",
+      "kind": "compute",
+      "label": "conv_1 · Conv2d",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 78,
+          "end_line": 78,
+          "column": 14,
+          "end_column": 28,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_1(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv_1",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "in_channels": 3,
+          "out_channels": 6,
+          "kernel_size": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/16:22:parameter:1",
+      "kind": "parameter",
+      "label": "conv_1.parameters",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 16,
+          "end_line": 20,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=3, out_channels=6, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv_1",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/77:4:composite:1/78:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 78,
+          "end_line": 78,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/79:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 79,
+          "end_line": 79,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/77:4:composite:1/79:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 79,
+          "end_line": 79,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/80:14:compute:1",
+      "kind": "compute",
+      "label": "pool_1 · MaxPool2d",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 80,
+          "end_line": 80,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_1(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "module_path": "pool_1",
+      "framework_type": "torch.nn.MaxPool2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": [
+            2,
+            2
+          ],
+          "stride": [
+            2,
+            2
+          ],
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/80:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 80,
+          "end_line": 80,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/82:14:compute:1",
+      "kind": "compute",
+      "label": "conv_2 · Conv2d",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 82,
+          "end_line": 82,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_2(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv_2",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "in_channels": 6,
+          "out_channels": 12,
+          "kernel_size": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/28:22:parameter:1",
+      "kind": "parameter",
+      "label": "conv_2.parameters",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 28,
+          "end_line": 32,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=6, out_channels=12, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv_2",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/77:4:composite:1/82:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 82,
+          "end_line": 82,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/83:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 83,
+          "end_line": 83,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/77:4:composite:1/83:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 83,
+          "end_line": 83,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/84:14:compute:1",
+      "kind": "compute",
+      "label": "pool_2 · MaxPool2d",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 84,
+          "end_line": 84,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_2(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "module_path": "pool_2",
+      "framework_type": "torch.nn.MaxPool2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": [
+            2,
+            2
+          ],
+          "stride": [
+            2,
+            2
+          ],
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/84:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 84,
+          "end_line": 84,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/86:14:compute:1",
+      "kind": "compute",
+      "label": "conv_3 · Conv2d",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 86,
+          "end_line": 86,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_3(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv_3",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "in_channels": 12,
+          "out_channels": 18,
+          "kernel_size": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/40:22:parameter:1",
+      "kind": "parameter",
+      "label": "conv_3.parameters",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 40,
+          "end_line": 44,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=12, out_channels=18, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv_3",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/77:4:composite:1/86:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 86,
+          "end_line": 86,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/87:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 87,
+          "end_line": 87,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/77:4:composite:1/87:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 87,
+          "end_line": 87,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/88:14:compute:1",
+      "kind": "compute",
+      "label": "pool_3 · MaxPool2d",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 88,
+          "end_line": 88,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_3(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "module_path": "pool_3",
+      "framework_type": "torch.nn.MaxPool2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": [
+            2,
+            2
+          ],
+          "stride": [
+            2,
+            2
+          ],
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/88:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 88,
+          "end_line": 88,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/90:14:compute:1",
+      "kind": "compute",
+      "label": "conv_4 · Conv2d",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 90,
+          "end_line": 90,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_4(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv_4",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "in_channels": 18,
+          "out_channels": 24,
+          "kernel_size": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/52:22:parameter:1",
+      "kind": "parameter",
+      "label": "conv_4.parameters",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 52,
+          "end_line": 56,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=18, out_channels=24, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv_4",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/77:4:composite:1/90:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 90,
+          "end_line": 90,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/91:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 91,
+          "end_line": 91,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/77:4:composite:1/91:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 91,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/92:14:compute:1",
+      "kind": "compute",
+      "label": "pool_4 · MaxPool2d",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 92,
+          "end_line": 92,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_4(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "module_path": "pool_4",
+      "framework_type": "torch.nn.MaxPool2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": [
+            2,
+            2
+          ],
+          "stride": [
+            2,
+            2
+          ],
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/92:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 92,
+          "end_line": 92,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/94:14:compute:1",
+      "kind": "compute",
+      "label": "conv_5 · Conv2d",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 94,
+          "end_line": 94,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_5(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "conv_5",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "in_channels": 24,
+          "out_channels": 30,
+          "kernel_size": [
+            3,
+            3
+          ],
+          "stride": [
+            1,
+            1
+          ],
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/64:22:parameter:1",
+      "kind": "parameter",
+      "label": "conv_5.parameters",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 64,
+          "end_line": 68,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=24, out_channels=30, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "conv_5",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/77:4:composite:1/94:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 94,
+          "end_line": 94,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/95:14:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 95,
+          "end_line": 95,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.nn.functional.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "out"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/77:4:composite:1/95:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 95,
+          "end_line": 95,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/96:14:compute:1",
+      "kind": "compute",
+      "label": "pool_5 · MaxPool2d",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 96,
+          "end_line": 96,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_5(out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "module_path": "pool_5",
+      "framework_type": "torch.nn.MaxPool2d",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": [
+            2,
+            2
+          ],
+          "stride": [
+            2,
+            2
+          ],
+          "padding": 0
+        }
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/96:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 96,
+          "end_line": 96,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/98:44:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 98,
+          "end_line": 98,
+          "column": 44,
+          "end_column": 50,
+          "symbol": "ConvNet.forward",
+          "expression": "1 * 1 * 30"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult"
+    },
+    {
+      "id": "model/77:4:composite:1/98:44:compute:2",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 98,
+          "end_line": 98,
+          "column": 44,
+          "end_column": 47,
+          "symbol": "ConvNet.forward",
+          "expression": "1 * 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult"
+    },
+    {
+      "id": "model/77:4:composite:1/98:31:compute:1",
+      "kind": "compute",
+      "label": "view",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 98,
+          "end_line": 98,
+          "column": 31,
+          "end_column": 51,
+          "symbol": "ConvNet.forward",
+          "expression": "out.view(-1, 1 * 1 * 30)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "out.view",
+      "arguments": {
+        "args": [
+          -1,
+          30
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/77:4:composite:1/98:17:compute:1",
+      "kind": "compute",
+      "label": "linear_1 · Linear",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 98,
+          "end_line": 98,
+          "column": 17,
+          "end_column": 52,
+          "symbol": "ConvNet.forward",
+          "expression": "self.linear_1(out.view(-1, 1 * 1 * 30))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "linear_1",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          30,
+          10
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/77:4:composite:1/74:24:parameter:1",
+      "kind": "parameter",
+      "label": "linear_1.parameters",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 74,
+          "end_line": 74,
+          "column": 24,
+          "end_column": 60,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Linear(1 * 1 * 30, num_classes)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "linear_1",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/77:4:composite:1/98:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "logits",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 98,
+          "end_line": 98,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "ConvNet.forward",
+          "expression": "logits"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/99:17:compute:1",
+      "kind": "compute",
+      "label": "softmax",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 99,
+          "end_line": 99,
+          "column": 17,
+          "end_column": 41,
+          "symbol": "ConvNet.forward",
+          "expression": "F.softmax(logits, dim=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "softmax",
+      "function_target": "torch.nn.functional.softmax",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "logits"
+          }
+        ],
+        "kwargs": {
+          "dim": 1
+        }
+      },
+      "reason": null
+    },
+    {
+      "id": "model/77:4:composite:1/99:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "probas",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 99,
+          "end_line": 99,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "ConvNet.forward",
+          "expression": "probas"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/77:4:composite:1/100:15:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 100,
+          "end_line": 100,
+          "column": 15,
+          "end_column": 29,
+          "symbol": "ConvNet.forward",
+          "expression": "(logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple"
+    },
+    {
+      "id": "model/77:4:composite:1/100:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/77:4:composite:1",
+      "source_parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 100,
+          "end_line": 100,
+          "column": 8,
+          "end_column": 29,
+          "symbol": "ConvNet.forward",
+          "expression": "return (logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "motif:CNN block:0",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 78,
+          "end_line": 78,
+          "column": 14,
+          "end_column": 28,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_1(x)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 78,
+          "end_line": 78,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 79,
+          "end_line": 79,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 79,
+          "end_line": 79,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 80,
+          "end_line": 80,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_1(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 16,
+          "end_line": 20,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=3, out_channels=6, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:0"
+    },
+    {
+      "id": "motif:CNN block:1",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 82,
+          "end_line": 82,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_2(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 82,
+          "end_line": 82,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 83,
+          "end_line": 83,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 83,
+          "end_line": 83,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 84,
+          "end_line": 84,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_2(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 28,
+          "end_line": 32,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=6, out_channels=12, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:1"
+    },
+    {
+      "id": "motif:CNN block:2",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 86,
+          "end_line": 86,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_3(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 86,
+          "end_line": 86,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 87,
+          "end_line": 87,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 87,
+          "end_line": 87,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 88,
+          "end_line": 88,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_3(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 40,
+          "end_line": 44,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=12, out_channels=18, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:2"
+    },
+    {
+      "id": "motif:CNN block:3",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 90,
+          "end_line": 90,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_4(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 90,
+          "end_line": 90,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 91,
+          "end_line": 91,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 91,
+          "end_line": 91,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 92,
+          "end_line": 92,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_4(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 52,
+          "end_line": 56,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=18, out_channels=24, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:3"
+    },
+    {
+      "id": "motif:CNN block:4",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/77:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 94,
+          "end_line": 94,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.conv_5(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 94,
+          "end_line": 94,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 95,
+          "end_line": 95,
+          "column": 14,
+          "end_column": 25,
+          "symbol": "ConvNet.forward",
+          "expression": "F.relu(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 95,
+          "end_line": 95,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "ConvNet.forward",
+          "expression": "out"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 96,
+          "end_line": 96,
+          "column": 14,
+          "end_column": 30,
+          "symbol": "ConvNet.forward",
+          "expression": "self.pool_5(out)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=26",
+          "line": 64,
+          "end_line": 68,
+          "column": 22,
+          "end_column": 48,
+          "symbol": "ConvNet.forward",
+          "expression": "torch.nn.Conv2d(in_channels=24, out_channels=30, kernel_size=(3, 3), stride=(1, 1), padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/77:4:composite:1/16:22:parameter:1",
+      "target": "model/77:4:composite:1/78:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/77:4:composite:1/77:22:interface:1",
+      "target": "model/77:4:composite:1/78:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/77:4:composite:1/78:14:compute:1",
+      "target": "model/77:4:composite:1/78:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/77:4:composite:1/78:8:value-alias:1",
+      "target": "model/77:4:composite:1/79:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/77:4:composite:1/79:14:compute:1",
+      "target": "model/77:4:composite:1/79:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/77:4:composite:1/79:8:value-alias:1",
+      "target": "model/77:4:composite:1/80:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/77:4:composite:1/80:14:compute:1",
+      "target": "model/77:4:composite:1/80:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/77:4:composite:1/28:22:parameter:1",
+      "target": "model/77:4:composite:1/82:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00007"
+    },
+    {
+      "source": "model/77:4:composite:1/80:8:value-alias:1",
+      "target": "model/77:4:composite:1/82:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/77:4:composite:1/82:14:compute:1",
+      "target": "model/77:4:composite:1/82:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/77:4:composite:1/82:8:value-alias:1",
+      "target": "model/77:4:composite:1/83:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/77:4:composite:1/83:14:compute:1",
+      "target": "model/77:4:composite:1/83:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/77:4:composite:1/83:8:value-alias:1",
+      "target": "model/77:4:composite:1/84:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/77:4:composite:1/84:14:compute:1",
+      "target": "model/77:4:composite:1/84:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/77:4:composite:1/40:22:parameter:1",
+      "target": "model/77:4:composite:1/86:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00014"
+    },
+    {
+      "source": "model/77:4:composite:1/84:8:value-alias:1",
+      "target": "model/77:4:composite:1/86:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/77:4:composite:1/86:14:compute:1",
+      "target": "model/77:4:composite:1/86:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/77:4:composite:1/86:8:value-alias:1",
+      "target": "model/77:4:composite:1/87:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/77:4:composite:1/87:14:compute:1",
+      "target": "model/77:4:composite:1/87:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/77:4:composite:1/87:8:value-alias:1",
+      "target": "model/77:4:composite:1/88:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/77:4:composite:1/88:14:compute:1",
+      "target": "model/77:4:composite:1/88:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/77:4:composite:1/52:22:parameter:1",
+      "target": "model/77:4:composite:1/90:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00021"
+    },
+    {
+      "source": "model/77:4:composite:1/88:8:value-alias:1",
+      "target": "model/77:4:composite:1/90:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/77:4:composite:1/90:14:compute:1",
+      "target": "model/77:4:composite:1/90:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/77:4:composite:1/90:8:value-alias:1",
+      "target": "model/77:4:composite:1/91:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/77:4:composite:1/91:14:compute:1",
+      "target": "model/77:4:composite:1/91:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/77:4:composite:1/91:8:value-alias:1",
+      "target": "model/77:4:composite:1/92:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/77:4:composite:1/92:14:compute:1",
+      "target": "model/77:4:composite:1/92:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00027"
+    },
+    {
+      "source": "model/77:4:composite:1/64:22:parameter:1",
+      "target": "model/77:4:composite:1/94:14:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00028"
+    },
+    {
+      "source": "model/77:4:composite:1/92:8:value-alias:1",
+      "target": "model/77:4:composite:1/94:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00029"
+    },
+    {
+      "source": "model/77:4:composite:1/94:14:compute:1",
+      "target": "model/77:4:composite:1/94:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00030"
+    },
+    {
+      "source": "model/77:4:composite:1/94:8:value-alias:1",
+      "target": "model/77:4:composite:1/95:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00031"
+    },
+    {
+      "source": "model/77:4:composite:1/95:14:compute:1",
+      "target": "model/77:4:composite:1/95:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00032"
+    },
+    {
+      "source": "model/77:4:composite:1/95:8:value-alias:1",
+      "target": "model/77:4:composite:1/96:14:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00033"
+    },
+    {
+      "source": "model/77:4:composite:1/96:14:compute:1",
+      "target": "model/77:4:composite:1/96:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00034"
+    },
+    {
+      "source": "model/77:4:composite:1/98:44:compute:2",
+      "target": "model/77:4:composite:1/98:44:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00035"
+    },
+    {
+      "source": "model/77:4:composite:1/96:8:value-alias:1",
+      "target": "model/77:4:composite:1/98:31:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00036"
+    },
+    {
+      "source": "model/77:4:composite:1/98:44:compute:1",
+      "target": "model/77:4:composite:1/98:31:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00037"
+    },
+    {
+      "source": "model/77:4:composite:1/74:24:parameter:1",
+      "target": "model/77:4:composite:1/98:17:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00038"
+    },
+    {
+      "source": "model/77:4:composite:1/98:31:compute:1",
+      "target": "model/77:4:composite:1/98:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00039"
+    },
+    {
+      "source": "model/77:4:composite:1/98:17:compute:1",
+      "target": "model/77:4:composite:1/98:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00040"
+    },
+    {
+      "source": "model/77:4:composite:1/98:8:value-alias:1",
+      "target": "model/77:4:composite:1/99:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00041"
+    },
+    {
+      "source": "model/77:4:composite:1/99:17:compute:1",
+      "target": "model/77:4:composite:1/99:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00042"
+    },
+    {
+      "source": "model/77:4:composite:1/98:8:value-alias:1",
+      "target": "model/77:4:composite:1/100:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00043"
+    },
+    {
+      "source": "model/77:4:composite:1/99:8:value-alias:1",
+      "target": "model/77:4:composite:1/100:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00044"
+    },
+    {
+      "source": "model/77:4:composite:1/100:15:compute:1",
+      "target": "model/77:4:composite:1/100:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00045"
+    }
+  ],
+  "branches": [],
+  "motifs": [
+    {
+      "id": "motif:CNN block:0",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/77:4:composite:1/78:14:compute:1",
+        "model/77:4:composite:1/78:8:value-alias:1",
+        "model/77:4:composite:1/79:14:compute:1",
+        "model/77:4:composite:1/79:8:value-alias:1",
+        "model/77:4:composite:1/80:14:compute:1",
+        "model/77:4:composite:1/16:22:parameter:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:1",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/77:4:composite:1/82:14:compute:1",
+        "model/77:4:composite:1/82:8:value-alias:1",
+        "model/77:4:composite:1/83:14:compute:1",
+        "model/77:4:composite:1/83:8:value-alias:1",
+        "model/77:4:composite:1/84:14:compute:1",
+        "model/77:4:composite:1/28:22:parameter:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:2",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/77:4:composite:1/86:14:compute:1",
+        "model/77:4:composite:1/86:8:value-alias:1",
+        "model/77:4:composite:1/87:14:compute:1",
+        "model/77:4:composite:1/87:8:value-alias:1",
+        "model/77:4:composite:1/88:14:compute:1",
+        "model/77:4:composite:1/40:22:parameter:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:3",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/77:4:composite:1/90:14:compute:1",
+        "model/77:4:composite:1/90:8:value-alias:1",
+        "model/77:4:composite:1/91:14:compute:1",
+        "model/77:4:composite:1/91:8:value-alias:1",
+        "model/77:4:composite:1/92:14:compute:1",
+        "model/77:4:composite:1/52:22:parameter:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:4",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/77:4:composite:1/94:14:compute:1",
+        "model/77:4:composite:1/94:8:value-alias:1",
+        "model/77:4:composite:1/95:14:compute:1",
+        "model/77:4:composite:1/95:8:value-alias:1",
+        "model/77:4:composite:1/96:14:compute:1",
+        "model/77:4:composite:1/64:22:parameter:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    }
+  ],
+  "diagnostics": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=1",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=12",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cyclical-learning-rate.ipynb#cell=47",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    }
+  ],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "469fe5385e5efe00a6987d417af75d2472690160b8588583ba85ae49c055a5f3"
+}

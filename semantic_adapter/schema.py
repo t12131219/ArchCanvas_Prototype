@@ -32,6 +32,17 @@ def seal(ir):
     return ir
 
 
+def source_graph_digest(ir):
+    """Bind certificates to source facts; appending observations cannot change it."""
+    nodes = [{k: v for k, v in n.items() if k not in {'runtime_evidence', 'evidence_status', 'runtime_branch_outcomes'}}
+             for n in ir['nodes'] if n['id'] != 'runtime-observations' and not n['id'].startswith('runtime:')]
+    ids = {n['id'] for n in nodes}
+    edges = [e for e in ir['edges'] if e['source'] in ids and e['target'] in ids]
+    files = {s['file'] for n in nodes for s in n.get('source', [])}
+    generation = {s['path']: s['sha256'] for s in ir.get('sources', []) if s['path'] in files}
+    return digest({'nodes': nodes, 'edges': edges, 'entry': ir['entry'], 'source_generation': generation})
+
+
 def validate_ir(ir):
     errors = []
     if ir.get('schema') != SCHEMA:
@@ -67,6 +78,46 @@ def validate_ir(ir):
     for motif in ir.get('motifs', []):
         if not set(motif['members']) <= by.keys() or not motif.get('evidence'):
             errors.append('invalid motif: ' + motif['id'])
+    certificates = {c['id']: c for c in ir.get('semantic_contracts', [])}
+    if certificates and ir.get('semantic_contract_basis') != source_graph_digest(ir):
+        errors.append('semantic certificates refer to a different source graph')
+    if len(certificates) != len(ir.get('semantic_contracts', [])):
+        errors.append('duplicate semantic certificate IDs')
+    for c in certificates.values():
+        if c.get('rule_version') != 'source-contracts/1' or c.get('node') not in by or not set(c.get('members', [])) <= by.keys() or not set(c.get('edges', [])) <= edge_ids:
+            errors.append('invalid semantic certificate: ' + c['id'])
+        if not set(c.get('dependencies', [])) <= certificates.keys() or not c.get('proof') or not c.get('scope'):
+            errors.append('missing semantic certificate evidence: ' + c['id'])
+    for n in nodes:
+        if n.get('return_selection'):
+            selected = n['return_selection']['selected']
+            if selected not in by or not any(e['source'] == selected and e['target'] == n['id'] and e['kind'] == 'interface-binding' for e in ir.get('edges', [])):
+                errors.append('invalid invocation return selection: ' + n['id'])
+    index = ir.get('observation_index')
+    if index:
+        receipt = ir.get('runtime', {})
+        runs = receipt.get('runs', [])
+        if index.get('schema') != 'archcanvas-observation-index/1' or index.get('receipt_digest') != receipt.get('trace_digest') or index.get('source_binding') != receipt.get('binding'):
+            errors.append('invalid observation evidence binding')
+        for a in index.get('module_associations', []):
+            static = by.get(a.get('node'), {})
+            if not static or static.get('module_path') != a.get('path') or static['id'].startswith('runtime:'):
+                errors.append('invalid observation module association')
+            for o in a.get('observations', []):
+                ri = o.get('run', -1)
+                call = by.get(o.get('call'), {})
+                if not 0 <= ri < len(runs) or o.get('case') != runs[ri]['case'] or o.get('mode') != runs[ri]['mode'] or call.get('module_path') != a.get('path') or not o.get('call', '').startswith(f'runtime:{ri}:'):
+                    errors.append('invalid observed invocation')
+        for g in index.get('trace_groups', []):
+            representative = g.get('representative')
+            if representative not in by or not any(r.get('node') == representative for r in g.get('runs', [])):
+                errors.append('missing observed trace representative')
+            for row in g.get('node_correspondences', []):
+                ri = row.get('run', -1)
+                mapping = row.get('mapping', {})
+                expected = {n['id'] for n in nodes if n['id'].startswith(f'runtime:{ri}:')}
+                if set(mapping) != expected or len(set(mapping.values())) != len(mapping) or not set(mapping.values()) <= by.keys():
+                    errors.append('invalid observed trace correspondence')
     if ir.get('ir_digest') != digest({k: v for k, v in ir.items() if k != 'ir_digest'}):
         errors.append('IR digest mismatch')
     return {'ok': not errors, 'errors': errors}

@@ -113,4 +113,6 @@ def merge(ir, receipt):
                       'reason': 'if/if-expression outcomes and finite outputs verified for declared cases' if complete else 'unobserved/unsupported source, failed run, or input domain not exhaustively declared'}
     from .motifs import recognize_runtime
     recognize_runtime(ir)
+    from .observations import index_observations
+    index_observations(ir, receipt)
     return seal(ir)

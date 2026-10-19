@@ -12,7 +12,7 @@
   function setCamera(){svg.setAttribute('viewBox',`${camera.x} ${camera.y} ${camera.w} ${camera.h}`);}
   function fit(){const b=projection.bounds,r=$('stage').clientWidth/$('stage').clientHeight,w=b.w+40,h=b.h+40;camera=w/h>r?{x:b.x-20,y:b.y-(w/r-h)/2-20,w,h:w/r}:{x:b.x-(h*r-w)/2-20,y:b.y-20,w:h*r,h};setCamera();}
   function library(){const q=$('search').value.toLowerCase();$('catalog').replaceChildren();for(const m of catalog.filter(m=>m.title.toLowerCase().includes(q))){const b=document.createElement('button');b.className='case'+(ir?.ir_digest===m.digest?' active':'');b.innerHTML=`<strong>${esc(m.title)}</strong><small>${m.nodes} 节点 · ${esc(m.runtime==='passed'?'CPU 已观测':'静态源码')}</small>`;b.onclick=()=>loadModel(m);$('catalog').append(b);}}
-  async function loadModel(m){const ticket=++loadRevision;try{const response=await fetch('../data/semantic/'+m.ir);if(!response.ok)throw Error('IR 文件读取失败');const value=await response.json();if(ticket!==loadRevision)return;open(value);$('irLink').href='../data/semantic/'+m.ir;$('irLink').hidden=false;}catch(error){message(error.message);}}
+  async function loadModel(m){const ticket=++loadRevision;try{const response=await fetch('../data/semantic/'+m.ir,{cache:'no-store'});if(!response.ok)throw Error('IR 文件读取失败');const value=await response.json();if(ticket!==loadRevision)return;open(value);$('irLink').href='../data/semantic/'+m.ir;$('irLink').hidden=false;}catch(error){message(error.message);}}
   function open(value,saved){E.validate(value);ir=value;history=[];future=[];selected=null;inspectedBundle=null;
     const roots=ir.nodes.filter(n=>!n.parent).map(n=>n.id);state={open:roots,offsets:{},mode:'source',view:'publication'};
     try{const disk=saved||JSON.parse(localStorage.getItem(storeKey()));if(disk&&typeof disk==='object'&&!Array.isArray(disk))state={...state,...disk,open:Array.isArray(disk.open)?disk.open:roots,offsets:disk.offsets&&typeof disk.offsets==='object'&&!Array.isArray(disk.offsets)?disk.offsets:{}};}catch(_){}
@@ -20,13 +20,17 @@
     if(state.mode==='runtime'&&$('mode').options[1].disabled)state.mode='source';$('mode').value=state.mode;$('nodeTitle').textContent='选择图元';$('details').textContent='单击节点查看源码与运行证据。';
     $('title').textContent=ir.title;$('summary').textContent=`${ir.nodes.length} 个语义单位 · ${ir.edges.length} 个关系 · ${(ir.motifs||[]).length} 个组合模式`;
     const c=ir.coverage||{status:'not-verified'},r=ir.runtime||{status:'not-requested'},branches=c.branches||[];
-    $('coverage').innerHTML=`<strong>验证范围</strong> <span class="badge">${esc(c.status)}</span><p>${esc(ir.coverage_contract)}</p><div>当前输入：${esc(c.scope||'静态分析')}；CPU：${esc(r.status)}；源码分支：${branches.filter(b=>b.kind!=='loop'&&!b.missing.length).length}/${(ir.branches||[]).filter(b=>b.kind!=='loop').length} 个 if / 条件表达式已覆盖两个结果；循环与短路路径另列为限制。</div><div>${esc(c.reason||'')}</div>${r.reason?'<pre>'+esc(r.reason)+'</pre>':''}<details><summary>分支、限制和模式证据</summary><pre>${esc(JSON.stringify({coverage:c,motifs:ir.motifs,limitations:ir.limitations},null,2))}</pre></details>`;
+    $('coverage').innerHTML=`<strong>验证范围</strong> <span class="badge">${esc(c.status)}</span><p>目标契约（当前验证结果见状态与限制）：${esc(ir.coverage_contract)}</p><div>当前输入：${esc(c.scope||'静态分析')}；CPU：${esc(r.status)}；源码分支：${branches.filter(b=>b.kind!=='loop'&&!b.missing.length).length}/${(ir.branches||[]).filter(b=>b.kind!=='loop').length} 个 if / 条件表达式已覆盖两个结果；循环与短路路径另列为限制。</div><div>${esc(c.reason||'')}</div>${r.reason?'<pre>'+esc(r.reason)+'</pre>':''}<details><summary>分支、限制和模式证据</summary><pre>${esc(JSON.stringify({coverage:c,motifs:ir.motifs,limitations:ir.limitations},null,2))}</pre></details>`;
     render();fit();library();message($('status').textContent+'；双击模块展开，单击查看证据');
   }
   function inspect(id){selected=id;inspectedBundle=null;for(const[key,g]of renderedNodes)g.classList.toggle('selected',key===id);const n=projection.idx.nodes.get(id);if(!n)return;
     $('nodeTitle').textContent=n.label;
     $('details').innerHTML=`<span class="badge">${esc(n.kind)}</span><span class="badge">${esc(n.evidence_status)}</span>${n.semantic_type?'<p>'+esc(n.semantic_type)+'</p>':''}${n.reason?'<p>'+esc(n.reason)+'</p>':''}${n.presentation_only?'<p>架构摘要 · '+n.canonical_members.length+' 个原始节点 · '+n.boundary_ports.length+' 个边界端口</p><pre>'+esc(JSON.stringify(projection.architecture.findings.find(f=>f.id===n.finding),null,2))+'</pre>':''}${(n.source||[]).slice(0,10).map(s=>`<div class="source">${esc(s.file.split('/').slice(-2).join('/'))}:${s.line}<code>${esc(s.symbol)}</code><pre>${esc(s.expression)}</pre></div>`).join('')}${n.inputs?'<p>输入 / 输出张量</p><pre>'+esc(JSON.stringify({inputs:n.inputs,outputs:n.outputs},null,2))+'</pre>':''}${projection.annotations.get(id)?.length?'<details><summary>附属资源与配置</summary><pre>'+esc(JSON.stringify(projection.annotations.get(id),null,2))+'</pre></details>':''}<details><summary>完整语义与证据</summary><pre>${esc(JSON.stringify(n,null,2))}</pre></details>`;
     if(n.content_inventory)$('details').insertAdjacentHTML('afterbegin','<h3>摘要内容</h3><p>按当前语义单元计数，包含操作、调用和已确认的局部组合；不表示重复堆叠、执行并发或参数共享。</p>'+n.content_inventory.terms.map(t=>'<div class="source"><strong>'+esc(t.label)+' × '+t.count+'</strong><br>'+t.units.map(id=>esc(projection.idx.nodes.get(id)?.label||id)).join(' · ')+'</div>').join(''));
+    if(n.semantic_contracts?.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>语义契约与证据范围</summary><pre>'+esc(JSON.stringify((ir.semantic_contracts||[]).filter(c=>n.semantic_contracts.includes(c.id)),null,2))+'</pre></details>');
+    if(n.observed_calls)$('details').insertAdjacentHTML('beforeend','<details><summary>对应的运行观测</summary><pre>'+esc(JSON.stringify(n.observed_calls,null,2))+'</pre></details>');
+    if(n.repeat_contract?.homogeneous){const button=document.createElement('button');button.textContent='查看一个代表实例';button.onclick=()=>{snapshot();state.paperFocus=n.id;state.paperRepresentative=true;state.paperGranularity='modules';state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);}
+    if(n.observation_group){const button=document.createElement('button');button.textContent='查看一条代表轨迹';button.onclick=()=>{snapshot();state.paperFocus=n.observation_group.representative;state.paperRepresentative=false;state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);}
     if(n.boundary_uses?.length>1)$('details').insertAdjacentHTML('beforeend','<h3>外部使用</h3><p>同一源码结果的 '+n.boundary_uses.length+' 次使用；逐条保留目标与操作数。</p>'+n.boundary_uses.map(e=>'<div class="source"><strong>'+esc(projection.idx.nodes.get(e.target)?.label||e.target)+'</strong> ['+esc(e.target_port)+']<br>'+esc(e.id)+' · '+esc(e.evidence)+'</div>').join(''));
   }
   function inspectBundle(edge){
@@ -39,7 +43,11 @@
     for(const id of groups){const button=document.createElement('button');button.textContent='展开 '+projection.idx.nodes.get(id).label;button.onclick=()=>toggle(id);$('details').append(button);}
   }
   function refreshBundleInspector(){
-    if(!inspectedBundle)return;
+    if(!inspectedBundle){
+      if(!selected)return;
+      if(projection.positions.has(selected)){inspect(selected);return;}
+      selected=null;$('nodeTitle').textContent='选择图元';$('details').textContent='单击节点或合绘连线查看当前图面的证据。';return;
+    }
     const edge=state.view==='publication'&&projection.edges.find(e=>e.id===inspectedBundle&&e.bundle_members);
     if(edge){inspectBundle(edge);return;}
     inspectedBundle=null;$('nodeTitle').textContent='选择图元';$('details').textContent='单击节点或合绘连线查看当前图面的证据。';
@@ -53,7 +61,7 @@
   }
   function render(){if(!ir)return;$('legend').innerHTML=state.view==='publication'?'<span>蓝灰实线：源码依赖</span><span>绿色：实际张量流</span><span>黄虚线：控制</span><span>虚框：未知操作</span><span>无节点交叉：跨越</span><span>粗线与数量：合绘的独立依赖，可单击查看</span>':'<span>蓝色虚线：源码依赖</span><span>绿色实线：实际张量流</span><span>紫色：参数</span><span>黄色：控制</span><span>红色虚框：未知边界</span>';svg.classList.toggle('publication',state.view==='publication');if(state.view!=='publication')document.getElementById('paperLabels')?.remove();if(state.view==='publication'){renderPaper();return;}projection=E.project(ir,state);renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
     const frameFragment=document.createDocumentFragment(),nodeFragment=document.createDocumentFragment(),edgeFragment=document.createDocumentFragment();
-    for(const n of projection.nodes){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});const fill=n.glyph?.fill||'#edf2fa',color=n.kind==='opaque'?'#bf6b6b':'#92a8c4';let shape;
+    for(const n of E.drawingOrder(projection.nodes,projection.idx)){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});const fill=n.glyph?.fill||'#edf2fa',color=n.kind==='opaque'?'#bf6b6b':'#92a8c4';let shape;
       if(p.symbol){shape=el('circle',{cx:p.w/2,cy:p.h/2,r:p.w/2,fill,stroke:color});}
       else if(n.kind==='control'&&!p.expanded){shape=el('polygon',{points:`16,0 ${p.w-16},0 ${p.w},${p.h/2} ${p.w-16},${p.h} 16,${p.h} 0,${p.h/2}`,fill,stroke:color});}
       else shape=el('rect',{x:0,y:0,width:p.w,height:p.h,rx:p.expanded?12:n.kind==='interface'?28:8,fill:p.expanded?'#f7f9fd':fill,stroke:color,'stroke-width':p.expanded?1.6:1.2,...(n.kind==='opaque'?{'stroke-dasharray':'5 4'}:{})});
@@ -75,21 +83,22 @@
   }
   function syncPaperControls(){
     if(!ir||!state)return;
-    $('paperAuto').checked=state.paperAuto!==false;$('paperWidth').value=state.paperWidthMm||180;
+    $('paperAuto').checked=state.paperAuto!==false;$('paperWidth').value=state.paperWidthMm||180;$('paperGranularity').value=state.paperGranularity||'overview';$('paperGranularity').disabled=state.paperAuto===false;
     const plan=P.plan(ir),idx=E.index(plan),select=$('paperFocus');select.replaceChildren(new Option('模型总览',''));
     const source=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return false;id=idx.nodes.get(id)?.parent;}return true;};
     for(const n of plan.nodes)if(n.parent&&(idx.children.get(n.id)||[]).length&&(state.mode==='source'?source(n.id):state.mode==='runtime'?!source(n.id):true)){const option=new Option((n.module_path||n.label)+(n.paper.unknown_count?' · '+n.paper.unknown_count+' 未知边界':''),n.id);select.add(option);}
     select.value=state.paperFocus||'';
   }
-  $('paperFocus').onchange=()=>{snapshot();state.paperFocus=$('paperFocus').value||null;state.paperAuto=true;state.offsets={};render();fit();persist();syncPaperControls();};
-  $('paperAuto').onchange=()=>{snapshot();state.open=projection.publication?.open||state.open;state.paperAuto=$('paperAuto').checked;state.offsets={};render();fit();persist();};
+  $('paperFocus').onchange=()=>{snapshot();state.paperFocus=$('paperFocus').value||null;state.paperRepresentative=false;state.paperAuto=true;state.offsets={};render();fit();persist();syncPaperControls();};
+  $('paperAuto').onchange=()=>{snapshot();state.open=projection.publication?.open||state.open;state.paperAuto=$('paperAuto').checked;state.offsets={};syncPaperControls();render();fit();persist();};
+  $('paperGranularity').onchange=()=>{snapshot();state.paperGranularity=$('paperGranularity').value;state.paperAuto=true;state.offsets={};render();fit();persist();};
   $('paperWidth').onchange=()=>{snapshot();state.paperWidthMm=Math.max(80,Math.min(400,Number($('paperWidth').value)||180));render();fit();persist();};
   function renderPaper(){
     const figure=R.prepareFigure(ir,state);projection=figure.graph;const prepared=figure.prepared;projection.bounds=prepared.bounds;
     renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
     let style=document.getElementById('paperStyle');if(!style){style=el('style',{id:'paperStyle'},R.css);svg.prepend(style);svg.querySelector('defs').insertAdjacentHTML('beforeend',R.defs);}
     document.getElementById('paperLabels')?.remove();const labels=el('g',{id:'paperLabels'});
-    for(const n of projection.nodes){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});g.innerHTML=R.nodeBody(n,p);g.append(el('title',{},R.nodeTitle(n,projection.idx)));bindNode(g,n,p);(p.expanded?$('frames'):$('nodes')).append(g);renderedNodes.set(n.id,g);}
+    for(const n of E.drawingOrder(projection.nodes,projection.idx)){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});g.innerHTML=R.nodeBody(n,p);g.append(el('title',{},R.nodeTitle(n,projection.idx)));bindNode(g,n,p);(p.expanded?$('frames'):$('nodes')).append(g);renderedNodes.set(n.id,g);}
     for(const edge of prepared.routes){
       const g=el('g');g.innerHTML=R.edgeBody(edge);
       if(edge.bundle_members){
@@ -109,8 +118,9 @@
     labels.innerHTML=prepared.labeling.placed.map(R.labelBody).join('');svg.append(labels);refreshBundleInspector();
     const q=prepared.quality;$('paperQuality').textContent=`${q.min_print_font_pt} pt 最小字号 · ${Number(q.width_mm.toFixed(1))} × ${q.height_mm} mm${q.issues.length?' · 需调整：'+q.issues.map(s=>({'font-below-8pt':'字号偏小','figure-taller-than-245mm':'图过高','route-failure':'连线路径','port-label-requires-note':'端口标签见导出附注','edge-path-overlap':'路径重合'})[s]).join('、'):''}`;
     $('paperQuality').className=q.issues.length?'needs-adjustment':'quality-ok';
-    $('paperAuto').checked=state.paperAuto!==false;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
-    message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接${projection.publication.wire_bundles.length?'（'+projection.edge_accounting.visible.length+' 条依赖）':''} · ${projection.publication.unknowns} 个未知操作${prepared.quality.route_failures.length?' · 存在待调整路径':''}`);
+    $('paperAuto').checked=state.paperAuto!==false;$('paperGranularity').disabled=state.paperAuto===false;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
+    const limited=prepared.routing.granularity_refinement;
+    message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接${projection.publication.wire_bundles.length?'（'+projection.edge_accounting.visible.length+' 条依赖）':''} · ${projection.publication.unknowns} 个未知操作${prepared.quality.route_failures.length?' · 存在待调整路径':''}${limited&&(limited.selected!==limited.requested||limited.selected_budget<limited.requested_budget)?' · 受图宽限制，部分细节请打开模块详图':''}`);
   }
   function world(e){const point=svg.createSVGPoint();point.x=e.clientX;point.y=e.clientY;return point.matrixTransform(svg.getScreenCTM().inverse());}
   function move(){pendingFrame=0;if(!drag||!dragPoint)return;const point=dragPoint;if(drag.kind==='pan'){camera.x=drag.camera.x-(point.clientX-drag.client.x)*camera.w/svg.clientWidth;camera.y=drag.camera.y-(point.clientY-drag.client.y)*camera.h/svg.clientHeight;setCamera();return;}
@@ -139,5 +149,5 @@
   $('save').onclick=()=>download(JSON.stringify({schema:'semantic-canvas/1',ir,state},null,2),ir.title+'-semantic.json','application/json');
   $('export').onclick=()=>{if(state.view==='publication'){download(R.render(ir,state).svg,ir.title+'-figure.svg','image/svg+xml');return;}const copy=svg.cloneNode(true);copy.setAttribute('xmlns',NS);copy.setAttribute('viewBox',`${projection.bounds.x} ${projection.bounds.y} ${projection.bounds.w} ${projection.bounds.h}`);copy.setAttribute('width',projection.bounds.w);copy.setAttribute('height',projection.bounds.h);const style=el('style',{},'.edge{fill:none;stroke-width:1.8}.edge.source{stroke:#6b89b8;stroke-dasharray:5 4}.edge.runtime{stroke:#288765}.edge.resource{stroke:#ac72a0}.edge.route-failed{stroke:#cf7930;stroke-dasharray:3 3}text{font-family:Arial,sans-serif}');copy.prepend(style);download(new XMLSerializer().serializeToString(copy),ir.title+'.svg','image/svg+xml');};
   $('import').onclick=()=>$('file').click();$('file').onchange=async()=>{const file=$('file').files[0];if(!file)return;const ticket=++loadRevision;try{if(file.size>20_000_000)throw Error('文件超过 20MB');const value=JSON.parse(await file.text());if(ticket!==loadRevision)return;open(['semantic-canvas/1','archcanvas-architecture-document/1'].includes(value.schema)?value.ir:value,value.state);$('irLink').hidden=true;}catch(error){message(error.message);}finally{$('file').value='';}};
-  Promise.all([fetch('../data/semantic/catalog.json').then(r=>r.json()),fetch('../data/semantic/source-inventory.json').then(r=>r.json())]).then(([data,inventory])=>{catalog=data.models;$('inventory').textContent=`已只读扫描 ${inventory.files.length} 个文件，发现 ${inventory.models.length} 个模型候选。Awesome 列表登记 ${inventory.github_links.length} 个 GitHub 来源链接，尚未下载。Notebook 仅静态解析。`;library();const id=new URLSearchParams(location.search).get('model');loadModel(catalog.find(m=>m.id===id)||catalog[0]);}).catch(error=>message('读取失败：'+error.message));
+  Promise.all([fetch('../data/semantic/catalog.json',{cache:'no-store'}).then(r=>r.json()),fetch('../data/semantic/source-inventory.json',{cache:'no-store'}).then(r=>r.json())]).then(([data,inventory])=>{catalog=data.models;$('inventory').textContent=`已只读扫描 ${inventory.files.length} 个文件，发现 ${inventory.models.length} 个模型候选。Awesome 列表登记 ${inventory.github_links.length} 个 GitHub 来源链接，尚未下载。Notebook 仅静态解析。`;library();const id=new URLSearchParams(location.search).get('model');loadModel(catalog.find(m=>m.id===id)||catalog[0]);}).catch(error=>message('读取失败：'+error.message));
 })();

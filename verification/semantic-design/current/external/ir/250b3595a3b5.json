@@ -1,0 +1,2081 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "AlexNet",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+    "class": "AlexNet",
+    "cell": 15,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=7",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 7,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "e1bba43664076e0730449ec3d5393eea22a9c96118ccbb8f176929ce862e9b91"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=10",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 10,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "107248a805c94afc2ea78a5f8f9164b90ec92399e40f58fd7f4950f64de2d60f"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=12",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 12,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "2fcb426fec502783df5ce09b0a3a861c21708f61044587fd35ce227199596b42"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=13",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 13,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "93585e57640798cdb28471840548b96af951a7d6fe5f4a57ccf67e43cce03d49"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 15,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "b2bb04e7e6b50a8e9ce0d765ca50f0f88ed28b2ec802bc0d81938569d4bca5af"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=16",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 16,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "a0ec2f9aa5e318ba2a5c2250c6ab852a834228c4abaf277a0a4b584f868dac86"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=18",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 18,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "40cd4a79815df9353fede362b8644ab2fb81e558d26acc7bf73897a45c7dfba4"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=19",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 19,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "91716ed27e86acaba6c8b6507de9d47df6a471ed3553032e4108c041a825a832"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=21",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 21,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "034fcee9405edcfcb80d6cfce9cd610badd2f1c2a6f3419777422f8bf33f665c"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=22",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 22,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "60423b2cb16fb2df8e42ebb90bf56e0f088d57019214dd6dabef783acbbbb113"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=23",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 23,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "71f2456a44dd2d13415ff2ac1a2d56b655b1fe058d9f6d2393facb82099c1d4d"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=25",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 25,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "40cd4a79815df9353fede362b8644ab2fb81e558d26acc7bf73897a45c7dfba4"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=26",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 26,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "a33f2f8db94153219fd3062257ef403bc701897f914f89cbc8f803516e2a4755"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=27",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 27,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "b916c8c71fb892bd3e821b2e8ba05ed33e38580bedff08969597df817b52874c"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=28",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 28,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "034fcee9405edcfcb80d6cfce9cd610badd2f1c2a6f3419777422f8bf33f665c"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=29",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 29,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "60423b2cb16fb2df8e42ebb90bf56e0f088d57019214dd6dabef783acbbbb113"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=30",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb",
+      "cell": 30,
+      "sha256": "f91147a29e2a0148bcd38f69f28f71d288658a8e3aa75128a2c3a18923294db3",
+      "unit_sha256": "71f2456a44dd2d13415ff2ac1a2d56b655b1fe058d9f6d2393facb82099c1d4d"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/35:4:composite:1",
+      "kind": "composite",
+      "label": "AlexNet",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 35,
+          "end_line": 41,
+          "column": 4,
+          "end_column": 29,
+          "symbol": "AlexNet.forward",
+          "expression": "def forward(self, x):\n    x = self.features(x)\n    x = self.avgpool(x)\n    x = x.view(x.size(0), 256 * 6 * 6)\n    logits = self.classifier(x)\n    probas = F.softmax(logits, dim=1)\n    return (logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "convolutional network",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "AlexNet"
+    },
+    {
+      "id": "model/35:4:composite:1/35:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 35,
+          "end_line": 35,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "AlexNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1",
+      "kind": "composite",
+      "label": "features",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 36,
+          "end_line": 36,
+          "column": 12,
+          "end_column": 28,
+          "symbol": "AlexNet.forward",
+          "expression": "self.features(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "convolutional network",
+      "module_path": "features"
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/10:12:compute:1",
+      "kind": "compute",
+      "label": "0: Conv2d",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 10,
+          "end_line": 10,
+          "column": 12,
+          "end_column": 65,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "features.0",
+      "constructor": {
+        "args": [
+          3,
+          64
+        ],
+        "kwargs": {
+          "kernel_size": 11,
+          "stride": 4,
+          "padding": 2
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/11:12:compute:1",
+      "kind": "compute",
+      "label": "1: ReLU",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 11,
+          "end_line": 11,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "features.1",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/12:12:compute:1",
+      "kind": "compute",
+      "label": "2: MaxPool2d",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 12,
+          "end_line": 12,
+          "column": 12,
+          "end_column": 49,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "framework_type": "torch.nn.MaxPool2d",
+      "module_path": "features.2",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 2
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/13:12:compute:1",
+      "kind": "compute",
+      "label": "3: Conv2d",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 13,
+          "end_line": 13,
+          "column": 12,
+          "end_column": 56,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(64, 192, kernel_size=5, padding=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "features.3",
+      "constructor": {
+        "args": [
+          64,
+          192
+        ],
+        "kwargs": {
+          "kernel_size": 5,
+          "padding": 2
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/14:12:compute:1",
+      "kind": "compute",
+      "label": "4: ReLU",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 14,
+          "end_line": 14,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "features.4",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/15:12:compute:1",
+      "kind": "compute",
+      "label": "5: MaxPool2d",
+      "parent": "motif:CNN block:1",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 15,
+          "end_line": 15,
+          "column": 12,
+          "end_column": 49,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "framework_type": "torch.nn.MaxPool2d",
+      "module_path": "features.5",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 2
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/16:12:compute:1",
+      "kind": "compute",
+      "label": "6: Conv2d",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 16,
+          "end_line": 16,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(192, 384, kernel_size=3, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "features.6",
+      "constructor": {
+        "args": [
+          192,
+          384
+        ],
+        "kwargs": {
+          "kernel_size": 3,
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/17:12:compute:1",
+      "kind": "compute",
+      "label": "7: ReLU",
+      "parent": "motif:CNN block:2",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 17,
+          "end_line": 17,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "features.7",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/18:12:compute:1",
+      "kind": "compute",
+      "label": "8: Conv2d",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 18,
+          "end_line": 18,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(384, 256, kernel_size=3, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "features.8",
+      "constructor": {
+        "args": [
+          384,
+          256
+        ],
+        "kwargs": {
+          "kernel_size": 3,
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/19:12:compute:1",
+      "kind": "compute",
+      "label": "9: ReLU",
+      "parent": "motif:CNN block:3",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 19,
+          "end_line": 19,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "features.9",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/20:12:compute:1",
+      "kind": "compute",
+      "label": "10: Conv2d",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 20,
+          "end_line": 20,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(256, 256, kernel_size=3, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "framework_type": "torch.nn.Conv2d",
+      "module_path": "features.10",
+      "constructor": {
+        "args": [
+          256,
+          256
+        ],
+        "kwargs": {
+          "kernel_size": 3,
+          "padding": 1
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/21:12:compute:1",
+      "kind": "compute",
+      "label": "11: ReLU",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 21,
+          "end_line": 21,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "features.11",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/22:12:compute:1",
+      "kind": "compute",
+      "label": "12: MaxPool2d",
+      "parent": "motif:CNN block:4",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 22,
+          "end_line": 22,
+          "column": 12,
+          "end_column": 49,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "framework_type": "torch.nn.MaxPool2d",
+      "module_path": "features.12",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "kernel_size": 3,
+          "stride": 2
+        }
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/36:12:composite:1/36:12:interface:1",
+      "kind": "interface",
+      "label": "out",
+      "parent": "model/35:4:composite:1/36:12:composite:1",
+      "source_parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 36,
+          "end_line": 36,
+          "column": 12,
+          "end_column": 28,
+          "symbol": "AlexNet.forward",
+          "expression": "self.features(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/35:4:composite:1/36:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 36,
+          "end_line": 36,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "AlexNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/35:4:composite:1/37:12:compute:1",
+      "kind": "compute",
+      "label": "avgpool · AdaptiveAvgPool2d",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 37,
+          "end_line": 37,
+          "column": 12,
+          "end_column": 27,
+          "symbol": "AlexNet.forward",
+          "expression": "self.avgpool(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "pooling",
+      "module_path": "avgpool",
+      "framework_type": "torch.nn.AdaptiveAvgPool2d",
+      "constructor": {
+        "args": [
+          [
+            6,
+            6
+          ]
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/37:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 37,
+          "end_line": 37,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "AlexNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/35:4:composite:1/38:19:compute:1",
+      "kind": "compute",
+      "label": "size",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 38,
+          "end_line": 38,
+          "column": 19,
+          "end_column": 28,
+          "symbol": "AlexNet.forward",
+          "expression": "x.size(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.size",
+      "arguments": {
+        "args": [
+          0
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/35:4:composite:1/38:30:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 38,
+          "end_line": 38,
+          "column": 30,
+          "end_column": 41,
+          "symbol": "AlexNet.forward",
+          "expression": "256 * 6 * 6"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult"
+    },
+    {
+      "id": "model/35:4:composite:1/38:30:compute:2",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 38,
+          "end_line": 38,
+          "column": 30,
+          "end_column": 37,
+          "symbol": "AlexNet.forward",
+          "expression": "256 * 6"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult"
+    },
+    {
+      "id": "model/35:4:composite:1/38:12:compute:1",
+      "kind": "compute",
+      "label": "view",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 38,
+          "end_line": 38,
+          "column": 12,
+          "end_column": 42,
+          "symbol": "AlexNet.forward",
+          "expression": "x.view(x.size(0), 256 * 6 * 6)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "x.view",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x.size(0)"
+          },
+          9216
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/35:4:composite:1/38:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 38,
+          "end_line": 38,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "AlexNet.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1",
+      "kind": "composite",
+      "label": "classifier",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 39,
+          "end_line": 39,
+          "column": 17,
+          "end_column": 35,
+          "symbol": "AlexNet.forward",
+          "expression": "self.classifier(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "sequential",
+      "module_path": "classifier"
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/26:12:compute:1",
+      "kind": "compute",
+      "label": "0: Dropout",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 26,
+          "end_line": 26,
+          "column": 12,
+          "end_column": 27,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Dropout(0.5)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "dropout",
+      "framework_type": "torch.nn.Dropout",
+      "module_path": "classifier.0",
+      "constructor": {
+        "args": [
+          0.5
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/27:12:compute:1",
+      "kind": "compute",
+      "label": "1: Linear",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 27,
+          "end_line": 27,
+          "column": 12,
+          "end_column": 40,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Linear(256 * 6 * 6, 4096)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "framework_type": "torch.nn.Linear",
+      "module_path": "classifier.1",
+      "constructor": {
+        "args": [
+          9216,
+          4096
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/28:12:compute:1",
+      "kind": "compute",
+      "label": "2: ReLU",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 28,
+          "end_line": 28,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.2",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/29:12:compute:1",
+      "kind": "compute",
+      "label": "3: Dropout",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 29,
+          "end_line": 29,
+          "column": 12,
+          "end_column": 27,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Dropout(0.5)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "dropout",
+      "framework_type": "torch.nn.Dropout",
+      "module_path": "classifier.3",
+      "constructor": {
+        "args": [
+          0.5
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/30:12:compute:1",
+      "kind": "compute",
+      "label": "4: Linear",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 30,
+          "end_line": 30,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Linear(4096, 4096)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "framework_type": "torch.nn.Linear",
+      "module_path": "classifier.4",
+      "constructor": {
+        "args": [
+          4096,
+          4096
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/31:12:compute:1",
+      "kind": "compute",
+      "label": "5: ReLU",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 31,
+          "end_line": 31,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "framework_type": "torch.nn.ReLU",
+      "module_path": "classifier.5",
+      "constructor": {
+        "args": [],
+        "kwargs": {
+          "inplace": true
+        }
+      },
+      "mutable": true,
+      "effect_scope": "sequential-call; external-aliases-unresolved"
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/32:12:compute:1",
+      "kind": "compute",
+      "label": "6: Linear",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 32,
+          "end_line": 32,
+          "column": 12,
+          "end_column": 40,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Linear(4096, num_classes)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "framework_type": "torch.nn.Linear",
+      "module_path": "classifier.6",
+      "constructor": {
+        "args": [
+          4096,
+          {
+            "unresolved": "num_classes"
+          }
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/35:4:composite:1/39:17:composite:1/39:17:interface:1",
+      "kind": "interface",
+      "label": "out",
+      "parent": "model/35:4:composite:1/39:17:composite:1",
+      "source_parent": "model/35:4:composite:1/39:17:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 39,
+          "end_line": 39,
+          "column": 17,
+          "end_column": 35,
+          "symbol": "AlexNet.forward",
+          "expression": "self.classifier(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/35:4:composite:1/39:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "logits",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 39,
+          "end_line": 39,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "AlexNet.forward",
+          "expression": "logits"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/35:4:composite:1/40:17:compute:1",
+      "kind": "compute",
+      "label": "softmax",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 40,
+          "end_line": 40,
+          "column": 17,
+          "end_column": 41,
+          "symbol": "AlexNet.forward",
+          "expression": "F.softmax(logits, dim=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "softmax",
+      "function_target": "torch.nn.functional.softmax",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "logits"
+          }
+        ],
+        "kwargs": {
+          "dim": 1
+        }
+      },
+      "reason": null
+    },
+    {
+      "id": "model/35:4:composite:1/40:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "probas",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 40,
+          "end_line": 40,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "AlexNet.forward",
+          "expression": "probas"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/35:4:composite:1/41:15:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 41,
+          "end_line": 41,
+          "column": 15,
+          "end_column": 29,
+          "symbol": "AlexNet.forward",
+          "expression": "(logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple"
+    },
+    {
+      "id": "model/35:4:composite:1/41:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/35:4:composite:1",
+      "source_parent": "model/35:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 41,
+          "end_line": 41,
+          "column": 8,
+          "end_column": 29,
+          "symbol": "AlexNet.forward",
+          "expression": "return (logits, probas)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "motif:CNN block:0",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 10,
+          "end_line": 10,
+          "column": 12,
+          "end_column": 65,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 11,
+          "end_line": 11,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 12,
+          "end_line": 12,
+          "column": 12,
+          "end_column": 49,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:0"
+    },
+    {
+      "id": "motif:CNN block:1",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 13,
+          "end_line": 13,
+          "column": 12,
+          "end_column": 56,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(64, 192, kernel_size=5, padding=2)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 14,
+          "end_line": 14,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 15,
+          "end_line": 15,
+          "column": 12,
+          "end_column": 49,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:1"
+    },
+    {
+      "id": "motif:CNN block:2",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 16,
+          "end_line": 16,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(192, 384, kernel_size=3, padding=1)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 17,
+          "end_line": 17,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:2"
+    },
+    {
+      "id": "motif:CNN block:3",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 18,
+          "end_line": 18,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(384, 256, kernel_size=3, padding=1)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 19,
+          "end_line": 19,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:3"
+    },
+    {
+      "id": "motif:CNN block:4",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/35:4:composite:1/36:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 20,
+          "end_line": 20,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.Conv2d(256, 256, kernel_size=3, padding=1)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 21,
+          "end_line": 21,
+          "column": 12,
+          "end_column": 33,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.ReLU(inplace=True)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+          "line": 22,
+          "end_line": 22,
+          "column": 12,
+          "end_column": 49,
+          "symbol": "AlexNet.forward",
+          "expression": "nn.MaxPool2d(kernel_size=3, stride=2)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:4"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/35:4:composite:1/35:22:interface:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/10:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/10:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/11:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00001"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/11:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/12:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00002"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/12:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/13:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00003"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/13:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/14:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00004"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/14:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/15:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00005"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/15:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/16:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00006"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/16:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/17:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00007"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/17:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/18:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00008"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/18:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/19:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00009"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/19:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/20:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00010"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/20:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/21:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00011"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/21:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/22:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00012"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/22:12:compute:1",
+      "target": "model/35:4:composite:1/36:12:composite:1/36:12:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00013"
+    },
+    {
+      "source": "model/35:4:composite:1/36:12:composite:1/36:12:interface:1",
+      "target": "model/35:4:composite:1/36:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/35:4:composite:1/36:8:value-alias:1",
+      "target": "model/35:4:composite:1/37:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/35:4:composite:1/37:12:compute:1",
+      "target": "model/35:4:composite:1/37:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/35:4:composite:1/37:8:value-alias:1",
+      "target": "model/35:4:composite:1/38:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/35:4:composite:1/38:30:compute:2",
+      "target": "model/35:4:composite:1/38:30:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/35:4:composite:1/37:8:value-alias:1",
+      "target": "model/35:4:composite:1/38:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/35:4:composite:1/38:19:compute:1",
+      "target": "model/35:4:composite:1/38:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/35:4:composite:1/38:30:compute:1",
+      "target": "model/35:4:composite:1/38:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/35:4:composite:1/38:12:compute:1",
+      "target": "model/35:4:composite:1/38:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/35:4:composite:1/38:8:value-alias:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/26:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00023"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/26:12:compute:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/27:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00024"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/27:12:compute:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/28:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00025"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/28:12:compute:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/29:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00026"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/29:12:compute:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/30:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00027"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/30:12:compute:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/31:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00028"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/31:12:compute:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/32:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00029"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/32:12:compute:1",
+      "target": "model/35:4:composite:1/39:17:composite:1/39:17:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00030"
+    },
+    {
+      "source": "model/35:4:composite:1/39:17:composite:1/39:17:interface:1",
+      "target": "model/35:4:composite:1/39:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00031"
+    },
+    {
+      "source": "model/35:4:composite:1/39:8:value-alias:1",
+      "target": "model/35:4:composite:1/40:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00032"
+    },
+    {
+      "source": "model/35:4:composite:1/40:17:compute:1",
+      "target": "model/35:4:composite:1/40:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00033"
+    },
+    {
+      "source": "model/35:4:composite:1/39:8:value-alias:1",
+      "target": "model/35:4:composite:1/41:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00034"
+    },
+    {
+      "source": "model/35:4:composite:1/40:8:value-alias:1",
+      "target": "model/35:4:composite:1/41:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00035"
+    },
+    {
+      "source": "model/35:4:composite:1/41:15:compute:1",
+      "target": "model/35:4:composite:1/41:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00036"
+    }
+  ],
+  "branches": [],
+  "motifs": [
+    {
+      "id": "motif:CNN block:0",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/35:4:composite:1/36:12:composite:1/10:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/11:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/12:12:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:1",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/35:4:composite:1/36:12:composite:1/13:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/14:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/15:12:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:2",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/35:4:composite:1/36:12:composite:1/16:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/17:12:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:3",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/35:4:composite:1/36:12:composite:1/18:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/19:12:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:CNN block:4",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/35:4:composite:1/36:12:composite:1/20:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/21:12:compute:1",
+        "model/35:4:composite:1/36:12:composite:1/22:12:compute:1"
+      ],
+      "evidence": [
+        "convolution → activation → pooling",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    }
+  ],
+  "diagnostics": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=1",
+      "kind": "syntax-unavailable",
+      "line": 1,
+      "reason": "invalid syntax"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=8",
+      "kind": "syntax-unavailable",
+      "line": 2,
+      "reason": "invalid syntax"
+    }
+  ],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "line": 11,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "line": 14,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "line": 17,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "line": 19,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "line": 21,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "line": 28,
+      "kind": "sequential-mutation-alias-unresolved"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/deeplearning-models-master/deeplearning-models-master/pytorch_ipynb/tricks/cnn-alexnet-cifar10-batchincrease.ipynb#cell=15",
+      "line": 31,
+      "kind": "sequential-mutation-alias-unresolved"
+    }
+  ],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "355e615622ffa09b001392aa1344a3179d7778bc4c52553e6f06a62b4107ff67"
+}

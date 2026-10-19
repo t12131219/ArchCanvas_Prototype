@@ -1,5 +1,7 @@
 # 可组合架构表达与通用布局（实验版）
 
+2026-10-19 的后续通用优化见 [语义认证与架构版式](semantic-design.md)，包括受限重复构造、局部源码契约、共享参数与运行关联、代表实例及真实 SVG 审计。下文较早的循环限制、计数与验收记录按其阶段理解。
+
 2026-10-18，在 Summary_Merge 的通用 PyTorch 链路上新增架构表达层。静态抽取、CPU 证据、局部语义归纳、展示分组和几何布局分别保留各自职责。实现位于 `semantic_studio/architecture.js`、`architecture-layout.js` 与 `semantic-engine.js`，浏览器和 Node 导出器共用同一份实现。
 
 ## 使用

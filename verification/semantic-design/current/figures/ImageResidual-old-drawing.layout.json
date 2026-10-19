@@ -1,0 +1,2472 @@
+{
+  "schema": "archcanvas-architecture-document/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "ImageResidual",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+      "class": "ImageResidual",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+        "cell": null,
+        "sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2",
+        "unit_sha256": "d3c3b9539576faf36288b82bb5ff45b80f8a356eeeb49a7f3f45a49ec633e7e2"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/75:4:composite:1",
+        "kind": "composite",
+        "label": "ImageResidual",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 75,
+            "end_line": 77,
+            "column": 4,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "def forward(self, x):\n    transformed = self.second(torch.relu(self.first(x)))\n    return self.norm(x + transformed)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "convolutional network",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "ImageResidual"
+      },
+      {
+        "id": "model/75:4:composite:1/75:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 75,
+            "end_line": 75,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "ImageResidual.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/75:4:composite:1/76:45:compute:1",
+        "kind": "compute",
+        "label": "first · Conv2d",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 45,
+            "end_column": 58,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.first(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "first",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [
+            4,
+            4,
+            3
+          ],
+          "kwargs": {
+            "padding": 1
+          }
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/71:21:parameter:1",
+        "kind": "parameter",
+        "label": "first.parameters",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 71,
+            "end_line": 71,
+            "column": 21,
+            "end_column": 50,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "first",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/75:4:composite:1/76:34:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "motif:CNN block:0",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 34,
+            "end_column": 59,
+            "symbol": "ImageResidual.forward",
+            "expression": "torch.relu(self.first(x))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.first(x)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null
+      },
+      {
+        "id": "model/75:4:composite:1/76:22:compute:1",
+        "kind": "compute",
+        "label": "second · Conv2d",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 22,
+            "end_column": 60,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.second(torch.relu(self.first(x)))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "second",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [
+            4,
+            4,
+            3
+          ],
+          "kwargs": {
+            "padding": 1
+          }
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/72:22:parameter:1",
+        "kind": "parameter",
+        "label": "second.parameters",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 72,
+            "end_line": 72,
+            "column": 22,
+            "end_column": 51,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "second",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/75:4:composite:1/76:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "transformed",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 8,
+            "end_column": 19,
+            "symbol": "ImageResidual.forward",
+            "expression": "transformed"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 25,
+            "end_column": 40,
+            "symbol": "ImageResidual.forward",
+            "expression": "x + transformed"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add"
+      },
+      {
+        "id": "model/75:4:composite:1/77:15:compute:1",
+        "kind": "compute",
+        "label": "norm · BatchNorm2d",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 15,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.norm(x + transformed)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "normalization",
+        "module_path": "norm",
+        "framework_type": "torch.nn.BatchNorm2d",
+        "constructor": {
+          "args": [
+            4
+          ],
+          "kwargs": {}
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/73:20:parameter:1",
+        "kind": "parameter",
+        "label": "norm.parameters",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 73,
+            "end_line": 73,
+            "column": 20,
+            "end_column": 37,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.BatchNorm2d(4)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "norm",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/75:4:composite:1/77:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 8,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "return self.norm(x + transformed)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "motif:CNN block:0",
+        "kind": "composite",
+        "label": "CNN block",
+        "parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 45,
+            "end_column": 58,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.first(x)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 34,
+            "end_column": 59,
+            "symbol": "ImageResidual.forward",
+            "expression": "torch.relu(self.first(x))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 71,
+            "end_line": 71,
+            "column": 21,
+            "end_column": 50,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "semantic_type": "CNN block",
+        "runtime_evidence": [],
+        "motif": "motif:CNN block:0"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/75:4:composite:1/71:21:parameter:1",
+        "target": "model/75:4:composite:1/76:45:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00000"
+      },
+      {
+        "source": "model/75:4:composite:1/75:22:interface:1",
+        "target": "model/75:4:composite:1/76:45:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/75:4:composite:1/76:45:compute:1",
+        "target": "model/75:4:composite:1/76:34:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/75:4:composite:1/72:22:parameter:1",
+        "target": "model/75:4:composite:1/76:22:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00003"
+      },
+      {
+        "source": "model/75:4:composite:1/76:34:compute:1",
+        "target": "model/75:4:composite:1/76:22:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/75:4:composite:1/76:22:compute:1",
+        "target": "model/75:4:composite:1/76:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/75:4:composite:1/75:22:interface:1",
+        "target": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/75:4:composite:1/76:8:value-alias:1",
+        "target": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/75:4:composite:1/73:20:parameter:1",
+        "target": "model/75:4:composite:1/77:15:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00008"
+      },
+      {
+        "source": "model/75:4:composite:1/77:25:compute:1",
+        "target": "model/75:4:composite:1/77:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/75:4:composite:1/77:15:compute:1",
+        "target": "model/75:4:composite:1/77:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      }
+    ],
+    "branches": [],
+    "motifs": [
+      {
+        "id": "motif:CNN block:0",
+        "semantic_type": "CNN block",
+        "members": [
+          "model/75:4:composite:1/76:45:compute:1",
+          "model/75:4:composite:1/76:34:compute:1",
+          "model/75:4:composite:1/71:21:parameter:1"
+        ],
+        "evidence": [
+          "convolution → activation",
+          "source operand dependencies"
+        ],
+        "confidence": "rule-confirmed",
+        "rule_version": "dataflow-motifs/1"
+      },
+      {
+        "id": "motif:add-and-normalization candidate:1",
+        "semantic_type": "add-and-normalization candidate",
+        "members": [
+          "model/75:4:composite:1/75:22:interface:1",
+          "model/75:4:composite:1/76:22:compute:1",
+          "model/75:4:composite:1/72:22:parameter:1",
+          "model/75:4:composite:1/76:8:value-alias:1",
+          "model/75:4:composite:1/77:25:compute:1",
+          "model/75:4:composite:1/77:15:compute:1",
+          "model/75:4:composite:1/73:20:parameter:1",
+          "model/75:4:composite:1/77:8:interface:1",
+          "motif:CNN block:0",
+          "model/75:4:composite:1/76:45:compute:1",
+          "model/75:4:composite:1/71:21:parameter:1",
+          "model/75:4:composite:1/76:34:compute:1"
+        ],
+        "evidence": [
+          "add + normalization; residual origin unproven"
+        ],
+        "confidence": "rule-confirmed",
+        "rule_version": "dataflow-motifs/1"
+      }
+    ],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "semantic_contracts": [
+      {
+        "id": "contract:residual-postnorm:e5f706f21dd6",
+        "rule": "residual-postnorm",
+        "rule_version": "source-contracts/1",
+        "node": "model/75:4:composite:1/77:15:compute:1",
+        "members": [
+          "model/75:4:composite:1/76:45:compute:1",
+          "model/75:4:composite:1/76:34:compute:1",
+          "model/75:4:composite:1/76:22:compute:1",
+          "model/75:4:composite:1/77:25:compute:1",
+          "model/75:4:composite:1/77:15:compute:1"
+        ],
+        "roles": {
+          "skip": "model/75:4:composite:1/75:22:interface:1",
+          "skip_slot": "out",
+          "branch": "model/75:4:composite:1/76:22:compute:1",
+          "branch_slot": "out",
+          "add": "model/75:4:composite:1/77:25:compute:1",
+          "output": "model/75:4:composite:1/77:15:compute:1",
+          "order": "postnorm",
+          "normalization": "model/75:4:composite:1/77:15:compute:1",
+          "normalization_type": "torch.nn.BatchNorm2d",
+          "branch_path": [
+            "model/75:4:composite:1/76:45:compute:1",
+            "model/75:4:composite:1/76:34:compute:1",
+            "model/75:4:composite:1/76:22:compute:1"
+          ]
+        },
+        "proof": [
+          "the same producer and result slot feed both branch computation and a distinct addition operand",
+          "normalization position is determined by exact operand binding; normalization type remains explicit"
+        ],
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 15,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.norm(x + transformed)"
+          }
+        ],
+        "dependencies": [],
+        "edges": [
+          "e00000",
+          "e00001",
+          "e00002",
+          "e00003",
+          "e00004",
+          "e00005",
+          "e00006",
+          "e00007",
+          "e00008",
+          "e00009",
+          "e00010"
+        ],
+        "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+        "not_asserted": [
+          "arbitrary-input execution coverage",
+          "identity branch computation",
+          "in-place alias equivalence"
+        ]
+      }
+    ],
+    "semantic_contract_basis": "9e998227255eecc0acfb002b8ee29bbd4dbdcef6bccefc8ae2fc75d53807f264",
+    "ir_digest": "2e4f8b8dfbf79a500c6ace460217cfe749d972d4c5789ef1614cd8af5f96dd50"
+  },
+  "state": {
+    "view": "publication"
+  },
+  "architecture": {
+    "schema": "archcanvas-architecture/1",
+    "rule_version": "architecture-rules/3",
+    "canonical_digest": "2e4f8b8dfbf79a500c6ace460217cfe749d972d4c5789ef1614cd8af5f96dd50",
+    "nodes": [
+      {
+        "id": "model/75:4:composite:1",
+        "kind": "composite",
+        "label": "ImageResidual",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 75,
+            "end_line": 77,
+            "column": 4,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "def forward(self, x):\n    transformed = self.second(torch.relu(self.first(x)))\n    return self.norm(x + transformed)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "convolutional network",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "ImageResidual",
+        "paper": {
+          "title": "ImageResidual",
+          "caption": "convolutional network",
+          "lines": [
+            "ImageResidual"
+          ],
+          "captions": [
+            "convolutional network"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/75:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 75,
+            "end_line": 75,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "ImageResidual.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "paper": {
+          "title": "x",
+          "caption": "",
+          "lines": [
+            "x"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/76:45:compute:1",
+        "kind": "compute",
+        "label": "first · Conv2d",
+        "parent": "architecture:convolution-block:e7463de5",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 45,
+            "end_column": 58,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.first(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "first",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [
+            4,
+            4,
+            3
+          ],
+          "kwargs": {
+            "padding": 1
+          }
+        },
+        "paper": {
+          "title": "first · Conv2d",
+          "caption": "4 → 4 · k=3",
+          "lines": [
+            "first · Conv2d"
+          ],
+          "captions": [
+            "4 → 4 · k=3"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/71:21:parameter:1",
+        "kind": "parameter",
+        "label": "first.parameters",
+        "parent": "architecture:convolution-block:e7463de5",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 71,
+            "end_line": 71,
+            "column": 21,
+            "end_column": 50,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "first",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "first.parameters",
+          "caption": "parameter",
+          "lines": [
+            "first.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/76:34:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "architecture:convolution-block:e7463de5",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 34,
+            "end_column": 59,
+            "symbol": "ImageResidual.forward",
+            "expression": "torch.relu(self.first(x))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "self.first(x)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "paper": {
+          "title": "relu",
+          "caption": "activation",
+          "lines": [
+            "relu"
+          ],
+          "captions": [
+            "activation"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/76:22:compute:1",
+        "kind": "compute",
+        "label": "second · Conv2d",
+        "parent": "architecture:residual-postnorm:4de9b63e",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 22,
+            "end_column": 60,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.second(torch.relu(self.first(x)))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "convolution",
+        "module_path": "second",
+        "framework_type": "torch.nn.Conv2d",
+        "constructor": {
+          "args": [
+            4,
+            4,
+            3
+          ],
+          "kwargs": {
+            "padding": 1
+          }
+        },
+        "paper": {
+          "title": "second · Conv2d",
+          "caption": "4 → 4 · k=3",
+          "lines": [
+            "second · Conv2d"
+          ],
+          "captions": [
+            "4 → 4 · k=3"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/72:22:parameter:1",
+        "kind": "parameter",
+        "label": "second.parameters",
+        "parent": "architecture:residual-postnorm:4de9b63e",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 72,
+            "end_line": 72,
+            "column": 22,
+            "end_column": 51,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "second",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "second.parameters",
+          "caption": "parameter",
+          "lines": [
+            "second.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/76:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "transformed",
+        "parent": "architecture:residual-postnorm:4de9b63e",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 8,
+            "end_column": 19,
+            "symbol": "ImageResidual.forward",
+            "expression": "transformed"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null,
+        "paper": {
+          "title": "transformed",
+          "caption": "Value",
+          "lines": [
+            "transformed"
+          ],
+          "captions": [
+            "Value"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "architecture:residual-postnorm:4de9b63e",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 25,
+            "end_column": 40,
+            "symbol": "ImageResidual.forward",
+            "expression": "x + transformed"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "paper": {
+          "title": "add",
+          "caption": "add",
+          "lines": [
+            "add"
+          ],
+          "captions": [
+            "add"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": "+",
+          "w": 48,
+          "h": 48
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/77:15:compute:1",
+        "kind": "compute",
+        "label": "norm · BatchNorm2d",
+        "parent": "architecture:residual-postnorm:4de9b63e",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 15,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.norm(x + transformed)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "normalization",
+        "module_path": "norm",
+        "framework_type": "torch.nn.BatchNorm2d",
+        "constructor": {
+          "args": [
+            4
+          ],
+          "kwargs": {}
+        },
+        "paper": {
+          "title": "norm · BatchNorm2d",
+          "caption": "normalization",
+          "lines": [
+            "norm · BatchNorm2d"
+          ],
+          "captions": [
+            "normalization"
+          ],
+          "font": 16,
+          "fill": "#edf4fc",
+          "stroke": "#456c96",
+          "category": "operation",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/73:20:parameter:1",
+        "kind": "parameter",
+        "label": "norm.parameters",
+        "parent": "architecture:residual-postnorm:4de9b63e",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 73,
+            "end_line": 73,
+            "column": 20,
+            "end_column": 37,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.BatchNorm2d(4)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "norm",
+        "identity_status": "declared-scope; sharing-unresolved",
+        "paper": {
+          "title": "norm.parameters",
+          "caption": "parameter",
+          "lines": [
+            "norm.parameters"
+          ],
+          "captions": [
+            "parameter"
+          ],
+          "font": 16,
+          "fill": "#f7f6f2",
+          "stroke": "#8a8474",
+          "category": "resource",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "model/75:4:composite:1/77:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/75:4:composite:1",
+        "source_parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 8,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "return self.norm(x + transformed)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "paper": {
+          "title": "return",
+          "caption": "",
+          "lines": [
+            "return"
+          ],
+          "captions": [],
+          "font": 15,
+          "fill": "#ffffff",
+          "stroke": "#7e8b9b",
+          "category": "interface",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "id": "motif:CNN block:0",
+        "kind": "composite",
+        "label": "CNN block",
+        "parent": "architecture:residual-postnorm:4de9b63e",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 45,
+            "end_column": 58,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.first(x)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 34,
+            "end_column": 59,
+            "symbol": "ImageResidual.forward",
+            "expression": "torch.relu(self.first(x))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 71,
+            "end_line": 71,
+            "column": 21,
+            "end_column": 50,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "semantic_type": "CNN block",
+        "runtime_evidence": [],
+        "motif": "motif:CNN block:0",
+        "source_parent": "model/75:4:composite:1",
+        "paper": {
+          "title": "CNN block",
+          "caption": "CNN block",
+          "lines": [
+            "CNN block"
+          ],
+          "captions": [
+            "CNN block"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "architecture:convolution-block:e7463de5",
+        "kind": "composite",
+        "label": "Convolution block",
+        "parent": "motif:CNN block:0",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 45,
+            "end_column": 58,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.first(x)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 34,
+            "end_column": 59,
+            "symbol": "ImageResidual.forward",
+            "expression": "torch.relu(self.first(x))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 71,
+            "end_line": 71,
+            "column": 21,
+            "end_column": 50,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "runtime_evidence": [],
+        "semantic_type": "convolution-block",
+        "granularity": "composite",
+        "evidence_status": "static-only",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#e9f1ff"
+        },
+        "presentation_only": true,
+        "finding": "architecture:convolution-block:e7463de5",
+        "canonical_members": [
+          "model/75:4:composite:1/76:45:compute:1",
+          "model/75:4:composite:1/71:21:parameter:1",
+          "model/75:4:composite:1/76:34:compute:1"
+        ],
+        "boundary_ports": [
+          {
+            "id": "e00001",
+            "direction": "input",
+            "source": "model/75:4:composite:1/75:22:interface:1",
+            "source_port": "out",
+            "target": "model/75:4:composite:1/76:45:compute:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00004",
+            "direction": "output",
+            "source": "model/75:4:composite:1/76:34:compute:1",
+            "source_port": "out",
+            "target": "model/75:4:composite:1/76:22:compute:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          }
+        ],
+        "paper": {
+          "title": "Convolution block",
+          "caption": "convolution-block",
+          "lines": [
+            "Convolution block"
+          ],
+          "captions": [
+            "convolution-block"
+          ],
+          "font": 16,
+          "fill": "#e9f4ee",
+          "stroke": "#4d7e67",
+          "category": "convolution",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 64
+        }
+      },
+      {
+        "id": "architecture:residual-postnorm:4de9b63e",
+        "kind": "composite",
+        "label": "Residual · Post-Norm",
+        "parent": "model/75:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 22,
+            "end_column": 60,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.second(torch.relu(self.first(x)))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 45,
+            "end_column": 58,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.first(x)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 34,
+            "end_column": 59,
+            "symbol": "ImageResidual.forward",
+            "expression": "torch.relu(self.first(x))"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 71,
+            "end_line": 71,
+            "column": 21,
+            "end_column": 50,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 25,
+            "end_column": 40,
+            "symbol": "ImageResidual.forward",
+            "expression": "x + transformed"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 77,
+            "end_line": 77,
+            "column": 15,
+            "end_column": 41,
+            "symbol": "ImageResidual.forward",
+            "expression": "self.norm(x + transformed)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 72,
+            "end_line": 72,
+            "column": 22,
+            "end_column": 51,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 76,
+            "end_line": 76,
+            "column": 8,
+            "end_column": 19,
+            "symbol": "ImageResidual.forward",
+            "expression": "transformed"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/design_compositions.py",
+            "line": 73,
+            "end_line": 73,
+            "column": 20,
+            "end_column": 37,
+            "symbol": "ImageResidual.forward",
+            "expression": "nn.BatchNorm2d(4)"
+          }
+        ],
+        "runtime_evidence": [],
+        "semantic_type": "residual-postnorm",
+        "granularity": "composite",
+        "evidence_status": "static-only",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#e9f1ff"
+        },
+        "presentation_only": true,
+        "finding": "architecture:residual-postnorm:4de9b63e",
+        "canonical_members": [
+          "model/75:4:composite:1/76:22:compute:1",
+          "model/75:4:composite:1/72:22:parameter:1",
+          "model/75:4:composite:1/76:8:value-alias:1",
+          "model/75:4:composite:1/77:25:compute:1",
+          "model/75:4:composite:1/77:15:compute:1",
+          "model/75:4:composite:1/73:20:parameter:1",
+          "motif:CNN block:0",
+          "model/75:4:composite:1/76:45:compute:1",
+          "model/75:4:composite:1/71:21:parameter:1",
+          "model/75:4:composite:1/76:34:compute:1"
+        ],
+        "boundary_ports": [
+          {
+            "id": "e00001",
+            "direction": "input",
+            "source": "model/75:4:composite:1/75:22:interface:1",
+            "source_port": "out",
+            "target": "model/75:4:composite:1/76:45:compute:1",
+            "target_port": "arg:0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00006",
+            "direction": "input",
+            "source": "model/75:4:composite:1/75:22:interface:1",
+            "source_port": "out",
+            "target": "model/75:4:composite:1/77:25:compute:1",
+            "target_port": "0",
+            "evidence": "source-dependency"
+          },
+          {
+            "id": "e00010",
+            "direction": "output",
+            "source": "model/75:4:composite:1/77:15:compute:1",
+            "source_port": "out",
+            "target": "model/75:4:composite:1/77:8:interface:1",
+            "target_port": "in",
+            "evidence": "source-dependency"
+          }
+        ],
+        "paper": {
+          "title": "Residual · Post-Norm",
+          "caption": "Residual · Post-Norm",
+          "lines": [
+            "Residual ·",
+            "Post-Norm"
+          ],
+          "captions": [
+            "Residual · Post-Norm"
+          ],
+          "font": 16,
+          "fill": "#f7eef7",
+          "stroke": "#90678e",
+          "category": "algebra",
+          "unknown_count": 0,
+          "symbol": null,
+          "w": 212,
+          "h": 78
+        }
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/75:4:composite:1/71:21:parameter:1",
+        "target": "model/75:4:composite:1/76:45:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00000"
+      },
+      {
+        "source": "model/75:4:composite:1/75:22:interface:1",
+        "target": "model/75:4:composite:1/76:45:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/75:4:composite:1/76:45:compute:1",
+        "target": "model/75:4:composite:1/76:34:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/75:4:composite:1/72:22:parameter:1",
+        "target": "model/75:4:composite:1/76:22:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00003"
+      },
+      {
+        "source": "model/75:4:composite:1/76:34:compute:1",
+        "target": "model/75:4:composite:1/76:22:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/75:4:composite:1/76:22:compute:1",
+        "target": "model/75:4:composite:1/76:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/75:4:composite:1/75:22:interface:1",
+        "target": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/75:4:composite:1/76:8:value-alias:1",
+        "target": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/75:4:composite:1/73:20:parameter:1",
+        "target": "model/75:4:composite:1/77:15:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00008"
+      },
+      {
+        "source": "model/75:4:composite:1/77:25:compute:1",
+        "target": "model/75:4:composite:1/77:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/75:4:composite:1/77:15:compute:1",
+        "target": "model/75:4:composite:1/77:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      }
+    ],
+    "findings": [
+      {
+        "id": "architecture:convolution-block:e7463de5",
+        "rule": "convolution-block",
+        "label": "Convolution block",
+        "members": [
+          "model/75:4:composite:1/76:45:compute:1",
+          "model/75:4:composite:1/76:34:compute:1"
+        ],
+        "roles": {
+          "convolution": "model/75:4:composite:1/76:45:compute:1",
+          "activation": "model/75:4:composite:1/76:34:compute:1"
+        },
+        "proof": [
+          "convolution → activation operand dependency path"
+        ],
+        "excluded": [],
+        "rule_version": "architecture-rules/3",
+        "evidence_scope": "source-dependencies",
+        "presentation": "group",
+        "parent": "motif:CNN block:0"
+      },
+      {
+        "id": "architecture:residual-postnorm:4de9b63e",
+        "rule": "residual-postnorm",
+        "label": "Residual · Post-Norm",
+        "members": [
+          "model/75:4:composite:1/76:22:compute:1",
+          "model/75:4:composite:1/76:34:compute:1",
+          "model/75:4:composite:1/76:45:compute:1",
+          "model/75:4:composite:1/77:25:compute:1",
+          "model/75:4:composite:1/77:15:compute:1"
+        ],
+        "roles": {
+          "skip": "model/75:4:composite:1/75:22:interface:1",
+          "branch": "model/75:4:composite:1/76:22:compute:1",
+          "add": "model/75:4:composite:1/77:25:compute:1",
+          "normalization": "model/75:4:composite:1/77:15:compute:1"
+        },
+        "proof": [
+          "skip value is an actual producer of both the branch path and addition",
+          "normalization consumes the addition output"
+        ],
+        "excluded": [
+          "model/75:4:composite:1/75:22:interface:1"
+        ],
+        "rule_version": "architecture-rules/3",
+        "evidence_scope": "source-dependencies",
+        "presentation": "group",
+        "parent": "model/75:4:composite:1"
+      }
+    ],
+    "limitations": [
+      "Local dependency patterns do not certify arbitrary-input behavior.",
+      "Unknown operations, tuple slots, conditional joins and loop templates remain explicit.",
+      "No Q/K/V, complete LSTM, MoE or model-family identity is inferred from names."
+    ],
+    "publication": {
+      "schema": "archcanvas-publication-plan/1",
+      "structural_regions": 0
+    }
+  },
+  "publication": {
+    "schema": "archcanvas-publication/1",
+    "focus": "model/75:4:composite:1",
+    "auto": true,
+    "open": [
+      "model/75:4:composite:1",
+      "architecture:residual-postnorm:4de9b63e",
+      "motif:CNN block:0",
+      "architecture:convolution-block:e7463de5"
+    ],
+    "budget": 12,
+    "boundary": [],
+    "wire_bundles": [],
+    "configuration_arithmetic": [],
+    "paper_width_mm": 180,
+    "fit_page": true,
+    "min_font_pt": 8,
+    "unknowns": 0
+  },
+  "layout": {
+    "bounds": {
+      "x": 4,
+      "y": 2,
+      "w": 708,
+      "h": 886
+    },
+    "nodes": [
+      {
+        "id": "model/75:4:composite:1",
+        "x": 32,
+        "y": 30,
+        "title": "ImageResidual",
+        "caption": "convolutional network",
+        "lines": [
+          "ImageResidual"
+        ],
+        "captions": [
+          "convolutional network"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 652,
+        "h": 830,
+        "expanded": true,
+        "header": 66,
+        "cyclic": false
+      },
+      {
+        "id": "model/75:4:composite:1/75:22:interface:1",
+        "x": 281,
+        "y": 96,
+        "title": "x",
+        "caption": "",
+        "lines": [
+          "x"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/75:4:composite:1/77:8:interface:1",
+        "x": 281,
+        "y": 792,
+        "title": "return",
+        "caption": "",
+        "lines": [
+          "return"
+        ],
+        "captions": [],
+        "font": 15,
+        "fill": "#ffffff",
+        "stroke": "#7e8b9b",
+        "category": "interface",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 154,
+        "h": 44,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "architecture:residual-postnorm:4de9b63e",
+        "x": 56,
+        "y": 184,
+        "title": "Residual · Post-Norm",
+        "caption": "Residual · Post-Norm",
+        "lines": [
+          "Residual ·",
+          "Post-Norm"
+        ],
+        "captions": [
+          "Residual · Post-Norm"
+        ],
+        "font": 16,
+        "fill": "#f7eef7",
+        "stroke": "#90678e",
+        "category": "algebra",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 604,
+        "h": 564,
+        "expanded": true,
+        "header": 80,
+        "cyclic": false
+      },
+      {
+        "id": "model/75:4:composite:1/76:22:compute:1",
+        "x": 424,
+        "y": 408,
+        "title": "second · Conv2d",
+        "caption": "4 → 4 · k=3",
+        "lines": [
+          "second · Conv2d"
+        ],
+        "captions": [
+          "4 → 4 · k=3"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 1,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "model/75:4:composite:1/77:25:compute:1",
+        "x": 506,
+        "y": 668,
+        "title": "add",
+        "caption": "add",
+        "lines": [
+          "add"
+        ],
+        "captions": [
+          "add"
+        ],
+        "font": 16,
+        "fill": "#f7eef7",
+        "stroke": "#90678e",
+        "category": "algebra",
+        "unknown_count": 0,
+        "symbol": "+",
+        "w": 48,
+        "h": 48,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 2,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "model/75:4:composite:1/77:15:compute:1",
+        "x": 128,
+        "y": 660,
+        "title": "norm · BatchNorm2d",
+        "caption": "normalization",
+        "lines": [
+          "norm · BatchNorm2d"
+        ],
+        "captions": [
+          "normalization"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false,
+        "topological_rank": 3,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "motif:CNN block:0",
+        "x": 80,
+        "y": 264,
+        "title": "CNN block",
+        "caption": "CNN block",
+        "lines": [
+          "CNN block"
+        ],
+        "captions": [
+          "CNN block"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 308,
+        "h": 352,
+        "expanded": true,
+        "header": 66,
+        "cyclic": false,
+        "topological_rank": 0,
+        "arrangement": "folded-ranks"
+      },
+      {
+        "id": "architecture:convolution-block:e7463de5",
+        "x": 104,
+        "y": 330,
+        "title": "Convolution block",
+        "caption": "convolution-block",
+        "lines": [
+          "Convolution block"
+        ],
+        "captions": [
+          "convolution-block"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 260,
+        "h": 262,
+        "expanded": true,
+        "header": 66,
+        "cyclic": false
+      },
+      {
+        "id": "model/75:4:composite:1/76:45:compute:1",
+        "x": 128,
+        "y": 396,
+        "title": "first · Conv2d",
+        "caption": "4 → 4 · k=3",
+        "lines": [
+          "first · Conv2d"
+        ],
+        "captions": [
+          "4 → 4 · k=3"
+        ],
+        "font": 16,
+        "fill": "#e9f4ee",
+        "stroke": "#4d7e67",
+        "category": "convolution",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      },
+      {
+        "id": "model/75:4:composite:1/76:34:compute:1",
+        "x": 128,
+        "y": 504,
+        "title": "relu",
+        "caption": "activation",
+        "lines": [
+          "relu"
+        ],
+        "captions": [
+          "activation"
+        ],
+        "font": 16,
+        "fill": "#edf4fc",
+        "stroke": "#456c96",
+        "category": "operation",
+        "unknown_count": 0,
+        "symbol": null,
+        "w": 212,
+        "h": 64,
+        "expanded": false,
+        "cyclic": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/75:4:composite:1/75:22:interface:1",
+        "target": "model/75:4:composite:1/76:45:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001",
+        "originals": [
+          "e00001"
+        ],
+        "canonical_source": "model/75:4:composite:1/75:22:interface:1",
+        "canonical_target": "model/75:4:composite:1/76:45:compute:1",
+        "resolved_source": "model/75:4:composite:1/75:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 337.6666666666667,
+              "y": 140
+            },
+            {
+              "x": 337.6666666666667,
+              "y": 380
+            },
+            {
+              "x": 234,
+              "y": 380
+            },
+            {
+              "x": 234,
+              "y": 396
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/75:4:composite:1/76:45:compute:1",
+        "target": "model/75:4:composite:1/76:34:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00002",
+        "originals": [
+          "e00002"
+        ],
+        "canonical_source": "model/75:4:composite:1/76:45:compute:1",
+        "canonical_target": "model/75:4:composite:1/76:34:compute:1",
+        "resolved_source": "model/75:4:composite:1/76:45:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 234,
+              "y": 460
+            },
+            {
+              "x": 234,
+              "y": 488
+            },
+            {
+              "x": 204,
+              "y": 488
+            },
+            {
+              "x": 204,
+              "y": 504
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/75:4:composite:1/76:34:compute:1",
+        "target": "model/75:4:composite:1/76:22:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00004",
+        "originals": [
+          "e00004"
+        ],
+        "canonical_source": "model/75:4:composite:1/76:34:compute:1",
+        "canonical_target": "model/75:4:composite:1/76:22:compute:1",
+        "resolved_source": "model/75:4:composite:1/76:34:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 264,
+              "y": 504
+            },
+            {
+              "x": 264,
+              "y": 488
+            },
+            {
+              "x": 500,
+              "y": 488
+            },
+            {
+              "x": 500,
+              "y": 472
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "top",
+          "target_side": "bottom"
+        }
+      },
+      {
+        "source": "model/75:4:composite:1/75:22:interface:1",
+        "target": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00006",
+        "originals": [
+          "e00006"
+        ],
+        "canonical_source": "model/75:4:composite:1/75:22:interface:1",
+        "canonical_target": "model/75:4:composite:1/77:25:compute:1",
+        "resolved_source": "model/75:4:composite:1/75:22:interface:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 378.3333333333333,
+              "y": 140
+            },
+            {
+              "x": 378.3333333333333,
+              "y": 156
+            },
+            {
+              "x": 412.83333333333337,
+              "y": 156
+            },
+            {
+              "x": 412.83333333333337,
+              "y": 652.1486082400022
+            },
+            {
+              "x": 527.3333333333334,
+              "y": 652.1486082400022
+            },
+            {
+              "x": 527.3333333333334,
+              "y": 668.1486082400022
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/75:4:composite:1/76:22:compute:1",
+        "target": "model/75:4:composite:1/77:25:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00007",
+        "originals": [
+          "e00005",
+          "e00007"
+        ],
+        "canonical_source": "model/75:4:composite:1/76:8:value-alias:1",
+        "canonical_target": "model/75:4:composite:1/77:25:compute:1",
+        "resolved_source": "model/75:4:composite:1/76:22:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 560,
+              "y": 472
+            },
+            {
+              "x": 560,
+              "y": 652.1486082400022
+            },
+            {
+              "x": 532.6666666666666,
+              "y": 652.1486082400022
+            },
+            {
+              "x": 532.6666666666666,
+              "y": 668.1486082400022
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      },
+      {
+        "source": "model/75:4:composite:1/77:25:compute:1",
+        "target": "model/75:4:composite:1/77:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00009",
+        "originals": [
+          "e00009"
+        ],
+        "canonical_source": "model/75:4:composite:1/77:25:compute:1",
+        "canonical_target": "model/75:4:composite:1/77:15:compute:1",
+        "resolved_source": "model/75:4:composite:1/77:25:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 506,
+              "y": 692
+            },
+            {
+              "x": 340,
+              "y": 692
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "left",
+          "target_side": "right"
+        }
+      },
+      {
+        "source": "model/75:4:composite:1/77:15:compute:1",
+        "target": "model/75:4:composite:1/77:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00010",
+        "originals": [
+          "e00010"
+        ],
+        "canonical_source": "model/75:4:composite:1/77:15:compute:1",
+        "canonical_target": "model/75:4:composite:1/77:8:interface:1",
+        "resolved_source": "model/75:4:composite:1/77:15:compute:1",
+        "paper_labels": [],
+        "route": {
+          "points": [
+            {
+              "x": 234,
+              "y": 724
+            },
+            {
+              "x": 234,
+              "y": 776
+            },
+            {
+              "x": 358,
+              "y": 776
+            },
+            {
+              "x": 358,
+              "y": 792
+            }
+          ],
+          "ok": true,
+          "reason": null,
+          "feedback": false,
+          "source_side": "bottom",
+          "target_side": "top"
+        }
+      }
+    ],
+    "edge_accounting": {
+      "visible": [
+        "e00001",
+        "e00002",
+        "e00004",
+        "e00006",
+        "e00007",
+        "e00009",
+        "e00010"
+      ],
+      "internal": [],
+      "excluded": [],
+      "contracted": [
+        "e00005"
+      ],
+      "attached": [
+        "e00000",
+        "e00003",
+        "e00008"
+      ]
+    },
+    "node_accounting": {
+      "visible": [
+        "model/75:4:composite:1",
+        "model/75:4:composite:1/75:22:interface:1",
+        "model/75:4:composite:1/76:45:compute:1",
+        "model/75:4:composite:1/76:34:compute:1",
+        "model/75:4:composite:1/76:22:compute:1",
+        "model/75:4:composite:1/77:25:compute:1",
+        "model/75:4:composite:1/77:15:compute:1",
+        "model/75:4:composite:1/77:8:interface:1",
+        "motif:CNN block:0"
+      ],
+      "collapsed": [],
+      "contracted": [
+        "model/75:4:composite:1/76:8:value-alias:1"
+      ],
+      "attached": [
+        "model/75:4:composite:1/71:21:parameter:1",
+        "model/75:4:composite:1/72:22:parameter:1",
+        "model/75:4:composite:1/73:20:parameter:1"
+      ],
+      "excluded": []
+    },
+    "representatives": {
+      "model/75:4:composite:1": "model/75:4:composite:1",
+      "model/75:4:composite:1/75:22:interface:1": "model/75:4:composite:1/75:22:interface:1",
+      "model/75:4:composite:1/76:45:compute:1": "model/75:4:composite:1/76:45:compute:1",
+      "model/75:4:composite:1/71:21:parameter:1": "architecture:convolution-block:e7463de5",
+      "model/75:4:composite:1/76:34:compute:1": "model/75:4:composite:1/76:34:compute:1",
+      "model/75:4:composite:1/76:22:compute:1": "model/75:4:composite:1/76:22:compute:1",
+      "model/75:4:composite:1/72:22:parameter:1": "architecture:residual-postnorm:4de9b63e",
+      "model/75:4:composite:1/76:8:value-alias:1": "architecture:residual-postnorm:4de9b63e",
+      "model/75:4:composite:1/77:25:compute:1": "model/75:4:composite:1/77:25:compute:1",
+      "model/75:4:composite:1/77:15:compute:1": "model/75:4:composite:1/77:15:compute:1",
+      "model/75:4:composite:1/73:20:parameter:1": "architecture:residual-postnorm:4de9b63e",
+      "model/75:4:composite:1/77:8:interface:1": "model/75:4:composite:1/77:8:interface:1",
+      "motif:CNN block:0": "motif:CNN block:0"
+    },
+    "labels": []
+  },
+  "diagnostics": {
+    "route_failures": [],
+    "publication": {
+      "schema": "publication-quality/1",
+      "route_strategy": "canonical-short",
+      "wire_length": 1960.3,
+      "min_print_font_pt": 9.37,
+      "target_min_font_pt": 8,
+      "requested_width_mm": 180,
+      "width_mm": 180,
+      "height_mm": 225.3,
+      "route_failures": [],
+      "unplaced_port_labels": [],
+      "line_geometry": {
+        "crossings": 1,
+        "overlapping_paths": [],
+        "unrelated_contacts": []
+      },
+      "issues": []
+    },
+    "routing": {
+      "selected": "canonical-short",
+      "baseline_crossings": 1,
+      "refinement": {
+        "attempts": 4,
+        "accepted": [],
+        "before_crossings": 1,
+        "before_contacts": 0,
+        "after_crossings": 1,
+        "after_contacts": 0
+      },
+      "candidates": [
+        {
+          "strategy": "canonical-short",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1960.3,
+          "min_print_font_pt": 9.37,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-short",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1960.3,
+          "min_print_font_pt": 9.37,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-long",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1960.3,
+          "min_print_font_pt": 9.37,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "canonical-long",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1960.3,
+          "min_print_font_pt": 9.37,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-clear-short",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1960.3,
+          "min_print_font_pt": 9.37,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        },
+        {
+          "strategy": "neighbors-clear-long",
+          "crossings": 1,
+          "issues": [],
+          "wire_length": 1960.3,
+          "min_print_font_pt": 9.37,
+          "route_failures": 0,
+          "unplaced_labels": 0
+        }
+      ],
+      "topology_refinement": {
+        "strategy": "consumer",
+        "accepted": false,
+        "before": {
+          "crossings": 1,
+          "contacts": 0,
+          "issues": [],
+          "min_print_font_pt": 9.37,
+          "unplaced_labels": 0,
+          "route_failures": 0,
+          "width_mm": 180,
+          "height_mm": 225.3,
+          "wire_length": 1960.3
+        },
+        "candidate": {
+          "crossings": 1,
+          "contacts": 0,
+          "issues": [],
+          "min_print_font_pt": 9.37,
+          "unplaced_labels": 0,
+          "route_failures": 0,
+          "width_mm": 180,
+          "height_mm": 225.3,
+          "wire_length": 1960.3
+        },
+        "selected": "earliest",
+        "max_area_ratio": 1.1,
+        "max_wire_ratio": 1.1
+      }
+    }
+  }
+}

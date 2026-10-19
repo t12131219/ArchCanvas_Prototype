@@ -1,0 +1,3412 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "Transformer",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+    "class": "Transformer",
+    "cell": null,
+    "constructor": {
+      "src_vocab_size": 16,
+      "tgt_vocab_size": 16,
+      "d_model": 8,
+      "num_heads": 2,
+      "num_encoder_layers": 1,
+      "num_decoder_layers": 1,
+      "d_ff": 16,
+      "dropout": 0.0,
+      "max_len": 8
+    }
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+      "cell": null,
+      "sha256": "322b523bb2c142d35888a2ab8283f83fa979fc1c44deedaca2852719762c6dba",
+      "unit_sha256": "322b523bb2c142d35888a2ab8283f83fa979fc1c44deedaca2852719762c6dba"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/470:4:composite:1",
+      "kind": "composite",
+      "label": "Transformer",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 470,
+          "end_line": 499,
+          "column": 4,
+          "end_column": 42,
+          "symbol": "Transformer.forward",
+          "expression": "def forward(self, src: Tensor, tgt: Tensor, src_key_padding_mask: Optional[Tensor]=None, tgt_key_padding_mask: Optional[Tensor]=None, tgt_mask: Optional[Tensor]=None) -> Tensor:\n    \"\"\"\n        Args:\n            src: [B, S]\n            tgt: [B, T]\n            src_key_padding_mask: [B, S], True at PAD positions\n            tgt_key_padding_mask: [B, T], True a"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {
+        "src_vocab_size": 16,
+        "tgt_vocab_size": 16,
+        "d_model": 8,
+        "num_heads": 2,
+        "num_encoder_layers": 1,
+        "num_decoder_layers": 1,
+        "d_ff": 16,
+        "dropout": 0.0,
+        "max_len": 8
+      },
+      "source_class": "Transformer"
+    },
+    {
+      "id": "model/470:4:composite:1/472:8:interface:1",
+      "kind": "interface",
+      "label": "src",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 472,
+          "end_line": 472,
+          "column": 8,
+          "end_column": 19,
+          "symbol": "Transformer.forward",
+          "expression": "src: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "src"
+    },
+    {
+      "id": "model/470:4:composite:1/473:8:interface:1",
+      "kind": "interface",
+      "label": "tgt",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 473,
+          "end_line": 473,
+          "column": 8,
+          "end_column": 19,
+          "symbol": "Transformer.forward",
+          "expression": "tgt: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt"
+    },
+    {
+      "id": "model/470:4:composite:1/474:8:interface:1",
+      "kind": "interface",
+      "label": "src_key_padding_mask",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 474,
+          "end_line": 474,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Transformer.forward",
+          "expression": "src_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "src_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/475:8:interface:1",
+      "kind": "interface",
+      "label": "tgt_key_padding_mask",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 475,
+          "end_line": 475,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Transformer.forward",
+          "expression": "tgt_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/476:8:interface:1",
+      "kind": "interface",
+      "label": "tgt_mask",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 476,
+          "end_line": 476,
+          "column": 8,
+          "end_column": 34,
+          "symbol": "Transformer.forward",
+          "expression": "tgt_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1",
+      "kind": "composite",
+      "label": "self.encode",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 445,
+          "end_line": 451,
+          "column": 4,
+          "end_column": 52,
+          "symbol": "encode",
+          "expression": "def encode(self, src: Tensor, src_key_padding_mask: Optional[Tensor]=None) -> Tensor:\n    x = self.position(self.src_embedding(src))\n    return self.encoder(x, src_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {
+        "src_vocab_size": 16,
+        "tgt_vocab_size": 16,
+        "d_model": 8,
+        "num_heads": 2,
+        "num_encoder_layers": 1,
+        "num_decoder_layers": 1,
+        "d_ff": 16,
+        "dropout": 0.0,
+        "max_len": 8
+      },
+      "source_class": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/447:8:interface:1",
+      "kind": "interface",
+      "label": "src",
+      "parent": "model/470:4:composite:1/445:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 447,
+          "end_line": 447,
+          "column": 8,
+          "end_column": 19,
+          "symbol": "encode",
+          "expression": "src: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "src"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/448:8:interface:1",
+      "kind": "interface",
+      "label": "src_key_padding_mask",
+      "parent": "model/470:4:composite:1/445:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 448,
+          "end_line": 448,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "encode",
+          "expression": "src_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "src_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "kind": "composite",
+      "label": "src_embedding",
+      "parent": "model/470:4:composite:1/445:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 244,
+          "end_line": 245,
+          "column": 4,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "def forward(self, token_ids: Tensor) -> Tensor:\n    return self.embedding(token_ids) * math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "src_embedding",
+      "constructor": {
+        "vocab_size": 16,
+        "d_model": 8
+      },
+      "source_class": "TokenEmbedding"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/244:22:interface:1",
+      "kind": "interface",
+      "label": "token_ids",
+      "parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 244,
+          "end_line": 244,
+          "column": 22,
+          "end_column": 39,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "token_ids: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "token_ids"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 15,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "self.embedding(token_ids) * math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "kind": "compute",
+      "label": "embedding · Embedding",
+      "parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 15,
+          "end_column": 40,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "self.embedding(token_ids)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "embedding",
+      "module_path": "src_embedding.embedding",
+      "framework_type": "torch.nn.Embedding",
+      "constructor": {
+        "args": [
+          16,
+          8
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/242:25:parameter:1",
+      "kind": "parameter",
+      "label": "embedding.parameters",
+      "parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 242,
+          "end_line": 242,
+          "column": 25,
+          "end_column": 58,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "nn.Embedding(vocab_size, d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "src_embedding.embedding",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:53:state:1",
+      "kind": "state",
+      "label": "self.d_model",
+      "parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 53,
+          "end_column": 65,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "self.d_model"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": 8
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:43:compute:1",
+      "kind": "compute",
+      "label": "sqrt",
+      "parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 43,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sqrt",
+      "function_target": "math.sqrt",
+      "arguments": {
+        "args": [
+          8
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 8,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "return self.embedding(token_ids) * math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "kind": "composite",
+      "label": "position",
+      "parent": "model/470:4:composite:1/445:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 231,
+          "end_line": 233,
+          "column": 4,
+          "end_column": 30,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "def forward(self, x: Tensor) -> Tensor:\n    x = x + self.pe[:, :x.size(1)].to(dtype=x.dtype)\n    return self.dropout(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "position",
+      "constructor": {
+        "d_model": 8,
+        "dropout": 0.0,
+        "max_len": 8
+      },
+      "source_class": "PositionalEncoding"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 231,
+          "end_line": 231,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x + self.pe[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "kind": "compute",
+      "label": "getitem · (:, :x.size(1))",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 16,
+          "end_column": 39,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.pe[:, :x.size(1)]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "(:, :x.size(1))"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:state:1",
+      "kind": "state",
+      "label": "self.pe",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 16,
+          "end_column": 23,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.pe"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "self.pe"
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:29:compute:1",
+      "kind": "compute",
+      "label": "size",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 29,
+          "end_column": 38,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x.size(1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.size",
+      "arguments": {
+        "args": [
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:49:compute:1",
+      "kind": "compute",
+      "label": "x.dtype",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 49,
+          "end_column": 56,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x.dtype"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "x.dtype"
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "kind": "compute",
+      "label": "to",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 16,
+          "end_column": 57,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.pe[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "device-cast",
+      "function_target": "self.pe[:, :x.size(1)].to",
+      "arguments": {
+        "args": [],
+        "kwargs": {
+          "dtype": {
+            "unresolved": "x.dtype"
+          }
+        }
+      },
+      "reason": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/233:15:compute:1",
+      "kind": "compute",
+      "label": "dropout · Dropout",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 233,
+          "end_line": 233,
+          "column": 15,
+          "end_column": 30,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.dropout(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "dropout",
+      "module_path": "position.dropout",
+      "framework_type": "torch.nn.Dropout",
+      "constructor": {
+        "args": [
+          0.0
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/233:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 233,
+          "end_line": 233,
+          "column": 8,
+          "end_column": 30,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "return self.dropout(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/450:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/470:4:composite:1/445:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 450,
+          "end_line": 450,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "encode",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "kind": "composite",
+      "label": "encoder",
+      "parent": "model/470:4:composite:1/445:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 296,
+          "end_line": 303,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "Encoder.forward",
+          "expression": "def forward(self, x: Tensor, src_key_padding_mask: Optional[Tensor]=None) -> Tensor:\n    for layer in self.layers:\n        x = layer(x, src_key_padding_mask=src_key_padding_mask)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "encoder",
+      "constructor": {
+        "num_layers": 1,
+        "layer": {
+          "unresolved": "encoder_layer"
+        }
+      },
+      "source_class": "Encoder"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/298:8:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 298,
+          "end_line": 298,
+          "column": 8,
+          "end_column": 17,
+          "symbol": "Encoder.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/299:8:interface:1",
+      "kind": "interface",
+      "label": "src_key_padding_mask",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 299,
+          "end_line": 299,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Encoder.forward",
+          "expression": "src_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "src_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:control:1",
+      "kind": "control",
+      "label": "for layer in self.layers",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 301,
+          "end_line": 302,
+          "column": 8,
+          "end_column": 67,
+          "symbol": "Encoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x, src_key_padding_mask=src_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "loop",
+      "loop_semantics": "source-body-template; repetition-and-carried-state-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:21:state:1",
+      "kind": "state",
+      "label": "self.layers",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 301,
+          "end_line": 301,
+          "column": 21,
+          "end_column": 32,
+          "symbol": "Encoder.forward",
+          "expression": "self.layers"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "self.layers"
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "kind": "composite",
+      "label": "loop body (source template)",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 301,
+          "end_line": 302,
+          "column": 8,
+          "end_column": 67,
+          "symbol": "Encoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x, src_key_padding_mask=src_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "loop-template"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/301:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "layer",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 301,
+          "end_line": 301,
+          "column": 12,
+          "end_column": 17,
+          "symbol": "Encoder.forward",
+          "expression": "layer"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/302:16:opaque:1",
+      "kind": "opaque",
+      "label": "layer",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 302,
+          "end_line": 302,
+          "column": 16,
+          "end_column": 67,
+          "symbol": "Encoder.forward",
+          "expression": "layer(x, src_key_padding_mask=src_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "layer",
+      "function_target": "layer",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {
+          "src_key_padding_mask": {
+            "unresolved": "src_key_padding_mask"
+          }
+        }
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/302:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 302,
+          "end_line": 302,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "Encoder.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:opaque:1",
+      "kind": "opaque",
+      "label": "layer · loop-carried value",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 301,
+          "end_line": 302,
+          "column": 8,
+          "end_column": 67,
+          "symbol": "Encoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x, src_key_padding_mask=src_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:opaque:2",
+      "kind": "opaque",
+      "label": "x · loop-carried value",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 301,
+          "end_line": 302,
+          "column": 8,
+          "end_column": 67,
+          "symbol": "Encoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x, src_key_padding_mask=src_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/303:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 303,
+          "end_line": 303,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "Encoder.forward",
+          "expression": "return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/451:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/445:4:composite:1",
+      "source_parent": "model/470:4:composite:1/445:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 451,
+          "end_line": 451,
+          "column": 8,
+          "end_column": 52,
+          "symbol": "encode",
+          "expression": "return self.encoder(x, src_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/489:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "memory",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 489,
+          "end_line": 489,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "Transformer.forward",
+          "expression": "memory"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1",
+      "kind": "composite",
+      "label": "self.decode",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 453,
+          "end_line": 468,
+          "column": 4,
+          "end_column": 9,
+          "symbol": "decode",
+          "expression": "def decode(self, tgt: Tensor, memory: Tensor, tgt_mask: Optional[Tensor]=None, tgt_key_padding_mask: Optional[Tensor]=None, memory_key_padding_mask: Optional[Tensor]=None) -> Tensor:\n    x = self.position(self.tgt_embedding(tgt))\n    return self.decoder(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask="
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {
+        "src_vocab_size": 16,
+        "tgt_vocab_size": 16,
+        "d_model": 8,
+        "num_heads": 2,
+        "num_encoder_layers": 1,
+        "num_decoder_layers": 1,
+        "d_ff": 16,
+        "dropout": 0.0,
+        "max_len": 8
+      },
+      "source_class": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/455:8:interface:1",
+      "kind": "interface",
+      "label": "tgt",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 455,
+          "end_line": 455,
+          "column": 8,
+          "end_column": 19,
+          "symbol": "decode",
+          "expression": "tgt: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/456:8:interface:1",
+      "kind": "interface",
+      "label": "memory",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 456,
+          "end_line": 456,
+          "column": 8,
+          "end_column": 22,
+          "symbol": "decode",
+          "expression": "memory: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "memory"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/457:8:interface:1",
+      "kind": "interface",
+      "label": "tgt_mask",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 457,
+          "end_line": 457,
+          "column": 8,
+          "end_column": 34,
+          "symbol": "decode",
+          "expression": "tgt_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/458:8:interface:1",
+      "kind": "interface",
+      "label": "tgt_key_padding_mask",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 458,
+          "end_line": 458,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "decode",
+          "expression": "tgt_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/459:8:interface:1",
+      "kind": "interface",
+      "label": "memory_key_padding_mask",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 459,
+          "end_line": 459,
+          "column": 8,
+          "end_column": 49,
+          "symbol": "decode",
+          "expression": "memory_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "memory_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "kind": "composite",
+      "label": "tgt_embedding",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 244,
+          "end_line": 245,
+          "column": 4,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "def forward(self, token_ids: Tensor) -> Tensor:\n    return self.embedding(token_ids) * math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "tgt_embedding",
+      "constructor": {
+        "vocab_size": 16,
+        "d_model": 8
+      },
+      "source_class": "TokenEmbedding"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/244:22:interface:1",
+      "kind": "interface",
+      "label": "token_ids",
+      "parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 244,
+          "end_line": 244,
+          "column": 22,
+          "end_column": 39,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "token_ids: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "token_ids"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 15,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "self.embedding(token_ids) * math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "kind": "compute",
+      "label": "embedding · Embedding",
+      "parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 15,
+          "end_column": 40,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "self.embedding(token_ids)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "embedding",
+      "module_path": "tgt_embedding.embedding",
+      "framework_type": "torch.nn.Embedding",
+      "constructor": {
+        "args": [
+          16,
+          8
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/242:25:parameter:1",
+      "kind": "parameter",
+      "label": "embedding.parameters",
+      "parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 242,
+          "end_line": 242,
+          "column": 25,
+          "end_column": 58,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "nn.Embedding(vocab_size, d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "tgt_embedding.embedding",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:53:state:1",
+      "kind": "state",
+      "label": "self.d_model",
+      "parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 53,
+          "end_column": 65,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "self.d_model"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": 8
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:43:compute:1",
+      "kind": "compute",
+      "label": "sqrt",
+      "parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 43,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sqrt",
+      "function_target": "math.sqrt",
+      "arguments": {
+        "args": [
+          8
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 245,
+          "end_line": 245,
+          "column": 8,
+          "end_column": 66,
+          "symbol": "TokenEmbedding.forward",
+          "expression": "return self.embedding(token_ids) * math.sqrt(self.d_model)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "kind": "composite",
+      "label": "position",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 231,
+          "end_line": 233,
+          "column": 4,
+          "end_column": 30,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "def forward(self, x: Tensor) -> Tensor:\n    x = x + self.pe[:, :x.size(1)].to(dtype=x.dtype)\n    return self.dropout(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "position",
+      "constructor": {
+        "d_model": 8,
+        "dropout": 0.0,
+        "max_len": 8
+      },
+      "source_class": "PositionalEncoding"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 231,
+          "end_line": 231,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 12,
+          "end_column": 57,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x + self.pe[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "kind": "compute",
+      "label": "getitem · (:, :x.size(1))",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 16,
+          "end_column": 39,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.pe[:, :x.size(1)]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "(:, :x.size(1))"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:state:1",
+      "kind": "state",
+      "label": "self.pe",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 16,
+          "end_column": 23,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.pe"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "self.pe"
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:29:compute:1",
+      "kind": "compute",
+      "label": "size",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 29,
+          "end_column": 38,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x.size(1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.size",
+      "arguments": {
+        "args": [
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:49:compute:1",
+      "kind": "compute",
+      "label": "x.dtype",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 49,
+          "end_column": 56,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x.dtype"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "x.dtype"
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "kind": "compute",
+      "label": "to",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 16,
+          "end_column": 57,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.pe[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "device-cast",
+      "function_target": "self.pe[:, :x.size(1)].to",
+      "arguments": {
+        "args": [],
+        "kwargs": {
+          "dtype": {
+            "unresolved": "x.dtype"
+          }
+        }
+      },
+      "reason": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 232,
+          "end_line": 232,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/233:15:compute:1",
+      "kind": "compute",
+      "label": "dropout · Dropout",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 233,
+          "end_line": 233,
+          "column": 15,
+          "end_column": 30,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "self.dropout(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "dropout",
+      "module_path": "position.dropout",
+      "framework_type": "torch.nn.Dropout",
+      "constructor": {
+        "args": [
+          0.0
+        ],
+        "kwargs": {}
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/233:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 233,
+          "end_line": 233,
+          "column": 8,
+          "end_column": 30,
+          "symbol": "PositionalEncoding.forward",
+          "expression": "return self.dropout(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/461:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 461,
+          "end_line": 461,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "decode",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "kind": "composite",
+      "label": "decoder",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 374,
+          "end_line": 390,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "Decoder.forward",
+          "expression": "def forward(self, x: Tensor, memory: Tensor, tgt_mask: Optional[Tensor]=None, tgt_key_padding_mask: Optional[Tensor]=None, memory_key_padding_mask: Optional[Tensor]=None) -> Tensor:\n    for layer in self.layers:\n        x = layer(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask=memory_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "decoder",
+      "constructor": {
+        "num_layers": 1,
+        "layer": {
+          "unresolved": "decoder_layer"
+        }
+      },
+      "source_class": "Decoder"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/376:8:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 376,
+          "end_line": 376,
+          "column": 8,
+          "end_column": 17,
+          "symbol": "Decoder.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/377:8:interface:1",
+      "kind": "interface",
+      "label": "memory",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 377,
+          "end_line": 377,
+          "column": 8,
+          "end_column": 22,
+          "symbol": "Decoder.forward",
+          "expression": "memory: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "memory"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/378:8:interface:1",
+      "kind": "interface",
+      "label": "tgt_mask",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 378,
+          "end_line": 378,
+          "column": 8,
+          "end_column": 34,
+          "symbol": "Decoder.forward",
+          "expression": "tgt_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/379:8:interface:1",
+      "kind": "interface",
+      "label": "tgt_key_padding_mask",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 379,
+          "end_line": 379,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Decoder.forward",
+          "expression": "tgt_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tgt_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/380:8:interface:1",
+      "kind": "interface",
+      "label": "memory_key_padding_mask",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 380,
+          "end_line": 380,
+          "column": 8,
+          "end_column": 49,
+          "symbol": "Decoder.forward",
+          "expression": "memory_key_padding_mask: Optional[Tensor]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "memory_key_padding_mask"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:control:1",
+      "kind": "control",
+      "label": "for layer in self.layers",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 382,
+          "end_line": 389,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "Decoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask=memory_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "loop",
+      "loop_semantics": "source-body-template; repetition-and-carried-state-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:21:state:1",
+      "kind": "state",
+      "label": "self.layers",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 382,
+          "end_line": 382,
+          "column": 21,
+          "end_column": 32,
+          "symbol": "Decoder.forward",
+          "expression": "self.layers"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "value": {
+        "unresolved": "self.layers"
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "kind": "composite",
+      "label": "loop body (source template)",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 382,
+          "end_line": 389,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "Decoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask=memory_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "loop-template"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/382:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "layer",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 382,
+          "end_line": 382,
+          "column": 12,
+          "end_column": 17,
+          "symbol": "Decoder.forward",
+          "expression": "layer"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:16:opaque:1",
+      "kind": "opaque",
+      "label": "layer",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 383,
+          "end_line": 389,
+          "column": 16,
+          "end_column": 13,
+          "symbol": "Decoder.forward",
+          "expression": "layer(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask=memory_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "layer",
+      "function_target": "layer",
+      "arguments": {
+        "args": [],
+        "kwargs": {
+          "x": {
+            "unresolved": "x"
+          },
+          "memory": {
+            "unresolved": "memory"
+          },
+          "tgt_mask": {
+            "unresolved": "tgt_mask"
+          },
+          "tgt_key_padding_mask": {
+            "unresolved": "tgt_key_padding_mask"
+          },
+          "memory_key_padding_mask": {
+            "unresolved": "memory_key_padding_mask"
+          }
+        }
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 383,
+          "end_line": 383,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "Decoder.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:opaque:1",
+      "kind": "opaque",
+      "label": "layer · loop-carried value",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 382,
+          "end_line": 389,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "Decoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask=memory_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:opaque:2",
+      "kind": "opaque",
+      "label": "x · loop-carried value",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 382,
+          "end_line": 389,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "Decoder.forward",
+          "expression": "for layer in self.layers:\n    x = layer(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask=memory_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/390:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 390,
+          "end_line": 390,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "Decoder.forward",
+          "expression": "return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/462:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1/453:4:composite:1",
+      "source_parent": "model/470:4:composite:1/453:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 462,
+          "end_line": 468,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "decode",
+          "expression": "return self.decoder(x=x, memory=memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask, memory_key_padding_mask=memory_key_padding_mask)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/470:4:composite:1/491:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "decoder_out",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 491,
+          "end_line": 491,
+          "column": 8,
+          "end_column": 19,
+          "symbol": "Transformer.forward",
+          "expression": "decoder_out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/470:4:composite:1/499:15:compute:1",
+      "kind": "compute",
+      "label": "generator · Linear",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 499,
+          "end_line": 499,
+          "column": 15,
+          "end_column": 42,
+          "symbol": "Transformer.forward",
+          "expression": "self.generator(decoder_out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "generator",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          16
+        ],
+        "kwargs": {
+          "bias": false
+        }
+      }
+    },
+    {
+      "id": "model/470:4:composite:1/430:25:parameter:1",
+      "kind": "parameter",
+      "label": "generator.parameters",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 430,
+          "end_line": 430,
+          "column": 25,
+          "end_column": 71,
+          "symbol": "Transformer.forward",
+          "expression": "nn.Linear(d_model, tgt_vocab_size, bias=False)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "generator",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/499:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/470:4:composite:1",
+      "source_parent": "model/470:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+          "line": 499,
+          "end_line": 499,
+          "column": 8,
+          "end_column": 42,
+          "symbol": "Transformer.forward",
+          "expression": "return self.generator(decoder_out)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/470:4:composite:1/472:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/447:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "src",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/470:4:composite:1/474:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/448:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "src_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/447:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/244:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "token_ids",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/242:25:parameter:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00003"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/244:22:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "target": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:53:state:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:43:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:43:compute:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/244:4:composite:1/245:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:state:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:29:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:29:compute:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "index:0",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:49:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:49:compute:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:dtype",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/232:8:value-alias:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/233:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/233:15:compute:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/233:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/231:4:composite:1/233:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/450:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/450:8:value-alias:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/298:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/448:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/299:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "src_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:21:state:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00024"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:control:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:control:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/301:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/298:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/302:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00027"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/299:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/302:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:src_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00028"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/302:16:opaque:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/302:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00029"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/301:12:value-alias:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00030"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/298:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:opaque:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "initial",
+      "evidence": "source-dependency",
+      "id": "e00031"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:composite:1/302:12:value-alias:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:opaque:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00032"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:opaque:2",
+      "target": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/303:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00033"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/303:8:interface:1",
+      "target": "model/470:4:composite:1/445:4:composite:1/451:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00034"
+    },
+    {
+      "source": "model/470:4:composite:1/445:4:composite:1/451:8:interface:1",
+      "target": "model/470:4:composite:1/489:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00035"
+    },
+    {
+      "source": "model/470:4:composite:1/473:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/455:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "tgt",
+      "evidence": "source-dependency",
+      "id": "e00036"
+    },
+    {
+      "source": "model/470:4:composite:1/489:8:value-alias:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/456:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "memory",
+      "evidence": "source-dependency",
+      "id": "e00037"
+    },
+    {
+      "source": "model/470:4:composite:1/476:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/457:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "tgt_mask",
+      "evidence": "source-dependency",
+      "id": "e00038"
+    },
+    {
+      "source": "model/470:4:composite:1/475:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/458:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "tgt_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00039"
+    },
+    {
+      "source": "model/470:4:composite:1/474:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/459:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "memory_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00040"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/455:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/244:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "token_ids",
+      "evidence": "source-dependency",
+      "id": "e00041"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/242:25:parameter:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00042"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/244:22:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00043"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:2",
+      "target": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00044"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:53:state:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:43:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00045"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:43:compute:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00046"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:15:compute:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00047"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/244:4:composite:1/245:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00048"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00049"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:state:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00050"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:29:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00051"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:29:compute:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "index:0",
+      "evidence": "source-dependency",
+      "id": "e00052"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/231:22:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:49:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00053"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00054"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:49:compute:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:dtype",
+      "evidence": "source-dependency",
+      "id": "e00055"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:16:compute:2",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00056"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:12:compute:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00057"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/232:8:value-alias:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/233:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00058"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/233:15:compute:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/233:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00059"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/231:4:composite:1/233:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/461:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00060"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/461:8:value-alias:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/376:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00061"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/456:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/377:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "memory",
+      "evidence": "source-dependency",
+      "id": "e00062"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/457:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/378:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "tgt_mask",
+      "evidence": "source-dependency",
+      "id": "e00063"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/458:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/379:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "tgt_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00064"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/459:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/380:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "memory_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00065"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:21:state:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00066"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:control:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00067"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:control:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/382:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00068"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/376:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:x",
+      "evidence": "source-dependency",
+      "id": "e00069"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/377:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:memory",
+      "evidence": "source-dependency",
+      "id": "e00070"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/378:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:tgt_mask",
+      "evidence": "source-dependency",
+      "id": "e00071"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/379:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:tgt_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00072"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/380:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:memory_key_padding_mask",
+      "evidence": "source-dependency",
+      "id": "e00073"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:16:opaque:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00074"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/382:12:value-alias:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00075"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/376:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:opaque:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "initial",
+      "evidence": "source-dependency",
+      "id": "e00076"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:composite:1/383:12:value-alias:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:opaque:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00077"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:opaque:2",
+      "target": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/390:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00078"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/390:8:interface:1",
+      "target": "model/470:4:composite:1/453:4:composite:1/462:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00079"
+    },
+    {
+      "source": "model/470:4:composite:1/453:4:composite:1/462:8:interface:1",
+      "target": "model/470:4:composite:1/491:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00080"
+    },
+    {
+      "source": "model/470:4:composite:1/430:25:parameter:1",
+      "target": "model/470:4:composite:1/499:15:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00081"
+    },
+    {
+      "source": "model/470:4:composite:1/491:8:value-alias:1",
+      "target": "model/470:4:composite:1/499:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00082"
+    },
+    {
+      "source": "model/470:4:composite:1/499:15:compute:1",
+      "target": "model/470:4:composite:1/499:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00083"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/470:4:composite:1/445:4:composite:1/296:4:composite:1/301:8:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+      "line": 301,
+      "kind": "loop",
+      "outcomes": [
+        "zero",
+        "nonzero"
+      ],
+      "path_coverage": "unresolved"
+    },
+    {
+      "id": "model/470:4:composite:1/453:4:composite:1/374:4:composite:1/382:8:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/snapshots/transformer_programmatic_guide/sources/pytorch_transformer_original/transformer.py",
+      "line": 382,
+      "kind": "loop",
+      "outcomes": [
+        "zero",
+        "nonzero"
+      ],
+      "path_coverage": "unresolved"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "27788ce3eb5d4dc1ec35a8d2f091674a82cffc978e1734cf400ac8f1fbd1775f"
+}

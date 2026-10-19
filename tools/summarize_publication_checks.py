@@ -313,7 +313,11 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'local-relations':
+        if stage == 'frame-ownership':
+            from summarize_frame_ownership import main as summarize_stage
+        elif stage == 'inline-sequences':
+            from summarize_inline_sequences import main as summarize_stage
+        elif stage == 'local-relations':
             from summarize_local_relations import main as summarize_stage
         elif stage == 'semantic-design':
             from summarize_semantic_design import main as summarize_stage

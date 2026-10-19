@@ -44,7 +44,19 @@
     function eligible(id){if(mode!=='source')return true;while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return false;id=idx.nodes.get(id)?.parent;}return true;}
     function visit(id){if(!eligible(id)||bindings.has(id)||resources.has(id)||metadata.has(id))return;visible.add(id);if(open.has(id))for(const c of idx.children.get(id)||[])visit(c);}
     roots.forEach(visit);
-    function rep(id){const seen=new Set();while(id&&!visible.has(id)&&!seen.has(id)){if(!eligible(id))return null;seen.add(id);id=idx.nodes.get(id)?.parent;}return visible.has(id)?id:null;}
+    const ownership=options.frameOwnership?.({ir,plan,idx,visible,open,roots})||new Map();
+    for(const id of ownership.keys())visible.delete(id);
+    function rep(id){const seen=new Set();while(id&&!visible.has(id)&&!seen.has(id)){if(!eligible(id))return null;seen.add(id);id=ownership.get(id)?.target||idx.nodes.get(id)?.parent;}return visible.has(id)?id:null;}
+    let drawingIdx=idx;
+    if(ownership.size){
+      const nodes=plan.nodes.map(n=>({...n})),by=new Map(nodes.map(n=>[n.id,n]));
+      for(const n of nodes){while(ownership.has(n.parent))n.parent=idx.nodes.get(n.parent)?.parent;}
+      for(const record of ownership.values()){
+        const target=rep(record.target);if(!target)throw Error('source ownership lost its visible destination');
+        const n=by.get(target);if(!n.frame_ownership)n.frame_ownership=[];n.frame_ownership.push({...record,target});
+      }
+      drawingIdx=index({nodes});for(const n of nodes.filter(n=>n.frame_ownership))options.decorateFrameOwner?.(n,drawingIdx);
+    }
     const projected=[],internal=[],excluded=[],contracted=[],attached=[],annotations=new Map();
     for(const raw of ir.edges){
       if(!eligible(raw.source)||!eligible(raw.target)){excluded.push(raw.id);continue;}
@@ -74,15 +86,16 @@
     C.project(plan,projected,rep,edgeAccounting);
     const presented=options.presentEdges?options.presentEdges(projected,idx):projected;
     const constraintReceipts=C.project(plan,presented,rep,edgeAccounting);
-    const positions=L.layout(idx,roots,visible,presented,state.offsets||{},{foldSerial:state.view==='architecture'&&state.foldSerial!==false,...options.layout}),ps=[...positions.values()];
+    const positions=L.layout(drawingIdx,roots,visible,presented,state.offsets||{},{foldSerial:state.view==='architecture'&&state.foldSerial!==false,...options.layout}),ps=[...positions.values()];
     C.evaluate(constraintReceipts,positions,presented);
     const left=Math.min(0,...ps.map(p=>p.x-60)),top=Math.min(0,...ps.map(p=>p.y-60));
     const nodeAccounting={visible:[],collapsed:[],contracted:[],attached:[],excluded:[]},representatives={};
     for(const n of ir.nodes){const representative=rep(n.id);let bucket;
-      if(!eligible(n.id)||!representative)bucket='excluded';else if(visible.has(n.id))bucket='visible';else if(bindings.has(n.id))bucket='contracted';else if(resources.has(n.id)||metadata.has(n.id))bucket='attached';else bucket='collapsed';
+      if(!eligible(n.id)||!representative)bucket='excluded';else if(visible.has(n.id))bucket='visible';else if(bindings.has(n.id))bucket='contracted';else if(resources.has(n.id)||metadata.has(n.id)||ownership.has(n.id))bucket='attached';else bucket='collapsed';
       nodeAccounting[bucket].push(n.id);if(representative)representatives[n.id]=representative;
     }
-    return {nodes:plan.nodes.filter(n=>visible.has(n.id)),edges:presented,positions,idx,annotations,architecture:state.view==='architecture'?plan:null,
+    return {nodes:plan.nodes.filter(n=>visible.has(n.id)).map(n=>drawingIdx.nodes.get(n.id)),edges:presented,positions,idx:drawingIdx,annotations,architecture:state.view==='architecture'?plan:null,
+      ...(ownership.size?{frame_ownership:[...ownership.values()].map(r=>({...r,target:rep(r.target)}))}:{}),
       node_accounting:nodeAccounting,representatives,constraint_receipts:constraintReceipts,
       edge_accounting:edgeAccounting,
       bounds:{x:left,y:top,w:Math.max(900,...ps.map(p=>p.x+p.w+60))-left,h:Math.max(600,...ps.map(p=>p.y+p.h+60))-top}};

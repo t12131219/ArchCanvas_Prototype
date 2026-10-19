@@ -58,7 +58,7 @@ test('summary and print retain the pre-inline sequence projection',()=>{
  const ir=read('EquivalentSteps');for(const preset of ['overview','modules','detailed']){
   assert.equal(R.render(ir,{paperGranularity:preset}).svg,frozen.render(ir,{paperGranularity:preset}).svg);
   const s={paperGranularity:preset,paperMedium:'canvas'};
-  assert.equal(R.render(ir,{...s,paperSequenceView:'summary'}).svg,frozen.render(ir,s).svg);
+  assert.equal(R.render(ir,{...s,paperSequenceView:'summary',paperFrameView:'source'}).svg,frozen.render(ir,s).svg);
  }
 });
 test('both generic sequences stay in the whole graph with exact shared context and independent values',()=>{

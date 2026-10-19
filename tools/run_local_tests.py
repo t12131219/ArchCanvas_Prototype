@@ -20,6 +20,7 @@ COMMANDS = {
     'structural-repeats': ['node', 'tests/structural-repeats.test.cjs'],
     'representative-atlas': ['node', 'tests/representative-atlas.test.cjs'],
     'canvas-medium': ['node', 'tests/canvas-medium.test.cjs'],
+    'frame-ownership': ['node', 'tests/frame-ownership.test.cjs'],
     'inline-sequences': ['node', 'tests/inline-sequences.test.cjs'],
 }
 

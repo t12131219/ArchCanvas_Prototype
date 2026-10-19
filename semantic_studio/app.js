@@ -26,6 +26,10 @@
   function inspect(id){selected=id;inspectedBundle=null;for(const[key,g]of renderedNodes)g.classList.toggle('selected',key===id);const n=projection.idx.nodes.get(id);if(!n)return;
     $('nodeTitle').textContent=n.label;
     $('details').innerHTML=`<span class="badge">${esc(n.kind)}</span><span class="badge">${esc(n.evidence_status)}</span>${n.semantic_type?'<p>'+esc(n.semantic_type)+'</p>':''}${n.reason?'<p>'+esc(n.reason)+'</p>':''}${n.presentation_only?'<p>架构摘要 · '+n.canonical_members.length+' 个原始节点 · '+n.boundary_ports.length+' 个边界端口</p><pre>'+esc(JSON.stringify(projection.architecture.findings.find(f=>f.id===n.finding),null,2))+'</pre>':''}${(n.source||[]).slice(0,10).map(s=>`<div class="source">${esc(s.file.split('/').slice(-2).join('/'))}:${s.line}<code>${esc(s.symbol)}</code><pre>${esc(s.expression)}</pre></div>`).join('')}${n.inputs?'<p>输入 / 输出张量</p><pre>'+esc(JSON.stringify({inputs:n.inputs,outputs:n.outputs},null,2))+'</pre>':''}${projection.annotations.get(id)?.length?'<details><summary>附属资源与配置</summary><pre>'+esc(JSON.stringify(projection.annotations.get(id),null,2))+'</pre></details>':''}<details><summary>完整语义与证据</summary><pre>${esc(JSON.stringify(n,null,2))}</pre></details>`;
+    if(n.frame_ownership?.length){
+      $('details').insertAdjacentHTML('beforeend','<details open><summary>附注中的源码归属</summary><p>这些已展开外框附注在当前图元上；原始对象及源码归属仍独立保存。</p><pre>'+esc(JSON.stringify(n.frame_ownership,null,2))+'</pre></details>');
+      const button=document.createElement('button');button.textContent='恢复源码外框';button.onclick=()=>{snapshot();state.paperFrameView='source';state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
+    }
     if(n.content_inventory)$('details').insertAdjacentHTML('afterbegin','<h3>摘要内容</h3><p>按当前语义单元计数，包含操作、调用和已确认的局部组合；不表示重复堆叠、执行并发或参数共享。</p>'+n.content_inventory.terms.map(t=>'<div class="source"><strong>'+esc(t.label)+' × '+t.count+'</strong><br>'+t.units.map(id=>esc(projection.idx.nodes.get(id)?.label||id)).join(' · ')+'</div>').join(''));
     if(n.semantic_contracts?.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>语义契约与证据范围</summary><pre>'+esc(JSON.stringify((ir.semantic_contracts||[]).filter(c=>n.semantic_contracts.includes(c.id)),null,2))+'</pre></details>');
     const relations=projection.architecture?.relation_graph?.relations||[],receipts=projection.constraint_receipts||[];
@@ -94,7 +98,7 @@
   function syncPaperControls(){
     if(!ir||!state)return;
     $('paperAuto').checked=state.paperAuto!==false;$('paperWidth').value=state.paperWidthMm||180;$('paperGranularity').value=state.paperGranularity||'overview';$('paperGranularity').disabled=state.paperAuto===false;
-    const canvas=state.paperMedium==='canvas';$('paperMedium').value=canvas?'canvas':'print';$('paperPrintWidth').hidden=canvas;$('nativeScale').hidden=!canvas;$('paperSequenceTools').hidden=!canvas;$('paperSequenceView').value=state.paperSequenceView==='summary'?'summary':'representatives';
+    const canvas=state.paperMedium==='canvas';$('paperMedium').value=canvas?'canvas':'print';$('paperPrintWidth').hidden=canvas;$('nativeScale').hidden=!canvas;$('paperSequenceTools').hidden=!canvas;$('paperSequenceView').value=state.paperSequenceView==='summary'?'summary':'representatives';$('paperFrameTools').hidden=!canvas;$('paperFrameView').value=state.paperFrameView==='source'?'source':'compact';
     const plan=P.plan(ir),idx=E.index(plan),select=$('paperFocus');select.replaceChildren(new Option('模型总览',''));
     const source=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return false;id=idx.nodes.get(id)?.parent;}return true;};
     for(const n of plan.nodes)if(n.parent&&(idx.children.get(n.id)||[]).length&&(state.mode==='source'?source(n.id):state.mode==='runtime'?!source(n.id):true)){const option=new Option((n.module_path||n.label)+(n.paper.unknown_count?' · '+n.paper.unknown_count+' 未知边界':''),n.id);select.add(option);}
@@ -106,6 +110,7 @@
   $('paperWidth').onchange=()=>{snapshot();state.paperWidthMm=Math.max(80,Math.min(400,Number($('paperWidth').value)||180));render();fit();persist();};
   $('paperMedium').onchange=()=>{snapshot();state.paperMedium=$('paperMedium').value;state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperSequenceView').onchange=()=>{snapshot();state.paperSequenceView=$('paperSequenceView').value;state.paperAuto=true;state.open=[];state.offsets={};syncPaperControls();render();fit();persist();};
+  $('paperFrameView').onchange=()=>{snapshot();state.paperFrameView=$('paperFrameView').value;state.offsets={};render();fit();persist();};
   $('nativeScale').onclick=()=>{const b=projection.bounds;camera={x:b.x-20,y:b.y-20,w:svg.clientWidth,h:svg.clientHeight};setCamera();};
   function showPaperQuality(q){
     const issues={'font-below-8pt':'打印字号偏小','figure-taller-than-245mm':'打印图过高','canvas-font-below-12px':'原始字号偏小',

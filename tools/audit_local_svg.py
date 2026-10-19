@@ -79,10 +79,20 @@ def main():
         OUT = ROOT / 'verification/symbolic-values/current'
     if '--canvas' in sys.argv:
         OUT = ROOT / 'verification/canvas-medium/current'
+    if '--frames' in sys.argv:
+        OUT = ROOT / 'verification/frame-ownership/current'
     if '--inline' in sys.argv:
         OUT = ROOT / 'verification/inline-sequences/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
+    if '--inline' in sys.argv or '--frames' in sys.argv:
+        sys.path.insert(0, str(ROOT))
+        from semantic_adapter.schema import validate_ir
+        extraction = json.loads((ROOT / report['extraction']).read_text())
+        assert hashlib.sha256((ROOT / report['extraction']).read_bytes()).hexdigest() == report['extraction_sha256']
+        assert hashlib.sha256((ROOT / extraction['source']).read_bytes()).hexdigest() == extraction['source_sha256']
+        for file, digest in report['implementation_sha256'].items():
+            assert hashlib.sha256((ROOT / file).read_bytes()).hexdigest() == digest, ('stale inline producer', file)
     if '--symbolic' in sys.argv:
         sys.path.insert(0, str(ROOT))
         from semantic_adapter.schema import validate_ir
@@ -117,8 +127,44 @@ def main():
         assert hashlib.sha256(source.read_bytes()).hexdigest() == row['svg_sha256']
         document = json.loads((OUT / row['document']).read_text())
         canonical = {e['id']: e for e in document['ir']['edges']}
+        if '--inline' in sys.argv or '--frames' in sys.argv:
+            # JS JSON serialization normalizes 1.0 to 1. Python's existing
+            # digest preserves that spelling. Validate the hashed source IR,
+            # then independently compare every transported fact by JSON value;
+            # do not reseal the exported document or claim its old hash passes.
+            source_ir = json.loads((ROOT / row['input']).read_text())
+            assert validate_ir(source_ir)['ok'], 'stale source repeat certificate'
+            assert source_ir == document['ir'], 'document changed canonical facts'
+            original = {n['id']: n for n in source_ir['nodes']}
+            children = {}
+            for n in original.values():
+                children.setdefault(n.get('parent'), []).append(n['id'])
+
+            def closure(node):
+                members, todo = set(), [node]
+                while todo:
+                    at = todo.pop()
+                    members.add(at)
+                    todo.extend(children.get(at, []))
+                return members
+
+            for n in document['architecture']['nodes']:
+                remainder = n.get('sequence_remainder')
+                if not remainder:
+                    continue
+                indices = remainder['indices']
+                assert len(indices) >= 2 and indices == list(range(indices[0], indices[-1] + 1))
+                sequence = original[remainder['sequence']]['repeat_contract']
+                group = sequence['structure']['groups'][remainder['structure_group']]
+                assert group['status'] == 'proved'
+                assert all(i in group['indices'] for i in indices)
+                assert [original[call]['repeat_index'] for call in remainder['instances']] == indices
+                members = set().union(*(closure(call) for call in remainder['instances']))
+                assert members == set(n['canonical_members'])
+                cuts = [e for e in document['ir']['edges'] if (e['source'] in members) != (e['target'] in members)]
+                assert cuts == n['boundary_ports'], 'suffix lost or modified a canonical boundary'
         tree = ET.parse(source)
-        if '--canvas' in sys.argv or '--inline' in sys.argv:
+        if '--canvas' in sys.argv or '--inline' in sys.argv or '--frames' in sys.argv:
             assert hashlib.sha256((ROOT / row['input']).read_bytes()).hexdigest() == row['input_sha256']
             assert hashlib.sha256((OUT / row['document']).read_bytes()).hexdigest() == row['document_sha256']
             q = row['quality']
@@ -135,6 +181,28 @@ def main():
                 assert set(values) == {v['id'] for v in document['ir'][key]}
         nodes = {e.attrib['data-node-id']: e for e in tree.iter() if 'data-node-id' in e.attrib}
         paths = {e.attrib['data-edge-id']: e for e in tree.iter() if 'data-edge-id' in e.attrib}
+        if '--frames' in sys.argv:
+            owners = document['layout'].get('frame_ownership', [])
+            assert owners == row['frame_ownership'] == document['publication'].get('frame_ownership', [])
+            planned = {n['id']: n for n in document['architecture']['nodes']}
+            incidents = {e[k] for e in document['ir']['edges'] for k in ['source', 'target']}
+            for record in owners:
+                owner = planned[record['node']]
+                assert record['node'] not in nodes and record['target'] in nodes
+                assert owner['id'] not in incidents
+                assert not any(owner.get(k) for k in ['semantic_contracts', 'contract_roles', 'condition', 'mutable', 'identity_display', 'observed_calls'])
+                assert record['label'] == owner['label'] and record['module_identity'] == owner.get('module_identity')
+                assert document['layout']['representatives'].get(owner['id'], record['target']) == record['target']
+                assert record['label'] in ''.join(nodes[record['target']].find('{http://www.w3.org/2000/svg}title').itertext())
+                if record['kind'] == 'same-call-source':
+                    parent = planned[owner['parent']]
+                    assert parent['semantic_type'] == 'repeat-instance'
+                    assert owner['module_identity'] == parent['module_identity']
+                elif record['kind'] == 'expanded-dependency-region':
+                    assert owner['presentation_only'] and owner['semantic_type'] in ['structural-region', 'computation-region']
+                else:
+                    assert record['kind'] == 'source-owner'
+                    assert owner['semantic_type'] in ['source-module', 'source-function']
         assert len(nodes) == row['nodes']
         assert len(paths) == row['edges']
         measured = {p['id']: p for p in document['layout']['nodes']}

@@ -143,3 +143,7 @@ Linux x86-64 的 Bubblewrap 隔离 network/user/pid/mount，模型源目录和�
 ## 可组合架构表达（2026-10-18）
 
 新增独立架构表达、局部规则和障碍路由，替换通用画布此前的简单布局。证据筛选与表达方式分别选择；源码语义和 CPU 覆盖边界继续适用。实现、命令、测试与限制见 [架构表达说明](architecture-rules.md)。
+
+本轮整图序列前沿、语义边界预设及端口对齐规则见 [inline-sequence-frontier.md](inline-sequence-frontier.md)；其中单独记录尚未收敛的参考图差异和跨语言摘要限制。
+
+通用画布中的来源外框简化与恢复规则见 [frame-ownership.md](frame-ownership.md)。该规则只改变展示归属，语义角色与参考图的对应关系仍需单独验收。

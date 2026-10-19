@@ -8,6 +8,7 @@ function atlas(ir,options={}){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'re
 test('one common structure panel covers different source wrappers while every concrete boundary is direct',()=>{
   const ir=read('EquivalentSteps'),before=JSON.stringify(ir),{manifest:m,dir}=atlas(ir);
   assert.equal(m.complete,true);assert.equal(m.quality_pass,true);assert.equal(m.panels.length,3);
+  for(const file of ['symbolic-values.js','structural-representatives.js','sequence-frontier.js'])assert.match(m.implementation_sha256['semantic_studio/'+file],/^[a-f0-9]{64}$/);
   const shared=m.expression_goals.filter(g=>g.coverage_methods.includes('structural-representative'));
   assert.equal(shared.length,6);
   for(const goal of shared)for(const file of goal.panels){

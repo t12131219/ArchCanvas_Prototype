@@ -37,8 +37,8 @@ render('transformer-overview',transformer,{...state,paperGranularity:'overview'}
 render('transformer-semantic',transformer,state);
 render('transformer-detailed',transformer,{...state,paperGranularity:'detailed'});
 const referenceFolder='verification/generic-convergence/current/',reference=['collapsed','expanded'].map(view=>{
- const svg=referenceFolder+'reference-'+view+'.dom.svg',graph=referenceFolder+'reference-'+view+'.graph.json';
- return{view,svg,svg_sha256:sha(svg),graph,graph_sha256:sha(graph),scope:'Normalized actual reference editor DOM; evaluation only. Raw expand-all states are not equated.'};
+ const svg=referenceFolder+'reference-'+view+'.svg',dom=referenceFolder+'reference-'+view+'.dom.svg',graph=referenceFolder+'reference-'+view+'.graph.json';
+ return{view,svg,svg_sha256:sha(svg),raw_dom:dom,raw_dom_sha256:sha(dom),graph,graph_sha256:sha(graph),scope:'Actual reference editor DOM normalized for standalone CSS and graph bounds; evaluation only. Raw expand-all states are not equated.'};
 });
 for(const [file,digest]of Object.entries(implementation))assert.equal(sha(file),digest);
 const report={schema:'inline-sequence-audit/1',implementation_sha256:implementation,frozen_snapshot:frozenPath+'/snapshot.json',frozen_snapshot_sha256:sha(frozenPath+'/snapshot.json'),
@@ -46,5 +46,5 @@ const report={schema:'inline-sequence-audit/1',implementation_sha256:implementat
  runtime_executed:false,goal_complete:false,reference_frontier_match:false,
  scope:'Development inputs. Proved concrete first calls unfold in their original sequence. Contiguous subsequent calls retain separate identity, exact cuts and deeper expansion. Local budgets and visible endpoint layout do not assert numerical equality, purity, parameter stability or execution scheduling.',
  unresolved:rows.filter(r=>r.quality.issues.length).map(r=>({name:r.name,issues:r.quality.issues})),
- remaining:['No verified node/role correspondence to the dedicated reference frontier yet.','Semantic frontier keeps certified modules folded; the reference exposes more internal roles.','Source wrapper nesting and cross-frame context paths remain visually verbose.','Dense further-expanded views can exceed canvas budgets or retain path overlaps.']};
+ remaining:['No verified node/role correspondence to the dedicated reference frontier yet.','Semantic frontier keeps certified modules folded; the reference exposes more internal roles.','Source wrapper nesting and cross-frame context paths remain visually verbose.','Dense further-expanded views can exceed canvas budgets.','Python digests preserve JSON number spelling while JS normalizes e.g. 1.0 to 1; source certificates pass but saved document digests need a cross-language contract.']};
 fs.writeFileSync(path.join(out,'render-report.json'),JSON.stringify(report,null,2)+'\n');

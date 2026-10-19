@@ -2,6 +2,7 @@
 (function(root){
   'use strict';
   const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
+  const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
   const P=root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
   const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
@@ -214,9 +215,10 @@
     const bundle=e.bundle_members?` data-bundle-members="${esc(JSON.stringify(e.bundle_members.map(m=>m.id)))}" data-bundle-endpoints="${esc(JSON.stringify(e.bundle_members.map(m=>({id:m.id,source:m.canonical_source,target:m.canonical_target}))))}" style="stroke-width:3"`:'';
     const canonical=e.bundle_members?'':` data-canonical-source="${esc(e.canonical_source)}" data-canonical-target="${esc(e.canonical_target)}"`;
     const title=e.bundle_members?e.bundle_members.map(m=>`${m.id}: ${m.canonical_source}[${m.source_port}] → ${m.canonical_target}[${m.target_port}]`).join('\n'):e.source_port+' → '+e.target_port+' · '+e.evidence;
+    const channel=e.context_lane?` data-context-owner="${esc(e.context_lane.owner)}" data-context-side="${esc(e.context_lane.side)}"`:'';
     const design=e.design_route?` data-design-route="${esc(e.design_route.kind)}" data-design-certificate="${esc(e.design_route.certificate)}"`:'';
     const ports=` data-source-port="${esc(e.source_port)}" data-target-port="${esc(e.target_port)}" data-semantic-bindings="${esc(JSON.stringify(e.semantic_bindings||[]))}"`;
-    return `<path class="paper-edge-halo" d="${d}"/><path class="edge paper-edge ${e.kind==='control'?'control':''}" data-edge-id="${esc(e.id)}" data-route-valid="${e.route.ok}"${canonical}${bundle}${design}${ports} d="${d}" stroke="${color}" marker-end="url(#paper-arrow)"><title>${esc(title)}</title></path>`;
+    return `<path class="paper-edge-halo" d="${d}"/><path class="edge paper-edge ${e.kind==='control'?'control':''}" data-edge-id="${esc(e.id)}" data-route-valid="${e.route.ok}"${canonical}${bundle}${design}${channel}${ports} d="${d}" stroke="${color}" marker-end="url(#paper-arrow)"><title>${esc(title)}</title></path>`;
   }
   function labelBody(label){return `<g class="paper-label" data-label-edge="${esc(label.edge)}"><rect x="${label.x}" y="${label.y}" width="${label.w}" height="${label.h}" rx="4" fill="#fff" fill-opacity=".96"/><text x="${label.x+6}" y="${label.y+16}" class="paper-port-label">${esc(label.text)}</text></g>`;}
   function prepareLabels(ir,state){
@@ -261,8 +263,30 @@
       selected:accepted?'consumer':'earliest',max_area_ratio:1.1,max_wire_ratio:1.1};
     return chosen;
   }
+  function prepareContext(ir,state={}){
+    const baseline=prepareTopology(ir,state),b=baseline.prepared.quality;
+    // Context entries are a soft geometry proposal, never a semantic rule.
+    // Automatic selection must preserve the frontier and all quality gates.
+    if(b.medium!=='canvas'||baseline.graph.publication.granularity!=='roles'||state.paperContextLanes!==undefined||
+      state.paperAuto===false||Object.keys(state.offsets||{}).length||!b.line_geometry.crossings||baseline.graph.edges.length>128||!L.contextEntries(baseline.graph.idx,new Set(baseline.graph.positions.keys()),baseline.graph.edges).length)return baseline;
+    const trial=prepareTopology(ir,{...state,paperContextLanes:'left'}),q=trial.prepared.quality;
+    if(!trial.graph.positions.context.contextLanes.length)return baseline;
+    const identity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id),edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,
+      source_port:e.source_port,target_port:e.target_port,originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition}))});
+    const accepted=identity(baseline.graph)===identity(trial.graph)&&q.line_geometry.crossings<b.line_geometry.crossings&&
+      q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=Math.min(fontMetric(b),fontFloor(q))&&
+      areaMetric(q)<=areaMetric(b)*1.15&&q.wire_length<=b.wire_length*1.1;
+    const chosen=accepted?trial:baseline,metrics=q=>({crossings:q.line_geometry.crossings,contacts:q.line_geometry.unrelated_contacts.length,
+      issues:q.issues,wire_length:q.wire_length,width:q.native_width_px,height:q.native_height_px});
+    chosen.prepared.routing.context_refinement={strategy:'left',accepted,before:metrics(b),candidate:metrics(q),
+      candidates:trial.graph.positions.context.contextLanes.length,max_area_ratio:1.15,max_wire_ratio:1.1,
+      scope:'measured visible dependency geometry; no semantic or execution claim'};
+    return chosen;
+  }
   function selectFigure(ir,state={}){
-    let chosen=prepareTopology(ir,state);
+    let chosen=prepareContext(ir,state);
     const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
     // A zoomable canvas keeps the requested semantic frontier. Route/resource
     // failures remain explicit; silently replacing it with an overview is not
@@ -316,7 +340,13 @@
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" class="publication" ${dimensions} viewBox="${b.x} ${b.y} ${b.w} ${totalH}" role="img" aria-label="${esc(ir.title)}"><title>${esc(ir.title)} · architecture</title><desc>Source-backed architecture; unresolved regions remain explicit. Crossings without a node are not junctions. ${esc(notes.join('; '))}</desc><metadata>${esc(JSON.stringify({schema:'archcanvas-publication/1',canonical_digest:ir.ir_digest,quality}))}</metadata><style>${css}</style><defs>${defs}</defs><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${totalH}" fill="#fff"/><g id="frames">${frames.join('')}</g><g id="edges">${routes.map(edgeBody).join('')}</g><g id="nodes">${nodes.join('')}</g><g id="port-labels">${labeling.placed.map(labelBody).join('')}</g>${noteLines.length?`<text x="${b.x+14}" y="${b.y+b.h+20}" class="paper-port-label">${noteLines.map((line,i)=>`<tspan x="${b.x+14}" dy="${i?17:0}">${esc(line)}</tspan>`).join('')}</text>`:''}</svg>\n`;
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       layout:{bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
-        ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments}:{})},
+        ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments}:{}),
+        ...(g.positions.context.contextLanes.length?{context_lanes:g.positions.context.contextLanes.map(entry=>{
+          const owner=g.positions.get(entry.owner),edge=routes.find(e=>e.id===entry.edge),low=entry.side==='left'?owner.x+(owner.design_gutter||0):owner.x+owner.w-owner.context_gutter;
+          const high=entry.side==='left'?low+owner.context_gutter:owner.x+owner.w;
+          const used=edge.route.ok&&edge.route.target_side===entry.side&&edge.route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>low&&p.x<high);
+          return {...entry,status:used?'realized':'deferred',reason:used?'final side terminal and vertical channel verified':'obstacle-aware fallback did not realize a vertical channel'};
+        })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
   const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,prepareFigure,render,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;

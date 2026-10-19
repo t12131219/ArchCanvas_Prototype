@@ -10,14 +10,35 @@
     }
     for(const id of ids)if(!number.has(id))visit(id);return result;
   }
+  // A side entry is only a drawing preference: external values remain data,
+  // with distinct uses, operand slots and conditions. No role is inferred.
+  function contextEntries(idx,visible,edges,side='left'){
+    const ancestors=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
+    const ordinary=edge=>(edge.bundle_members||[edge]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition);
+    const counts=new Map(),result=[];
+    for(const e of edges){
+      const owner=idx.nodes.get(e.target)?.parent,inside=id=>ancestors(id).includes(owner);
+      if(!owner||!visible.has(owner)||inside(e.source)||ancestors(e.target).includes(e.source)||e.design_route||!ordinary(e))continue;
+      const internal=edges.filter(other=>other.target===e.target&&other.source!==e.source&&inside(other.source)&&other.source!==owner&&ordinary(other)&&!other.design_route);
+      if(!internal.length)continue;
+      const index=counts.get(owner)||0;counts.set(owner,index+1);
+      result.push({edge:e.id,owner,index,side:side==='left'?'left':'right',internal_inputs:internal.map(other=>other.id),
+        scope:'visible dependency geometry; no auxiliary-input or execution assertion'});
+    }
+    return result;
+  }
   function layout(idx,roots,visible,edges,offsets={},options={}){
     const positions=new Map(),feedback=new Set(),compoundAlignments=[];
-    const laneOwners=new Map();
+    const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
     const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
     const laneKinds=['bypass','state-interface','iteration-feedback'];
     if(options.semanticLanes)for(const e of edges)if(laneKinds.includes(e.design_route?.kind)){
       const targetAnc=new Set(ancestry(e.target)),owner=ancestry(e.source).slice(1).find(id=>targetAnc.has(id));
       if(owner){e.design_route.owner=owner;laneOwners.set(owner,(laneOwners.get(owner)||0)+1);}
+    }
+    if(options.contextLanes)for(const entry of contextEntries(idx,visible,edges,options.contextLanes)){
+      const e=edges.find(e=>e.id===entry.edge);e.context_lane={...entry};delete e.context_lane.edge;
+      contextOwners.set(entry.owner,(contextOwners.get(entry.owner)||0)+1);contextLanes.push(entry);
     }
     const gapX=options.gapX??40,gapY=options.gapY??76;
     function size(n){
@@ -180,13 +201,13 @@
       return vertical;
     }
     function place(id){const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(c=>visible.has(c)),p={id,x:0,y:0,...size(n),expanded:!!kids.length};positions.set(id,p);
-      if(kids.length){kids.forEach(place);const box=arrange(kids,id),pad=options.framePadding??32,title=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74,header=title+(options.headerClearance??20),gutter=laneOwners.has(id)?28+Math.min(3,laneOwners.get(id))*20:0;p.header=header;p.protected_header_height=title-10;p.design_gutter=gutter;p.w=Math.max(options.nodeSize?212:300,box.w+pad*2+gutter);p.h=box.h+header+pad;for(const child of kids){positions.get(child).x+=pad+gutter;positions.get(child).y+=header;}}
+      if(kids.length){kids.forEach(place);const box=arrange(kids,id),pad=options.framePadding??32,title=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74,header=title+(options.headerClearance??20),gutter=laneOwners.has(id)?28+Math.min(3,laneOwners.get(id))*20:0;p.header=header;p.protected_header_height=title-10;p.design_gutter=gutter;p.w=Math.max(options.nodeSize?212:300,box.w+pad*2+gutter+(contextOwners.has(id)?32+contextOwners.get(id)*16:0));if(contextOwners.has(id))p.context_gutter=32+contextOwners.get(id)*16;p.h=box.h+header+pad;for(const child of kids){positions.get(child).x+=pad+gutter+(options.contextLanes==='left'?(p.context_gutter||0):0);positions.get(child).y+=header;}}
     }
     roots.filter(id=>visible.has(id)).forEach(place);
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={idx,edges,feedback,compoundAlignments};return positions;
+    positions.context={idx,edges,feedback,compoundAlignments,contextLanes};return positions;
   }
   const point=(x,y)=>({x,y});
   function simplify(points){const out=[];for(const p of points){if(out.length&&out.at(-1).x===p.x&&out.at(-1).y===p.y)continue;while(out.length>1&&((out.at(-2).x===out.at(-1).x&&out.at(-1).x===p.x)||(out.at(-2).y===out.at(-1).y&&out.at(-1).y===p.y)))out.pop();out.push(p);}return out;}
@@ -212,6 +233,8 @@
     const laneOwner=positions.get(e.design_route?.owner);
     const semanticBypass=['bypass','state-interface','iteration-feedback'].includes(e.design_route?.kind)&&laneOwner?.design_gutter;
     if(semanticBypass)ss=ts='left';
+    const contextOwner=positions.get(e.context_lane?.owner),contextLane=!!contextOwner?.context_gutter;
+    if(contextLane)ts=e.context_lane.side;
     function sideFor(edge,isSource){
       const from=positions.get(edge.source),to=positions.get(edge.target);if(!from||!to)return null;
       const down=to.y>=from.y+from.h,up=from.y>=to.y+to.h;
@@ -223,6 +246,7 @@
       if(edge.source!==edge.target&&to.expanded&&ancestors(edge.source).has(edge.target))targetSide=header?'top':'bottom';
       if(header&&edge.source!==edge.target&&(from.expanded&&ancestors(edge.target).has(edge.source)||to.expanded&&ancestors(edge.source).has(edge.target)))sourceSide=targetSide='top';
       if(['bypass','state-interface','iteration-feedback'].includes(edge.design_route?.kind)&&positions.get(edge.design_route.owner)?.design_gutter)sourceSide=targetSide='left';
+      if(edge.context_lane&&positions.get(edge.context_lane.owner)?.context_gutter)targetSide=edge.context_lane.side;
       return isSource?sourceSide:targetSide;
     }
     function port(id,other,isSource,which){
@@ -285,6 +309,12 @@
         ...nearest(start.y).flatMap(leave=>nearest(end.y).filter(enter=>enter!==leave).map(enter=>
           [start,point(start.x,leave),point(x,leave),point(x,enter),point(end.x,enter),end]))];
     }):[];
+    if(contextLane){
+      const x=e.context_lane.side==='left'?contextOwner.x+(contextOwner.design_gutter||0)+16+e.context_lane.index*16:contextOwner.x+contextOwner.w-16-e.context_lane.index*16;
+      laneCandidates.push([start,point(x,start.y),point(x,end.y),end]);
+      const corridors=[...new Set([start.y,a.y+a.h+16,...boxes.flatMap(r=>[r.y-2,r.y+r.h+2])])];
+      for(const y of corridors)laneCandidates.push([start,point(start.x,y),point(x,y),point(x,end.y),end]);
+    }
     const reserved=context?.reserved||[];
     if(reserved.length)for(const delta of [-12,12,-24,24,-40,40]){
       candidates.push([start,point(start.x,middle+delta),point(end.x,middle+delta),end]);
@@ -339,5 +369,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

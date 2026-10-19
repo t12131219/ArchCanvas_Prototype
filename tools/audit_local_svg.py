@@ -75,6 +75,8 @@ def audit_atlas_coverage(manifest, panel, document, nodes, paths):
 
 def main():
     global OUT
+    if '--context' in sys.argv:
+        sys.argv.append('--expressions')
     if '--symbolic' in sys.argv:
         OUT = ROOT / 'verification/symbolic-values/current'
     if '--canvas' in sys.argv:
@@ -87,6 +89,8 @@ def main():
         OUT = ROOT / 'verification/frame-ownership/current'
     if '--inline' in sys.argv:
         OUT = ROOT / 'verification/inline-sequences/current'
+    if '--context' in sys.argv:
+        OUT = ROOT / 'verification/context-lanes/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -334,7 +338,60 @@ def main():
                 receipt = [c for c in document['layout'].get('constraint_receipts', []) if c['status'] == 'applied' and c.get('route_verified')]
                 if any(c['evidence'].get('relation') == edge['design_route']['certificate'] or c['evidence'].get('certificate') == edge['design_route']['certificate'] for c in receipt):
                     assert lane, 'claimed lane is absent from actual SVG path'
-        results.append({'name': row['name'], 'nodes': len(nodes), 'paths': len(paths), 'passed': True})
+        if '--context' in sys.argv:
+            assert row['context_lanes'] == document['layout'].get('context_lanes', [])
+            planned = {n['id']: n for n in document['architecture']['nodes']}
+            attached = {r['node'] for r in document['layout'].get('frame_ownership', [])}
+            parents = {n: value.get('parent') for n, value in planned.items()}
+            for node, parent in list(parents.items()):
+                while parent in attached:
+                    parent = parents[parent]
+                parents[node] = parent
+
+            def ancestors(node):
+                result = set()
+                while node:
+                    result.add(node)
+                    node = parents.get(node)
+                return result
+            for entry in row['context_lanes']:
+                edge = edge_layout[entry['edge']]
+                element = paths[entry['edge']]
+                assert element.get('data-context-owner') == entry['owner']
+                assert element.get('data-context-side') == entry['side'] == edge['route']['target_side']
+                assert entry['internal_inputs'] and not edge.get('design_route')
+                assert parents[edge['target']] == entry['owner']
+                assert entry['owner'] not in ancestors(edge['source'])
+                assert edge['source'] not in ancestors(edge['target'])
+                for internal_id in entry['internal_inputs']:
+                    other = edge_layout[internal_id]
+                    assert other['target'] == edge['target'] and other['source'] != edge['source']
+                    assert entry['owner'] in ancestors(other['source']) and other['source'] != entry['owner']
+                for member in edge.get('bundle_members', [edge]):
+                    assert member['kind'] in ['data', 'alias', 'interface-binding'] and not member.get('condition')
+                owner = measured[entry['owner']]
+                low = owner['x'] + owner.get('design_gutter', 0) if entry['side'] == 'left' else owner['x'] + owner['w'] - owner['context_gutter']
+                high = low + owner['context_gutter']
+                points = [(float(x), float(y)) for x, y in re.findall(r'[ML](-?[\d.eE+]+),(-?[\d.eE+]+)', element.attrib['d'])]
+                realized = edge['route']['ok'] and any(a[0] == b[0] and a[1] != b[1] and low < a[0] < high for a, b in zip(points, points[1:]))
+                assert (entry['status'] == 'realized') == realized
+        measured_crossings = 0
+        if '--context' in sys.argv:
+            polylines = [[(float(x), float(y)) for x, y in re.findall(r'[ML](-?[\d.eE+]+),(-?[\d.eE+]+)', element.attrib['d'])] for element in paths.values()]
+            segments = [list(zip(points, points[1:])) for points in polylines]
+            for i, first in enumerate(segments):
+                for second in segments[i + 1:]:
+                    for a, b in first:
+                        for c, d in second:
+                            av, cv = a[0] == b[0], c[0] == d[0]
+                            if av == cv:
+                                continue
+                            v, w, h, k = (a, b, c, d) if av else (c, d, a, b)
+                            if min(h[0], k[0]) < v[0] < max(h[0], k[0]) and min(v[1], w[1]) < h[1] < max(v[1], w[1]):
+                                measured_crossings += 1
+            assert measured_crossings == row['quality']['line_geometry']['crossings']
+        results.append({'name': row['name'], 'nodes': len(nodes), 'paths': len(paths), 'passed': True,
+                        **({'crossings': measured_crossings} if '--context' in sys.argv else {})})
     output = {'schema': 'local-svg-audit/1', 'render_report_sha256': hashlib.sha256((OUT / report_file).read_bytes()).hexdigest(), 'results': results,
               'scope': 'XML counts, orthogonal paths, physical terminals, canonical operands and bundle members, exact region cuts, relation references and claimed reserved channels.'}
     (OUT / ('representative-atlas-svg-report.json' if '--atlases' in sys.argv else 'repeat-svg-report.json' if '--repeats' in sys.argv else 'identity-svg-report.json' if '--identities' in sys.argv else 'iteration-svg-report.json' if '--iterations' in sys.argv else 'holdout-svg-report.json' if '--holdout' in sys.argv else 'svg-report.json')).write_text(json.dumps(output, indent=2) + '\n')

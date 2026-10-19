@@ -17,12 +17,16 @@ def sha(file):
 
 def main():
     global OUT
+    if '--context' in sys.argv:
+        sys.argv.append('--expressions')
     if '--expressions' in sys.argv:
         OUT = ROOT / 'verification/local-expressions/current'
     if '--roles' in sys.argv:
         OUT = ROOT / 'verification/role-frontier/current'
     if '--frames' in sys.argv:
         OUT = ROOT / 'verification/frame-ownership/current'
+    if '--context' in sys.argv:
+        OUT = ROOT / 'verification/context-lanes/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -67,6 +71,8 @@ def main():
         head = head.replace('当前已形成整图中的具体代表调用、连续后续调用摘要及独立输入流程的端口对齐', '本轮将已展开的冗余源码外框转为可恢复的来源附注；逐条操作数和控制边界仍保留')
     if '--expressions' in sys.argv:
         head = head.replace('本轮依据已有证书角色选择局部内部层级；嵌套契约、条件与未知边界保留进一步展开', '本轮将独立门控、状态、选择、条件、未知与身份关系纳入局部表达请求和预算；证书及控制边界保留')
+    if '--context' in sys.argv:
+        head = head.replace('本轮将独立门控、状态、选择、条件、未知与身份关系纳入局部表达请求和预算；证书及控制边界保留', '本轮比较按真实跨边生成的侧端口与通道候选，只有实际几何改善才采用；模块与更深的展开能力保留')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -96,6 +102,18 @@ def main():
             viewport = [scope['x'] - 28, scope['y'] - 28, scope['w'] + 56, scope['h'] + 56]
             detail += f'<article><h2>{escape(key)}</h2><p>{"局部乘积仍在摘要中" if key.endswith("before") else "显示 gate / signal 与实际乘积"}</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
         (OUT / 'mixed-detail-comparison.html').write_text(detail + '</div></html>')
+    if '--context' in sys.argv:
+        current = rows['transformer-roles']
+        entry = max(current['context_lanes'], key=lambda entry: len(entry['internal_inputs']))
+        detail = head.replace('height:720px', 'height:700px')
+        detail += '<h2>外部输入进入内部阶段：实际 SVG 局部比较</h2><p>按最多内部输入选取同一容器，仅调整 viewBox。左侧是冻结基线；右侧是通过整图测量后采用的侧端口候选。通道未全部兑现，不能把侧端口等同于完整总线。</p><div class="cards">'
+        for key in ['transformer-before', 'transformer-roles']:
+            row = rows[key]
+            document = json.loads((OUT / row['document']).read_text())
+            scope = next(n for n in document['layout']['nodes'] if n['id'] == entry['owner'])
+            viewport = [scope['x'] - 36, scope['y'] - 36, scope['w'] + 72, scope['h'] + 72]
+            detail += f'<article><h2>{escape(key)}</h2><p>整图交叉 {row["quality"]["line_geometry"]["crossings"]}；{row["nodes"]} 图元 / {row["edges"]} 边</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
+        (OUT / 'context-comparison.html').write_text(detail + '</div></html>')
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

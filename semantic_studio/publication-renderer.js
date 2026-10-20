@@ -608,7 +608,8 @@
         seen.add(candidate.id);
         const next=engine.apply(selectedState,candidate),graph=E.project(ir,{...next,view:'publication'}),before=new Set(chosen.graph.nodes.map(n=>n.id));
         const added=graph.nodes.filter(n=>!before.has(n.id)),request=candidate.kind==='roles'?graph.publication.role_frontier?.detail_requests.find(r=>r.node===candidate.node):null;
-        let reason=request&&request.status!=='expanded'?'protected-or-budgeted-role':!added.length?'no-new-visible-detail':null;
+        const pathRequest=candidate.kind==='role-path'?graph.publication.role_frontier?.path_requests?.find(r=>r.node===candidate.node&&r.certificate===candidate.certificate&&JSON.stringify(r.role)===JSON.stringify(candidate.role)):null;
+        let reason=request&&request.status!=='expanded'||candidate.kind==='role-path'&&(!pathRequest||pathRequest.status!=='exposed')?'protected-or-budgeted-role':!added.length?'no-new-visible-detail':null;
         const estimate=added.filter(n=>['compute','opaque','control'].includes(n.kind)).length;
         const benefit=reason||!planning?null:engine.preview(ir,chosen,graph);
         if(benefit?.only_summary_internal&&!benefit.structure&&!benefit.critical)reason='dependency-structure-already-expressed';
@@ -619,6 +620,12 @@
         {...b.benefit,cost:1,score:[b.benefit.critical,b.benefit.structure,b.benefit.detail]})||
         b.estimate/Math.max(1,b.added)-a.estimate/Math.max(1,a.added)||a.candidate.id.localeCompare(b.candidate.id)):
         b.candidate.priority-a.candidate.priority||b.estimate/Math.max(1,b.added)-a.estimate/Math.max(1,a.added)||a.candidate.id.localeCompare(b.candidate.id));
+      // Spend the existing two-trial comparison on different granularities
+      // of the same scope when available, rather than two full expansions.
+      if(planning&&shortlist[0]?.candidate.kind==='roles'){
+        const alternative=shortlist.findIndex((item,i)=>i>0&&item.candidate.kind==='role-path'&&item.candidate.node===shortlist[0].candidate.node);
+        if(alternative>1)shortlist.splice(1,0,...shortlist.splice(alternative,1));
+      }
       // Untested shortlist entries remain eligible after a successful local
       // step, with preflight repeated against that newly selected frontier.
       for(const item of shortlist)seen.delete(item.candidate.id);
@@ -627,7 +634,7 @@
       for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
         seen.add(item.candidate.id);
         const trial=attachExpressionEvidence(ir,prepareRoleSourceFrames(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
-        const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
+        const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperRolePaths:item.next.paperRolePaths||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
           ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
         trials.push({item,trial,assessment,receipt});
       }
@@ -642,7 +649,7 @@
     }
     const remaining=engine.candidates(chosen.graph,selectedState).filter(c=>!seen.has(c.id));
     const receipt={rule_version:engine.VERSION,requested:true,policy:planning?'structure':'detail',baseline:initial,selected:engine.metrics(chosen),attempts,preflights,
-      selected_role_details:selectedState.paperRoleDetails||[],selected_expression_details:selectedState.paperExpressionDetails||[],
+      selected_role_details:selectedState.paperRoleDetails||[],selected_role_paths:selectedState.paperRolePaths||[],selected_expression_details:selectedState.paperExpressionDetails||[],
       unmeasured_opportunities:remaining.length,measurement_limit:3,preflight_limit:36,
       scope:'Bounded measured comparison of local role/relation expressions; critical boundaries, newly expressed structure and detailed paths remain distinct. Existing summaries preserve structure without fulfilling atomic detail. Canonical IR and saved requests remain unchanged; this is not global summary/detail or graph-set planning.'};
     chosen.graph.publication.adaptive_frontier=receipt;chosen.prepared.routing.semantic_refinement=receipt;

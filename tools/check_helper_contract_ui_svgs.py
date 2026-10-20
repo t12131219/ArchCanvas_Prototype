@@ -10,7 +10,7 @@ import audit_local_svg as shared
 from audit_input_dock_receipts import verify as verify_docks
 from audit_role_source_frame_receipts import verify as verify_frames
 
-OUT = Path(__file__).resolve().parents[1] / 'verification/helper-contracts/current'
+OUT = Path(__file__).resolve().parents[1] / (sys.argv[1] if len(sys.argv) > 1 else 'verification/helper-contracts/current')
 report = json.loads((OUT / 'ui-report.json').read_text())
 for row in report['rows']:
     doc, tree = json.loads((OUT / row['document']).read_text()), ET.parse(OUT / row['svg'])

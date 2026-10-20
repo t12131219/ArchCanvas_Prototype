@@ -43,15 +43,15 @@
       '当前状态尚未完整表达这段依赖结构；可展开本区域检查缺少的内容。')+'</p><p>此项不代表所有操作数、参数、配置或运行行为已经验证。</p><details><summary>检查记录</summary><pre>'+esc(JSON.stringify(summaryCheck,null,2))+'</pre></details></details>');
     if(n.semantic_contracts?.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>语义契约与证据范围</summary><pre>'+esc(JSON.stringify((ir.semantic_contracts||[]).filter(c=>n.semantic_contracts.includes(c.id)),null,2))+'</pre></details>');
     if(state.view==='publication'&&state.paperMedium==='canvas'&&state.paperGranularity==='roles'&&n.kind==='composite'&&n.semantic_contracts?.length){
-      const adaptive=projection.publication?.adaptive_frontier,requested=adaptive?.selected_role_details||(Array.isArray(state.paperRoleDetails)?state.paperRoleDetails:[]),active=requested.includes(id);
+      const adaptive=projection.publication?.adaptive_frontier,requested=adaptive?.selected_role_details||(Array.isArray(state.paperRoleDetails)?state.paperRoleDetails:[]),active=requested.includes(id),selectedPaths=adaptive?.selected_role_paths||(Array.isArray(state.paperRolePaths)?state.paperRolePaths:[]);
       const button=document.createElement('button');button.textContent=active?'收起本区域的角色细化':'展开本区域已证明的角色';
-      button.onclick=()=>{snapshot();if(adaptive){state.paperAdaptive=false;state.paperExpressionDetails=adaptive.selected_expression_details;}state.paperRoleDetails=active?requested.filter(node=>node!==id):[...requested,id];state.paperRolePaths=(state.paperRolePaths||[]).filter(p=>p.node!==id);state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
-      const rolePaths=document.createElement('details'),heading=document.createElement('summary');heading.textContent='选择单条已证明的角色路径';rolePaths.open=(state.paperRolePaths||[]).some(p=>p.node===id);rolePaths.append(heading);
+      button.onclick=()=>{snapshot();if(adaptive){state.paperAdaptive=false;state.paperExpressionDetails=adaptive.selected_expression_details;}state.paperRoleDetails=active?requested.filter(node=>node!==id):[...requested,id];state.paperRolePaths=selectedPaths.filter(p=>p.node!==id);state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
+      const rolePaths=document.createElement('details'),heading=document.createElement('summary');heading.textContent='选择单条已证明的角色路径';rolePaths.open=selectedPaths.some(p=>p.node===id);rolePaths.append(heading);
       const note=document.createElement('p');note.textContent='只细化选中的路径；同级必要节点仍可见，条件、未知和独立认证边界继续保留。';rolePaths.append(note);
       const by=projection.idx.nodes,certificates=(projection.architecture.semantic_contracts||[]).filter(c=>c.node===id&&n.semantic_contracts.includes(c.id));
       for(const c of certificates)for(const ref of window.SemanticRoleFrontier.references(c.roles,by)){
         let at=ref.node;while(at&&at!==id)at=by.get(at)?.parent;if(ref.node===id||at!==id)continue;
-        const key=JSON.stringify([id,c.id,ref.keys]),paths=Array.isArray(state.paperRolePaths)?state.paperRolePaths:[],on=paths.some(p=>JSON.stringify([p.node,p.certificate,p.role])===key);
+        const key=JSON.stringify([id,c.id,ref.keys]),paths=selectedPaths,on=paths.some(p=>JSON.stringify([p.node,p.certificate,p.role])===key);
         const row=document.createElement('div'),button=document.createElement('button');button.textContent=(on?'收起路径 · ':'细化路径 · ')+ref.path;button.disabled=active;button.dataset.rolePath=JSON.stringify(ref.keys);button.dataset.certificate=c.id;
         button.onclick=()=>{snapshot();if(adaptive){state.paperAdaptive=false;state.paperRoleDetails=adaptive.selected_role_details;state.paperExpressionDetails=adaptive.selected_expression_details;}
           state.paperRolePaths=on?paths.filter(p=>JSON.stringify([p.node,p.certificate,p.role])!==key):[...paths,{node:id,certificate:c.id,role:ref.keys}];

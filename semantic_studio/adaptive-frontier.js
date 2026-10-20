@@ -2,20 +2,33 @@
  * are deliberately absent: candidates are existing roles or relation paths. */
 (function(root){
   'use strict';
-  const VERSION='adaptive-frontier/3';
+  const VERSION='adaptive-frontier/4';
+  const Roles=root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null);
   const Expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
   const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
   function candidates(graph,state={}){
     const plan=graph.architecture,by=new Map(plan.nodes.map(n=>[n.id,n])),owners=new Set(graph.publication.role_frontier?.modules.map(m=>m.node)||[]);
     const selectedRoles=new Set(Array.isArray(state.paperRoleDetails)?state.paperRoleDetails:[]),selectedExpressions=new Set(Array.isArray(state.paperExpressionDetails)?state.paperExpressionDetails:[]),out=[];
     const refs=value=>typeof value==='string'&&by.has(value)?[value]:value&&typeof value==='object'?Object.values(value).flatMap(refs):[];
-    // Only a visible, folded nested certificate can be the next role layer.
+    // Compare a complete role layer with exact local paths. Partial requests
+    // keep the remaining independent roles available on later iterations.
     // The role compiler remains responsible for checking intervening guards.
     for(const c of plan.semantic_contracts||[]){
       const p=graph.positions.get(c.node);
-      if(!p||p.expanded||owners.has(c.node)||selectedRoles.has(c.node)||out.some(r=>r.kind==='roles'&&r.node===c.node))continue;
+      const paths=Array.isArray(state.paperRolePaths)?state.paperRolePaths:[],partial=paths.some(r=>r.node===c.node);
+      if(!p||selectedRoles.has(c.node)||!partial&&(p.expanded||owners.has(c.node)))continue;
       const targets=[...new Set(refs(c.roles))];
-      if(targets.some(id=>id!==c.node))out.push({id:'roles:'+c.node,kind:'roles',node:c.node,priority:2,targets,scope:c.scope});
+      if(targets.some(id=>id!==c.node&&!graph.positions.has(id))&&!out.some(r=>r.kind==='roles'&&r.node===c.node))out.push({id:'roles:'+c.node,kind:'roles',node:c.node,priority:2,targets,scope:c.scope});
+      if(state.paperAdaptivePolicy!=='structure')continue;
+      const seenTargets=new Set();
+      for(const ref of Roles.references(c.roles,by)){
+        if(ref.node===c.node||graph.positions.has(ref.node)||seenTargets.has(ref.node))continue;
+        let at=by.get(ref.node)?.parent;while(at&&at!==c.node)at=by.get(at)?.parent;
+        if(at!==c.node||paths.some(r=>r.node===c.node&&r.certificate===c.id&&JSON.stringify(r.role)===JSON.stringify(ref.keys)))continue;
+        seenTargets.add(ref.node);
+        out.push({id:'role-path:'+JSON.stringify([c.node,c.id,ref.keys]),kind:'role-path',node:c.node,certificate:c.id,role:ref.keys,
+          priority:2,targets:[ref.node],scope:c.scope});
+      }
     }
     const relations=(plan.relation_graph?.relations||[]).filter(r=>!selectedExpressions.has(r.id)&&
       (graph.positions.has(r.node)||graph.positions.has(graph.representatives[r.node])));
@@ -34,9 +47,11 @@
       out.push({id:'relation:'+r.relation,kind:'relation',relation:r.relation,type:r.type,priority:critical.has(r.type)?3:2,
         targets:internal.map(t=>t.node),required_open:[...path],scope:r.evidence_scope});
     }
-    return out.sort((a,b)=>b.priority-a.priority||a.targets.length-b.targets.length||a.id.localeCompare(b.id));
+    return out.sort((a,b)=>b.priority-a.priority||Number(a.kind==='role-path')-Number(b.kind==='role-path')||a.targets.length-b.targets.length||a.id.localeCompare(b.id));
   }
   function apply(state,candidate){
+    if(candidate.kind==='role-path')return {...state,paperRolePaths:[...(Array.isArray(state.paperRolePaths)?state.paperRolePaths:[]),
+      {node:candidate.node,certificate:candidate.certificate,role:candidate.role.slice()}]};
     const key=candidate.kind==='roles'?'paperRoleDetails':'paperExpressionDetails',id=candidate.kind==='roles'?candidate.node:candidate.relation;
     return {...state,[key]:[...new Set([...(Array.isArray(state[key])?state[key]:[]),id])]};
   }
@@ -65,7 +80,11 @@
     const boundaries=new Set(g.nodes.filter(n=>by.has(n.id)&&(n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.evidence_status==='runtime-only')).map(n=>n.id));
     const conflicts=new Set((g.constraint_receipts||[]).filter(r=>r.status==='conflict').map(r=>r.id));
     const summaries=new Set((g.summary_coverage||[]).filter(r=>r.status==='fulfilled').map(r=>r.goal));
-    return {goals,roles,boundaries,conflicts,summaries};
+    const paths=new Map((g.publication.role_frontier?.path_requests||[]).filter(r=>r.selection==='selected').map(r=>{
+      const incoming=ir.edges.filter(e=>e.target===r.target&&['data','alias','interface-binding'].includes(e.kind));
+      return [JSON.stringify([r.node,r.certificate,r.role]),r.status==='exposed'&&g.positions.has(r.target)&&incoming.length>0&&incoming.every(e=>physical.has(e.id))];
+    }));
+    return {goals,roles,boundaries,conflicts,summaries,paths};
   }
   function contribution(baseline,gained,roles,summaries){
     const fulfilled=new Set((baseline.graph.summary_coverage||[]).filter(c=>c.status==='fulfilled').map(c=>c.goal));
@@ -106,6 +125,7 @@
     const lostSummaries=[...before.summaries].filter(id=>!after.summaries.has(id));
     if(lostSummaries.length)reasons.push('previous-dependency-structure-lost');
     if([...before.roles].some(id=>!after.roles.has(id)))reasons.push('previous-role-lost');
+    if([...after.paths].some(([id,verified])=>!verified&&(!before.paths.has(id)||before.paths.get(id))))reasons.push('unverified-role-path-binding');
     if([...before.boundaries].some(id=>!after.boundaries.has(id)))reasons.push('visible-boundary-lost');
     if([...after.conflicts].some(id=>!before.conflicts.has(id)))reasons.push('new-constraint-conflict');
     for(const [key,objects]of [['node_accounting',ir.nodes],['edge_accounting',ir.edges]]){

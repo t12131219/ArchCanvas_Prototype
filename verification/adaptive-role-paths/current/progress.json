@@ -1,0 +1,28 @@
+{
+  "schema": "adaptive-role-paths-progress/1",
+  "observed_at_utc": "2026-10-20 23:02:47 UTC",
+  "pending_check": "transformer-default-adaptive-comparison",
+  "session_id": 51885,
+  "process_pid": 681657,
+  "parent_pid": 681655,
+  "last_announced_phase": "before",
+  "handle_observation": "write_stdin returned session_id51885 with no exit_code; process earlier independently observed Rl at100 percent CPU. Not terminal; do not restart on an observation timeout.",
+  "input": "verification/helper-contracts/current/Transformer-current.json",
+  "state": {
+    "paperMedium": "canvas",
+    "paperGranularity": "roles",
+    "paperAdaptive": true,
+    "paperAdaptivePolicy": "structure"
+  },
+  "expected_outputs": [
+    "transformer-before.svg",
+    "transformer-before.layout.json",
+    "transformer-current.svg",
+    "transformer-current.layout.json"
+  ],
+  "orchestration": "The observed parent shell command loads the frozen iteration41 renderer in an isolated VM, renders before and writes its two outputs, then loads current semantic_studio in another isolated VM and renders current.",
+  "reproduction_tool": "tools/render_adaptive_role_transformer.cjs",
+  "next_action": "Poll the existing session51885. After terminal success, run audit_adaptive_role_paths.cjs without --small, repeat receipt/SVG/UI report checks, regenerate and inspect review artifacts, refresh native browser text measurements and rerun summarizer. No current-stage Transformer result or timing is inferred from historical fixed-path panels.",
+  "current_adapter_sha256": "afd93617828d5fb8cf12d40990fe1d12b5d1647ddec67a409b0f64721b7f302e",
+  "observed_after_final_adapter_edit": "Session51885 remained live with no phase-change output; both transformer-before.svg and transformer-current.svg were still absent after the final adapter edit. The current VM is loaded only after the before files are written."
+}

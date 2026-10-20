@@ -1,0 +1,728 @@
+{
+  "schema": "adaptive-role-paths-ui/1",
+  "render_report_sha256": "a2a2a062c2efe5dec62267f46a035a541af6a102da8c0293222b53367415491d",
+  "rows": [
+    {
+      "name": "ui-planned",
+      "svg": "ui-planned.svg",
+      "document": "cli-ui-planned.layout.json",
+      "svg_sha256": "f583249e6479b2a4b58fd0f3defa7659984c039e4eb60b1e27f82501581eec4a",
+      "document_sha256": "bfc2eee812e13c642e13aa9dc6c463bf1a8d7aaa4f41116a39a2dc2acae10399",
+      "nodes": 28,
+      "edges": 27,
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "neighbors-clear-short",
+        "wire_length": 6144.3,
+        "min_print_font_pt": 3.73,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 72.38416175231677,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 1,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 716,
+        "native_height_px": 2374,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "contract_stages": {
+        "rule_version": "contract-stages/2",
+        "rows": [],
+        "rejected": [],
+        "partitions": []
+      },
+      "local_pipelines": {
+        "rule_version": "local-pipelines/4",
+        "rows": [
+          {
+            "rule_version": "local-pipelines/2",
+            "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+            "form": "dependency-path-summary",
+            "operations": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+                "operator": "transpose",
+                "framework_type": null,
+                "label": "transpose",
+                "label_basis": "operator"
+              },
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+                "operator": "copy",
+                "framework_type": null,
+                "label": "copy",
+                "label_basis": "operator"
+              },
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "operator": "reshape",
+                "framework_type": null,
+                "label": "reshape",
+                "label_basis": "operator"
+              }
+            ],
+            "auxiliary_reads": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+                "fact": {
+                  "rule_version": "source-symbolic-value/1",
+                  "kind": "tensor-attribute",
+                  "receiver": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+                  "edge": "e00125",
+                  "attribute": "shape",
+                  "scope": "source Tensor contract only; annotation is not runtime validation; actual value unresolved"
+                }
+              }
+            ],
+            "bindings": [
+              {
+                "edge": "e00130",
+                "producer": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/40:0:composite:1/41:11:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+                "target_port": "receiver",
+                "kind": "value"
+              },
+              {
+                "edge": "e00131",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+                "target_port": "receiver",
+                "kind": "value"
+              },
+              {
+                "edge": "e00134",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "receiver",
+                "kind": "value"
+              },
+              {
+                "edge": "e00135",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+                "source_port": "0",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "arg:0",
+                "kind": "symbolic-read"
+              },
+              {
+                "edge": "e00136",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+                "source_port": "2",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "arg:1",
+                "kind": "symbolic-read"
+              },
+              {
+                "edge": "e00137",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:66:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "arg:2",
+                "kind": "configuration"
+              }
+            ],
+            "cuts": [
+              {
+                "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/47:4:interface:1",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+                "kind": "interface-binding",
+                "source_port": "out",
+                "target_port": "x",
+                "evidence": "source-dependency",
+                "id": "e00124"
+              },
+              {
+                "source": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:8:interface:1",
+                "target": "model/81:4:composite:1/68:4:composite:1/72:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00140"
+              }
+            ],
+            "canonical_members": [
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:8:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:15:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:22:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:30:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:66:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:8:interface:1"
+            ],
+            "source_boundaries": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+                "parent": "model/81:4:composite:1/68:4:composite:1",
+                "semantic_type": "source-function",
+                "source": [
+                  {
+                    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/adaptive_role_paths.py",
+                    "line": 64,
+                    "end_line": 66,
+                    "column": 4,
+                    "end_column": 80,
+                    "symbol": "collect",
+                    "expression": "def collect(self, x):\n    batch, parts, length, chunk = x.shape\n    return x.transpose(1, 2).contiguous().view(batch, length, parts * chunk)"
+                  }
+                ],
+                "module_identity": "core",
+                "cuts": [
+                  {
+                    "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/47:4:interface:1",
+                    "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+                    "kind": "interface-binding",
+                    "source_port": "out",
+                    "target_port": "x",
+                    "evidence": "source-dependency",
+                    "id": "e00124"
+                  },
+                  {
+                    "source": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:8:interface:1",
+                    "target": "model/81:4:composite:1/68:4:composite:1/72:15:compute:1",
+                    "kind": "data",
+                    "source_port": "out",
+                    "target_port": "arg:0",
+                    "evidence": "source-dependency",
+                    "id": "e00140"
+                  }
+                ]
+              }
+            ],
+            "scope": "Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion.",
+            "status": "summary",
+            "visible_node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+            "detailed_operations_exposed": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ui-manual",
+      "svg": "ui-manual.svg",
+      "document": "cli-ui-manual.layout.json",
+      "svg_sha256": "45eb7b3efb7ee1f8f373b7e51b4f9e829ca99054fa3995a3e28b7a0f06707360",
+      "document_sha256": "e244a3c3e13de937e3d8512ae1eff91747724337fd8e6be04ec7c3594075a6e0",
+      "nodes": 25,
+      "edges": 23,
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "canonical-short",
+        "wire_length": 4550.3,
+        "min_print_font_pt": 4.01,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 77.96733212341198,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 1,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 716,
+        "native_height_px": 2204,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "contract_stages": {
+        "rule_version": "contract-stages/2",
+        "rows": [],
+        "rejected": [],
+        "partitions": []
+      },
+      "local_pipelines": {
+        "rule_version": "local-pipelines/4",
+        "rows": [
+          {
+            "rule_version": "local-pipelines/3",
+            "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1",
+            "form": "dependency-tree-summary",
+            "operations": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:27:compute:1",
+                "operator": "transpose",
+                "framework_type": null,
+                "label": "transpose",
+                "label_basis": "operator"
+              },
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:50:compute:1",
+                "operator": "sqrt",
+                "framework_type": null,
+                "label": "sqrt",
+                "label_basis": "source-framework-function"
+              },
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:2",
+                "operator": "matmul",
+                "framework_type": null,
+                "label": "matmul",
+                "label_basis": "source-framework-function"
+              },
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:1",
+                "operator": "div",
+                "framework_type": null,
+                "label": "div",
+                "label_basis": "operator"
+              }
+            ],
+            "entry_operations": [
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:27:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:50:compute:1"
+            ],
+            "result_operation": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:1",
+            "dependency_tree": {
+              "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:1",
+              "inputs": [
+                {
+                  "edge": "e00059",
+                  "target_port": "0",
+                  "source_port": "out",
+                  "expression": {
+                    "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:2",
+                    "inputs": [
+                      {
+                        "edge": "e00058",
+                        "target_port": "arg:1",
+                        "source_port": "out",
+                        "expression": {
+                          "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:27:compute:1",
+                          "inputs": []
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "edge": "e00062",
+                  "target_port": "2",
+                  "source_port": "out",
+                  "expression": {
+                    "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:50:compute:1",
+                    "inputs": []
+                  }
+                }
+              ]
+            },
+            "parameter_reads": [],
+            "output_bindings": [
+              {
+                "edge": "e00064",
+                "producer": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/45:4:value-alias:1",
+                "target_port": "value"
+              }
+            ],
+            "auxiliary_reads": [],
+            "bindings": [
+              {
+                "edge": "e00056",
+                "producer": "model/81:4:composite:1/68:4:composite:1/60:4:composite:2/62:15:compute:3",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:27:compute:1",
+                "target_port": "receiver",
+                "kind": "value"
+              },
+              {
+                "edge": "e00057",
+                "producer": "model/81:4:composite:1/68:4:composite:1/60:4:composite:1/62:15:compute:3",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:2",
+                "target_port": "arg:0",
+                "kind": "value"
+              },
+              {
+                "edge": "e00058",
+                "producer": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:27:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:2",
+                "target_port": "arg:1",
+                "kind": "value"
+              },
+              {
+                "edge": "e00059",
+                "producer": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:2",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:1",
+                "target_port": "0",
+                "kind": "value"
+              },
+              {
+                "edge": "e00061",
+                "producer": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:60:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:50:compute:1",
+                "target_port": "arg:0",
+                "kind": "configuration"
+              },
+              {
+                "edge": "e00062",
+                "producer": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:50:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:1",
+                "target_port": "2",
+                "kind": "value"
+              }
+            ],
+            "cuts": [
+              {
+                "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/44:19:interface:1",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/7:16:interface:1",
+                "kind": "interface-binding",
+                "source_port": "out",
+                "target_port": "a",
+                "evidence": "source-dependency",
+                "id": "e00054"
+              },
+              {
+                "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/44:22:interface:1",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/7:19:interface:1",
+                "kind": "interface-binding",
+                "source_port": "out",
+                "target_port": "b",
+                "evidence": "source-dependency",
+                "id": "e00055"
+              },
+              {
+                "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:4:interface:1",
+                "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/45:4:value-alias:1",
+                "kind": "alias",
+                "source_port": "out",
+                "target_port": "value",
+                "evidence": "source-dependency",
+                "id": "e00064"
+              }
+            ],
+            "canonical_members": [
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/7:16:interface:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/7:19:interface:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:27:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:11:compute:2",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:60:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:50:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:4:interface:1"
+            ],
+            "source_boundaries": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1",
+                "parent": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1",
+                "semantic_type": "source-function",
+                "source": [
+                  {
+                    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/adaptive_role_paths.py",
+                    "line": 7,
+                    "end_line": 8,
+                    "column": 0,
+                    "end_column": 71,
+                    "symbol": "pair_scores",
+                    "expression": "def pair_scores(a, b):\n    return torch.matmul(a, b.transpose(-2, -1)) / math.sqrt(a.size(-1))"
+                  }
+                ],
+                "module_identity": "core",
+                "cuts": [
+                  {
+                    "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/44:19:interface:1",
+                    "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/7:16:interface:1",
+                    "kind": "interface-binding",
+                    "source_port": "out",
+                    "target_port": "a",
+                    "evidence": "source-dependency",
+                    "id": "e00054"
+                  },
+                  {
+                    "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/44:22:interface:1",
+                    "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/7:19:interface:1",
+                    "kind": "interface-binding",
+                    "source_port": "out",
+                    "target_port": "b",
+                    "evidence": "source-dependency",
+                    "id": "e00055"
+                  },
+                  {
+                    "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1/8:4:interface:1",
+                    "target": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/45:4:value-alias:1",
+                    "kind": "alias",
+                    "source_port": "out",
+                    "target_port": "value",
+                    "evidence": "source-dependency",
+                    "id": "e00064"
+                  }
+                ]
+              }
+            ],
+            "scope": "Modeled converging dependency tree across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No scalar evaluation, purity, fusion, parallel execution or model-family assertion.",
+            "status": "summary",
+            "visible_node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/7:0:composite:1",
+            "detailed_operations_exposed": false
+          },
+          {
+            "rule_version": "local-pipelines/2",
+            "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+            "form": "dependency-path-summary",
+            "operations": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+                "operator": "transpose",
+                "framework_type": null,
+                "label": "transpose",
+                "label_basis": "operator"
+              },
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+                "operator": "copy",
+                "framework_type": null,
+                "label": "copy",
+                "label_basis": "operator"
+              },
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "operator": "reshape",
+                "framework_type": null,
+                "label": "reshape",
+                "label_basis": "operator"
+              }
+            ],
+            "auxiliary_reads": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+                "fact": {
+                  "rule_version": "source-symbolic-value/1",
+                  "kind": "tensor-attribute",
+                  "receiver": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+                  "edge": "e00125",
+                  "attribute": "shape",
+                  "scope": "source Tensor contract only; annotation is not runtime validation; actual value unresolved"
+                }
+              }
+            ],
+            "bindings": [
+              {
+                "edge": "e00130",
+                "producer": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/40:0:composite:1/41:11:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+                "target_port": "receiver",
+                "kind": "value"
+              },
+              {
+                "edge": "e00131",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+                "target_port": "receiver",
+                "kind": "value"
+              },
+              {
+                "edge": "e00134",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "receiver",
+                "kind": "value"
+              },
+              {
+                "edge": "e00135",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+                "source_port": "0",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "arg:0",
+                "kind": "symbolic-read"
+              },
+              {
+                "edge": "e00136",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+                "source_port": "2",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "arg:1",
+                "kind": "symbolic-read"
+              },
+              {
+                "edge": "e00137",
+                "producer": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:66:compute:1",
+                "source_port": "out",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+                "target_port": "arg:2",
+                "kind": "configuration"
+              }
+            ],
+            "cuts": [
+              {
+                "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/47:4:interface:1",
+                "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+                "kind": "interface-binding",
+                "source_port": "out",
+                "target_port": "x",
+                "evidence": "source-dependency",
+                "id": "e00124"
+              },
+              {
+                "source": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:8:interface:1",
+                "target": "model/81:4:composite:1/68:4:composite:1/72:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00140"
+              }
+            ],
+            "canonical_members": [
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:38:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:8:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:15:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:22:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/65:30:value-alias:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:2",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:66:compute:1",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:15:compute:3",
+              "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:8:interface:1"
+            ],
+            "source_boundaries": [
+              {
+                "node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+                "parent": "model/81:4:composite:1/68:4:composite:1",
+                "semantic_type": "source-function",
+                "source": [
+                  {
+                    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/adaptive_role_paths.py",
+                    "line": 64,
+                    "end_line": 66,
+                    "column": 4,
+                    "end_column": 80,
+                    "symbol": "collect",
+                    "expression": "def collect(self, x):\n    batch, parts, length, chunk = x.shape\n    return x.transpose(1, 2).contiguous().view(batch, length, parts * chunk)"
+                  }
+                ],
+                "module_identity": "core",
+                "cuts": [
+                  {
+                    "source": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1/47:4:interface:1",
+                    "target": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/64:22:interface:1",
+                    "kind": "interface-binding",
+                    "source_port": "out",
+                    "target_port": "x",
+                    "evidence": "source-dependency",
+                    "id": "e00124"
+                  },
+                  {
+                    "source": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1/66:8:interface:1",
+                    "target": "model/81:4:composite:1/68:4:composite:1/72:15:compute:1",
+                    "kind": "data",
+                    "source_port": "out",
+                    "target_port": "arg:0",
+                    "evidence": "source-dependency",
+                    "id": "e00140"
+                  }
+                ]
+              }
+            ],
+            "scope": "Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion.",
+            "status": "summary",
+            "visible_node": "model/81:4:composite:1/68:4:composite:1/64:4:composite:1",
+            "detailed_operations_exposed": false
+          }
+        ]
+      }
+    }
+  ],
+  "generic_sequence": [
+    28,
+    28,
+    25,
+    13,
+    144,
+    28
+  ],
+  "selected_paths": [
+    {
+      "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1",
+      "certificate": "contract:scaled-dot-product-attention:bf0b545e5b52",
+      "role": [
+        "key_transpose"
+      ]
+    },
+    {
+      "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1",
+      "certificate": "contract:scaled-dot-product-attention:bf0b545e5b52",
+      "role": [
+        "numerical_guards",
+        "0"
+      ]
+    }
+  ],
+  "retained_manual_paths": [
+    {
+      "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1",
+      "certificate": "contract:scaled-dot-product-attention:bf0b545e5b52",
+      "role": [
+        "numerical_guards",
+        "0"
+      ]
+    }
+  ],
+  "saved_reopened": true,
+  "canonical_ir_unchanged": true,
+  "cli_svg_equal": true,
+  "exact_return_svg": true,
+  "raw_document": "cli-ui-raw.json",
+  "raw_svg": "ui-raw.svg",
+  "scope": "Actual file chooser import, canvas/roles structure policy, automatic path inspector, save/reopen, refold one path while retaining another, refold remainder, source view details and Expand all, then reopen semantic document. No Transformer UI or thousands-node routing/performance claim.",
+  "artifacts_sha256": {
+    "ui-saved.layout.json": "6edf470be96b34ae5132662776aae1219f0b9727bd5a46c4e61cd69d1eebc70a",
+    "ui-manual-state.json": "9a4aa2566554941af717e78419ed79b1e5350ceb3d48e5fa2329e91a2d717518",
+    "ui-raw-state.json": "3fb830334b3c4c9b92b07ceda92712d57fdd5462008879029ecc59dda76e0dd1",
+    "ui-planned.svg": "f583249e6479b2a4b58fd0f3defa7659984c039e4eb60b1e27f82501581eec4a",
+    "ui-reopened.svg": "f583249e6479b2a4b58fd0f3defa7659984c039e4eb60b1e27f82501581eec4a",
+    "ui-manual.svg": "45eb7b3efb7ee1f8f373b7e51b4f9e829ca99054fa3995a3e28b7a0f06707360",
+    "ui-refolded.svg": "ba84029d54371e7a05285a97197b92a577dd8fa6f0fbe967fe7b8841dc401b5b",
+    "ui-raw.svg": "5eade95b58037e7a3a0360632a26ab7ec91ed15562b2a4a96790cf4fb9c3f0a5",
+    "ui-returned.svg": "f583249e6479b2a4b58fd0f3defa7659984c039e4eb60b1e27f82501581eec4a",
+    "ui-planned.png": "fc265093fcc8b113b8f08ee229ec78a2c581d31bc1532b8b142ab4a49ccad777",
+    "ui-returned.png": "9a68f9ad20c50b7a6275776aaa73b65085f6eedb06ae61c537de5e9c2b5e2bcd",
+    "cli-ui-raw.json": "c6ad0835a13a3f81880d3b809049c2b3c5e0a36665986fd26f66e677b5644fa1",
+    "cli-ui-planned.layout.json": "bfc2eee812e13c642e13aa9dc6c463bf1a8d7aaa4f41116a39a2dc2acae10399",
+    "cli-ui-manual.layout.json": "e244a3c3e13de937e3d8512ae1eff91747724337fd8e6be04ec7c3594075a6e0"
+  }
+}

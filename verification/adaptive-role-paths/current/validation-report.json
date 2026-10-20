@@ -1,0 +1,138 @@
+{
+  "schema": "adaptive-role-paths-validation/1",
+  "evidence_consistent": true,
+  "goal_complete": false,
+  "pending_checks": [
+    "transformer-default-adaptive-comparison"
+  ],
+  "render_report_sha256": "a2a2a062c2efe5dec62267f46a035a541af6a102da8c0293222b53367415491d",
+  "tests": 539,
+  "svg_panels": 20,
+  "additional_ui_svg_panels": 2,
+  "native_node_texts": 1269,
+  "native_edge_labels": 11,
+  "generic_sequence": [
+    28,
+    28,
+    25,
+    13,
+    144,
+    28
+  ],
+  "comparisons": [
+    {
+      "name": "BoundedWeave",
+      "svg_unchanged": false,
+      "before": 13,
+      "current": 28,
+      "selected_paths": [
+        {
+          "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1",
+          "certificate": "contract:scaled-dot-product-attention:bf0b545e5b52",
+          "role": [
+            "key_transpose"
+          ]
+        },
+        {
+          "node": "model/81:4:composite:1/68:4:composite:1/44:0:composite:1",
+          "certificate": "contract:scaled-dot-product-attention:bf0b545e5b52",
+          "role": [
+            "numerical_guards",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MixedBoundary",
+      "svg_unchanged": false,
+      "before": 15,
+      "current": 30,
+      "selected_paths": [
+        {
+          "node": "model/90:4:composite:1/68:4:composite:1/44:0:composite:1",
+          "certificate": "contract:scaled-dot-product-attention:2b3ede3c661f",
+          "role": [
+            "key_transpose"
+          ]
+        },
+        {
+          "node": "model/90:4:composite:1/68:4:composite:1/44:0:composite:1",
+          "certificate": "contract:scaled-dot-product-attention:2b3ede3c661f",
+          "role": [
+            "numerical_guards",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ConditionalWeave",
+      "svg_unchanged": false,
+      "before": 17,
+      "current": 32,
+      "selected_paths": [
+        {
+          "node": "model/101:4:composite:1/102:8:composite:1/68:4:composite:1/44:0:composite:1",
+          "certificate": "contract:scaled-dot-product-attention:86ddb4536bdf",
+          "role": [
+            "key_transpose"
+          ]
+        },
+        {
+          "node": "model/101:4:composite:1/102:8:composite:1/68:4:composite:1/44:0:composite:1",
+          "certificate": "contract:scaled-dot-product-attention:86ddb4536bdf",
+          "role": [
+            "numerical_guards",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SeparateStages",
+      "svg_unchanged": true,
+      "before": 20,
+      "current": 20,
+      "selected_paths": []
+    },
+    {
+      "name": "SameSource",
+      "svg_unchanged": true,
+      "before": 17,
+      "current": 17,
+      "selected_paths": []
+    },
+    {
+      "name": "UnknownFusion",
+      "svg_unchanged": true,
+      "before": 13,
+      "current": 13,
+      "selected_paths": []
+    }
+  ],
+  "limitations": [
+    "Partial role paths improve local granularity, not global summary/detail optimization or complete dedicated-reference convergence.",
+    "More detail increases height; MixedBoundary crossings rise from1 to3. Index-only role captions and long context paths remain visual issues.",
+    "Three measured trials and36 preflights do not bound wall-clock time. Transformer synchronous rendering remains expensive.",
+    "144-node145-edge raw UI and3371-node3663-edge raw projection do not verify thousands-node SVG routing or UI performance.",
+    "Broader held-out mixtures of state, routing and effects remain incomplete."
+  ],
+  "artifacts_sha256": {
+    "render-report.json": "a2a2a062c2efe5dec62267f46a035a541af6a102da8c0293222b53367415491d",
+    "receipt-report.json": "70be20d95db6e963e9955de500235659b9487ef78b2d054a126eb20cc14b1e2a",
+    "svg-report.json": "0926b5bae2568d83e9ed3a99778e8d2095b85d21d3fd20b374b48c136a93270c",
+    "native-text-report.json": "8cab5bc3f3d30c232eb2d102499a99600277f6b56b59b44c3ca360d5c282e28d",
+    "test-report.json": "0a8a202b9e33e3a70dda3a1ebba0d85baeef62b0f3ed573772a9e1d4fd2fa0e9",
+    "ui-report.json": "b523d84b6ed298383f2ffc7eb4cbcf33d7cf38336d954bab7085f06d9a810aed",
+    "ui-svg-report.json": "5778f6fd4597911d545bf85421c1389a43f513a9d3713734d8d2c3caa761c033",
+    "visual-review.json": "23056cd28f5565c4c78db5615b450ecf3e449a4206ba57abfa6d296fc953733c",
+    "source-expandability.json": "77221899527ef41ffdd079d20f97befed4cb78f34443f31ac52bd97583d49029"
+  },
+  "supporting_tools_sha256": {
+    "tools/summarize_adaptive_role_paths.py": "ad9069a5de3cecaf8d571e11a457dbb579d918d4ea838ae5fa113ad6edc8890c",
+    "tools/summarize_publication_checks.py": "409d635e90d2251b37c08b5e60474f428af97e609a028160fcc5be7141d8ecdb",
+    "tools/build_adaptive_role_path_review.py": "011a9fa690e510e2add1772509769264f82bb43f5322a71fd378221ad8074c7c",
+    "tools/render_adaptive_role_transformer.cjs": "43540da80a4ecdf25719b7f256105271086b46d1c2dbadbcbace42a96c123a07"
+  }
+}

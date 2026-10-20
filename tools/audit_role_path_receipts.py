@@ -1,10 +1,11 @@
 """Recheck exact role references and actual incoming SVG paths independently."""
 import hashlib
 import json
+import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'verification/role-paths/current'
+OUT = ROOT / (sys.argv[1] if len(sys.argv) > 1 else 'verification/role-paths/current')
 sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
 r = json.loads((OUT / 'render-report.json').read_text())
 for file, digest in r['implementation_sha256'].items():

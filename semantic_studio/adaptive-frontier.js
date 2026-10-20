@@ -64,7 +64,8 @@
     const roles=new Set((g.publication.role_frontier?.roles||[]).filter(r=>r.status==='exposed').map(r=>JSON.stringify([r.certificate,r.role,r.node])));
     const boundaries=new Set(g.nodes.filter(n=>by.has(n.id)&&(n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.evidence_status==='runtime-only')).map(n=>n.id));
     const conflicts=new Set((g.constraint_receipts||[]).filter(r=>r.status==='conflict').map(r=>r.id));
-    return {goals,roles,boundaries,conflicts};
+    const summaries=new Set((g.summary_coverage||[]).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    return {goals,roles,boundaries,conflicts,summaries};
   }
   function assess(ir,baseline,trial){
     const b=metrics(baseline),q=metrics(trial),before=evidence(ir,baseline),after=evidence(ir,trial),reasons=[];
@@ -72,6 +73,8 @@
     const gain=gained.reduce((s,g)=>s+g.priority,0);
     if(!gain)reasons.push('no-verified-relationship-gain');
     if(lost.length)reasons.push('previous-expression-lost');
+    const lostSummaries=[...before.summaries].filter(id=>!after.summaries.has(id));
+    if(lostSummaries.length)reasons.push('previous-dependency-structure-lost');
     if([...before.roles].some(id=>!after.roles.has(id)))reasons.push('previous-role-lost');
     if([...before.boundaries].some(id=>!after.boundaries.has(id)))reasons.push('visible-boundary-lost');
     if([...after.conflicts].some(id=>!before.conflicts.has(id)))reasons.push('new-constraint-conflict');
@@ -92,7 +95,8 @@
     // Contacts and distinct-value overlaps never receive this allowance.
     const crossingAllowance=Math.floor(gain/2);
     if(q.crossings>b.crossings+crossingAllowance)reasons.push('crossing-cost');
-    return {accepted:!reasons.length,reasons,gain,gained_goals:gained,lost_goals:lost,new_exposed_roles:after.roles.size-before.roles.size,
+    return {accepted:!reasons.length,reasons,gain,gained_goals:gained,lost_goals:lost,lost_summary_goals:lostSummaries,
+      preserved_summary_goals:[...before.summaries].filter(id=>after.summaries.has(id)),new_exposed_roles:after.roles.size-before.roles.size,
       before:b,candidate:q,crossing_allowance:crossingAllowance};
   }
   const api={VERSION,candidates,apply,metrics,evidence,assess};root.SemanticAdaptiveFrontier=api;if(typeof module!=='undefined')module.exports=api;

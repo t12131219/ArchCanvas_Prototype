@@ -215,6 +215,15 @@
       "log": "test-logs/dependency-dags.log"
     },
     {
+      "name": "summary-coverage",
+      "command": [
+        "node",
+        "tests/summary-coverage.test.cjs"
+      ],
+      "exit_code": 0,
+      "log": "test-logs/summary-coverage.log"
+    },
+    {
       "name": "flow-entries",
       "command": [
         "node",
@@ -284,6 +293,7 @@
     "dependency-trees": 10,
     "frontier-reservations": 8,
     "dependency-dags": 8,
+    "summary-coverage": 10,
     "flow-entries": 7,
     "context-lanes": 7,
     "local-expressions": 10,
@@ -307,8 +317,8 @@
     "semantic_adapter/sources.py": "37e3b3cc10b89107c828bf8245683319ce5c0138f5eb470afddcd22ef2acf54e",
     "semantic_adapter/structure.py": "1a69cf5b861a69edddb2bfaeabc733ae1ba459038ef10c893cb1744ab1b6da35",
     "semantic_adapter/symbolic_values.py": "60e2ad820aa616cba8ff25f7989986f6f43b60908a3bc83c0c6134ca1469664f",
-    "semantic_studio/adaptive-frontier.js": "1cf13012a4d4001400ed30f3a1d54a31e98ce0c62dbdfbfd534ab15e694f3620",
-    "semantic_studio/app.js": "2be484052fff6372da9e4799796e34175788db30cbed5b1d76b1e049b4365b42",
+    "semantic_studio/adaptive-frontier.js": "42ed908fd693c4ae60c76ca4dfb6b6e266f35cee7a45d4275e96f67dcf22d7b8",
+    "semantic_studio/app.js": "2b808c6d348323c85d4406b8dc82d3921fe2067cfe13c81f6c6cfac81fa6f892",
     "semantic_studio/architecture-layout.js": "78f664c37e6e141ef0d4443ed0e67324414fc7a68e6a564b22bbe559a347ad32",
     "semantic_studio/architecture.js": "18218c65377b07e503bee31ce3ad15eab00624c48e4e80310c3354d4e9e735b7",
     "semantic_studio/branch-regions.js": "1eab813442fb6a6e66f00bd57920043ca5656fa141b828f8e1640bd2d9713cb3",
@@ -316,12 +326,12 @@
     "semantic_studio/dimension-paths.js": "0e6eecf6c8af55a41b1fda5893b3179107f661a197e78d29b2a2bda23d16f6e5",
     "semantic_studio/expression-goals.js": "cced6181b2a869dfcd033b913d3118946cf28320754a9f3fb76a5bd2a4135af9",
     "semantic_studio/frame-ownership.js": "af8016bbcdb325177ca4549e2e5f1347a6e96c88b932b893373be41dfcac009f",
-    "semantic_studio/index.html": "0000ca5dd9bdf145a78164e63ff3cc7498ac030137ae9b4dd6e760c43f426801",
+    "semantic_studio/index.html": "b29c026988156aa1f2113eed75eb615b48fd52f87497114830b649ab4e2ea119",
     "semantic_studio/local-expressions.js": "830bf0cc4856b44896435973d395089ca47825a0e2e3077a6996213d7d650366",
     "semantic_studio/local-pipelines.js": "1599fa9bbdb349b1ead093eb6577731db86946804970e3e62f1c3c5dc8e86b16",
     "semantic_studio/local-relations.js": "e407fd29ec10c38d55d65d0edcd0a3325bc0f9b01edfc43fefdadadeab05e800",
     "semantic_studio/presentation-regions.js": "b951e1299a8e0a302e4d975c797e131455ff7a799c0120a237d433b3bc7b9fdb",
-    "semantic_studio/publication-renderer.js": "ce0ff1c4afbc66f8314d1e66f9a0582b4a353f18c6e601c43d18097e2c770194",
+    "semantic_studio/publication-renderer.js": "a387ce8be78a467600e8665bd561ad93dfcd914603e2ce4061151ab80fb4e496",
     "semantic_studio/publication.js": "541dacd4c87860297f4a811866f84c608e1aa0217c6e917039b7adb8e3cfe780",
     "semantic_studio/relation-constraints.js": "52726b98e5500feb6cb645605de5f77171c14550031875fcf2b130fe8e8b7386",
     "semantic_studio/role-frontier.js": "fe1fe717038305faca813d3d35535b6749213af0ec846a29f5e59c86d6b7299d",
@@ -329,6 +339,7 @@
     "semantic_studio/sequence-frontier.js": "3b1e665a25cf9116ea01725b31ffff555f43bef80d2da32cdcad4de94ea62e0c",
     "semantic_studio/structural-representatives.js": "0ecaab27cb84f56f38cf20ac673dd2d2ed8f9d14d0f407552ddfb08d463524f7",
     "semantic_studio/style.css": "ffe38296a64bc01af5229931dcbf98e50dc32684c7562cc8026d1edd593c585d",
+    "semantic_studio/summary-goals.js": "4d17f11e19dec94ec1d6a313c7e2cd448f73779c59a3fd64d5fc69b50b29194e",
     "semantic_studio/symbolic-values.js": "71a2e6aa85b94bed236497f3579a32b959d526916a04034ff2a97cb3b8338e4e",
     "tests/adaptive-frontier.test.cjs": "a413e35aa691e755907a85ee6dcf40ce13b00549ee2f0a0723e10ce14d5283b6",
     "tests/architecture.test.cjs": "660b23e7640524e4e8eab7fcc6b4af50125dd4bcb98720c8a3fb8b83c9906b1e",
@@ -387,8 +398,10 @@
     "tests/semantic_fixtures/result_fanout.py": "14c63292b07d99d9a8837b2729860add0ee2d0aec4fdc567393956e27a83ff50",
     "tests/semantic_fixtures/sequence_contexts.py": "01cfd64ec3bbabcea83f794a226b94ce89aac9d5a73ac633be0c4882b973c414",
     "tests/semantic_fixtures/structural_repeats.py": "d5acf33ac722da4eae29c6d80e8bc487d429a8fb3111b951131750c0d995157f",
+    "tests/semantic_fixtures/summary_coverage.py": "187df12f68eba644f6db8810e5a928db4e960f27f27dc6b401af7b56ccf5b105",
     "tests/semantic_fixtures/symbolic_values.py": "423837aafa83d695dd98a131a3cdc63dbb0615485aa8618e2d61653b203670c6",
     "tests/structural-repeats.test.cjs": "d8bf4b7b76b7b188915d68426f9b4f716903929028e0ac5b6f1512335341c570",
+    "tests/summary-coverage.test.cjs": "53dbbb8627bdb5080cf4e8b6d883844948b4158136329cc4e83c24cb8df91dc0",
     "tests/test_architecture_adapter.py": "20deb40b00cb389a3792a304b69d9d04a80523eca64f910a7ba8bf491a1fe476",
     "tests/test_design_contract_adapter.py": "c6cee014129cc038aaaefe3757b08503fdaba5291f345ad0259934a16976b03b",
     "tests/test_identity_bindings.py": "01144b4a3e96bfc34d6e44497181db0d783d035baacecebdcc08e35e0e04e356",
@@ -400,7 +413,7 @@
     "tests/test_symbolic_values.py": "20eafdcf53b34694e97248f57bb2d43183ac1f2dfe14fc9b1425b87641cda394",
     "tools/export_publication.cjs": "4c8c051c2afda4e1a53f98c4dd7fe337ef0cf78bb64abac6c70ba0874867c99b",
     "tools/representative_atlas.cjs": "b159b12938178830af0dc6e598011508d537910cdd6d6ebdebeef9c68fcf1cad",
-    "tools/run_local_tests.py": "2298aa805ead4ed86f8ec69e489ac3d79f14d6d86110ef243aa9aa38955c215d",
+    "tools/run_local_tests.py": "b9713adb3c9b40391ecb640c4aafffa771936aaa15f3108c9ad1d41da3e54eec",
     "tools/symbolic_values.cjs": "fe2cba64866cc0fe0bd84dd8bbf47557afa2e501aab953ae7e6c503e6789cb4e"
   }
 }

@@ -34,6 +34,10 @@
     if(n.content_inventory)$('details').insertAdjacentHTML('afterbegin','<h3>摘要内容</h3><p>按当前语义单元计数，包含操作、调用和已确认的局部组合；不表示重复堆叠、执行并发或参数共享。</p>'+n.content_inventory.terms.map(t=>'<div class="source"><strong>'+esc(t.label)+' × '+t.count+'</strong><br>'+t.units.map(id=>esc(projection.idx.nodes.get(id)?.label||id)).join(' · ')+'</div>').join(''));
     if(n.contract_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>认证角色阶段与原始绑定</summary><p>只折叠已认证的相加与后置归一化；分支计算保留在外部。双击可展开原始操作。</p><pre>'+esc(JSON.stringify(n.contract_stage,null,2))+'</pre></details>');
     if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');
+    const summaryCheck=projection.summary_coverage?.find(r=>r.node===id);
+    if(summaryCheck)$('details').insertAdjacentHTML('afterbegin','<details open data-summary-coverage="'+esc(summaryCheck.status)+'"><summary>依赖结构表达检查</summary><p>'+(
+      summaryCheck.status==='fulfilled'?(summaryCheck.form==='summary'?'当前摘要已表达操作及内部依赖结构。双击可继续展开原始操作和路径。':'当前操作与路径已表达这段依赖结构。'):
+      '当前状态尚未完整表达这段依赖结构；可展开本区域检查缺少的内容。')+'</p><p>此项不代表所有操作数、参数、配置或运行行为已经验证。</p><details><summary>检查记录</summary><pre>'+esc(JSON.stringify(summaryCheck,null,2))+'</pre></details></details>');
     if(n.semantic_contracts?.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>语义契约与证据范围</summary><pre>'+esc(JSON.stringify((ir.semantic_contracts||[]).filter(c=>n.semantic_contracts.includes(c.id)),null,2))+'</pre></details>');
     if(state.view==='publication'&&state.paperMedium==='canvas'&&state.paperGranularity==='roles'&&n.kind==='composite'&&n.semantic_contracts?.length){
       const adaptive=projection.publication?.adaptive_frontier,requested=adaptive?.selected_role_details||(Array.isArray(state.paperRoleDetails)?state.paperRoleDetails:[]),active=requested.includes(id);

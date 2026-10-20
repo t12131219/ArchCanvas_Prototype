@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'dependency-dags':
+        if stage == 'summary-coverage':
+            from summarize_summary_coverage import main as summarize_stage
+        elif stage == 'dependency-dags':
             from summarize_dependency_dags import main as summarize_stage
         elif stage == 'frontier-reservations':
             from summarize_frontier_reservations import main as summarize_stage

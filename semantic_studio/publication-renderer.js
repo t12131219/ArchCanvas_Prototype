@@ -557,8 +557,43 @@
       scope:'Existing input terminals move beside their uses. Same frontier, canonical bindings and realized relations required; at least 10% less wire permits up to 12% more width/area, with no added height, crossings, contacts or routing failures.'};
     return chosen;
   }
+  function prepareRoleSourceFrames(ir,state={}){
+    const baseline=prepareInputDocks(ir,state),g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperRoleSourceFrames!==undefined||state.paperFrameView==='source'||
+      Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
+    const rank=baseline.prepared.routing.rank_clearance_refinement,before=realizedRelations(baseline);
+    const candidateState={...state,...rank?.attempts.filter(a=>a.accepted).at(-1)?.configuration,paperRoleSourceFrames:true,
+      paperInputDocks:g.positions.context.inputDocks.length>0,
+      paperEntryBand:g.positions.context.compoundAlignments.some(c=>L.entryBandGeometry(c,g.positions)),
+      paperFlowAlignment:g.positions.context.compoundAlignments.some(c=>c.accepted&&c.mode==='entries')?'entries':state.paperFlowAlignment,
+      paperSampleFrame:(g.frame_ownership||[]).some(r=>r.kind==='sequence-sample'),
+      paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest',
+      paperContextEdges:state.paperContextEdges||before.contexts,paperBranchColumns:!!g.positions.context.branchColumns.length,
+      paperContextLanes:g.positions.context.contextLanes.find(c=>c.selected!==false)?.side||false,
+      ...(g.publication.label_clearance?{paperLabelSpacing:g.publication.label_clearance.mode}:{})};
+    const probe=E.project(ir,{...candidateState,view:'publication'}),frames=(probe.frame_ownership||[]).filter(r=>r.kind==='role-source');
+    if(!frames.length)return baseline;
+    const trial=prepareLabels(ir,candidateState),q=trial.prepared.quality,ids=new Set(frames.map(r=>r.node)),after=realizedRelations(trial);
+    const identity=h=>JSON.stringify({nodes:h.nodes.filter(n=>!ids.has(n.id)).map(n=>n.id),open:h.publication.open,
+      edges:h.edges.map(e=>({id:e.id,source:e.source,target:e.target,source_port:e.source_port,target_port:e.target_port,originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition})),
+      node_accounting:Object.fromEntries(Object.entries(h.node_accounting).map(([k,v])=>[k,v.filter(id=>!ids.has(id))])),
+      edge_accounting:h.edge_accounting,boundary:h.publication.boundary,roles:h.publication.role_frontier});
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    const facts=identity(g)===identity(trial.graph)&&frames.every(r=>g.positions.get(r.node)?.expanded&&trial.graph.node_accounting.attached.includes(r.node)&&trial.graph.positions.has(r.target));
+    const accepted=facts&&areaMetric(q)<areaMetric(b)*.98&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&
+      q.wire_length<=b.wire_length&&q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      conflicts(trial).every(id=>conflicts(baseline).includes(id))&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const chosen=accepted?trial:baseline;
+    if(accepted)for(const [key,value]of Object.entries(baseline.prepared.routing))if(key.endsWith('_refinement'))chosen.prepared.routing[key]=value;
+    chosen.prepared.routing.role_source_frame_refinement={accepted,facts_preserved:facts,frames,before:clearanceMetrics(b),candidate:clearanceMetrics(q),realized_before:before,realized_candidate:after,configuration:candidateState,
+      scope:'Expanded ordinary helpers become source-ownership annotations inside the existing certified role scope. Exact source cuts, operations, bindings and selected frontier remain; one measured trial, no helper equivalence or execution claim.'};
+    return chosen;
+  }
   function prepareAdaptive(ir,state={}){
-    let chosen=prepareInputDocks(ir,state);
+    let chosen=prepareRoleSourceFrames(ir,state);
     if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
     const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     attachExpressionEvidence(ir,chosen);
@@ -591,7 +626,7 @@
       const trials=[];
       for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
         seen.add(item.candidate.id);
-        const trial=attachExpressionEvidence(ir,prepareInputDocks(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+        const trial=attachExpressionEvidence(ir,prepareRoleSourceFrames(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
         const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
           ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
         trials.push({item,trial,assessment,receipt});

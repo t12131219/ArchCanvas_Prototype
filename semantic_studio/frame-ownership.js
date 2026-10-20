@@ -2,7 +2,7 @@
  * redundant enclosures can become inspectable ownership annotations. */
 (function(root){
   'use strict';
-  function select({ir,idx,visible,open,roots,flattenDependencyBands=false,flattenSequenceSamples=false}){
+  function select({ir,idx,visible,open,roots,flattenDependencyBands=false,flattenSequenceSamples=false,roleSources=[]}){
     const frames=new Map(),rootSet=new Set(roots),incidents=new Set(ir.edges.flatMap(e=>[e.source,e.target]));
     const descendants=id=>{const all=[],todo=[id];for(let i=0;i<todo.length;i++){all.push(todo[i]);todo.push(...idx.children.get(todo[i])||[]);}return all;};
     const guarded=id=>{const members=new Set(descendants(id));return [...members].some(id=>{const n=idx.nodes.get(id);return n.kind==='opaque'||n.mutable||n.identity_display||n.observed_calls;})||
@@ -48,6 +48,31 @@
       frames.get(id).sequence_sample={sequence:parent.id,index:n.repeat_index,
         module_identity:n.module_identity??null,source_positions:n.structure_representative.indices.slice(),
         parameter_sharing:parent.repeat_contract.parameter_sharing};
+    }
+    // A role's actual endpoint may live in an ordinary source helper. Once
+    // that helper is open, its ownership can remain on the certified scope
+    // while the real operations participate directly in the scope's layout.
+    // This changes drawing containment only, never calls or value bindings.
+    const protectedExecution=n=>n.kind==='opaque'||n.kind==='control'||n.kind==='state'||n.kind==='buffer'||n.condition||n.mutable||n.identity_display||n.observed_calls||n.evidence_status==='runtime-only'||n.runtime_evidence?.length||
+      n.repeat_contract||n.iteration||n.contract_stage||
+      ['loop-template','iteration-region','conditional-region','conditional-collection','serial-repeat','repeat-instance','serial-remainder','observed-variant'].includes(n.semantic_type);
+    const protectedRole=n=>protectedExecution(n)||n.semantic_contracts?.length||n.contract_roles;
+    const sourceBy=new Map(ir.nodes.map(n=>[n.id,n])),sourceKids=new Map();
+    for(const n of ir.nodes){if(!sourceKids.has(n.parent))sourceKids.set(n.parent,[]);sourceKids.get(n.parent).push(n.id);}
+    const sourceClosure=id=>{const todo=[id];for(let i=0;i<todo.length;i++)todo.push(...sourceKids.get(todo[i])||[]);return todo;};
+    for(const id of visible){const n=idx.nodes.get(id);
+      if(frames.has(id)||!eligible(n)||!['source-module','source-function'].includes(n.semantic_type))continue;
+      if(!sourceBy.has(id))continue;
+      const members=new Set(sourceClosure(id));
+      if([...members].some(id=>protectedRole(sourceBy.get(id)))||descendants(id).some(id=>protectedRole(idx.nodes.get(id)))||ir.edges.some(e=>(members.has(e.source)||members.has(e.target))&&(e.condition||!['data','alias','interface-binding','parameter-read'].includes(e.kind))))continue;
+      let owner=n.parent;const chain=[];
+      while(owner&&!idx.nodes.get(owner)?.semantic_contracts?.length){chain.push(owner);owner=idx.nodes.get(owner)?.parent;}
+      if(!owner||!visible.has(owner)||!open.has(owner)||protectedExecution(idx.nodes.get(owner))||chain.some(id=>protectedRole(idx.nodes.get(id))))continue;
+      const roles=roleSources.filter(r=>r.owner===owner&&r.location==='internal'&&r.node===r.frontier_node&&members.has(r.node)&&visible.has(r.node));
+      if(!roles.length)continue;
+      attach(n,owner,'role-source','An expanded ordinary source helper contains a displayed certified role; its source ownership and exact cuts remain annotations.');
+      Object.assign(frames.get(id),{role_sources:roles.map(r=>({certificate:r.certificate,role:r.role,node:r.node})),
+        canonical_members:[...members],cuts:ir.edges.filter(e=>members.has(e.source)!==members.has(e.target))});
     }
     for(const id of visible){const n=idx.nodes.get(id);if(frames.has(id)||!eligible(n)||guarded(id)||!['source-module','source-function'].includes(n.semantic_type))continue;
       const kids=(idx.children.get(id)||[]).filter(id=>visible.has(id));

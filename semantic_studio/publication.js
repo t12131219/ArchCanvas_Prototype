@@ -665,7 +665,8 @@
     if(base.publication?.boundary_plans?.some(p=>p.parent===focus))options.layout.inputPlacement='consumer';
     if(canvas&&state.paperFrameView!=='source'){
       const engine=root.SemanticFrameOwnership||(typeof require==='function'?require('./frame-ownership.js'):null);
-      options.frameOwnership=args=>engine.select({...args,flattenDependencyBands:canvas&&granularity==='roles',flattenSequenceSamples:canvas&&granularity==='roles'&&state.paperSampleFrame===true});options.decorateFrameOwner=decorate;
+      options.frameOwnership=args=>engine.select({...args,flattenDependencyBands:canvas&&granularity==='roles',flattenSequenceSamples:canvas&&granularity==='roles'&&state.paperSampleFrame===true,
+        roleSources:canvas&&granularity==='roles'&&state.paperRoleSourceFrames===true?roleFrontier?.records||[]:[]});options.decorateFrameOwner=decorate;
     }
     // A proved source path already has a meaningful intermediate expression.
     // Keep it folded unless a role or local relationship requests its detail.

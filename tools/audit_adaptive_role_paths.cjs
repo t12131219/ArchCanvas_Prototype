@@ -6,7 +6,7 @@ const checkpoint='verification/local-relations/iteration-41-before-adaptive-role
 for(const [f,h]of Object.entries(snapshot.files))assert.equal(sha(checkpoint+'/implementation/'+f),h);
 const R=require('../semantic_studio/publication-renderer.js'),A=require('../semantic_studio/adaptive-frontier.js'),old=require('./load_publication_renderer.cjs')(path.join(root,checkpoint,'implementation/semantic_studio'));
 const files=[...Object.keys(snapshot.files),'tools/audit_adaptive_role_paths.cjs','tools/extract_adaptive_role_paths.py','tests/adaptive-role-paths.test.cjs','tests/semantic_fixtures/adaptive_role_paths.py','tools/audit_local_svg.py',
- 'tools/audit_role_path_receipts.py','tools/check_adaptive_role_path_svgs.py','tools/audit_adaptive_role_path_ui.cjs','tools/check_helper_contract_ui_svgs.py'];
+ 'tools/audit_role_path_receipts.py','tools/check_adaptive_role_path_svgs.py','tools/audit_adaptive_role_path_ui.cjs','tools/check_helper_contract_ui_svgs.py','tests/role-identity.test.cjs'];
 const implementation=Object.fromEntries(files.map(f=>[f,sha(f)])),rows=[],comparisons=[];
 const base={paperMedium:'canvas',paperGranularity:'roles'},planned={...base,paperAdaptive:true,paperAdaptivePolicy:'structure'};
 function save(name,input,state,r){

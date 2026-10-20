@@ -2,7 +2,7 @@
  * model families nor substitutes computations for their internal paths. */
 (function(root){
   'use strict';
-  const VERSION='role-frontier/2',PATH_VERSION='role-paths/1';
+  const VERSION='role-frontier/3',PATH_VERSION='role-paths/2';
   function references(value,by,path=[]){
     if(typeof value==='string'&&by.has(value))return [{path:path.join('.'),keys:path,node:value}];
     if(value&&typeof value==='object')return Object.entries(value).flatMap(([key,v])=>references(v,by,[...path,key]));
@@ -60,7 +60,7 @@
       const n=by.get(owner),local=[];
       for(const c of attached(n))for(const r of references(c.roles,by)){
         if(!full.has(owner)&&(partial.get(owner)||[]).some(p=>p.selection==='selected')&&!(partial.get(owner)||[]).some(p=>p.selection==='selected'&&p.certificate===c.id&&JSON.stringify(p.role)===JSON.stringify(r.keys)))continue;
-        const record={owner,certificate:c.id,role:r.path,node:r.node,scope:c.scope,not_asserted:c.not_asserted||[]};
+        const record={owner,certificate:c.id,role:r.path,role_keys:r.keys.slice(),node:r.node,scope:c.scope,not_asserted:c.not_asserted||[]};
         if(r.node===owner||!within(r.node,owner)){records.push({...record,location:r.node===owner?'self':'external',frontier_node:r.node});continue;}
         // Stop before the next certified, conditional, unknown or mutable
         // boundary. Its own detail remains available through manual expansion.
@@ -84,7 +84,7 @@
         attached.has(r.frontier_node)?'attached':contracted.has(r.frontier_node)?'contracted':representative?'folded':'outside'};
     });
     return {rule_version:VERSION,...(frontier.pathRequests.length?{path_rule_version:PATH_VERSION,path_requests:frontier.pathRequests.map(r=>{
-      const role=roleRows.find(x=>x.owner===r.node&&x.certificate===r.certificate&&x.role===r.role.join('.')&&x.node===r.target);
+      const role=roleRows.find(x=>x.owner===r.node&&x.certificate===r.certificate&&JSON.stringify(x.role_keys)===JSON.stringify(r.role)&&x.node===r.target);
       return {...r,status:r.selection!=='selected'?'deferred':role?.status||'deferred',frontier_node:role?.frontier_node??null,visible_node:role?.visible_node??null};
     })}:{}),detail_requests:frontier.detailRequests.map(r=>({...r,status:r.selection==='selected'&&graph.positions.get(r.node)?.expanded?'expanded':'deferred',
       ...(r.selection==='selected'&&!graph.positions.get(r.node)?.expanded?{reason:'The selected role detail remains folded by visibility, explicit open state or local budget.'}:{})})),

@@ -69,8 +69,25 @@ def main():
             if edge['id'] in {e['id'] for e in after['ir']['edges']}:
                 original = next(e for e in after['ir']['edges'] if e['id'] == edge['id'])
                 assert edge.get('condition') == original.get('condition')
-    for name in ['SameSource', 'SeparateStages', 'UnknownFusion']:
+    for name in ['SameSource', 'UnknownFusion']:
         assert rows[name + '-before']['svg_sha256'] == rows[name + '-current']['svg_sha256']
+    # Numeric role titles deliberately gain their field context. Check the
+    # physical routes and the exact one-node text-width change independently.
+    a, b = [documents['SeparateStages-' + s] for s in ['before', 'current']]
+    assert rows['SeparateStages-before']['quality'] == rows['SeparateStages-current']['quality']
+    assert a['layout']['edges'] == b['layout']['edges']
+    old = {n['id']: n for n in a['layout']['nodes']}; changed = []
+    for node in b['layout']['nodes']:
+        original = old[node['id']]
+        if original['title'] == node['title']:
+            assert original == node
+        else:
+            changed.append(node['id'])
+            assert original['title'] == '0' and node['title'] == 'numerical guards · 0'
+            assert original['y'] == node['y'] and original['h'] == node['h']
+            assert original['x'] + original['w'] / 2 == node['x'] + node['w'] / 2
+            assert node['w'] > original['w']
+    assert len(changed) == 1
     assert rows['BoundedWeave-main-before']['svg_sha256'] == rows['BoundedWeave-main-current']['svg_sha256']
     assert rows['BoundedWeave-current']['svg_sha256'] == rows['BoundedWeave-manual-paths']['svg_sha256']
     for name in ['receipt-report.json', 'svg-report.json', 'native-text-report.json', 'ui-report.json', 'ui-svg-report.json']:
@@ -78,7 +95,7 @@ def main():
     assert len(read('receipt-report.json')['rows']) == len(read('svg-report.json')['results']) == len(rows)
     assert all(r['passed'] for r in read('receipt-report.json')['rows'] + read('svg-report.json')['results'])
     tests = read('test-report.json')
-    assert sum(tests['counts'].values()) == 543 and tests['counts']['adaptive-role-paths'] == 6 and tests['counts']['route-memoization'] == 4
+    assert sum(tests['counts'].values()) == 549 and tests['counts']['adaptive-role-paths'] == 6 and tests['counts']['route-memoization'] == 4 and tests['counts']['role-identity'] == 6
     for file, expected in tests['implementation_sha256'].items():
         assert sha(ROOT / file) == expected, ('stale tests', file)
     for row in tests['commands']:
@@ -123,7 +140,7 @@ def main():
         'native_node_texts': sum(r['node_texts'] for r in native['results']), 'native_edge_labels': sum(r['port_texts'] for r in native['results']),
         'generic_sequence': ui['generic_sequence'], 'comparisons': report['comparisons'],
         'limitations': ['Partial role paths improve local granularity, not global summary/detail optimization or complete dedicated-reference convergence.',
-            'More detail increases height; MixedBoundary crossings rise from1 to3. Index-only role captions and long context paths remain visual issues.',
+            'More detail increases height; MixedBoundary crossings rise from1 to3. Long context paths remain visual issues; numeric role titles now retain their containing field.',
             'Three measured trials and36 preflights do not bound wall-clock time. Transformer synchronous rendering remains expensive.',
             '144-node145-edge raw UI and3371-node3663-edge raw projection do not verify thousands-node SVG routing or UI performance.',
             'Broader held-out mixtures of state, routing and effects remain incomplete.'],

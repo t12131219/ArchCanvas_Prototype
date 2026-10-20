@@ -220,8 +220,14 @@
     if(literalOperands.length)caption=literalOperands.join(' · ');
     const symbol=n.kind==='compute'&&!n.mutable&&!literalOperands.length&&(['add','mult','mul'].includes(n.operator)||/^aten\.(add|mul)\./.test(n.operator||''))?(n.operator==='add'||n.operator.startsWith('aten.add.')?'+':'×'):null;
     if(n.role_annotations?.length&&!['opaque','control'].includes(n.kind)&&!n.mutable&&!n.condition&&!n.identity_display&&!n.observed_calls){
-      const roles=[...new Set(n.role_annotations.map(r=>r.role))],specific=roles.filter(r=>r!=='output');
-      const names=(specific.length?specific:roles).map(r=>r.split('.').at(-1).replaceAll('_',' '));
+      const roles=[...new Map(n.role_annotations.map(r=>[JSON.stringify(r.role_keys||[r.role]),r.role_keys||[r.role]])).values()],specific=roles.filter(keys=>keys.length!==1||keys[0]!=='output');
+      const names=(specific.length?specific:roles).map(keys=>{
+        // Keep the containing field for numeric members. A dotted object key
+        // is a single key, never an inferred nesting separator or array index.
+        const numeric=keys.findLastIndex(k=>/^\d+$/.test(k));
+        const parts=keys.slice(numeric<0?-1:Math.max(0,numeric-1));
+        return (numeric===0?'Role · ':'')+parts.map(k=>k.replaceAll('_',' ')).join(' · ');
+      });
       const role=[...new Set(names)].slice(0,2).join(' / ');
       const operation=n.framework_type?.split('.').at(-1)||n.operator;
       title=role;if(operation)caption=operation+(caption?' · '+caption:'');

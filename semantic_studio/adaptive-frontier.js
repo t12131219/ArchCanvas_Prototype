@@ -2,7 +2,7 @@
  * are deliberately absent: candidates are existing roles or relation paths. */
 (function(root){
   'use strict';
-  const VERSION='adaptive-frontier/4';
+  const VERSION='adaptive-frontier/5';
   const Roles=root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null);
   const Expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
   const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
@@ -76,7 +76,7 @@
       }
       goals.set(goal.id,{id:goal.id,kind:goal.kind,priority:goal.priority,node:goal.focus_node});
     }
-    const roles=new Set((g.publication.role_frontier?.roles||[]).filter(r=>r.status==='exposed').map(r=>JSON.stringify([r.certificate,r.role,r.node])));
+    const roles=new Set((g.publication.role_frontier?.roles||[]).filter(r=>r.status==='exposed').map(r=>JSON.stringify([r.certificate,r.role_keys,r.node])));
     const boundaries=new Set(g.nodes.filter(n=>by.has(n.id)&&(n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.evidence_status==='runtime-only')).map(n=>n.id));
     const conflicts=new Set((g.constraint_receipts||[]).filter(r=>r.status==='conflict').map(r=>r.id));
     const summaries=new Set((g.summary_coverage||[]).filter(r=>r.status==='fulfilled').map(r=>r.goal));
@@ -110,7 +110,7 @@
     const before=evidence(ir,baseline),visible=new Set(graph.nodes.map(n=>n.id)),edges=new Set();
     for(const e of graph.edges)for(const member of e.bundle_members||[e])for(const id of [member.id,...member.originals||[]])edges.add(id);
     const gained=baseline.graph.expression_goals.goals.filter(g=>!before.goals.has(g.id)&&g.core.every(id=>visible.has(id))&&g.edges.every(id=>edges.has(id)));
-    const roles=new Set((graph.publication.role_frontier?.roles||[]).filter(r=>r.status==='exposed').map(r=>JSON.stringify([r.certificate,r.role,r.node])));
+    const roles=new Set((graph.publication.role_frontier?.roles||[]).filter(r=>r.status==='exposed').map(r=>JSON.stringify([r.certificate,r.role_keys,r.node])));
     // Projection estimates rank trials only. Actual text, routes, cuts,
     // evidence and resource checks still decide eligibility and selection.
     return contribution(baseline,gained,[...roles].filter(id=>!before.roles.has(id)).length,0);

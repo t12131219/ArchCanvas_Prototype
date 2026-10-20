@@ -7,8 +7,9 @@ function layout(ir,extra={}){const idx=E.index(ir),regions=L.labelClearances(idx
  return L.layout(idx,ir.nodes.filter(n=>!n.parent).map(n=>n.id),new Set(ir.nodes.map(n=>n.id)),ir.edges,{},
   {gapY:28,gapYForParent:parent=>regions.find(r=>r.parent===parent)?.gap_y||0,rankLabelClearances:regions,foldSerial:false,...extra});}
 const gap=(p,a,b)=>p.get(b).y-p.get(a).y-p.get(a).h;
-function identity(g){return JSON.parse(JSON.stringify({nodes:g.nodes.map(n=>n.id),edges:g.edges,open:g.publication.open,
- nodes_accounted:g.node_accounting,edges_accounted:g.edge_accounting,boundary:g.publication.boundary,roles:g.publication.role_frontier}));}
+function identity(g){const {rule_version,...roles}=g.publication.role_frontier;
+ return JSON.parse(JSON.stringify({nodes:g.nodes.map(n=>n.id),edges:g.edges,open:g.publication.open,
+ nodes_accounted:g.node_accounting,edges_accounted:g.edge_accounting,boundary:g.publication.boundary,roles}));}
 test('only the receiving rank gets parallel-label space, including around an unknown call',()=>{
  const ir=fixtureForRank(),before=JSON.stringify(ir),p=layout(ir);
  assert.deepEqual([gap(p,'x','a'),gap(p,'a','b'),gap(p,'b','unknown'),gap(p,'unknown','result')],[28,88,28,28]);
@@ -50,6 +51,7 @@ test('a selected rank parent leaves unselected helpers at the baseline global sp
 });
 test('measured selection shrinks the same semantic frontier and reopens deterministically',()=>{
  const ir=fixtureForRank(),before=JSON.stringify(ir),baseline=old.render(ir,state),r=R.render(ir,state),decision=r.prepared.routing.rank_clearance_refinement;
+ assert.equal(baseline.graph.publication.role_frontier.rule_version,'role-frontier/2');assert.equal(r.graph.publication.role_frontier.rule_version,'role-frontier/3');
  assert.ok(decision.accepted);assert.deepEqual(identity(r.graph),identity(baseline.graph));assert.equal(JSON.stringify(ir),before);
  assert.ok(r.prepared.quality.native_height_px<baseline.prepared.quality.native_height_px*.85);
  assert.deepEqual(r.prepared.quality.issues,[]);assert.equal(r.prepared.quality.line_geometry.unrelated_contacts.length,0);

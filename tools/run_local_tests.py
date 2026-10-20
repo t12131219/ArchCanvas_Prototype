@@ -22,6 +22,7 @@ COMMANDS = {
     'canvas-medium': ['node', 'tests/canvas-medium.test.cjs'],
     'role-frontier': ['node', 'tests/role-frontier.test.cjs'],
     'role-paths': ['node', 'tests/role-paths.test.cjs'],
+    'role-identity': ['node', 'tests/role-identity.test.cjs'],
     'role-source-frames': ['node', 'tests/role-source-frames.test.cjs'],
     'helper-contracts': ['node', 'tests/helper-contracts.test.cjs'],
     'role-details': ['node', 'tests/role-details.test.cjs'],

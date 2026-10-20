@@ -23,7 +23,8 @@
     return [n.label,...(n.contract_stage?['Certified role subregion: '+n.contract_stage.certificate,n.contract_stage.scope,'Original operations remain individually expandable.']:[]),...(pipeline?[
       pipeline.dependency_dag?'Local dependency DAG: '+JSON.stringify(pipeline.dependency_dag):pipeline.dependency_tree?'Local dependency tree: '+expression(pipeline.dependency_tree):'Local dependency path: '+pipeline.operations.map(o=>o.label).join(' → '),pipeline.scope,
       ...(pipeline.dependency_tree||pipeline.dependency_dag?pipeline.bindings.map(b=>`${b.edge}: ${b.producer} [${b.source_port}] → ${b.target} [${b.target_port}]`):[]),
-      ...(pipeline.parameter_reads||[]).flatMap(p=>p.edges.map(e=>`Parameter read ${e.id}: ${p.node} → ${e.target} [${e.target_port}]`))]:[]),...(n.role_annotations||[]).map(r=>'Certified role: '+r.role+' · '+r.certificate+' · '+r.scope),...(n.frame_ownership||[]).map(r=>'Source ownership: '+r.label+' ['+r.node+'] · '+r.kind+' · '+r.scope),...(n.source_label?['Source label: '+n.source_label]:[]),
+      ...(pipeline.parameter_reads||[]).flatMap(p=>p.edges.map(e=>`Parameter read ${e.id}: ${p.node} → ${e.target} [${e.target_port}]`))]:[]),...(n.role_annotations||[]).map(r=>'Certified role: '+r.role+
+        (r.role_keys?.some(k=>k.includes('.')||/^\d+$/.test(k))?' · exact keys: '+JSON.stringify(r.role_keys):'')+' · '+r.certificate+' · '+r.scope),...(n.frame_ownership||[]).map(r=>'Source ownership: '+r.label+' ['+r.node+'] · '+r.kind+' · '+r.scope),...(n.source_label?['Source label: '+n.source_label]:[]),
       ...(n.contract_evidence||[]).flatMap(c=>[c.rule+': '+c.scope,...c.proof,'Not asserted: '+c.not_asserted.join('; ')]),
       ...(n.observed_calls?[`${n.observed_calls.observations.length} observed calls; ${n.observed_calls.basis}`]:[]),
       ...(contents?['Contents of extracted units (unordered; parameter sharing not asserted):',

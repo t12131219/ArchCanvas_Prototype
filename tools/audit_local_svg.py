@@ -387,6 +387,8 @@ def audit_contract_stages(document, row, nodes):
 
 def main():
     global OUT
+    if '--input-docks' in sys.argv:
+        sys.argv.append('--return-regions')
     if '--return-regions' in sys.argv:
         sys.argv.append('--sample-frames')
     if '--sample-frames' in sys.argv:
@@ -481,6 +483,8 @@ def main():
         OUT = ROOT / 'verification/sample-frames/current'
     if '--return-regions' in sys.argv:
         OUT = ROOT / 'verification/return-regions/current'
+    if '--input-docks' in sys.argv:
+        OUT = ROOT / 'verification/input-docks/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -524,6 +528,9 @@ def main():
         source = OUT / row['svg']
         assert hashlib.sha256(source.read_bytes()).hexdigest() == row['svg_sha256']
         document = json.loads((OUT / row['document']).read_text())
+        if '--input-docks' in sys.argv:
+            from audit_input_dock_receipts import verify as verify_docks
+            verify_docks(document, ET.parse(source))
         if '--return-regions' in sys.argv:
             from audit_return_region_receipts import verify
             verify(document, ET.parse(source))
@@ -846,8 +853,11 @@ def main():
                         band = record['input_band']
                         inputs, regions = set(band['inputs']), set(band['regions'])
                         assert len(inputs) == len(band['inputs']) >= 2 and not inputs & regions
-                        assert inputs | regions == kids
-                        for node in inputs:
+                        docked = set(band.get('docked_inputs', []))
+                        assert not docked & (inputs | regions) and len(docked) == len(band.get('docked_inputs', []))
+                        assert docked == {d['node'] for d in document['layout'].get('input_docks', []) if d['parent'] == record['parent']}
+                        assert inputs | regions | docked == kids
+                        for node in inputs | docked:
                             assert planned[node]['kind'] == 'interface' and planned[node]['role'] == 'input'
                             assert not any(node in targets for targets in adjacent.values())
                         floor = max(actual_boxes[node][1] + actual_boxes[node][3] for node in inputs) + band['gap_y']
@@ -932,6 +942,9 @@ def main():
                 high = low + owner['context_gutter']
                 points = [(float(x), float(y)) for x, y in re.findall(r'[ML](-?[\d.eE+]+),(-?[\d.eE+]+)', element.attrib['d'])]
                 realized = edge['route']['ok'] and any(a[0] == b[0] and a[1] != b[1] and low < a[0] < high for a, b in zip(points, points[1:]))
+                if entry.get('method') == 'direct-docked-entry':
+                    assert '--input-docks' in sys.argv
+                    realized = edge['route']['ok'] and len(points) == 2 and points[0][1] == points[1][1]
                 assert (entry['status'] == 'realized') == realized
         measured_crossings = 0
         if '--context' in sys.argv:

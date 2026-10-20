@@ -449,8 +449,13 @@
       const columns=ctx.branchColumns.filter(c=>L.branchGeometry(c,positions)&&c.chains.every(p=>p.edges.every(id=>routes.get(id)?.route.ok)));
       const contexts=ctx.contextLanes.filter(c=>{if(c.selected===false)return false;const p=positions.get(c.owner),route=routes.get(c.edge)?.route;
         const lo=c.side==='left'?p.x+(p.design_gutter||0):p.x+p.w-p.context_gutter,hi=c.side==='left'?lo+p.context_gutter:p.x+p.w;
-        return route?.ok&&route.target_side===c.side&&route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi);});
+        return route?.ok&&route.target_side===c.side&&(route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi)||directDockEntry(r,c.edge));});
       return {entries:entries.map(c=>JSON.stringify(c.entry_bindings)),columns:columns.map(c=>JSON.stringify(c.chains)),contexts:contexts.map(c=>c.edge)};
+  }
+  function directDockEntry(r,id){
+    const e=r.prepared.routes.find(e=>e.id===id),p=e?.route?.points;
+    return !!(e?.route.ok&&e.context_lane&&e.route.target_side===e.context_lane.side&&p.length===2&&p[0].y===p[1].y&&
+      r.graph.positions.context.inputDocks.some(d=>d.node===e.source&&d.edges.some(use=>use.edge===id)&&L.inputDockGeometry(d,r.graph.positions)));
   }
   function prepareEntryBand(ir,state={}){
     const baseline=prepareRankClearance(ir,state),g=baseline.graph;
@@ -508,8 +513,40 @@
       scope:'One concrete representative shares its sequence frame; actual calls, source identities, suffixes and exact bindings retained. One measured trial; no output equality.'};
     return chosen;
   }
+  function prepareInputDocks(ir,state={}){
+    const baseline=prepareSampleFrame(ir,state),g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperInputDocks!==undefined||Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
+    const before=realizedRelations(baseline),rank=baseline.prepared.routing.rank_clearance_refinement;
+    const candidateState={...state,...rank?.attempts.filter(a=>a.accepted).at(-1)?.configuration,paperInputDocks:true,
+      paperEntryBand:g.positions.context.compoundAlignments.some(c=>L.entryBandGeometry(c,g.positions)),
+      paperFlowAlignment:g.positions.context.compoundAlignments.some(c=>c.accepted&&c.mode==='entries')?'entries':state.paperFlowAlignment,
+      paperSampleFrame:(g.frame_ownership||[]).some(r=>r.kind==='sequence-sample'),
+      paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest',
+      paperContextEdges:state.paperContextEdges||before.contexts,paperBranchColumns:!!g.positions.context.branchColumns.length,
+      paperContextLanes:g.positions.context.contextLanes.find(c=>c.selected!==false)?.side||false,
+      ...(g.publication.label_clearance?{paperLabelSpacing:g.publication.label_clearance.mode}:{})};
+    const probe=E.project(ir,{...candidateState,view:'publication'});
+    if(!probe.positions.context.inputDocks.length)return baseline;
+    const trial=prepareLabels(ir,candidateState),q=trial.prepared.quality,after=realizedRelations(trial),docks=trial.graph.positions.context.inputDocks;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    const bands=r=>r.graph.positions.context.compoundAlignments.filter(c=>L.entryBandGeometry(c,r.graph.positions)).map(c=>c.parent);
+    const facts=clearanceIdentity(g)===clearanceIdentity(trial.graph);
+    const accepted=facts&&docks.length>0&&docks.every(r=>L.inputDockGeometry(r,trial.graph.positions))&&
+      q.wire_length<=b.wire_length*.9&&q.native_width_px<=b.native_width_px*1.12&&q.native_height_px<=b.native_height_px&&areaMetric(q)<=areaMetric(b)*1.12&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      conflicts(trial).every(id=>conflicts(baseline).includes(id))&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&bands(baseline).every(id=>bands(trial).includes(id));
+    const chosen=accepted?trial:baseline;
+    if(accepted)for(const [key,value]of Object.entries(baseline.prepared.routing))if(key.endsWith('_refinement'))chosen.prepared.routing[key]=value;
+    chosen.prepared.routing.input_dock_refinement={accepted,facts_preserved:facts,before:clearanceMetrics(b),candidate:clearanceMetrics(q),docks,
+      realized_before:before,realized_candidate:after,configuration:candidateState,
+      scope:'Existing input terminals move beside their uses. Same frontier, canonical bindings and realized relations required; at least 10% less wire permits up to 12% more width/area, with no added height, crossings, contacts or routing failures.'};
+    return chosen;
+  }
   function prepareAdaptive(ir,state={}){
-    let chosen=prepareSampleFrame(ir,state);
+    let chosen=prepareInputDocks(ir,state);
     if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
     const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     attachExpressionEvidence(ir,chosen);
@@ -542,7 +579,7 @@
       const trials=[];
       for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
         seen.add(item.candidate.id);
-        const trial=attachExpressionEvidence(ir,prepareSampleFrame(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+        const trial=attachExpressionEvidence(ir,prepareInputDocks(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
         const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
           ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
         trials.push({item,trial,assessment,receipt});
@@ -617,6 +654,8 @@
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       summary_goals:g.summary_goals,summary_coverage:g.summary_coverage,
       layout:{bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
+        ...(g.positions.context.inputDocks.length?{input_docks:g.positions.context.inputDocks.map(record=>({...record,geometry_verified:L.inputDockGeometry(record,g.positions),
+          routes_verified:record.edges.every(e=>routes.find(r=>r.id===e.edge)?.route.ok)}))}:{}),
         ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments.map(record=>{
           if(record.mode!=='entries')return record;
           const geometry=L.entryGeometry(record,g.positions),valid=record.entry_bindings.every(b=>routes.find(e=>e.id===b.edge)?.route.ok&&routes.find(e=>e.id===b.independent_entry)?.route.ok);
@@ -631,8 +670,9 @@
         ...(g.positions.context.contextLanes.length?{context_lanes:g.positions.context.contextLanes.map(entry=>{
           const owner=g.positions.get(entry.owner),edge=routes.find(e=>e.id===entry.edge),low=entry.side==='left'?owner.x+(owner.design_gutter||0):owner.x+owner.w-owner.context_gutter;
           const high=entry.side==='left'?low+owner.context_gutter:owner.x+owner.w;
-          const used=entry.selected!==false&&edge.route.ok&&edge.route.target_side===entry.side&&edge.route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>low&&p.x<high);
-          return {...entry,status:used?'realized':'deferred',reason:used?'final side terminal and vertical channel verified':entry.selected===false?'unrealized baseline proposal retained without reserving a gutter':'obstacle-aware fallback did not realize a vertical channel'};
+          const direct=directDockEntry({graph:g,prepared},entry.edge);
+          const used=entry.selected!==false&&edge.route.ok&&edge.route.target_side===entry.side&&(direct||edge.route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>low&&p.x<high));
+          return {...entry,status:used?'realized':'deferred',...(direct?{method:'direct-docked-entry'}:{}),reason:used?direct?'existing docked input directly reaches its original side terminal':'final side terminal and vertical channel verified':entry.selected===false?'unrealized baseline proposal retained without reserving a gutter':'obstacle-aware fallback did not realize a vertical channel'};
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }

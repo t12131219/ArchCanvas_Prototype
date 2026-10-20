@@ -44,7 +44,7 @@
     return [...regions.values()];
   }
   function layout(idx,roots,visible,edges,offsets={},options={}){
-    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[];
+    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[],inputDocks=[];
     const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
     const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
     const laneKinds=['bypass','state-interface','iteration-feedback'];
@@ -87,6 +87,50 @@
         if(!seen.has(a)){adj.get(a).add(b);pred.get(b).add(a);}
       }
       const scc=components(kids,adj),unit=new Map();scc.forEach((group,i)=>group.forEach(id=>unit.set(id,i)));
+      // Relocate an existing external terminal beside its actual consumers.
+      // No copied values, role inference, containment or ranking edges arise.
+      // This is only a candidate; the publication renderer measures real routes.
+      function finish(box,band=null){
+        if(!options.inputDocks||!scc.every(g=>g.length===1))return box;
+        const guarded=id=>{const n=idx.nodes.get(id);return !n||['opaque','control','state','buffer','parameter'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||n.evidence_status==='runtime-only'||
+          ['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant'].includes(n.semantic_type);};
+        const regions=kids.filter(id=>positions.get(id).expanded&&!guarded(id));
+        if(!regions.length)return box;
+        const relative=id=>{let x=0,y=0;while(id!=null&&!kidSet.has(id)){const p=positions.get(id);if(!p||guarded(id))return null;x+=p.x;y+=p.y;id=idx.nodes.get(id)?.parent;}
+          return regions.includes(id)?{region:id,x:x+positions.get(id).x,y:y+positions.get(id).y}:null;};
+        const ordinary=e=>!e.design_route&&!e.layout_after&&(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
+        const inputs=kids.filter(id=>{const n=idx.nodes.get(id);return n.kind==='interface'&&n.role==='input'&&!guarded(id)&&!pred.get(id).size;});
+        let remaining=inputs.length;
+        const overlap=(a,b)=>a.x<b.x+b.w+gapX&&a.x+a.w+gapX>b.x&&a.y<b.y+b.h+gapY/2&&a.y+a.h+gapY/2>b.y;
+        const median=xs=>{xs.sort((a,b)=>a-b);return xs[Math.floor(xs.length/2)];};
+        // Keep two entry anchors where available; prioritize the terminals
+        // with most distinct visible uses rather than source declaration order.
+        const ordered=inputs.slice().sort((a,b)=>edges.filter(e=>e.source===b).length-edges.filter(e=>e.source===a).length);
+        for(const id of ordered){
+          if(remaining<=Math.min(2,inputs.length-1)||inputDocks.filter(r=>r.parent===parent).length>=4)break;
+          const uses=edges.filter(e=>e.source===id),p=positions.get(id);
+          if(uses.length<2||uses.some(e=>!ordinary(e))||edges.some(e=>e.target===id))continue;
+          const targets=uses.map(e=>{const at=relative(e.target),t=positions.get(e.target);return at?{...at,x:at.x+t.w/2,y:at.y+t.h/2}:null;});
+          if(targets.some(t=>!t))continue;
+          const top=median(targets.map(t=>t.y))-p.h/2;
+          if(top-p.y<3*gapY)continue;
+          const cost=a=>targets.reduce((sum,t)=>sum+Math.abs(a.x+a.w/2-t.x)+Math.abs(a.y+a.h/2-t.y),0),before=cost(p);
+          const bounds=targets.map(t=>positions.get(t.region)),left=Math.min(...bounds.map(p=>p.x)),right=Math.max(...bounds.map(p=>p.x+p.w));
+          const trials=[{side:'left',x:left-gapX-p.w},{side:'right',x:right+gapX}].map(a=>({...a,y:top,w:p.w,h:p.h}));
+          const candidate=trials.filter(a=>kids.every(other=>other===id||!overlap(a,positions.get(other)))).sort((a,b)=>cost(a)-cost(b))[0];
+          if(!candidate||cost(candidate)>before*.85)continue;
+          const record={parent,node:id,side:candidate.side,edges:uses.map(e=>({edge:e.id,target:e.target,source_port:e.source_port,target_port:e.target_port})),regions:[...new Set(targets.map(t=>t.region))],
+            initial:{x:p.x,y:p.y},candidate:{x:candidate.x,y:candidate.y},estimated_before:before,estimated_after:cost(candidate),
+            scope:'One existing source terminal, exact uses and source ownership retained; geometry only, no scheduling or input-role assertion.'};
+          Object.assign(p,{x:candidate.x,y:candidate.y,arrangement:'input-dock'});inputDocks.push(record);remaining--;
+          if(band){band.inputs=band.inputs.filter(other=>other!==id);(band.docked_inputs||=[]).push(id);}
+        }
+        const moved=inputDocks.filter(r=>r.parent===parent);if(!moved.length)return box;
+        const shift=Math.max(0,-Math.min(...kids.map(id=>positions.get(id).x)));
+        if(shift)for(const id of kids)positions.get(id).x+=shift;
+        for(const record of moved)record.translation_x=shift;
+        return {w:Math.max(...kids.map(id=>{const p=positions.get(id);return p.x+p.w;})),h:Math.max(...kids.map(id=>{const p=positions.get(id);return p.y+p.h;}))};
+      }
       const ca=scc.map(()=>new Set()),degree=scc.map(()=>0),rank=scc.map(()=>0);
       for(const [a,targets]of adj)for(const b of targets){const x=unit.get(a),y=unit.get(b);if(x!==y&&!ca[x].has(y)){ca[x].add(y);degree[y]++;}}
       const queue=scc.map((_,i)=>i).filter(i=>!degree[i]);
@@ -284,7 +328,7 @@
           if(accepted){
             if(rankRecord){rankRecord.applied=false;rankRecord.reason='Compound port alignment uses its existing clearance policy.';}
             for(const [id,p]of candidate){Object.assign(positions.get(id),{x:p.x,y:p.y,arrangement:'compound-port-alignment'});}
-            return box;
+            return finish(box,band);
           }
         }
       }
@@ -319,9 +363,9 @@
           for(const i of [...(prefix?[0]:[]),...(suffix?[sorted.length-1]:[])])for(const id of rows.get(sorted[i])){
             const p=positions.get(id),oldTop=rowTops.get(sorted[i]);p.x+=(best.box.w-width)/2;p.y=p.y-oldTop+(i===0?0:best.box.h-grids[i].h);p.topological_rank=i;p.arrangement='boundary-band';
           }
-          return best.box;}
+          return finish(best.box);}
       }
-      return vertical;
+      return finish(vertical);
     }
     function place(id){const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(c=>visible.has(c)),p={id,x:0,y:0,...size(n),expanded:!!kids.length};positions.set(id,p);
       if(kids.length){kids.forEach(place);const box=arrange(kids,id),pad=options.framePadding??32,title=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74,header=title+(options.headerClearance??20),gutter=laneOwners.has(id)?28+Math.min(3,laneOwners.get(id))*20:0;p.header=header;p.protected_header_height=title-10;p.design_gutter=gutter;p.w=Math.max(options.nodeSize?212:300,box.w+pad*2+gutter+(contextOwners.has(id)?32+contextOwners.get(id)*16:0));if(contextOwners.has(id))p.context_gutter=32+contextOwners.get(id)*16;p.h=box.h+header+pad;for(const child of kids){positions.get(child).x+=pad+gutter+(options.contextLanes==='left'?(p.context_gutter||0):0);positions.get(child).y+=header;}}
@@ -330,7 +374,7 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,
+    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,
       entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){
@@ -341,6 +385,15 @@
     if(!paths.every(ps=>ps.every((p,i)=>close(p.y,paths[0][i].y))))return false;
     if(!paths.every((ps,i)=>!i||Math.min(...ps.map(p=>p.x))>=Math.max(...paths[i-1].map(p=>p.x+p.w))))return false;
     const sink=positions.get(group.sink);return !!sink&&paths.every(ps=>sink.y>=ps.at(-1).y+ps.at(-1).h);
+  }
+  function inputDockGeometry(record,positions){
+    const p=positions.get(record.node),parent=positions.get(record.parent),idx=positions.context.idx;
+    if(!p||!parent||idx.nodes.get(record.node)?.parent!==record.parent||p.y<parent.y+parent.header||p.x<parent.x||p.x+p.w>parent.x+parent.w||p.y+p.h>parent.y+parent.h)return false;
+    const regions=record.regions.map(id=>positions.get(id));if(regions.some(p=>!p))return false;
+    if(record.side==='left'?!regions.every(r=>p.x+p.w<=r.x):!regions.every(r=>p.x>=r.x+r.w))return false;
+    return (idx.children.get(record.parent)||[]).filter(id=>id!==record.node&&positions.has(id)).every(id=>{
+      const q=positions.get(id);return p.x+p.w<=q.x||q.x+q.w<=p.x||p.y+p.h<=q.y||q.y+q.h<=p.y;
+    });
   }
   function entryGeometry(record,positions){
     return record.accepted&&record.entry_bindings?.length>0&&record.entry_bindings.every(binding=>{
@@ -535,5 +588,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry,entryBandGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

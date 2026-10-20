@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'return-regions':
+        if stage == 'input-docks':
+            from summarize_input_docks import main as summarize_stage
+        elif stage == 'return-regions':
             from summarize_return_regions import main as summarize_stage
         elif stage == 'sample-frames':
             from summarize_sample_frames import main as summarize_stage

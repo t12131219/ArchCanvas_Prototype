@@ -37,6 +37,7 @@ COMMANDS = {
     'coverage-selection': ['node', 'tests/coverage-selection.test.cjs'],
     'condition-predicates': ['node', 'tests/condition-predicates.test.cjs'],
     'branch-tail-stages': ['node', 'tests/branch-tail-stages.test.cjs'],
+    'diagram-set': ['node', 'tests/diagram-set.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],
@@ -61,7 +62,7 @@ def main():
     files = [*ROOT.glob('semantic_studio/*.js'), ROOT / 'semantic_studio/index.html', ROOT / 'semantic_studio/style.css', *ROOT.glob('semantic_adapter/*.py'),
              *ROOT.glob('tests/*.test.cjs'), *ROOT.glob('tests/*fixtures.cjs'), *ROOT.glob('tests/test_*.py'),
              *ROOT.glob('tests/semantic_fixtures/*.py'),
-             ROOT / 'tools/export_publication.cjs', ROOT / 'tools/representative_atlas.cjs', ROOT / 'tools/symbolic_values.cjs', Path(__file__).resolve()]
+             ROOT / 'tools/export_publication.cjs', ROOT / 'tools/export_diagram_set.cjs', ROOT / 'tools/representative_atlas.cjs', ROOT / 'tools/symbolic_values.cjs', Path(__file__).resolve()]
     hashes = {str(file.relative_to(ROOT)): hashlib.sha256(file.read_bytes()).hexdigest() for file in sorted(files)}
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
         results = list(pool.map(run, COMMANDS.items()))

@@ -465,6 +465,8 @@ def main():
         OUT = ROOT / 'verification/condition-predicates/current'
     if '--branch-tail-stages' in sys.argv:
         OUT = ROOT / 'verification/branch-tail-stages/current'
+    if '--diagram-set' in sys.argv:
+        OUT = ROOT / 'verification/diagram-set/current'
     if '--summary-coverage' in sys.argv:
         OUT = ROOT / 'verification/summary-coverage/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'

@@ -32,7 +32,7 @@
       const button=document.createElement('button');button.textContent='恢复源码外框';button.onclick=()=>{snapshot();state.paperFrameView='source';state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
     }
     if(n.content_inventory)$('details').insertAdjacentHTML('afterbegin','<h3>摘要内容</h3><p>按当前语义单元计数，包含操作、调用和已确认的局部组合；不表示重复堆叠、执行并发或参数共享。</p>'+n.content_inventory.terms.map(t=>'<div class="source"><strong>'+esc(t.label)+' × '+t.count+'</strong><br>'+t.units.map(id=>esc(projection.idx.nodes.get(id)?.label||id)).join(' · ')+'</div>').join(''));
-    if(n.contract_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>认证角色阶段与原始绑定</summary><p>只折叠已认证的相加与后置归一化；分支计算保留在外部。双击可展开原始操作。</p><pre>'+esc(JSON.stringify(n.contract_stage,null,2))+'</pre></details>');
+    if(n.contract_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>认证角色阶段与原始绑定</summary><p>摘要保留相加、后置归一化及说明中列出的独占分支末端。双击可展开原始操作。</p><pre>'+esc(JSON.stringify(n.contract_stage,null,2))+'</pre></details>');
     if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');
     const summaryCheck=projection.summary_coverage?.find(r=>r.node===id);
     if(summaryCheck)$('details').insertAdjacentHTML('afterbegin','<details open data-summary-coverage="'+esc(summaryCheck.status)+'"><summary>依赖结构表达检查</summary><p>'+(
@@ -89,7 +89,7 @@
       g.addEventListener('dblclick',e=>{e.stopPropagation();toggle(n.id);});
       g.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.stopPropagation();inspect(n.id);const point=world(e),ids=new Set([n.id]),todo=[n.id];for(let i=0;i<todo.length;i++)for(const child of projection.idx.children.get(todo[i])||[])if(projection.positions.has(child)){ids.add(child);todo.push(child);}drag={kind:'node',id:n.id,start:point,ids,origins:new Map([...ids].map(id=>[id,{...projection.positions.get(id)}])),offset:E.clone(state.offsets[n.id]||{x:0,y:0}),moved:false,edges:projection.edges.filter(edge=>ids.has(edge.source)||ids.has(edge.target))};g.setPointerCapture(e.pointerId);});
   }
-  function render(){if(!ir)return;$('legend').innerHTML=state.view==='publication'?'<span>蓝灰实线：源码依赖</span><span>绿色：实际张量流</span><span>黄虚线：控制</span><span>虚框：未知操作</span><span>无节点交叉：跨越</span><span>粗线与数量：合绘的独立依赖，可单击查看</span>':'<span>蓝色虚线：源码依赖</span><span>绿色实线：实际张量流</span><span>紫色：参数</span><span>黄色：控制</span><span>红色虚框：未知边界</span>';svg.classList.toggle('publication',state.view==='publication');if(state.view!=='publication')document.getElementById('paperLabels')?.remove();if(state.view==='publication'){renderPaper();return;}projection=E.project(ir,state);renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
+  function render(){if(!ir)return;$('diagramSuggestions').hidden=true;$('diagramBack').hidden=!state.paperDiagramReturn;$('legend').innerHTML=state.view==='publication'?'<span>蓝灰实线：源码依赖</span><span>绿色：实际张量流</span><span>黄虚线：控制</span><span>虚框：未知操作</span><span>无节点交叉：跨越</span><span>粗线与数量：合绘的独立依赖，可单击查看</span>':'<span>蓝色虚线：源码依赖</span><span>绿色实线：实际张量流</span><span>紫色：参数</span><span>黄色：控制</span><span>红色虚框：未知边界</span>';svg.classList.toggle('publication',state.view==='publication');if(state.view!=='publication')document.getElementById('paperLabels')?.remove();if(state.view==='publication'){renderPaper();return;}projection=E.project(ir,state);renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
     const frameFragment=document.createDocumentFragment(),nodeFragment=document.createDocumentFragment(),edgeFragment=document.createDocumentFragment();
     for(const n of E.drawingOrder(projection.nodes,projection.idx)){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});const fill=n.glyph?.fill||'#edf2fa',color=n.kind==='opaque'?'#bf6b6b':'#92a8c4';let shape;
       if(p.symbol){shape=el('circle',{cx:p.w/2,cy:p.h/2,r:p.w/2,fill,stroke:color});}
@@ -169,7 +169,19 @@
     $('paperAuto').checked=state.paperAuto!==false;$('paperGranularity').disabled=state.paperAuto===false;$('paperAdaptive').disabled=state.paperAuto===false;$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
     const limited=prepared.routing.granularity_refinement;
     message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接${projection.publication.wire_bundles.length?'（'+projection.edge_accounting.visible.length+' 条依赖）':''} · ${projection.publication.unknowns} 个未知操作${prepared.quality.route_failures.length?' · 存在待调整路径':''}${limited&&(limited.selected!==limited.requested||limited.selected_budget<limited.requested_budget)?' · 受图宽限制，部分细节请打开模块详图':''}`);
+    if(state.paperMedium==='canvas'&&state.paperGranularity==='roles'){
+      const planned=window.SemanticDiagramSet.plan(ir,figure,state),box=$('diagramSuggestions');box.replaceChildren();
+      if(planned.candidates.length){
+        box.hidden=false;const label=document.createElement('span');label.textContent='可在独立详图中查看：';box.append(label);
+        for(const request of planned.candidates.slice(0,6)){
+          const button=document.createElement('button');button.textContent=request.label;button.title='查看局部角色和依赖，保留主图展开状态';
+          button.onclick=()=>{snapshot();const previous=E.clone(state.paperDiagramReturn||state);delete previous.paperDiagramReturn;state={...E.clone(request.state),paperDiagramReturn:previous};selected=null;syncPaperControls();render();fit();persist();};box.append(button);
+        }
+        if(planned.candidates.length>6){const label=document.createElement('span');label.textContent=' 另有 '+(planned.candidates.length-6)+' 个区域，可从模块详图选择。';box.append(label);}
+      }
+    }
   }
+  $('diagramBack').onclick=()=>{if(!state.paperDiagramReturn)return;snapshot();state=E.clone(state.paperDiagramReturn);selected=null;$('view').value=state.view;$('mode').value=state.mode;syncPaperControls();render();fit();persist();};
   function world(e){const point=svg.createSVGPoint();point.x=e.clientX;point.y=e.clientY;return point.matrixTransform(svg.getScreenCTM().inverse());}
   function move(){pendingFrame=0;if(!drag||!dragPoint)return;const point=dragPoint;if(drag.kind==='pan'){camera.x=drag.camera.x-(point.clientX-drag.client.x)*camera.w/svg.clientWidth;camera.y=drag.camera.y-(point.clientY-drag.client.y)*camera.h/svg.clientHeight;setCamera();return;}
     const p=world(point),dx=p.x-drag.start.x,dy=p.y-drag.start.y;if(Math.abs(dx)+Math.abs(dy)<1&&!drag.moved)return;

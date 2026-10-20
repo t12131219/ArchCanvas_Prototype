@@ -8,6 +8,8 @@
 
 ## 可组合架构表达
 
+当前审核阶段新增通用“主图＋局部详图”规划、编辑器返回主图及逐实例的精确表达分配。六组输入、21 张 SVG、474 项测试与 587 处原生浏览器文字检查通过；主图均与冻结基线相同。Transformer 的直接细节目标由 36 增至 60 / 1855 项，仍有 1795 项待展开，主图对专用参考的接近度尚未改善。说明及限制见 [主图与局部详图](docs/diagram-set.md)，复现见 [图组审核](verification/diagram-set/README.md)。
+
 通用语义画布新增局部语义规则、架构摘要与拓扑布局。陌生组合中的残差、门控、前馈和重复结构可独立归纳；未知边界、原始连接、参数身份和端口证据保留。支持紧凑显示、递归展开与 Node SVG 导出。 新增真实 Notebook 语料复查工具 `python3 tools/audit_model_corpus.py`，只读检查 186 个 PyTorch 候选，浏览器提供 8 个 corpus 代表案例。实现范围、使用命令及自主测试见 [架构表达说明](docs/architecture-rules.md)。
 
 新增“论文视图”：自动粒度、模块详图、印刷字号检查、可追溯的递归 SVG 图册。命令 `node tools/export_publication.cjs input.json /tmp/model-atlas --strict`。当前增加配置用途证明：仅配置使用的静态整数运算归入附注，保留原节点、依赖和源码证据；特征系数、返回标量及未知调用保持数据表达。145 项回归通过，186 个只读外部候选的 1,291 个图面通过现有自动检查及浏览器文字测量；19 模型覆盖 44 个字面量运算正例。ConvNet 概览 11 → 9 个图元、1 → 0 个交叉；3 个 VAE 局部图的交叉增加，已保留对比截图和自省。新增 Encoder + GRU + 局部门控 + 未知融合原创案例。当前证据位于 `verification/publication/configuration/`，旧阶段独立归档；尚未达到任意模型的论文插图质量。详见 [论文视图与验收记录](docs/publication-view.md)。

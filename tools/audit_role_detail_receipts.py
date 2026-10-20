@@ -25,6 +25,8 @@ def main():
         OUT = ROOT / 'verification/condition-predicates/current'
     if '--branch-tail-stages' in sys.argv:
         OUT = ROOT / 'verification/branch-tail-stages/current'
+    if '--diagram-set' in sys.argv:
+        OUT = ROOT / 'verification/diagram-set/current'
     if '--summary-coverage' in sys.argv:
         OUT = ROOT / 'verification/summary-coverage/current'
     report = json.loads((OUT / 'render-report.json').read_text())
@@ -36,7 +38,11 @@ def main():
         layout = {n['id']: n for n in doc['layout']['nodes']}
         svg = ET.parse(OUT / row['svg'])
         nodes = {e.get('data-node-id'): e for e in svg.iter() if e.get('data-node-id')}
-        receipt = doc['publication']['role_frontier']
+        receipt = doc['publication'].get('role_frontier')
+        if receipt is None:
+            assert row['state']['paperGranularity'] != 'roles' or doc['publication'].get('relation')
+            results.append({'name': row['name'], 'role_frontier': 'not-applicable'})
+            continue
         assert receipt == row['role_frontier']
         owners = {m['node'] for m in receipt['modules']}
         requested = doc['publication'].get('adaptive_frontier', {}).get('selected_role_details', row['state'].get('paperRoleDetails', []))

@@ -49,15 +49,21 @@ test('manual offsets, print mode and explicit global spacing preserve baseline g
 test('explicit minimum gaps are honored in every container, and zero-gain proposals are rejected',()=>{
  const ir=fixture(),r=R.render(ir,{...state,paperLabelGapY:112});assert.equal(r.prepared.routing.clearance_refinement,undefined);
  assert.equal(r.svg,old.render(ir,{...state,paperLabelGapY:112}).svg);
- ir.nodes=ir.nodes.filter(n=>['root','x','a','b'].includes(n.id));for(const n of ir.nodes)if(n.id!=='root')n.parent='root';ir.edges=ir.edges.filter(e=>['e0','e1','e2'].includes(e.id));
- const same=R.render(ir,state);assert.equal(same.prepared.routing.clearance_refinement.accepted,false);
- assert.equal(same.svg,R.render(ir,{...state,paperLabelSpacing:'global'}).svg);
+ // A single required channel has no smaller rank allocation. Use a fresh
+ // immutable input; publication plans cache by IR object identity.
+ ir.nodes=ir.nodes.filter(n=>['root','a','b'].includes(n.id));for(const n of ir.nodes)if(n.id!=='root')n.parent='root';ir.edges=ir.edges.filter(e=>['e1','e2'].includes(e.id));
+ const fresh=JSON.parse(JSON.stringify(ir)),same=R.render(fresh,state);assert.equal(same.prepared.routing.clearance_refinement.accepted,false);
+ assert.equal(same.prepared.routing.rank_clearance_refinement.accepted,false);
+ assert.equal(same.svg,R.render(fresh,{...state,paperLabelSpacing:'global'}).svg);
 });
 test('crossing reductions cannot trade away a new ambiguous wire contact',()=>{
  const ir=fixture();for(const [i,source,target]of [[0,'v','z'],[1,'a','w']])ir.edges.push({id:'cross-'+i,source,target,source_port:'out',target_port:'use:'+i,kind:'data',evidence:'source-dependency'});
  const r=R.render(ir,state),c=r.prepared.routing.clearance_refinement;assert.equal(c.accepted,false);
  assert.ok(c.candidate.crossings<c.before.crossings);assert.ok(c.candidate.contacts>c.before.contacts);
- assert.equal(r.svg,R.render(ir,{...state,paperLabelSpacing:'global'}).svg);accounted(ir,r.graph);
+ const rank=r.prepared.routing.rank_clearance_refinement;assert.equal(rank.attempts[0].accepted,false);
+ assert.equal(rank.accepted,true);assert.ok(rank.attempts.slice(1).some(a=>a.accepted));
+ assert.equal(r.prepared.quality.line_geometry.unrelated_contacts.length,0);
+ assert.equal(r.prepared.quality.line_geometry.crossings,c.before.crossings);accounted(ir,r.graph);
 });
 test('identity and mutable or state boundaries survive geometry selection without semantic promotion',()=>{
  for(const guard of [{mutable:true},{identity_display:{kind:'same-object-calls',label:'shared object',invocation:1,count:2}},{kind:'state'},{kind:'control'}]){

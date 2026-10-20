@@ -23,6 +23,7 @@ COMMANDS = {
     'role-frontier': ['node', 'tests/role-frontier.test.cjs'],
     'role-details': ['node', 'tests/role-details.test.cjs'],
     'label-clearance': ['node', 'tests/label-clearance.test.cjs'],
+    'rank-clearance': ['node', 'tests/rank-clearance.test.cjs'],
     'branch-columns': ['node', 'tests/branch-columns.test.cjs'],
     'dimension-paths': ['node', 'tests/dimension-paths.test.cjs'],
     'contract-stages': ['node', 'tests/contract-stages.test.cjs'],

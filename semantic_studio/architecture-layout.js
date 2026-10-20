@@ -44,7 +44,7 @@
     return [...regions.values()];
   }
   function layout(idx,roots,visible,edges,offsets={},options={}){
-    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[];
+    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[];
     const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
     const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
     const laneKinds=['bypass','state-interface','iteration-feedback'];
@@ -115,6 +115,25 @@
         for(const id of candidates){const peers=candidates.filter(other=>[...pred.get(id)].some(p=>pred.get(other).has(p)));if(peers.length>1){const w=Math.max(...peers.map(id=>positions.get(id).w));for(const peer of peers)positions.get(peer).w=w;}}
       }
       const sorted=[...rows.keys()].sort((a,b)=>a-b),order=new Map();
+      // Reserve label space at the receiving rank, not in every rank of its
+      // frame. Same-rank/SCC pairs have no unique vertical channel and keep
+      // the conservative parent-wide spacing.
+      const requests=options.rankLabelClearances?.find(r=>r.parent===parent),rankGaps=new Map();
+      let rankRecord=null;
+      if(requests){
+        const pairs=requests.pairs.map(pair=>{const a=owner(pair.source),b=owner(pair.target),from=a?rank[unit.get(a)]:null,to=b?rank[unit.get(b)]:null;
+          const before=from!==null&&to!==null&&from!==to?sorted[sorted.indexOf(Math.max(from,to))-1]:null;
+          return {...pair,source_child:a,target_child:b,source_rank:from,target_rank:to,after_rank:before};});
+        const fallback=pairs.some(p=>p.after_rank===null);
+        for(const r of sorted)rankGaps.set(r,fallback?gapY:options.rankBaseGapY??options.gapY??76);
+        if(!fallback)for(const p of pairs)rankGaps.set(p.after_rank,Math.max(rankGaps.get(p.after_rank),p.gap_y));
+        rankRecord={parent,mode:fallback?'parent':'rank',reason:fallback?'A same-rank or unranked pair has no unique vertical channel.':null,pairs,ranks:[],applied:true};
+        rankClearances.push(rankRecord);
+      }
+      // Wrapped cells within a rank retain their existing clearance. Only
+      // the gaps between distinct dependency ranks are candidates here.
+      const rowGapY=gapY;
+      const gapAfter=r=>rankGaps.get(r)??gapY;
       for(const row of rows.values())row.forEach((id,i)=>order.set(id,i));
       for(let pass=0;pass<6;pass++)for(const r of pass%2?sorted.slice().reverse():sorted){
         const row=rows.get(r),neighbors=pass%2?adj:pred;
@@ -158,7 +177,7 @@
       }
       const grids=sorted.map(r=>{const ids=rows.get(r),cols=Math.min(rankColumns||ids.length,ids.length),widths=Array(cols).fill(0),heights=Array(Math.ceil(ids.length/cols)).fill(0);
         ids.forEach((id,i)=>{const p=positions.get(id);widths[i%cols]=Math.max(widths[i%cols],p.w);heights[Math.floor(i/cols)]=Math.max(heights[Math.floor(i/cols)],p.h);});
-        return {cols,widths,heights,w:widths.reduce((s,w)=>s+w,0)+(cols-1)*gapX,h:heights.reduce((s,h)=>s+h,0)+(heights.length-1)*gapY};});
+        return {cols,widths,heights,w:widths.reduce((s,w)=>s+w,0)+(cols-1)*gapX,h:heights.reduce((s,h)=>s+h,0)+(heights.length-1)*rowGapY};});
       if(branchGroups.length)for(const [i,r]of sorted.entries()){
         const groups=branchGroups.filter(g=>g.ranks.includes(r));if(!groups.length)continue;
         const assigned=new Set(groups.flatMap(g=>g.chains.flatMap(c=>c.nodes.filter(id=>rank[unit.get(id)]===r))));
@@ -166,24 +185,26 @@
         if(rest.length){
           const cols=Math.min(rankColumns||rest.length,rest.length),widths=Array(cols).fill(0),heights=Array(Math.ceil(rest.length/cols)).fill(0);
           rest.forEach((id,j)=>{const p=positions.get(id);widths[j%cols]=Math.max(widths[j%cols],p.w);heights[Math.floor(j/cols)]=Math.max(heights[Math.floor(j/cols)],p.h);});
-          bands.push({w:widths.reduce((a,b)=>a+b,0)+(cols-1)*gapX,h:heights.reduce((a,b)=>a+b,0)+(heights.length-1)*gapY,
-            cells:rest.map((id,j)=>({id,x:widths.slice(0,j%cols).reduce((a,b)=>a+b+gapX,0)+(widths[j%cols]-positions.get(id).w)/2,y:heights.slice(0,Math.floor(j/cols)).reduce((a,b)=>a+b+gapY,0)}))});
+          bands.push({w:widths.reduce((a,b)=>a+b,0)+(cols-1)*gapX,h:heights.reduce((a,b)=>a+b,0)+(heights.length-1)*rowGapY,
+            cells:rest.map((id,j)=>({id,x:widths.slice(0,j%cols).reduce((a,b)=>a+b+gapX,0)+(widths[j%cols]-positions.get(id).w)/2,y:heights.slice(0,Math.floor(j/cols)).reduce((a,b)=>a+b+rowGapY,0)}))});
         }
         for(const g of groups){const step=g.ranks.indexOf(r),ids=g.chains.map(c=>c.nodes[step]);
           bands.push({w:g.widths.reduce((a,b)=>a+b,0)+(ids.length-1)*gapX,h:Math.max(...ids.map(id=>positions.get(id).h)),
             cells:ids.map((id,j)=>({id,x:g.widths.slice(0,j).reduce((a,b)=>a+b+gapX,0)+(g.widths[j]-positions.get(id).w)/2,y:0}))});
         }
         const w=Math.max(...bands.map(b=>b.w)),cells=[];let y=0;
-        for(const band of bands){cells.push(...band.cells.map(c=>({...c,x:c.x+(w-band.w)/2,y:c.y+y})));y+=band.h+gapY;}
-        grids[i]={...grids[i],w,h:y-gapY,cells};
+        for(const band of bands){cells.push(...band.cells.map(c=>({...c,x:c.x+(w-band.w)/2,y:c.y+y})));y+=band.h+rowGapY;}
+        grids[i]={...grids[i],w,h:y-rowGapY,cells};
       }
       const rowWidths=grids.map(g=>g.w);
-      const width=Math.max(0,...rowWidths);let y=0;
+      const width=Math.max(0,...rowWidths),rowTops=new Map();let y=0;
       sorted.forEach((r,i)=>{const row=rows.get(r),grid=grids[i],left=(width-rowWidths[i])/2;
-        if(grid.cells){for(const c of grid.cells){const p=positions.get(c.id);p.x=left+c.x;p.y=y+c.y;p.cyclic=scc[unit.get(c.id)].length>1;}}else row.forEach((id,j)=>{const p=positions.get(id),col=j%grid.cols,gr=Math.floor(j/grid.cols);p.x=left+grid.widths.slice(0,col).reduce((s,w)=>s+w+gapX,0)+(grid.widths[col]-p.w)/2;p.y=y+grid.heights.slice(0,gr).reduce((s,h)=>s+h+gapY,0);p.cyclic=scc[unit.get(id)].length>1;});
-        y+=grid.h+gapY;
+        rowTops.set(r,y);
+        if(rankRecord)rankRecord.ranks.push({rank:r,nodes:row.slice(),top:y,height:grid.h,gap_after:i<sorted.length-1?gapAfter(r):0});
+        if(grid.cells){for(const c of grid.cells){const p=positions.get(c.id);p.x=left+c.x;p.y=y+c.y;p.cyclic=scc[unit.get(c.id)].length>1;}}else row.forEach((id,j)=>{const p=positions.get(id),col=j%grid.cols,gr=Math.floor(j/grid.cols);p.x=left+grid.widths.slice(0,col).reduce((s,w)=>s+w+gapX,0)+(grid.widths[col]-p.w)/2;p.y=y+grid.heights.slice(0,gr).reduce((s,h)=>s+h+rowGapY,0);p.cyclic=scc[unit.get(id)].length>1;});
+        y+=grid.h+(i<sorted.length-1?gapAfter(r):0);
       });
-      const vertical={w:width,h:Math.max(0,y-gapY)};
+      const vertical={w:width,h:Math.max(0,y)};
       // An edge into a late internal stage does not require the whole target
       // frame to start below its producer's frame. Use actual visible ports
       // to align independently entered compound flows in adjacent columns.
@@ -230,6 +251,7 @@
           const accepted=box.h<vertical.h*.9&&score(box)<score(vertical)*.9&&box.w*box.h<=vertical.w*vertical.h*2;
           compoundAlignments.push({parent,before:vertical,candidate:box,accepted,...(options.compoundStarts?{mode:'entries',entry_bindings:entryBindings}:{}),scope:'visible endpoint geometry; no execution-order assertion'});
           if(accepted){
+            if(rankRecord){rankRecord.applied=false;rankRecord.reason='Compound port alignment uses its existing clearance policy.';}
             for(const [id,p]of candidate){Object.assign(positions.get(id),{x:p.x,y:p.y,arrangement:'compound-port-alignment'});}
             return box;
           }
@@ -255,7 +277,7 @@
           const box={w:Math.max(innerW,prefix?rowWidths[0]:0,suffix?rowWidths.at(-1):0),h:topH+bottomH+heights.reduce((s,h)=>s+h,0)+gapY*(heights.length-1)};
           if(score(box)<score(vertical)*(options.foldGain??.8)&&(!best||score(box)<score(best.box)))best={box,widths,heights,grid};
         }
-        if(best){for(const [rank,{cell,row,col}]of best.grid.entries()){
+        if(best){if(rankRecord){rankRecord.applied=false;rankRecord.reason='Folded rank columns use their existing clearance policy.';}for(const [rank,{cell,row,col}]of best.grid.entries()){
           const innerW=best.widths.reduce((s,w)=>s+w,0)+foldGapX*(best.widths.length-1);
           let x=(best.box.w-innerW)/2+best.widths.slice(0,col).reduce((s,w)=>s+w+foldGapX,0)+(best.widths[col]-cell.w)/2;
           const y=topH+best.heights.slice(0,row).reduce((s,h)=>s+h+gapY,0)+(best.heights[row]-cell.h)/2;
@@ -264,7 +286,7 @@
           // Wide input/output ranks occupy their own bands; they do not force
           // every column of the computation path to inherit their full width.
           for(const i of [...(prefix?[0]:[]),...(suffix?[sorted.length-1]:[])])for(const id of rows.get(sorted[i])){
-            const p=positions.get(id),oldTop=grids.slice(0,i).reduce((s,g)=>s+g.h+gapY,0);p.x+=(best.box.w-width)/2;p.y=p.y-oldTop+(i===0?0:best.box.h-grids[i].h);p.topological_rank=i;p.arrangement='boundary-band';
+            const p=positions.get(id),oldTop=rowTops.get(sorted[i]);p.x+=(best.box.w-width)/2;p.y=p.y-oldTop+(i===0?0:best.box.h-grids[i].h);p.topological_rank=i;p.arrangement='boundary-band';
           }
           return best.box;}
       }
@@ -277,7 +299,7 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns};return positions;
+    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances};return positions;
   }
   function branchGeometry(group,positions){
     const paths=group.chains.map(c=>c.nodes.map(id=>positions.get(id)));

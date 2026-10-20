@@ -347,6 +347,25 @@
       scope:'independently entered compound regions; cross-region arrows remain exact and can point upward; no execution scheduling assertion'};
     return chosen;
   }
+  const clearanceIdentity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id),open:g.publication.open,
+    edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,source_port:e.source_port,target_port:e.target_port,
+      originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition})),
+    nodes_accounted:g.node_accounting,edges_accounted:g.edge_accounting,boundary:g.publication.boundary,roles:g.publication.role_frontier});
+  const clearanceMetrics=q=>({width:q.native_width_px,height:q.native_height_px,area:areaMetric(q),
+    crossings:q.line_geometry.crossings,contacts:q.line_geometry.unrelated_contacts.length,wire_length:q.wire_length,
+    overlaps:q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length,unplaced_labels:q.unplaced_port_labels.length,issues:q.issues});
+  function acceptClearance(baseline,trial){
+    const b=baseline.prepared.quality,q=trial.prepared.quality;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    return clearanceIdentity(baseline.graph)===clearanceIdentity(trial.graph)&&conflicts(trial).every(id=>conflicts(baseline).includes(id))&&
+      areaMetric(q)<areaMetric(b)*.98&&q.native_width_px<=b.native_width_px*1.05&&q.native_height_px<=b.native_height_px&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.wire_length<=b.wire_length;
+  }
   function prepareClearance(ir,state={}){
     const baseline=prepareFlows(ir,state),b=baseline.prepared.quality,clearance=baseline.graph.publication.label_clearance;
     if(b.medium!=='canvas'||state.paperLabelSpacing!==undefined||Object.keys(state.offsets||{}).length||
@@ -359,31 +378,53 @@
       paperBranchColumns:!!baseline.graph.positions.context.branchColumns.length,
       paperFlowAlignment:baseline.prepared.routing.flow_refinement?.accepted?'entries':state.paperFlowAlignment};
     const trial=prepareLabels(ir,candidateState),q=trial.prepared.quality;
-    const identity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id),open:g.publication.open,
-      edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,source_port:e.source_port,target_port:e.target_port,
-        originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition})),
-      nodes_accounted:g.node_accounting,edges_accounted:g.edge_accounting,boundary:g.publication.boundary,roles:g.publication.role_frontier});
-    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
-    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
-    const accepted=identity(baseline.graph)===identity(trial.graph)&&conflicts(trial).every(id=>conflicts(baseline).includes(id))&&
-      areaMetric(q)<areaMetric(b)*.98&&q.native_width_px<=b.native_width_px*1.05&&q.native_height_px<=b.native_height_px&&
-      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
-      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
-      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
-      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
-      q.wire_length<=b.wire_length;
-    const chosen=accepted?trial:baseline,metrics=q=>({width:q.native_width_px,height:q.native_height_px,area:areaMetric(q),
-      crossings:q.line_geometry.crossings,contacts:q.line_geometry.unrelated_contacts.length,wire_length:q.wire_length,
-      overlaps:q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length,unplaced_labels:q.unplaced_port_labels.length,issues:q.issues});
-    const receipt={accepted,selected:accepted?'local':'global',before:metrics(b),candidate:metrics(q),regions:clearance.regions,
+    const accepted=acceptClearance(baseline,trial),chosen=accepted?trial:baseline;
+    const receipt={accepted,selected:accepted?'local':'global',before:clearanceMetrics(b),candidate:clearanceMetrics(q),regions:clearance.regions,
       scope:'visible drawing-parent clearance; identical semantic frontier, operands and accounting required'};
     if(accepted)for(const key of ['topology_refinement','context_refinement','branch_refinement','flow_refinement'])
       if(baseline.prepared.routing[key])chosen.prepared.routing[key]=baseline.prepared.routing[key];
     chosen.prepared.routing.clearance_refinement=receipt;
     return chosen;
   }
+  function prepareRankClearance(ir,state={}){
+    const baseline=prepareClearance(ir,state),clearance=baseline.graph.publication.label_clearance;
+    if(baseline.prepared.quality.medium!=='canvas'||state.paperLabelSpacing!==undefined||Object.keys(state.offsets||{}).length||
+      !clearance||clearance.global_gap_y<=clearance.base_gap_y)return baseline;
+    const candidateState={...state,paperLabelSpacing:'rank',
+      paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest',
+      paperContextLanes:baseline.graph.positions.context.contextLanes[0]?.side||false,
+      paperBranchColumns:!!baseline.graph.positions.context.branchColumns.length,
+      paperFlowAlignment:baseline.prepared.routing.flow_refinement?.accepted?'entries':state.paperFlowAlignment};
+    const spacingConfig=s=>Object.fromEntries(['paperLabelSpacing','paperLabelRankParents','paperLabelRankFallback','paperRankStrategy','paperContextLanes','paperBranchColumns','paperFlowAlignment'].filter(k=>s[k]!==undefined).map(k=>[k,s[k]]));
+    const trial=prepareLabels(ir,candidateState),allAccepted=acceptClearance(baseline,trial);
+    let chosen=allAccepted?trial:baseline;
+    const attempts=[{parents:'all',configuration:spacingConfig(candidateState),accepted:allAccepted,before:clearanceMetrics(baseline.prepared.quality),candidate:clearanceMetrics(trial.prepared.quality)}],selected=[];
+    // When shrinking the entire drawing fails, measure at most three local
+    // parents. Keep all other parents at the selected baseline spacing. Each
+    // accepted step must satisfy the same factual and geometric guard.
+    if(!allAccepted){
+      const regions=(trial.graph.publication.label_clearance?.rank_layout||[]).filter(r=>r.applied&&r.mode==='rank');
+      const saving=r=>r.ranks.slice(0,-1).reduce((sum,rank)=>sum+Math.max(0,clearance.global_gap_y-rank.gap_after),0);
+      regions.sort((a,b)=>saving(b)-saving(a)||String(a.parent).localeCompare(String(b.parent)));
+      for(const region of regions.slice(0,3)){
+        const parents=[...selected,region.parent],localState={...candidateState,paperLabelRankParents:parents,paperLabelRankFallback:clearance.mode},local=prepareLabels(ir,localState);
+        const accepted=acceptClearance(chosen,local);
+        attempts.push({parents,configuration:spacingConfig(localState),accepted,before:clearanceMetrics(chosen.prepared.quality),candidate:clearanceMetrics(local.prepared.quality)});
+        if(accepted){chosen=local;selected.push(region.parent);}
+      }
+    }
+    const accepted=chosen!==baseline;
+    if(accepted)for(const key of ['topology_refinement','context_refinement','branch_refinement','flow_refinement','clearance_refinement'])
+      if(baseline.prepared.routing[key])chosen.prepared.routing[key]=baseline.prepared.routing[key];
+    chosen.prepared.routing.rank_clearance_refinement={accepted,selected:accepted?'rank':clearance.mode,
+      before:clearanceMetrics(baseline.prepared.quality),all_candidate:clearanceMetrics(trial.prepared.quality),selected_metrics:clearanceMetrics(chosen.prepared.quality),
+      rank_layout:trial.graph.publication.label_clearance?.rank_layout||[],
+      attempts,selected_parents:allAccepted?'all':selected,
+      scope:'vertical receiving-rank clearance; unchanged semantic frontier; folded and compound layouts retain parent clearance'};
+    return chosen;
+  }
   function selectFigure(ir,state={}){
-    let chosen=prepareClearance(ir,state);
+    let chosen=prepareRankClearance(ir,state);
     const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
     // A zoomable canvas keeps the requested semantic frontier. Route/resource
     // failures remain explicit; silently replacing it with an overview is not

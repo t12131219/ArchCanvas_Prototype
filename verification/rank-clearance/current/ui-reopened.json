@@ -1,0 +1,176 @@
+{
+  "schema": "semantic-canvas/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "Conditional uses with an unresolved computation",
+    "nodes": [
+      {
+        "id": "root",
+        "parent": null,
+        "kind": "composite",
+        "label": "root",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+            "line": 4,
+            "expression": "Synthetic geometry node root"
+          }
+        ],
+        "evidence_status": "static-only"
+      },
+      {
+        "id": "x",
+        "parent": "root",
+        "kind": "interface",
+        "label": "x",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+            "line": 4,
+            "expression": "Synthetic geometry node x"
+          }
+        ],
+        "evidence_status": "static-only"
+      },
+      {
+        "id": "a",
+        "parent": "root",
+        "kind": "compute",
+        "label": "a",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+            "line": 4,
+            "expression": "Synthetic geometry node a"
+          }
+        ],
+        "evidence_status": "static-only"
+      },
+      {
+        "id": "b",
+        "parent": "root",
+        "kind": "compute",
+        "label": "b",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+            "line": 4,
+            "expression": "Synthetic geometry node b"
+          }
+        ],
+        "evidence_status": "static-only"
+      },
+      {
+        "id": "unknown",
+        "parent": "root",
+        "kind": "opaque",
+        "label": "Foreign call",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+            "line": 4,
+            "expression": "Synthetic geometry node unknown"
+          }
+        ],
+        "evidence_status": "static-only"
+      },
+      {
+        "id": "result",
+        "parent": "root",
+        "kind": "compute",
+        "label": "Result",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+            "line": 4,
+            "expression": "Synthetic geometry node result"
+          }
+        ],
+        "evidence_status": "static-only"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e0",
+        "source": "x",
+        "target": "a",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "kind": "data",
+        "evidence": "source-dependency"
+      },
+      {
+        "id": "e1",
+        "source": "a",
+        "target": "b",
+        "source_port": "out",
+        "target_port": "arg:1",
+        "kind": "data",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "choice",
+          "outcome": "1"
+        }
+      },
+      {
+        "id": "e2",
+        "source": "a",
+        "target": "b",
+        "source_port": "out",
+        "target_port": "arg:2",
+        "kind": "data",
+        "evidence": "source-dependency",
+        "condition": {
+          "branch": "choice",
+          "outcome": "2"
+        }
+      },
+      {
+        "id": "e3",
+        "source": "b",
+        "target": "unknown",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "kind": "data",
+        "evidence": "source-dependency"
+      },
+      {
+        "id": "e4",
+        "source": "unknown",
+        "target": "result",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "kind": "data",
+        "evidence": "source-dependency"
+      }
+    ],
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+      "basis": "hand-authored geometry fixture, not extracted model facts"
+    },
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/rank-clearance-fixtures.cjs",
+        "sha256": "801b9ec5ebda9832268399eafa650a8372bdff4ac914cb3609effb8afbc5f464"
+      }
+    ],
+    "ir_digest": "b46dac501fd801993db38f5da0e32f7794a91e317e1186c550a7dde7f0a41e18"
+  },
+  "state": {
+    "open": [
+      "root"
+    ],
+    "offsets": {},
+    "mode": "source",
+    "view": "publication",
+    "paperMedium": "canvas",
+    "paperGranularity": "roles",
+    "paperAuto": false,
+    "paperFrameView": "source",
+    "paperContextLanes": false,
+    "paperBranchColumns": false,
+    "paperFlowAlignment": false,
+    "paperRankStrategy": "earliest",
+    "foldSerial": false
+  }
+}

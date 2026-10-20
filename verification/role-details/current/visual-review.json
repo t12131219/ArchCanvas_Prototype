@@ -1,0 +1,43 @@
+{
+  "schema": "role-details-visual-review/1",
+  "render_report_sha256": "c05928d11cc3e20d44261cc212d697c21256c62d5a4841428a23582f4cb61626",
+  "screenshots": [
+    {
+      "file": "comparison.png",
+      "sha256": "56be575c9bd6d693ac47a534fef2e57fc0117bc7edc81bb200227985786c7596"
+    },
+    {
+      "file": "transformer-comparison.png",
+      "sha256": "4b5b88103487a440e68778a42fcd11407d523c0108408519952294bb197d6501"
+    },
+    {
+      "file": "local-panel-reference.png",
+      "sha256": "84de99efd3aac07b93b01b98a9ed5d4dcd880ad0c414ffa5c0832a47ebce9f4b"
+    },
+    {
+      "file": "ui-selected.png",
+      "sha256": "ffb2f19f0a9b7548343f73cdc10c8f25618d406a437937ea7865b69164671d9b"
+    }
+  ],
+  "observations": [
+    "Local certificate roles form an intermediate view; unchanged outer/sibling modules retain their own proof scopes.",
+    "Original source detail remains below the selected semantic state. Default, selected and deeper views are visibly distinct.",
+    "Whole-graph Transformer refinements become substantially taller and sparser; they fail area limits, and the fully selected case also has path overlaps. These are not accepted convergence results.",
+    "The local Transformer panel retains masks, conditional alternatives, guards and exact operand roles; it is readable locally but does not match the reference whole-graph organization.",
+    "Native SVG text checks resolve thumbnail subpixel measurement artifacts; the original thumbnail measurements are retained separately."
+  ],
+  "failed_geometry": {
+    "transformer-local": [
+      "canvas-area-budget"
+    ],
+    "transformer-selected": [
+      "canvas-area-budget",
+      "edge-path-overlap"
+    ]
+  },
+  "reference": {
+    "file": "verification/generic-convergence/current/reference-expanded.svg",
+    "sha256": "8b8f5353642c39051b97774ef23bcf19debe02191b7c0bd83c76898fa322798c"
+  },
+  "goal_complete": false
+}

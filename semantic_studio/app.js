@@ -35,6 +35,13 @@
     if(n.contract_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>认证角色阶段与原始绑定</summary><p>只折叠已认证的相加与后置归一化；分支计算保留在外部。双击可展开原始操作。</p><pre>'+esc(JSON.stringify(n.contract_stage,null,2))+'</pre></details>');
     if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');
     if(n.semantic_contracts?.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>语义契约与证据范围</summary><pre>'+esc(JSON.stringify((ir.semantic_contracts||[]).filter(c=>n.semantic_contracts.includes(c.id)),null,2))+'</pre></details>');
+    if(state.view==='publication'&&state.paperMedium==='canvas'&&state.paperGranularity==='roles'&&n.kind==='composite'&&n.semantic_contracts?.length){
+      const requested=Array.isArray(state.paperRoleDetails)?state.paperRoleDetails:[],active=requested.includes(id);
+      const button=document.createElement('button');button.textContent=active?'收起本区域的角色细化':'展开本区域已证明的角色';
+      button.onclick=()=>{snapshot();state.paperRoleDetails=active?requested.filter(node=>node!==id):[...requested,id];state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
+      const request=projection.publication?.role_frontier?.detail_requests?.find(r=>r.node===id);
+      if(request)$('details').insertAdjacentHTML('beforeend','<details open><summary>本区域的角色细化状态</summary><pre>'+esc(JSON.stringify(request,null,2))+'</pre></details>');
+    }
     const relations=projection.architecture?.relation_graph?.relations||[],receipts=projection.constraint_receipts||[];
     const local=relations.filter(r=>r.node===id||r.members.includes(id));
     if(local.length)$('details').insertAdjacentHTML('beforeend','<details><summary>局部关系与未证明属性</summary><pre>'+esc(JSON.stringify(local,null,2))+'</pre></details>');

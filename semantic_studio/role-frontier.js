@@ -2,17 +2,37 @@
  * model families nor substitutes computations for their internal paths. */
 (function(root){
   'use strict';
-  const VERSION='role-frontier/1';
-  function compile({plan,focus}){
+  const VERSION='role-frontier/2';
+  function compile({plan,focus,details=[]}){
     const nodes=plan.nodes.map(n=>({...n})),by=new Map(nodes.map(n=>[n.id,n])),certs=new Map((plan.semantic_contracts||[]).map(c=>[c.id,c]));
     const within=(id,owner)=>{const seen=new Set();while(id&&!seen.has(id)){if(id===owner)return true;seen.add(id);id=by.get(id)?.parent;}return false;};
     const attached=n=>(n.semantic_contracts||[]).map(id=>certs.get(id)).filter(c=>c?.node===n.id);
     const candidates=new Set(nodes.filter(n=>n.kind==='composite'&&within(n.id,focus)&&attached(n).length).map(n=>n.id));
     const owners=new Set([...candidates].filter(id=>{let at=by.get(id)?.parent;while(at&&within(at,focus)){if(candidates.has(at))return false;at=by.get(at)?.parent;}return true;}));
     const open=new Set(),records=[],modules=[];
-    const protectedFrame=n=>n.contract_stage||n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.observed_calls||
+    const protectedFrame=n=>n.contract_stage||n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.observed_calls||n.evidence_status==='runtime-only'||n.runtime_evidence?.length||
       ['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant','serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type);
     const ownerOf=id=>{while(id){if(owners.has(id))return id;id=by.get(id)?.parent;}return null;};
+    // An explicit local refinement may cross ordinary source helpers, but
+    // never a control/effect/identity boundary or an unselected certificate.
+    // Ancestors are processed first so selecting two nested boundaries works
+    // independently of the order stored in the document.
+    const depth=id=>{let d=0;while(by.get(id)?.parent){d++;id=by.get(id).parent;}return d;};
+    const detailRequests=[];
+    for(const node of [...new Set(Array.isArray(details)?details.filter(id=>typeof id==='string'):[])].sort((a,b)=>depth(a)-depth(b)||a.localeCompare(b))){
+      const n=by.get(node),record={node,selection:'deferred',reason:null};detailRequests.push(record);
+      if(!candidates.has(node)){record.reason='No attached composite certificate in the current focus.';continue;}
+      if(protectedFrame(n)){record.reason='A control, effect, identity, observation or repetition boundary remains protected.';continue;}
+      if(owners.has(node)){record.selection='selected';record.reason='Already a local role owner.';continue;}
+      const chain=[];let at=node;
+      while(at&&!owners.has(at)){chain.unshift(at);at=by.get(at)?.parent;}
+      if(!at){record.reason='No reachable local role owner.';continue;}
+      if(protectedFrame(by.get(at))){record.boundary=at;record.reason='The enclosing local role owner is protected.';continue;}
+      const stop=chain.find(id=>protectedFrame(by.get(id))||(id!==node&&attached(by.get(id)).length));
+      if(stop){record.boundary=stop;record.reason='An intervening protected or unselected certified boundary limits this request.';continue;}
+      owners.add(node);for(const id of chain.slice(0,-1))open.add(id);open.add(at);
+      record.selection='selected';record.reason='Explicit local role refinement; independent certificate scope retained.';
+    }
     function references(value,path=[]){
       if(typeof value==='string'&&by.has(value))return [{path:path.join('.'),node:value}];
       if(value&&typeof value==='object')return Object.entries(value).flatMap(([key,v])=>references(v,[...path,key]));
@@ -35,11 +55,13 @@
       if(local.length&&!protectedFrame(n))open.add(owner);
       modules.push({node:owner,certificates:attached(n).map(c=>c.id),roles:local.length,scope:'one local role layer; nested certified/control/unknown boundaries retain independent detail'});
     }
-    return {plan:{...plan,nodes},open,owners,ownerOf,records,modules};
+    return {plan:{...plan,nodes},open,owners,ownerOf,records,modules,detailRequests};
   }
   function receipt(frontier,graph){
     const attached=new Set(graph.node_accounting.attached),contracted=new Set(graph.node_accounting.contracted);
-    return {rule_version:VERSION,modules:frontier.modules.map(m=>({...m,expanded:!!graph.positions.get(m.node)?.expanded})),roles:frontier.records.map(r=>{
+    return {rule_version:VERSION,detail_requests:frontier.detailRequests.map(r=>({...r,status:r.selection==='selected'&&graph.positions.get(r.node)?.expanded?'expanded':'deferred',
+      ...(r.selection==='selected'&&!graph.positions.get(r.node)?.expanded?{reason:'The selected role detail remains folded by visibility, explicit open state or local budget.'}:{})})),
+      modules:frontier.modules.map(m=>({...m,expanded:!!graph.positions.get(m.node)?.expanded})),roles:frontier.records.map(r=>{
       const visible=graph.positions.has(r.frontier_node),representative=graph.representatives[r.frontier_node]||null;
       return {...r,visible_node:visible?r.frontier_node:representative,status:visible?(r.node===r.frontier_node?'exposed':'boundary'):
         attached.has(r.frontier_node)?'attached':contracted.has(r.frontier_node)?'contracted':representative?'folded':'outside'};

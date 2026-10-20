@@ -32,6 +32,7 @@
       const button=document.createElement('button');button.textContent='恢复源码外框';button.onclick=()=>{snapshot();state.paperFrameView='source';state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
     }
     if(n.content_inventory)$('details').insertAdjacentHTML('afterbegin','<h3>摘要内容</h3><p>按当前语义单元计数，包含操作、调用和已确认的局部组合；不表示重复堆叠、执行并发或参数共享。</p>'+n.content_inventory.terms.map(t=>'<div class="source"><strong>'+esc(t.label)+' × '+t.count+'</strong><br>'+t.units.map(id=>esc(projection.idx.nodes.get(id)?.label||id)).join(' · ')+'</div>').join(''));
+    if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');
     if(n.semantic_contracts?.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>语义契约与证据范围</summary><pre>'+esc(JSON.stringify((ir.semantic_contracts||[]).filter(c=>n.semantic_contracts.includes(c.id)),null,2))+'</pre></details>');
     const relations=projection.architecture?.relation_graph?.relations||[],receipts=projection.constraint_receipts||[];
     const local=relations.filter(r=>r.node===id||r.members.includes(id));

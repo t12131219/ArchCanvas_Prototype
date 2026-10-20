@@ -1,0 +1,30 @@
+{
+  "schema": "local-pipelines-visual-review/1",
+  "render_report_sha256": "8b0d82ccc1c75279c9966b57c55a3a73a68d43f65650837c27564c467831401c",
+  "goal_complete": false,
+  "review_method": "Actual Codex in-app browser SVG screenshots and DOM text bounds; no diagram regenerated for screenshots.",
+  "artifacts_sha256": {
+    "pipeline-comparison.png": "44699eba6f77d7e06333e158b9987aa2ca26b4c0924f77b4380de0cf94b9485d",
+    "interrupted-comparison.png": "6799c29437b6860d4c8c3375d2df023861637fbcef985c9c06a1635a32b9338a",
+    "escaping-comparison.png": "37717d52b49bfafe15997a95e739be542675b571561ea9f80dbd8815ca75f39f",
+    "transformer-path-comparison.png": "1be3dbe1e75f888600d3c58d4908616a3464b556f68edc84284f9d3e44c34c1e",
+    "reference-comparison.png": "12593d7d0c4f48431f65138adb39cb8d67869dd2270b1efbe0111fd04bc99be0",
+    "PipelineMosaic-pipeline-comparison.html": "1de83351c25d9c2c04717417ba9c82072e5df7f037633069c910ae5c66d189bc",
+    "InterruptedPipeline-pipeline-comparison.html": "3a8cb5bd1df96310614f50a208432fabd7584a2b56bbc73471f6a5cbd413eb3b",
+    "EscapingPipeline-pipeline-comparison.html": "46d7dd050602a24229561b992dfaa769fa6815f4a39e1ac98958a151afd98f02",
+    "branch-visual.html": "88466f79aa15ccaf473dccc5ad3e8ee577fe7e16f187579792d3b0eddb548f3d",
+    "transformer-comparison.html": "4e9346813771ebcaac1b578f105acb2ce5fac1c80e8ed018e2cd176a8878e063"
+  },
+  "observations": [
+    "Unfamiliar folded helpers show exact modeled operator paths, while inputs, merge and return retain their geometry.",
+    "Expanded source helper exposes original relu/sin/tanh operations; export/save/reopen/refold preserves canonical bindings.",
+    "Inserted unknown call prevents only the affected helper summary; the unaffected helper retains its explanation.",
+    "Escaping intermediate result prevents a misleading single-output path summary; both outside connections remain visible.",
+    "Transformer path columns retain nine real source helper boundaries with reshape/transpose/copy summaries.",
+    "Reference comparison still shows a substantially denser and taller generic frontier; no reference-role correspondence is claimed."
+  ],
+  "tradeoffs": [
+    "Transformer height increases 28px for wrapped operator descriptions, with unchanged width, visible nodes/edges and crossing count.",
+    "Collapsed source boundaries with unknown or escaping results keep their existing function summary; adaptive selection of their internal detail remains future work."
+  ]
+}

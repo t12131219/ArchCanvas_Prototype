@@ -22,6 +22,7 @@ COMMANDS = {
     'canvas-medium': ['node', 'tests/canvas-medium.test.cjs'],
     'role-frontier': ['node', 'tests/role-frontier.test.cjs'],
     'branch-columns': ['node', 'tests/branch-columns.test.cjs'],
+    'local-pipelines': ['node', 'tests/local-pipelines.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],

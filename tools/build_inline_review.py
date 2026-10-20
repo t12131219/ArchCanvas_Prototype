@@ -17,6 +17,8 @@ def sha(file):
 
 def main():
     global OUT
+    if '--pipelines' in sys.argv:
+        sys.argv.append('--flows')
     if '--flows' in sys.argv:
         sys.argv.append('--branches')
     if '--branches' in sys.argv:
@@ -35,6 +37,8 @@ def main():
         OUT = ROOT / 'verification/branch-columns/current'
     if '--flows' in sys.argv:
         OUT = ROOT / 'verification/flow-entries/current'
+    if '--pipelines' in sys.argv:
+        OUT = ROOT / 'verification/local-pipelines/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -85,6 +89,8 @@ def main():
         head = head.replace('本轮比较按真实跨边生成的侧端口与通道候选，只有实际几何改善才采用；模块与更深的展开能力保留', '本轮按真实依赖路径建立分支列对应；仅已展开的纯展示分带转为可恢复附注。未知及条件节点独立保留')
     if '--flows' in sys.argv:
         head = head.replace('本轮按真实依赖路径建立分支列对应；仅已展开的纯展示分带转为可恢复附注。未知及条件节点独立保留', '本轮按独立入口组织相邻计算区域，真实上下文箭头可以向上连接。分列、已实现通道及更细展开能力保留')
+    if '--pipelines' in sys.argv:
+        head = head.replace('本轮按独立入口组织相邻计算区域，真实上下文箭头可以向上连接。分列、已实现通道及更细展开能力保留', '本轮用真实局部依赖解释折叠源码区域，保留原始操作数与继续展开能力。未知、条件及中间结果外流区域保持原边界')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -161,6 +167,12 @@ def main():
             for key in [name + '-before', name + '-roles']:
                 view += card(rows[key])
             (OUT / (name + '-flow-comparison.html')).write_text(view + '</div></html>')
+    if '--pipelines' in sys.argv:
+        for name in ['PipelineMosaic','InterruptedPipeline','EscapingPipeline']:
+            view = simple + '<h1>折叠区域的局部依赖路径：' + name + '</h1><p>摘要说明已提取操作的依赖路径，未知与外流结果保留边界；继续展开仍显示原始计算。</p><div class="cards">'
+            for key in [name+'-before',name+'-roles']+([name+'-opened'] if name=='PipelineMosaic' else []):
+                view += card(rows[key])
+            (OUT / (name+'-pipeline-comparison.html')).write_text(view+'</div></html>')
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

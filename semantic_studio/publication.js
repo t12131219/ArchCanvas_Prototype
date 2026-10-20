@@ -85,7 +85,7 @@
         expression:n.source?.[0]?.expression||n.label,dependencies:(ins.get(id)||[]).map(copy),uses:(uses.get(id)||[]).map(copy),
         value_evaluation:'not-performed',source:copy(n.source||[])});
     }
-    return {bindings,metadata,ins,uses,configurationArithmetic};
+    return {bindings,metadata,ins,uses,configurationArithmetic,configurationUses:new Set(ir.edges.filter(configUse).map(e=>e.id))};
   }
   function value(id,port='out',bindings){const seen=new Set();while(bindings.has(id)&&!seen.has(id)){seen.add(id);const e=bindings.get(id);id=e.source;const outer=e.source_port??'out';port=outer==='out'?port:port==='out'?outer:outer+'.'+port;}return {id,port};}
   function descendants(id,children){const all=[],todo=[...(children.get(id)||[])];for(let i=0;i<todo.length;i++){all.push(todo[i]);todo.push(...children.get(todo[i])||[]);}return all;}
@@ -218,6 +218,7 @@
       title=role;if(operation)caption=operation+(caption?' · '+caption:'');
       else if(n.contract_roles)caption=n.label;
     }
+    if(n.local_pipeline&&!n.local_pipeline_expanded){title=n.local_pipeline.operations.map(o=>o.label).join(' → ');caption='Dependency path';}
     const maxWidth=n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
     const lines=wrap(title,n.kind==='composite'?maxWidth-20:maxWidth,font),captions=caption?wrap(caption,maxWidth,13):[];
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
@@ -609,7 +610,10 @@
     const expressionEngine=roleFrontier?(root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null)):null;
     const expressions=expressionEngine?.compile({plan:focused.plan,focus});
     const frontierScopes=new Set(roleFrontier?.owners||[]);
-    const idx=index(focused.plan),pol=policy(ir,focus,focused.inside),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
+    const pol=policy(ir,focus,focused.inside),pipelineEngine=canvas&&granularity==='roles'&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
+    const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol});
+    if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id)}:n);
+    const idx=index(focused.plan),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
     if(structuralGroup)decorate(idx.nodes.get(focus),idx);
     // Input/output interfaces of a focused panel are real, named boundaries.
     for(const port of focused.boundary)if(!port.presentation)pol.bindings.delete(port.port_node);
@@ -689,6 +693,7 @@
     // A closed module owns its interface. Contracting that interface would
     // expose each internal consumer as another, misleading boundary arrow.
     for(const n of ir.nodes)if(n.kind==='interface'&&!open.includes(n.parent))pol.bindings.delete(n.id);
+    if(pipelines)for(const id of pipelines.keys()){const n=idx.nodes.get(id);n.local_pipeline_expanded=open.includes(id);decorate(n,idx);}
     let projected=E.project(ir,{...state,view:'architecture',details:false,open},focused.plan,options);
     const edgePairs=new Map(),labeledPairs=new Set();
     for(const e of projected.edges){const key=JSON.stringify([e.source,e.target]);edgePairs.set(key,(edgePairs.get(key)||0)+1);if(e.condition||e.bundle_members)labeledPairs.add(key);}
@@ -727,6 +732,7 @@
       projected.publication.inline_sequences=base.publication?.inline_sequences||null;
       projected.publication.frame_ownership=projected.frame_ownership||[];
       if(roleFrontier)projected.publication.role_frontier=roleEngine.receipt(roleFrontier,projected);
+      if(pipelines)projected.publication.local_pipelines=pipelineEngine.receipt(pipelines,projected);
       if(expressions)projected.publication.local_expressions=expressionEngine.receipt(expressions,projected);
       projected.publication.canvas_limits={width_px:limit('width_px',8192,512,16384),height_px:limit('height_px',16384,512,32768),
         area_px2:limit('area_px2',16777216,262144,67108864),nodes:limit('nodes',512,16,2048),edges:limit('edges',2048,16,8192)};

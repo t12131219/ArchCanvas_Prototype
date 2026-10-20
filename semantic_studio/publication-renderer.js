@@ -17,7 +17,7 @@
   function nodeTitle(n,idx){
     const uses=n.boundary_uses||[];
     const contents=n.content_inventory;
-    return [n.label,...(n.role_annotations||[]).map(r=>'Certified role: '+r.role+' · '+r.certificate+' · '+r.scope),...(n.frame_ownership||[]).map(r=>'Source ownership: '+r.label+' ['+r.node+'] · '+r.kind+' · '+r.scope),...(n.source_label?['Source label: '+n.source_label]:[]),
+    return [n.label,...(n.local_pipeline?['Local dependency path: '+n.local_pipeline.operations.map(o=>o.label).join(' → '),n.local_pipeline.scope]:[]),...(n.role_annotations||[]).map(r=>'Certified role: '+r.role+' · '+r.certificate+' · '+r.scope),...(n.frame_ownership||[]).map(r=>'Source ownership: '+r.label+' ['+r.node+'] · '+r.kind+' · '+r.scope),...(n.source_label?['Source label: '+n.source_label]:[]),
       ...(n.contract_evidence||[]).flatMap(c=>[c.rule+': '+c.scope,...c.proof,'Not asserted: '+c.not_asserted.join('; ')]),
       ...(n.observed_calls?[`${n.observed_calls.observations.length} observed calls; ${n.observed_calls.basis}`]:[]),
       ...(contents?['Contents of extracted units (unordered; parameter sharing not asserted):',

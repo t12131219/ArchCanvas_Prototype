@@ -73,8 +73,95 @@ def audit_atlas_coverage(manifest, panel, document, nodes, paths):
         assert 'sourcepositions' + ','.join(map(str, receipt['source_positions'])) in text
 
 
+def audit_pipeline_summaries(document, row, nodes):
+    from semantic_adapter.symbolic_values import derive
+    receipt = document['publication'].get('local_pipelines')
+    assert receipt == row.get('local_pipelines')
+    if not receipt:
+        return
+    canonical = {n['id']: n for n in document['ir']['nodes']}
+    planned = {n['id']: n for n in document['architecture']['nodes']}
+    edges = document['ir']['edges']
+    facts = derive(document['ir']['nodes'], edges)
+    ins = {}
+    for e in edges:
+        ins.setdefault(e['target'], []).append(e)
+
+    def resolve(node, slot='out'):
+        seen = set()
+        while node not in seen:
+            seen.add(node)
+            n, incoming = canonical[node], ins.get(node, [])
+            if n['kind'] not in ['interface', 'value-alias'] or n.get('operator') or len(incoming) != 1 or incoming[0].get('condition'):
+                break
+            e = incoming[0]
+            if e['kind'] not in ['data', 'alias', 'interface-binding']:
+                break
+            # Match publication.policy/local-pipelines resolution exactly.
+            # Interface terminals preserve the producer's output port; only a
+            # value alias with an explicit slot rewrites the port.  ``dict.get``
+            # cannot be used directly because extracted aliases commonly carry
+            # an explicit JSON null slot.
+            outer = (n.get('slot') if n['kind'] == 'value-alias' and n.get('slot') is not None
+                     else e.get('source_port', 'out'))
+            slot = slot if outer == 'out' else outer if slot == 'out' else outer + '.' + slot
+            node = e['source']
+        return node, slot
+
+    for r in receipt['rows']:
+        node = r['node']
+        assert r['visible_node'] == node and node in nodes
+        assert planned[node]['local_pipeline'] == {k: v for k, v in r.items() if k not in ['status', 'visible_node', 'detailed_operations_exposed']}
+        members = {node}
+        changed = True
+        while changed:
+            added = {n['id'] for n in planned.values() if n.get('parent') in members} - members
+            members.update(added)
+            changed = bool(added)
+        assert members == set(r['canonical_members'])
+        for id in members:
+            n = planned[id]
+            assert n['kind'] not in ['opaque', 'control'] and n.get('evidence_status') != 'runtime-only'
+            assert not any(n.get(k) for k in ['condition', 'mutable', 'identity_display', 'observed_calls', 'semantic_contracts', 'repeat_contract', 'iteration', 'runtime_evidence'])
+        cuts = [e for e in edges if (e['source'] in members) != (e['target'] in members)]
+        assert cuts == r['cuts']
+        ordered = [o['node'] for o in r['operations']]
+        assert 2 <= len(ordered) <= 6 and len(ordered) == len(set(ordered))
+        for a in r['auxiliary_reads']:
+            assert facts[a['node']] == a['fact'] and a['fact']['kind'] == 'tensor-attribute'
+        expected = [e for e in edges if e['target'] in ordered]
+        assert [e['id'] for e in expected] == [b['edge'] for b in r['bindings']]
+        adjacency = set()
+        for b, e in zip(r['bindings'], expected):
+            assert (b['producer'], b['source_port']) == resolve(e['source'], e.get('source_port', 'out'))
+            assert (b['target'], b['target_port']) == (e['target'], e['target_port'])
+            if b['producer'] in ordered:
+                adjacency.add((b['producer'], b['target']))
+        assert adjacency == set(zip(ordered, ordered[1:]))
+        for e in cuts:
+            if e['source'] in members:
+                assert resolve(e['source'], e.get('source_port', 'out'))[0] == ordered[-1]
+        for o in r['operations']:
+            n = planned[o['node']]
+            assert o['operator'] == n.get('operator') and o['framework_type'] == n.get('framework_type')
+            label = n.get('framework_type', '').split('.')[-1] if n.get('framework_type') else n['function_target'].split('.')[-1] if n.get('source_framework_function') and n['source_framework_function'] == n.get('function_target') else n['operator']
+            assert o['label'] == label
+        measured = next(n for n in document['layout']['nodes'] if n['id'] == node)
+        assert (r['status'] == 'expanded') == measured['expanded']
+        assert r['detailed_operations_exposed'] == all(id in nodes for id in ordered)
+        text = re.sub(r'\s', '', ''.join(''.join(e.itertext()) for e in nodes[node] if e.tag.endswith('text')))
+        if r['status'] == 'summary':
+            assert '→'.join(o['label'] for o in r['operations']).replace(' ', '') in text
+            assert not r['detailed_operations_exposed']
+            assert all(c['status'] != 'fulfilled' for c in document['expression_coverage'] if c['goal'] in {'goal:node:' + id for id in ordered})
+        title = ''.join(nodes[node].find('{http://www.w3.org/2000/svg}title').itertext())
+        assert planned[node]['label'] in title and r['scope'] in title
+
+
 def main():
     global OUT
+    if '--pipelines' in sys.argv:
+        sys.argv.append('--flows')
     if '--flows' in sys.argv:
         sys.argv.append('--branches')
     if '--branches' in sys.argv:
@@ -99,6 +186,8 @@ def main():
         OUT = ROOT / 'verification/branch-columns/current'
     if '--flows' in sys.argv:
         OUT = ROOT / 'verification/flow-entries/current'
+    if '--pipelines' in sys.argv:
+        OUT = ROOT / 'verification/local-pipelines/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -197,6 +286,8 @@ def main():
                 assert set(values) == {v['id'] for v in document['ir'][key]}
         nodes = {e.attrib['data-node-id']: e for e in tree.iter() if 'data-node-id' in e.attrib}
         paths = {e.attrib['data-edge-id']: e for e in tree.iter() if 'data-edge-id' in e.attrib}
+        if '--pipelines' in sys.argv:
+            audit_pipeline_summaries(document, row, nodes)
         if '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
             owners = document['layout'].get('frame_ownership', [])
             assert owners == row['frame_ownership'] == document['publication'].get('frame_ownership', [])

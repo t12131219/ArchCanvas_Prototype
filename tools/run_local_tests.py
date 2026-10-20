@@ -25,6 +25,7 @@ COMMANDS = {
     'dimension-paths': ['node', 'tests/dimension-paths.test.cjs'],
     'contract-stages': ['node', 'tests/contract-stages.test.cjs'],
     'local-pipelines': ['node', 'tests/local-pipelines.test.cjs'],
+    'composed-paths': ['node', 'tests/composed-paths.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],

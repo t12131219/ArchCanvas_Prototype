@@ -1,0 +1,1 @@
+Initial development extraction, retained as rejected evidence: source inheritance is not expanded by the current static analyzer. These inputs cannot validate intended nested paths. Current fixtures define their helpers and forward methods explicitly.

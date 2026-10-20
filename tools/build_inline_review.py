@@ -17,6 +17,8 @@ def sha(file):
 
 def main():
     global OUT
+    if '--composed' in sys.argv:
+        sys.argv.append('--dimensions')
     if '--dimensions' in sys.argv:
         sys.argv.append('--stability')
     if '--stability' in sys.argv:
@@ -51,6 +53,8 @@ def main():
         OUT = ROOT / 'verification/stage-stability/current'
     if '--dimensions' in sys.argv:
         OUT = ROOT / 'verification/dimension-paths/current'
+    if '--composed' in sys.argv:
+        OUT = ROOT / 'verification/composed-paths/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -109,6 +113,8 @@ def main():
         head = head.replace('本轮将已认证的相加与后置归一化角色形成可展开阶段，原始绑定保留；更细展开的整图布局仍有退化', '本轮固定证据粒度后再生成语义阶段，并为手动展开保留可测量的布局优化；实际移动的位置和显式布局设置保留')
     if '--dimensions' in sys.argv:
         head = head.replace('本轮固定证据粒度后再生成语义阶段，并为手动展开保留可测量的布局优化；实际移动的位置和显式布局设置保留', '本轮用可追踪的维度依赖解释配置路径；已证明的局部源码路径保留语义折叠状态，特征、条件及未知路径仍独立显示')
+    if '--composed' in sys.argv:
+        head = head.replace('本轮用可追踪的维度依赖解释配置路径；已证明的局部源码路径保留语义折叠状态，特征、条件及未知路径仍独立显示', '本轮使跨 helper 的连续计算保留统一的路径说明；各源码边界与原始绑定可检查，且可逐层展开')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -238,6 +244,16 @@ def main():
             viewport = [x, y, max(n['x'] + n['w'] for n in geometry) + 32 - x, max(n['y'] + n['h'] for n in geometry) + 32 - y]
             view += f'<article><h2>{key}</h2><p>整图 {row["nodes"]} 图元 / {row["edges"]} 边 · {row["quality"]["line_geometry"]["crossings"]} 处交叉</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
         (OUT / 'dimension-helper-comparison.html').write_text(view + '</div></html>')
+    if '--composed' in sys.argv:
+        for name in ['ComposedWeave', 'FlatWeave', 'EscapingComposition', 'LateComposition', 'UnknownComposition', 'ConditionalComposition', 'SharedComposition']:
+            view = simple + '<h1>跨 helper 路径与保留边界：' + name + '</h1><p>左：冻结实现；中：本轮路径摘要；右（若有）：打开源码 helper。每个原始切边和来源保留，不宣称融合、纯度或执行顺序。</p><div class="cards">'
+            for key in [name + '-before', name + '-roles'] + ([name + '-opened'] if name == 'ComposedWeave' else []):
+                view += card(rows[key])
+            (OUT / (name + '-composed-comparison.html')).write_text(view + '</div></html>')
+        view = simple + '<h1>源码重构与继续展开</h1><p>左：平铺写法；中：同计算拆成 helper 后的默认语义状态；右：继续打开 helper 内原始操作。只比较局部依赖说明，不证明输出数值相等。</p><div class="cards">'
+        for key in ['FlatWeave-roles', 'ComposedWeave-roles', 'ComposedWeave-detail']:
+            view += card(rows[key])
+        (OUT / 'refactoring-comparison.html').write_text(view + '</div></html>')
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

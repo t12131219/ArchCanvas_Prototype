@@ -1,0 +1,826 @@
+{
+  "schema": "semantic-canvas/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "ComposedWeave",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+      "class": "ComposedWeave",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+        "cell": null,
+        "sha256": "ac7b6664549093f22039d29634e63382ae9195852e03693a9163240e9086cbcf",
+        "unit_sha256": "ac7b6664549093f22039d29634e63382ae9195852e03693a9163240e9086cbcf"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/16:4:composite:1",
+        "kind": "composite",
+        "label": "ComposedWeave",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 16,
+            "end_line": 17,
+            "column": 4,
+            "end_column": 42,
+            "symbol": "ComposedWeave.forward",
+            "expression": "def forward(self, x: Tensor, y: Tensor):\n    return self.path(x) + torch.cos(y)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "ComposedWeave"
+      },
+      {
+        "id": "model/16:4:composite:1/16:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/16:4:composite:1",
+        "source_parent": "model/16:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 22,
+            "end_column": 31,
+            "symbol": "ComposedWeave.forward",
+            "expression": "x: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/16:4:composite:1/16:33:interface:1",
+        "kind": "interface",
+        "label": "y",
+        "parent": "model/16:4:composite:1",
+        "source_parent": "model/16:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 16,
+            "end_line": 16,
+            "column": 33,
+            "end_column": 42,
+            "symbol": "ComposedWeave.forward",
+            "expression": "y: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "y",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/16:4:composite:1/17:15:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/16:4:composite:1",
+        "source_parent": "model/16:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 15,
+            "end_column": 42,
+            "symbol": "ComposedWeave.forward",
+            "expression": "self.path(x) + torch.cos(y)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "syntax": {
+          "type": "BinOp",
+          "fields": {
+            "left": {
+              "operand": ".left"
+            },
+            "op": {
+              "type": "Add",
+              "fields": {}
+            },
+            "right": {
+              "operand": ".right"
+            }
+          }
+        }
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1",
+        "kind": "composite",
+        "label": "self.path",
+        "parent": "model/16:4:composite:1",
+        "source_parent": "model/16:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 13,
+            "end_line": 14,
+            "column": 4,
+            "end_column": 45,
+            "symbol": "path",
+            "expression": "def path(self, value: Tensor):\n    return self.second(self.first(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-function",
+        "module_path": "",
+        "constructor": {},
+        "source_class": null
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/13:19:interface:1",
+        "kind": "interface",
+        "label": "value",
+        "parent": "model/16:4:composite:1/13:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 13,
+            "end_line": 13,
+            "column": 19,
+            "end_column": 32,
+            "symbol": "path",
+            "expression": "value: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "value",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "kind": "composite",
+        "label": "self.first",
+        "parent": "model/16:4:composite:1/13:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 7,
+            "end_line": 8,
+            "column": 4,
+            "end_column": 43,
+            "symbol": "first",
+            "expression": "def first(self, value: Tensor):\n    return torch.sin(torch.relu(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-function",
+        "module_path": "",
+        "constructor": {},
+        "source_class": null
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/7:20:interface:1",
+        "kind": "interface",
+        "label": "value",
+        "parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 7,
+            "end_line": 7,
+            "column": 20,
+            "end_column": 33,
+            "symbol": "first",
+            "expression": "value: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "value",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:25:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 25,
+            "end_column": 42,
+            "symbol": "first",
+            "expression": "torch.relu(value)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "value"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.relu"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:15:compute:1",
+        "kind": "compute",
+        "label": "sin",
+        "parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 15,
+            "end_column": 43,
+            "symbol": "first",
+            "expression": "torch.sin(torch.relu(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "sin",
+        "function_target": "torch.sin",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "torch.relu(value)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.sin"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 8,
+            "end_column": 43,
+            "symbol": "first",
+            "expression": "return torch.sin(torch.relu(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "kind": "composite",
+        "label": "self.second",
+        "parent": "model/16:4:composite:1/13:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 10,
+            "end_line": 11,
+            "column": 4,
+            "end_column": 47,
+            "symbol": "second",
+            "expression": "def second(self, value: Tensor):\n    return torch.sigmoid(torch.tanh(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-function",
+        "module_path": "",
+        "constructor": {},
+        "source_class": null
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/10:21:interface:1",
+        "kind": "interface",
+        "label": "value",
+        "parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 10,
+            "end_line": 10,
+            "column": 21,
+            "end_column": 34,
+            "symbol": "second",
+            "expression": "value: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "value",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:29:compute:1",
+        "kind": "compute",
+        "label": "tanh",
+        "parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 11,
+            "end_line": 11,
+            "column": 29,
+            "end_column": 46,
+            "symbol": "second",
+            "expression": "torch.tanh(value)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "value"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.tanh"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:15:compute:1",
+        "kind": "compute",
+        "label": "sigmoid",
+        "parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 11,
+            "end_line": 11,
+            "column": 15,
+            "end_column": 47,
+            "symbol": "second",
+            "expression": "torch.sigmoid(torch.tanh(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.sigmoid",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "torch.tanh(value)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.sigmoid"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 11,
+            "end_line": 11,
+            "column": 8,
+            "end_column": 47,
+            "symbol": "second",
+            "expression": "return torch.sigmoid(torch.tanh(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/16:4:composite:1/13:4:composite:1/14:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/16:4:composite:1/13:4:composite:1",
+        "source_parent": "model/16:4:composite:1/13:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 14,
+            "end_line": 14,
+            "column": 8,
+            "end_column": 45,
+            "symbol": "path",
+            "expression": "return self.second(self.first(value))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/16:4:composite:1/17:30:compute:1",
+        "kind": "compute",
+        "label": "cos",
+        "parent": "model/16:4:composite:1",
+        "source_parent": "model/16:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 30,
+            "end_column": 42,
+            "symbol": "ComposedWeave.forward",
+            "expression": "torch.cos(y)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "cos",
+        "function_target": "torch.cos",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "y"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.cos"
+      },
+      {
+        "id": "model/16:4:composite:1/17:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/16:4:composite:1",
+        "source_parent": "model/16:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/composed_paths.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 8,
+            "end_column": 42,
+            "symbol": "ComposedWeave.forward",
+            "expression": "return self.path(x) + torch.cos(y)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/16:4:composite:1/16:22:interface:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/13:19:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/13:19:interface:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/7:20:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/7:20:interface:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:25:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:25:compute:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:15:compute:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/7:4:composite:1/8:8:interface:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/10:21:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/10:21:interface:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:29:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:29:compute:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:15:compute:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/10:4:composite:1/11:8:interface:1",
+        "target": "model/16:4:composite:1/13:4:composite:1/14:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/16:4:composite:1/13:4:composite:1/14:8:interface:1",
+        "target": "model/16:4:composite:1/17:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/16:4:composite:1/16:33:interface:1",
+        "target": "model/16:4:composite:1/17:30:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/16:4:composite:1/17:30:compute:1",
+        "target": "model/16:4:composite:1/17:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/16:4:composite:1/17:15:compute:1",
+        "target": "model/16:4:composite:1/17:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      }
+    ],
+    "branches": [],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "6e4955752c5123ba9b37c732afac80b440ae3697762fbd7dc43d3f739793d769"
+  },
+  "state": {
+    "open": [
+      "model/16:4:composite:1"
+    ],
+    "offsets": {},
+    "mode": "source",
+    "view": "publication",
+    "paperMedium": "canvas",
+    "paperGranularity": "roles",
+    "paperAuto": true
+  }
+}

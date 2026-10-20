@@ -119,6 +119,24 @@ def audit_pipeline_summaries(document, row, nodes):
             members.update(added)
             changed = bool(added)
         assert members == set(r['canonical_members'])
+        if r['rule_version'] == 'local-pipelines/2':
+            boundaries = [n for n in planned.values() if n['id'] in members and n['kind'] == 'composite']
+            assert {n['id'] for n in boundaries} == {b['node'] for b in r['source_boundaries']}
+            for boundary in r['source_boundaries']:
+                n = canonical[boundary['node']]
+                assert n['kind'] == 'composite' and planned[n['id']]['semantic_type'] in {'source-function', 'source-module'}
+                assert boundary['parent'] == planned[n['id']].get('parent')
+                assert boundary['source'] == n.get('source', []) and boundary['module_identity'] == n.get('module_identity')
+                inside = {n['id']}
+                changed = True
+                while changed:
+                    added = {c['id'] for c in canonical.values() if c.get('parent') in inside} - inside
+                    inside.update(added)
+                    changed = bool(added)
+                assert inside <= members
+                assert boundary['cuts'] == [e for e in edges if (e['source'] in inside) != (e['target'] in inside)]
+                if n['id'] != node:
+                    assert not any(e['source'] == n['id'] or e['target'] == n['id'] for e in edges)
         for id in members:
             n = planned[id]
             assert n['kind'] not in ['opaque', 'control'] and n.get('evidence_status') != 'runtime-only'
@@ -138,6 +156,12 @@ def audit_pipeline_summaries(document, row, nodes):
             if b['producer'] in ordered:
                 adjacency.add((b['producer'], b['target']))
         assert adjacency == set(zip(ordered, ordered[1:]))
+        if r['rule_version'] == 'local-pipelines/2':
+            outputs = [n for n in planned.values() if n['id'] in members and n.get('parent') == node and n['kind'] == 'interface' and n.get('role') == 'output']
+            assert outputs
+            for output in outputs:
+                es = ins.get(output['id'], [])
+                assert len(es) == 1 and resolve(es[0]['source'], es[0].get('source_port', 'out'))[0] == ordered[-1]
         for e in cuts:
             if e['source'] in members:
                 assert resolve(e['source'], e.get('source_port', 'out'))[0] == ordered[-1]
@@ -231,6 +255,8 @@ def audit_contract_stages(document, row, nodes):
 
 def main():
     global OUT
+    if '--composed' in sys.argv:
+        sys.argv.append('--dimensions')
     if '--dimensions' in sys.argv:
         sys.argv.append('--stability')
     if '--stability' in sys.argv:
@@ -271,6 +297,8 @@ def main():
         OUT = ROOT / 'verification/stage-stability/current'
     if '--dimensions' in sys.argv:
         OUT = ROOT / 'verification/dimension-paths/current'
+    if '--composed' in sys.argv:
+        OUT = ROOT / 'verification/composed-paths/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:

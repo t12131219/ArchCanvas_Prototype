@@ -2,7 +2,7 @@
  * presentation form, not fusion, purity, scheduling or a new family contract. */
 (function(root){
   'use strict';
-  const VERSION='local-pipelines/1',flow=e=>['data','alias','interface-binding'].includes(e.kind);
+  const VERSION='local-pipelines/2',flow=e=>['data','alias','interface-binding'].includes(e.kind);
   function compile({ir,plan,bindings,metadata,configurationUses}){
     const by=new Map(plan.nodes.map(n=>[n.id,n])),canonical=new Map(ir.nodes.map(n=>[n.id,n])),children=new Map(),result=new Map();
     for(const n of plan.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
@@ -12,11 +12,17 @@
     for(const owner of plan.nodes){
       if(!owner.parent||!['source-function','source-module'].includes(owner.semantic_type)||guarded(owner))continue;
       const ids=closure(owner.id),inside=new Set(ids),members=ids.slice(1).map(id=>by.get(id));
-      if(!members.length||members.some(n=>guarded(n)||n.kind==='composite'||!canonical.has(n.id)))continue;
+      if(!members.length||members.some(n=>guarded(n)||!canonical.has(n.id)))continue;
+      // Source refactoring alone need not break a proved value path. Nested
+      // enclosures retain their own original cuts and provenance; a grouping,
+      // certificate, effect or identity boundary cannot authorize composition.
+      const boundaries=[owner,...members.filter(n=>n.kind==='composite')];
+      if(boundaries.slice(1).some(n=>!['source-function','source-module'].includes(n.semantic_type)||
+        ir.edges.some(e=>e.source===n.id||e.target===n.id)))continue;
       const auxiliary=members.filter(n=>n.symbolic_value?.kind==='tensor-attribute'),aux=new Set(auxiliary.map(n=>n.id));
       const steps=members.filter(n=>n.kind==='compute'&&!aux.has(n.id)&&!metadata.has(n.id));
       if(steps.length<2||steps.length>6||steps.some(n=>!n.operator&&!n.framework_type))continue;
-      if(members.some(n=>!['compute','interface','value-alias','parameter','state','buffer'].includes(n.kind)||
+      if(members.some(n=>!['compute','interface','value-alias','parameter','state','buffer','composite'].includes(n.kind)||
         ['state','buffer','parameter'].includes(n.kind)&&!metadata.has(n.id)))continue;
       const active=new Set(steps.map(n=>n.id)),edges=ir.edges.filter(e=>inside.has(e.source)||inside.has(e.target));
       if(edges.some(e=>!flow(e)||e.condition||e.design_route))continue;
@@ -42,7 +48,7 @@
       // a single output-path summary would hide the distinguishing connection.
       const cuts=edges.filter(e=>inside.has(e.source)!==inside.has(e.target));
       if(cuts.some(e=>inside.has(e.source)&&resolve(e.source,e.source_port??'out').node!==ordered.at(-1)))continue;
-      const outputs=members.filter(n=>n.kind==='interface'&&n.role==='output');
+      const outputs=members.filter(n=>n.kind==='interface'&&n.role==='output'&&n.parent===owner.id);
       if(!outputs.length||outputs.some(n=>{const es=ir.edges.filter(e=>e.target===n.id);return es.length!==1||resolve(es[0].source,es[0].source_port??'out').node!==ordered.at(-1);}))continue;
       const operations=ordered.map(id=>{const n=by.get(id),framework=n.source_framework_function&&n.source_framework_function===n.function_target;
         return {node:id,operator:n.operator,framework_type:n.framework_type||null,
@@ -51,7 +57,9 @@
       result.set(owner.id,{rule_version:VERSION,node:owner.id,form:'dependency-path-summary',operations,
         auxiliary_reads:auxiliary.map(n=>({node:n.id,fact:n.symbolic_value})),bindings:traces,cuts:cuts.map(e=>({...e})),
         canonical_members:ids.filter(id=>canonical.has(id)),
-        scope:'Modeled dependency order inside one source boundary; exact operands and auxiliary reads retained. No purity, fusion, execution-order or model-family assertion.'});
+        source_boundaries:boundaries.map(n=>{const members=new Set(closure(n.id));return {node:n.id,parent:n.parent,semantic_type:n.semantic_type,
+          source:n.source||[],module_identity:n.module_identity??null,cuts:ir.edges.filter(e=>members.has(e.source)!==members.has(e.target)).map(e=>({...e}))};}),
+        scope:'Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion.'});
     }
     return result;
   }

@@ -1,0 +1,40 @@
+{
+  "schema": "composed-paths-visual-review/1",
+  "render_report_sha256": "292f045d9505e45e5397c62349257f53d249418414b05aca3c00d6d2b4335c79",
+  "goal_complete": false,
+  "review_method": "Actual Codex in-app browser viewport screenshots, independent source-subtree and exact binding audit, and SVG DOM text bounds for all 103 produced panels.",
+  "artifacts_sha256": {
+    "refactoring-comparison.png": "a5a46eed2799d37d354a99aaf695398ebd376341a7af88ab8b45f82c086df1bf",
+    "refactoring-comparison.html": "b1050040f0c47c6032d9810f9216abb066640253985ab21b7a69cd0a6c96cb42",
+    "reference-comparison.png": "b79ac7c0d5bad2083651b2cc76a6569dd9216e1096e861dfaed1db5b9a21d12b",
+    "transformer-comparison.html": "20891ba96aa9c748305082ade20908735ea210b68bdd7b96cb3bdd3aca806c08",
+    "ComposedWeave-composed-comparison.html": "4e089e664a54e527952999a618c357c1392fffbe216a0386235021413419a49b",
+    "ComposedWeave-comparison.png": "08bf967bedd0d5a8a4d56a8fe3a1379ac563112837cbc93a5a6bd18fadabbd85",
+    "LateComposition-composed-comparison.html": "51abdfdd94ab6d4fe90fafc719cd2afa220c07df608c3cfa01d095e37de6ac4e",
+    "LateComposition-comparison.png": "58f776695159be597cfafa5bc6fce74b5ec0c4be34b1d4a09098d236d575f137",
+    "UnknownComposition-composed-comparison.html": "6d1554e7032001be3a5ed6495b4b1225efafe1ff284b2857df3aba2ad40a3a3b",
+    "UnknownComposition-comparison.png": "5551a64a304c5288c059aa79a87a131e86674a6a7abd32447912ef10f5354a8b",
+    "EscapingComposition-composed-comparison.html": "1befd14be66a82909bce44f24965daafef8dc469d5bbcb7902e2c99a0cd1ed58",
+    "EscapingComposition-comparison.png": "8984f0ad903658a4a23d9b26cda734ce700aca5937d314d4444cda68c1c9cb30",
+    "ConditionalComposition-composed-comparison.html": "e1928285429191ff201b9ad2c4c42087b2f7b52edabcd3eecbee37130674be99",
+    "ConditionalComposition-comparison.png": "af05029385b6aac06aae65e3cf825592a31b8ad75bf84801f19cc003534174b3",
+    "SharedComposition-composed-comparison.html": "5f2e4fc61fa6070cff5cfb19360ccd7aa787a68d7f56001278a1171f30478f45",
+    "SharedComposition-comparison.png": "505ebdde045ca69df99484d9773e4d89d04095fc4f06c2264aa4b2a13e68a2a3",
+    "FlatWeave-composed-comparison.html": "d81fc9e806c000627edf2cedbfa6fe12d6ea71934fd2462278d81e459bc03163"
+  },
+  "observations": [
+    "ComposedWeave default state reduces 9 nodes/6 edges,540x608px to 7/5,508x442px. FlatWeave and the helper refactoring show the same relu/sin/tanh/sigmoid path and the same default geometry metrics; all have zero crossings.",
+    "The real editor exposes helper summaries first and original operations next. Save,open,detail,reopen,refold node counts are 7,9,13,13,7. Exact operands and the three original source boundaries remain inspectable and deterministic.",
+    "LateComposition keeps the outer path open and its exact receiving add visible. EscapingComposition retains both tuple operand links. UnknownComposition retains the unresolved call and two independent local summaries. ConditionalComposition retains conditional regions and phi. SharedComposition retains the two Object 1 invocation labels.",
+    "No before/roles pair gains final constraint conflicts. All 103 produced panels pass independent XML/binding/source-cut/geometry audit; 3436 actual browser text bounds have zero failures.",
+    "Transformer default and the same manual detail lists preserve their geometry metrics, including 100/106,2588x4530px,57 crossings in the default role frontier. No new nested unguarded source path applies to it.",
+    "Actual reference comparison still shows large wrappers, long context wires and dense crossings in the generic graph. Full correspondence is unproved."
+  ],
+  "tradeoffs": [
+    "Fully opened ComposedWeave grows to 13 nodes/8 edges,540x968px. Original source enclosures remain available, so this change does not guarantee position or size stability when revealing detail.",
+    "Only a bounded single computation chain qualifies. Forks, escaping intermediate values, unknown/control/effects/identity/repeat/certificate boundaries prevent enclosing composition. General DAG and cross-helper semantic regions remain incomplete.",
+    "Each summary preserves exact source-boundary cuts and increases saved evidence size. Source dependency paths do not prove numeric equality,purity,fusion,scheduling or successful execution.",
+    "Initial inherited-helper extraction did not yield the intended graph and is retained as rejected development evidence. Current fixtures explicitly declare methods; inheritance support is still absent.",
+    "The real editor initially displayed a cached old module; the script URL was versioned and all formal artifacts regenerated. UI evidence comes from the subsequently verified new page."
+  ]
+}

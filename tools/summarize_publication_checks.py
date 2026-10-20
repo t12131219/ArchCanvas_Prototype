@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'dimension-paths':
+        if stage == 'composed-paths':
+            from summarize_composed_paths import main as summarize_stage
+        elif stage == 'dimension-paths':
             from summarize_dimension_paths import main as summarize_stage
         elif stage == 'stage-stability':
             from summarize_stage_stability import main as summarize_stage

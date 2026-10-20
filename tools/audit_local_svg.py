@@ -231,6 +231,8 @@ def audit_contract_stages(document, row, nodes):
 
 def main():
     global OUT
+    if '--dimensions' in sys.argv:
+        sys.argv.append('--stability')
     if '--stability' in sys.argv:
         sys.argv.append('--stages')
     if '--stages' in sys.argv:
@@ -267,6 +269,8 @@ def main():
         OUT = ROOT / 'verification/contract-stages/current'
     if '--stability' in sys.argv:
         OUT = ROOT / 'verification/stage-stability/current'
+    if '--dimensions' in sys.argv:
+        OUT = ROOT / 'verification/dimension-paths/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -368,6 +372,9 @@ def main():
         if '--pipelines' in sys.argv:
             audit_pipeline_summaries(document, row, nodes)
         audit_contract_stages(document, row, nodes)
+        if '--dimensions' in sys.argv:
+            from audit_dimension_paths import audit as audit_dimensions
+            audit_dimensions(document, row, nodes)
         if '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
             owners = document['layout'].get('frame_ownership', [])
             assert owners == row['frame_ownership'] == document['publication'].get('frame_ownership', [])

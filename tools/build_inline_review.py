@@ -17,6 +17,8 @@ def sha(file):
 
 def main():
     global OUT
+    if '--dimensions' in sys.argv:
+        sys.argv.append('--stability')
     if '--stability' in sys.argv:
         sys.argv.append('--stages')
     if '--stages' in sys.argv:
@@ -47,6 +49,8 @@ def main():
         OUT = ROOT / 'verification/contract-stages/current'
     if '--stability' in sys.argv:
         OUT = ROOT / 'verification/stage-stability/current'
+    if '--dimensions' in sys.argv:
+        OUT = ROOT / 'verification/dimension-paths/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -103,6 +107,8 @@ def main():
         head = head.replace('本轮用真实局部依赖解释折叠源码区域，保留原始操作数与继续展开能力。未知、条件及中间结果外流区域保持原边界', '本轮将已认证的相加与后置归一化角色形成可展开阶段，原始绑定保留；更细展开的整图布局仍有退化')
     if '--stability' in sys.argv:
         head = head.replace('本轮将已认证的相加与后置归一化角色形成可展开阶段，原始绑定保留；更细展开的整图布局仍有退化', '本轮固定证据粒度后再生成语义阶段，并为手动展开保留可测量的布局优化；实际移动的位置和显式布局设置保留')
+    if '--dimensions' in sys.argv:
+        head = head.replace('本轮固定证据粒度后再生成语义阶段，并为手动展开保留可测量的布局优化；实际移动的位置和显式布局设置保留', '本轮用可追踪的维度依赖解释配置路径；已证明的局部源码路径保留语义折叠状态，特征、条件及未知路径仍独立显示')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -212,6 +218,26 @@ def main():
                 view += card(rows[key])
             (OUT / 'expansion-comparison.html').write_text(view + '</div></html>')
 
+    if '--dimensions' in sys.argv:
+        for name in ['DimensionWeave', 'AliasExtent', 'SharedExtent', 'EscapingExtent', 'UnknownExtent', 'ConditionalExtent', 'ExtentBoundary']:
+            view = simple + '<h1>维度配置依赖与特征边界：' + name + '</h1><p>只有已证明的配置依赖形成附注；特征使用、外流结果、未知和条件计算保持真实边界。可继续展开原始操作。</p><div class="cards">'
+            for key in [name + '-before', name + '-roles'] + ([name + '-opened'] if name == 'DimensionWeave' else []):
+                view += card(rows[key])
+            (OUT / (name + '-dimension-comparison.html')).write_text(view + '</div></html>')
+        view = simple + '<h1>Transformer 评估：已折叠的局部变换与维度证明</h1><p>使用同一份源码、相同手动展开列表；左为冻结实现，中为本轮细节，右为本轮语义折叠状态。</p><div class="cards">'
+        for key in ['transformer-dimension-open-before', 'transformer-dimension-open', 'transformer-roles']:
+            view += card(rows[key])
+        (OUT / 'dimension-expansion-comparison.html').write_text(view + '</div></html>')
+        helper = next(r for r in rows['transformer-dimension-open']['local_pipelines']['rows'] if r['operations'][0]['operator'] == 'transpose')
+        view = simple + '<h1>通用维度路径：实际 SVG 局部对照</h1><p>左：冻结实现；中：同一展开列表下的维度配置附注；右：可继续展开的语义路径摘要。仅修改 viewBox，跨越裁剪边界的连线不表示新增接口。</p><div class="cards">'
+        for key in ['transformer-dimension-open-before', 'transformer-dimension-open', 'transformer-roles']:
+            row = rows[key]
+            document = json.loads((OUT / row['document']).read_text())
+            geometry = [n for n in document['layout']['nodes'] if n['id'] == helper['node'] or n['id'].startswith(helper['node'] + '/')]
+            x, y = min(n['x'] for n in geometry) - 32, min(n['y'] for n in geometry) - 32
+            viewport = [x, y, max(n['x'] + n['w'] for n in geometry) + 32 - x, max(n['y'] + n['h'] for n in geometry) + 32 - y]
+            view += f'<article><h2>{key}</h2><p>整图 {row["nodes"]} 图元 / {row["edges"]} 边 · {row["quality"]["line_geometry"]["crossings"]} 处交叉</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
+        (OUT / 'dimension-helper-comparison.html').write_text(view + '</div></html>')
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

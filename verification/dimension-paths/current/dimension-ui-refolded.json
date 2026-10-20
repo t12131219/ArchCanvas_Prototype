@@ -1,0 +1,968 @@
+{
+  "schema": "semantic-canvas/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "DimensionWeave",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+      "class": "DimensionWeave",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+        "cell": null,
+        "sha256": "aaeb89cb667966bff0cab88f9d573eba83de96aeacb55487fe3d3961123bf5e7",
+        "unit_sha256": "aaeb89cb667966bff0cab88f9d573eba83de96aeacb55487fe3d3961123bf5e7"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/11:4:composite:1",
+        "kind": "composite",
+        "label": "DimensionWeave",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 11,
+            "end_line": 12,
+            "column": 4,
+            "end_column": 67,
+            "symbol": "DimensionWeave.forward",
+            "expression": "def forward(self, x: Tensor, y: Tensor):\n    return self.remap(torch.relu(x)) + torch.sin(torch.tanh(y))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "DimensionWeave"
+      },
+      {
+        "id": "model/11:4:composite:1/11:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 11,
+            "end_line": 11,
+            "column": 22,
+            "end_column": 31,
+            "symbol": "DimensionWeave.forward",
+            "expression": "x: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/11:4:composite:1/11:33:interface:1",
+        "kind": "interface",
+        "label": "y",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 11,
+            "end_line": 11,
+            "column": 33,
+            "end_column": 42,
+            "symbol": "DimensionWeave.forward",
+            "expression": "y: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "y",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/11:4:composite:1/12:15:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 15,
+            "end_column": 67,
+            "symbol": "DimensionWeave.forward",
+            "expression": "self.remap(torch.relu(x)) + torch.sin(torch.tanh(y))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "syntax": {
+          "type": "BinOp",
+          "fields": {
+            "left": {
+              "operand": ".left"
+            },
+            "op": {
+              "type": "Add",
+              "fields": {}
+            },
+            "right": {
+              "operand": ".right"
+            }
+          }
+        }
+      },
+      {
+        "id": "model/11:4:composite:1/12:26:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 26,
+            "end_column": 39,
+            "symbol": "DimensionWeave.forward",
+            "expression": "torch.relu(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.relu",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "x"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.relu"
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1",
+        "kind": "composite",
+        "label": "self.remap",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 7,
+            "end_line": 9,
+            "column": 4,
+            "end_column": 67,
+            "symbol": "remap",
+            "expression": "def remap(self, value: Tensor):\n    b, h, t, d = value.shape\n    return value.transpose(1, 2).contiguous().view(b, t, h * d)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-function",
+        "module_path": "",
+        "constructor": {},
+        "source_class": null
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+        "kind": "interface",
+        "label": "value",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 7,
+            "end_line": 7,
+            "column": 20,
+            "end_column": 33,
+            "symbol": "remap",
+            "expression": "value: Tensor"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "value",
+        "source_tensor_annotation": "torch.Tensor"
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/8:21:compute:1",
+        "kind": "compute",
+        "label": "value.shape",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 21,
+            "end_column": 32,
+            "symbol": "remap",
+            "expression": "value.shape"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "attribute",
+        "attribute_name": "shape",
+        "value": {
+          "unresolved": "value.shape"
+        },
+        "syntax": {
+          "type": "Attribute",
+          "fields": {
+            "value": {
+              "operand": ".value"
+            },
+            "attr": "shape"
+          }
+        },
+        "symbolic_value": {
+          "rule_version": "source-symbolic-value/1",
+          "kind": "tensor-attribute",
+          "receiver": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+          "edge": "e00002",
+          "attribute": "shape",
+          "scope": "source Tensor contract only; annotation is not runtime validation; actual value unresolved"
+        }
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/8:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "b",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "remap",
+            "expression": "b"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "0"
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/8:11:value-alias:1",
+        "kind": "value-alias",
+        "label": "h",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 11,
+            "end_column": 12,
+            "symbol": "remap",
+            "expression": "h"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "1"
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/8:14:value-alias:1",
+        "kind": "value-alias",
+        "label": "t",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 14,
+            "end_column": 15,
+            "symbol": "remap",
+            "expression": "t"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "2"
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/8:17:value-alias:1",
+        "kind": "value-alias",
+        "label": "d",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 17,
+            "end_column": 18,
+            "symbol": "remap",
+            "expression": "d"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": "3"
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/9:15:compute:1",
+        "kind": "compute",
+        "label": "transpose",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 9,
+            "end_line": 9,
+            "column": 15,
+            "end_column": 36,
+            "symbol": "remap",
+            "expression": "value.transpose(1, 2)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "transpose",
+        "function_target": "value.transpose",
+        "arguments": {
+          "args": [
+            1,
+            2
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "literal_type": "int",
+                "literal": "1"
+              },
+              {
+                "literal_type": "int",
+                "literal": "2"
+              }
+            ],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/9:15:compute:2",
+        "kind": "compute",
+        "label": "contiguous",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 9,
+            "end_line": 9,
+            "column": 15,
+            "end_column": 49,
+            "symbol": "remap",
+            "expression": "value.transpose(1, 2).contiguous()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "copy",
+        "function_target": "value.transpose(1, 2).contiguous",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/9:61:compute:1",
+        "kind": "compute",
+        "label": "mult",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 9,
+            "end_line": 9,
+            "column": 61,
+            "end_column": 66,
+            "symbol": "remap",
+            "expression": "h * d"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "mult",
+        "syntax": {
+          "type": "BinOp",
+          "fields": {
+            "left": {
+              "operand": ".left"
+            },
+            "op": {
+              "type": "Mult",
+              "fields": {}
+            },
+            "right": {
+              "operand": ".right"
+            }
+          }
+        }
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/9:15:compute:3",
+        "kind": "compute",
+        "label": "view",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 9,
+            "end_line": 9,
+            "column": 15,
+            "end_column": 67,
+            "symbol": "remap",
+            "expression": "value.transpose(1, 2).contiguous().view(b, t, h * d)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "reshape",
+        "function_target": "value.transpose(1, 2).contiguous().view",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "b"
+            },
+            {
+              "unresolved": "t"
+            },
+            {
+              "unresolved": "h * d"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              },
+              {
+                "operand": ".args:1"
+              },
+              {
+                "operand": ".args:2"
+              }
+            ],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/11:4:composite:1/7:4:composite:1/9:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/11:4:composite:1/7:4:composite:1",
+        "source_parent": "model/11:4:composite:1/7:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 9,
+            "end_line": 9,
+            "column": 8,
+            "end_column": 67,
+            "symbol": "remap",
+            "expression": "return value.transpose(1, 2).contiguous().view(b, t, h * d)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/11:4:composite:1/12:53:compute:1",
+        "kind": "compute",
+        "label": "tanh",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 53,
+            "end_column": 66,
+            "symbol": "DimensionWeave.forward",
+            "expression": "torch.tanh(y)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "torch.tanh",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "y"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.tanh"
+      },
+      {
+        "id": "model/11:4:composite:1/12:43:compute:1",
+        "kind": "compute",
+        "label": "sin",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 43,
+            "end_column": 67,
+            "symbol": "DimensionWeave.forward",
+            "expression": "torch.sin(torch.tanh(y))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "sin",
+        "function_target": "torch.sin",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "torch.tanh(y)"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_function": "torch.sin"
+      },
+      {
+        "id": "model/11:4:composite:1/12:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/11:4:composite:1",
+        "source_parent": "model/11:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dimension_paths.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 8,
+            "end_column": 67,
+            "symbol": "DimensionWeave.forward",
+            "expression": "return self.remap(torch.relu(x)) + torch.sin(torch.tanh(y))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/11:4:composite:1/11:22:interface:1",
+        "target": "model/11:4:composite:1/12:26:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/11:4:composite:1/12:26:compute:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/8:21:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:21:compute:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/8:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "0",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:21:compute:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/8:11:value-alias:1",
+        "kind": "alias",
+        "source_port": "1",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:21:compute:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/8:14:value-alias:1",
+        "kind": "alias",
+        "source_port": "2",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:21:compute:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/8:17:value-alias:1",
+        "kind": "alias",
+        "source_port": "3",
+        "target_port": "3",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/9:15:compute:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:11:value-alias:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:61:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:17:value-alias:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:61:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/9:15:compute:2",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:3",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:8:value-alias:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:3",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/8:14:value-alias:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:3",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:1",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/9:61:compute:1",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:3",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:2",
+        "evidence": "source-dependency",
+        "id": "e00014"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/9:15:compute:3",
+        "target": "model/11:4:composite:1/7:4:composite:1/9:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00015"
+      },
+      {
+        "source": "model/11:4:composite:1/7:4:composite:1/9:8:interface:1",
+        "target": "model/11:4:composite:1/12:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00016"
+      },
+      {
+        "source": "model/11:4:composite:1/11:33:interface:1",
+        "target": "model/11:4:composite:1/12:53:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00017"
+      },
+      {
+        "source": "model/11:4:composite:1/12:53:compute:1",
+        "target": "model/11:4:composite:1/12:43:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00018"
+      },
+      {
+        "source": "model/11:4:composite:1/12:43:compute:1",
+        "target": "model/11:4:composite:1/12:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00019"
+      },
+      {
+        "source": "model/11:4:composite:1/12:15:compute:1",
+        "target": "model/11:4:composite:1/12:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00020"
+      }
+    ],
+    "branches": [],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "d02d9b76858da11524b23d61e9e75ed478a1ec444a5fd66a8c1666fb708877aa"
+  },
+  "state": {
+    "open": [
+      "model/11:4:composite:1"
+    ],
+    "offsets": {},
+    "mode": "source",
+    "view": "publication",
+    "paperMedium": "canvas",
+    "paperGranularity": "roles",
+    "paperAuto": false
+  }
+}

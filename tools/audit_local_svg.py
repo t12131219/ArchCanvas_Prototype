@@ -255,6 +255,8 @@ def audit_contract_stages(document, row, nodes):
 
 def main():
     global OUT
+    if '--clearance' in sys.argv:
+        sys.argv.append('--role-details')
     if '--role-details' in sys.argv:
         sys.argv.append('--dimensions')
     if '--composed' in sys.argv:
@@ -303,6 +305,8 @@ def main():
         OUT = ROOT / 'verification/composed-paths/current'
     if '--role-details' in sys.argv:
         OUT = ROOT / 'verification/role-details/current'
+    if '--clearance' in sys.argv:
+        OUT = ROOT / 'verification/label-clearance/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:

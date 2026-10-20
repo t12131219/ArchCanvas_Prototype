@@ -727,8 +727,15 @@
     for(const e of projected.edges){const key=JSON.stringify([e.source,e.target]);edgePairs.set(key,(edgePairs.get(key)||0)+1);if(e.condition||e.bundle_members)labeledPairs.add(key);}
     const requestedLabelGap=Number(state.paperLabelGapY)||0;
     const labelGapY=Math.max(Math.min(160,Math.max(0,requestedLabelGap)),...[...labeledPairs].map(key=>edgePairs.get(key)>1?32+28*edgePairs.get(key):0));
+    const baseLabelGapY=Math.max(options.layout.gapY,Math.min(160,Math.max(0,requestedLabelGap)));
+    const clearanceRegions=L.labelClearances(projected.positions.context.idx,projected.edges);
+    const localClearance=canvas&&state.paperLabelSpacing==='local'&&!Object.keys(state.offsets||{}).length;
+    if(localClearance){
+      const gaps=new Map(clearanceRegions.map(r=>[r.parent,r.gap_y]));
+      options.layout.gapYForParent=parent=>gaps.get(parent)||0;
+    }
     const wireGapX=Math.max(36,...projected.edges.filter(e=>e.bundle_members).map(e=>Math.ceil(width(wireLabel(e),13)+28)));
-    if(labelGapY>options.layout.gapY||wireGapX>options.layout.foldGapX){options.layout.gapY=Math.max(labelGapY,options.layout.gapY);options.layout.foldGapX=wireGapX;projected=E.project(ir,{...state,view:'architecture',details:false,open},focused.plan,options);}
+    if(labelGapY>options.layout.gapY||wireGapX>options.layout.foldGapX){options.layout.gapY=localClearance?baseLabelGapY:Math.max(labelGapY,options.layout.gapY);options.layout.foldGapX=wireGapX;projected=E.project(ir,{...state,view:'architecture',details:false,open},focused.plan,options);}
     const widthMm=Math.max(80,Math.min(400,Number(state.paperWidthMm)||180));
     // Compare a bounded set of topology layouts at the requested print size.
     // The objective is readable physical scale, independent of module names.
@@ -757,6 +764,7 @@
     if(canvas){
       const input=state.paperCanvasLimits||{},limit=(key,fallback,min,max)=>Number.isFinite(input[key])?Math.max(min,Math.min(max,input[key])):fallback;
       projected.publication.medium='canvas';
+      if(labelGapY>baseLabelGapY)projected.publication.label_clearance={mode:localClearance?'local':'global',base_gap_y:baseLabelGapY,global_gap_y:labelGapY,regions:clearanceRegions};
       projected.publication.inline_sequences=base.publication?.inline_sequences||null;
       projected.publication.frame_ownership=projected.frame_ownership||[];
       if(roleFrontier)projected.publication.role_frontier=roleEngine.receipt(roleFrontier,projected);

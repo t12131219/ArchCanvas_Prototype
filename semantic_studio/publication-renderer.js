@@ -347,8 +347,43 @@
       scope:'independently entered compound regions; cross-region arrows remain exact and can point upward; no execution scheduling assertion'};
     return chosen;
   }
+  function prepareClearance(ir,state={}){
+    const baseline=prepareFlows(ir,state),b=baseline.prepared.quality,clearance=baseline.graph.publication.label_clearance;
+    if(b.medium!=='canvas'||state.paperLabelSpacing!==undefined||Object.keys(state.offsets||{}).length||
+      !clearance||clearance.global_gap_y<=clearance.base_gap_y)return baseline;
+    // Retain the measured baseline's other geometric choices. This candidate
+    // changes only label clearance scope, never the user's semantic frontier.
+    const candidateState={...state,paperLabelSpacing:'local',
+      paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest',
+      paperContextLanes:baseline.graph.positions.context.contextLanes[0]?.side||false,
+      paperBranchColumns:!!baseline.graph.positions.context.branchColumns.length,
+      paperFlowAlignment:baseline.prepared.routing.flow_refinement?.accepted?'entries':state.paperFlowAlignment};
+    const trial=prepareLabels(ir,candidateState),q=trial.prepared.quality;
+    const identity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id),open:g.publication.open,
+      edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,source_port:e.source_port,target_port:e.target_port,
+        originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition})),
+      nodes_accounted:g.node_accounting,edges_accounted:g.edge_accounting,boundary:g.publication.boundary,roles:g.publication.role_frontier});
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    const accepted=identity(baseline.graph)===identity(trial.graph)&&conflicts(trial).every(id=>conflicts(baseline).includes(id))&&
+      areaMetric(q)<areaMetric(b)*.98&&q.native_width_px<=b.native_width_px*1.05&&q.native_height_px<=b.native_height_px&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.wire_length<=b.wire_length;
+    const chosen=accepted?trial:baseline,metrics=q=>({width:q.native_width_px,height:q.native_height_px,area:areaMetric(q),
+      crossings:q.line_geometry.crossings,contacts:q.line_geometry.unrelated_contacts.length,wire_length:q.wire_length,
+      overlaps:q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length,unplaced_labels:q.unplaced_port_labels.length,issues:q.issues});
+    const receipt={accepted,selected:accepted?'local':'global',before:metrics(b),candidate:metrics(q),regions:clearance.regions,
+      scope:'visible drawing-parent clearance; identical semantic frontier, operands and accounting required'};
+    if(accepted)for(const key of ['topology_refinement','context_refinement','branch_refinement','flow_refinement'])
+      if(baseline.prepared.routing[key])chosen.prepared.routing[key]=baseline.prepared.routing[key];
+    chosen.prepared.routing.clearance_refinement=receipt;
+    return chosen;
+  }
   function selectFigure(ir,state={}){
-    let chosen=prepareFlows(ir,state);
+    let chosen=prepareClearance(ir,state);
     const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
     // A zoomable canvas keeps the requested semantic frontier. Route/resource
     // failures remain explicit; silently replacing it with an overview is not

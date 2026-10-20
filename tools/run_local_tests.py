@@ -22,6 +22,7 @@ COMMANDS = {
     'canvas-medium': ['node', 'tests/canvas-medium.test.cjs'],
     'role-frontier': ['node', 'tests/role-frontier.test.cjs'],
     'role-details': ['node', 'tests/role-details.test.cjs'],
+    'label-clearance': ['node', 'tests/label-clearance.test.cjs'],
     'branch-columns': ['node', 'tests/branch-columns.test.cjs'],
     'dimension-paths': ['node', 'tests/dimension-paths.test.cjs'],
     'contract-stages': ['node', 'tests/contract-stages.test.cjs'],
@@ -49,7 +50,7 @@ def run(item):
 def main():
     (OUT / 'test-logs').mkdir(parents=True, exist_ok=True)
     files = [*ROOT.glob('semantic_studio/*.js'), ROOT / 'semantic_studio/index.html', ROOT / 'semantic_studio/style.css', *ROOT.glob('semantic_adapter/*.py'),
-             *ROOT.glob('tests/*.test.cjs'), *ROOT.glob('tests/test_*.py'),
+             *ROOT.glob('tests/*.test.cjs'), *ROOT.glob('tests/*fixtures.cjs'), *ROOT.glob('tests/test_*.py'),
              *ROOT.glob('tests/semantic_fixtures/*.py'),
              ROOT / 'tools/export_publication.cjs', ROOT / 'tools/representative_atlas.cjs', ROOT / 'tools/symbolic_values.cjs', Path(__file__).resolve()]
     hashes = {str(file.relative_to(ROOT)): hashlib.sha256(file.read_bytes()).hexdigest() for file in sorted(files)}

@@ -27,6 +27,22 @@
     }
     return result;
   }
+  // Parallel labelled wires need clearance where their visible branches meet,
+  // not in every helper in the figure. Use the drawing hierarchy after frame
+  // ownership; source nesting may no longer be the visible containment tree.
+  function labelClearances(idx,edges){
+    const pairs=new Map(),regions=new Map();
+    for(const e of edges){const key=JSON.stringify([e.source,e.target]);if(!pairs.has(key))pairs.set(key,[]);pairs.get(key).push(e);}
+    const parents=id=>{const result=[];let at=idx.nodes.get(id)?.parent??null;while(at!==null){result.push(at);at=idx.nodes.get(at)?.parent??null;}result.push(null);return result;};
+    for(const group of pairs.values()){
+      if(group.length<2||!group.some(e=>e.condition||e.bundle_members))continue;
+      const edge=group[0],a=parents(edge.source),b=new Set(parents(edge.target)),parent=a.find(id=>b.has(id));
+      if(!regions.has(parent))regions.set(parent,{parent,gap_y:0,pairs:[]});
+      const record=regions.get(parent),gap=32+28*group.length;
+      record.gap_y=Math.max(record.gap_y,gap);record.pairs.push({source:edge.source,target:edge.target,edges:group.map(e=>e.id),gap_y:gap});
+    }
+    return [...regions.values()];
+  }
   function layout(idx,roots,visible,edges,offsets={},options={}){
     const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[];
     const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
@@ -50,6 +66,7 @@
       return {w:n.kind==='composite'?244:220,h:74};
     }
     function arrange(kids,parent){
+      const gapY=Math.max(options.gapY??76,options.gapYForParent?.(parent)??0);
       const rankColumns=options.rankColumnsFor?.(idx.nodes.get(parent))??options.rankColumns;
       const kidSet=new Set(kids),owner=id=>{while(id!=null&&!kidSet.has(id)){if(id===parent)return null;id=idx.nodes.get(id)?.parent;}return id;};
       const adj=new Map(kids.map(id=>[id,new Set()])),pred=new Map(kids.map(id=>[id,new Set()]));
@@ -437,5 +454,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

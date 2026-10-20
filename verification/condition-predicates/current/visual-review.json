@@ -1,0 +1,33 @@
+{
+  "schema": "condition-predicates-visual-review/1",
+  "render_report_sha256": "f18e74d1ea9d37315b0706a372381223a03cb04ab60fc6fb666beb55d814b306",
+  "artifacts_sha256": {
+    "comparison.html": "48053b8cdf2424d6a84e6a0bc860e94196fb52349ab1d43fed8b7b6f14f77691",
+    "transformer-comparison.html": "6133bed4d997b4342fa07cc097956efa265154c554f305ba644cf40470c5b965",
+    "text-qa.html": "51f6d30cb62032ba6b3475c13d398b769720625db7b24ecff43c52e79128c7c1",
+    "comparison.png": "d582bd6dd7d91ca53d938fa088e659e48db2f57f4800fa8b8d7ae12ace4b90c3",
+    "transformer-role-comparison.png": "d8aef6b508ff1d5ecff44cf63a412e16d1819146e287242f753585a5677470d8",
+    "transformer-reference-comparison.png": "2b45c00785e4e41a232471777c0e0a0cafe6c35d5c42bc40c0b4794a9e91d2f2"
+  },
+  "method": "Review of actual browser screenshots and formal SVG metrics; fit previews do not demonstrate native-size legibility. Native text measurements are recorded separately.",
+  "observations": [
+    {
+      "artifact": "comparison.png",
+      "finding": "The manual summary prints the actual condition and preserves independent opening. Nodes 17 to 15 and edges 19 to 15; opening one condition restores 20 nodes. Automatic state remains 25 nodes; crossings fall 2 to 0 while height grows 1828 to 1980."
+    },
+    {
+      "artifact": "transformer-role-comparison.png",
+      "finding": "Explicit role detail remains extremely tall with deeply nested source/helper frames. Nodes 108 to 107, edges 123 to 122, crossings 92 to 89; height grows 9006 to 9010 at width 2332. Both states exceed canvas-area-budget. Local condition grouping does not improve overall compactness."
+    },
+    {
+      "artifact": "transformer-reference-comparison.png",
+      "finding": "Dedicated reference has coherent stage boxes and aligned columns. Generic default retains staggered helper nesting and long routes. Its SVG is unchanged at 94 nodes, 102 edges, 2588 by 4364 and 57 crossings. Overall reference convergence remains unachieved."
+    }
+  ],
+  "goal_complete": false,
+  "limits": [
+    "17 SVG audits and 1264 native text measurements do not prove large-graph interaction performance.",
+    "Recovery of all 3371 source nodes and 3663 edges is projection evidence, not a routed thousands-node SVG.",
+    "Dedicated expanded view remains the target for an intermediate generic semantic state."
+  ]
+}

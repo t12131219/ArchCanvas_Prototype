@@ -31,7 +31,7 @@ def main():
                 f'{q["native_width_px"]} × {q["native_height_px"]} px · {q["line_geometry"]["crossings"]} 交叉 · '
                 f'{len(q["line_geometry"]["unrelated_contacts"])} 无关接触</p>'
                 f'<p>条件区域：摘要 {counts["summary"]} / 展开 {counts["expanded"]} / 上层折叠 {counts["folded"]}；'
-                f'几何检查项 {len(q["issues"])}。<a href="{escape(r["svg"])}">原始 SVG</a></p>'
+                f'几何限制：{escape(", ".join(q["issues"]) or "无已报告限制")}。<a href="{escape(r["svg"])}">原始 SVG</a></p>'
                 + svg(OUT / r['svg'], name) + '</article>')
 
     groups = [(['ConditionalSplice-summary-before', 'ConditionalSplice-summary', 'ConditionalSplice-opened'],
@@ -52,6 +52,12 @@ def main():
     text += '。下方保留同一显式角色细化请求的前后结果，展示实际几何成本；该请求不是自动采用的默认状态。'
     text += '条件局部规则不代表专用参考接近度已经改善。全部 3371 节点 / 3663 边的原始投影可恢复；数千节点同屏路由与交互性能未验证。</p>'
     text += '<div class="cards">' + card('transformer-before') + card('transformer-current') + '</div>'
+    a, b = rows['transformer-role-before'], rows['transformer-role-current']
+    text += ('<p class="notice">同一显式角色展开：'
+             f'{a["nodes"]} → {b["nodes"]} 图元，{a["edges"]} → {b["edges"]} 边，'
+             f'交叉 {a["quality"]["line_geometry"]["crossings"]} → {b["quality"]["line_geometry"]["crossings"]}，'
+             f'高度 {a["quality"]["native_height_px"]} → {b["quality"]["native_height_px"]}。'
+             '前后均超出画布面积预算；这不是已通过预算的默认状态，也不证明整图更接近专用参考。</p>')
     text += '<div class="cards">' + card('transformer-role-before') + card('transformer-role-current') + '</div>'
     text += '<div class="cards"><article data-case="reference"><h2>专用完全展开参考（仅评价）</h2>'
     text += svg(ROOT / report['reference']['svg'], 'reference') + '</article>' + card('transformer-current') + '</div></html>'

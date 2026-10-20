@@ -66,7 +66,7 @@ def main():
             source = row
         assert source['svg_sha256'] == row['svg_sha256']
         assert all(source[k] == row[k] for k in metrics)
-    assert native['texts'] == sum(r['texts'] for r in native['rows'])
+    assert native['texts'] == sum(r['texts'] for r in native['rows']) == 1264
     ui = evidence['ui-report.json']
     assert ui['sequence'] == [15, 20, 15, 15]
     assert all(ui[k] for k in ['canonical_ir_unchanged', 'summary_svg_matches_cli',
@@ -98,6 +98,17 @@ def main():
     assert (rows['ConditionalSplice-before']['quality']['line_geometry']['crossings'],
             rows['ConditionalSplice-current']['quality']['line_geometry']['crossings']) == (2, 0)
     assert rows['ConditionalSplice-current']['quality']['native_height_px'] > rows['ConditionalSplice-before']['quality']['native_height_px']
+    for name, nodes, edges, height, crossings in [
+        ('transformer-role-before', 108, 123, 9006, 92),
+        ('transformer-role-current', 107, 122, 9010, 89),
+    ]:
+        row = rows[name]
+        quality = row['quality']
+        assert (row['nodes'], row['edges']) == (nodes, edges)
+        assert (quality['native_width_px'], quality['native_height_px']) == (2332, height)
+        assert quality['line_geometry']['crossings'] == crossings
+        assert quality['line_geometry']['unrelated_contacts'] == []
+        assert quality['issues'] == ['canvas-area-budget']
     supplemental = ['tools/audit_condition_predicates.py', 'tools/build_condition_predicates_review.py',
                     'tools/summarize_condition_predicates.py', 'tools/summarize_publication_checks.py',
                     'docs/condition-predicates.md', 'verification/condition-predicates/README.md',

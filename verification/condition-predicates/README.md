@@ -2,7 +2,7 @@
 
 本阶段围绕直接、独占消费的源码比较和已有条件区域组织画面。原始事实保留，摘要打印实际条件，展开可恢复比较、控制及分支。整体目标仍在进行中。
 
-当前状态：实现及 458 项测试完成，真实 UI 验证完成；17 份 SVG 的整图角色对照仍在生成，最终独立审核、正式对照页及阶段汇总尚未完成。`comparison-preview.html` 仅是已生成的三个局部 SVG 的目视预览，不能替代正式整图对照。汇总入口在正式生成报告缺失时明确输出 `evidence_consistent: false`。
+当前状态：实现及 458 项测试完成；17 份正式 SVG 已生成并完成事实、几何及角色回执审核，1264 处原生文字测量无失败，真实 UI 的展开、折回和保存重开已验证。正式对照页及视觉审核已保存。Transformer 默认图未变，显式角色图仍过高且超出面积预算，整体目标未完成。`comparison-preview.html` 是早期局部预览，正式证据以 `current/render-report.json` 和正式对照页为准。
 
 冻结基线是 `verification/local-relations/iteration-31-before-condition-predicates`，来自提交 `ca0d039`。既有历史审核不被重新封装成当前实现的证据。
 
@@ -20,7 +20,7 @@ node tools/audit_source_expandability.cjs verification/symbolic-values/current/t
 python3 tools/summarize_publication_checks.py
 ```
 
-完整测试为 458 项，正式生成目标为 17 份 SVG。布局文档体积较大，不纳入版本控制；SVG、回执、审核报告及真实 UI 保存文档保留。重跑生成器会重建布局文档。真实编辑器与原生文字测量通过浏览器执行，相关产物不能由上述 CLI 命令代替生成。
+完整测试为 458 项，正式生成结果为 17 份 SVG。布局文档体积较大，不纳入版本控制；SVG、回执、审核报告及真实 UI 保存文档保留。重跑生成器会重建布局文档。真实编辑器与原生文字测量通过浏览器执行，相关产物不能由上述 CLI 命令代替生成。
 
 汇总器仅在当前实现哈希与所有产物一致时写入 `evidence_consistent: true`。它保持 `goal_complete: false` 并返回 2，表示阶段证据一致、完整目标未完成。不能把这个退出码改写成整体验收通过。
 

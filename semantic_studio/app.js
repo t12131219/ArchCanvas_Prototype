@@ -45,7 +45,25 @@
     if(state.view==='publication'&&state.paperMedium==='canvas'&&state.paperGranularity==='roles'&&n.kind==='composite'&&n.semantic_contracts?.length){
       const adaptive=projection.publication?.adaptive_frontier,requested=adaptive?.selected_role_details||(Array.isArray(state.paperRoleDetails)?state.paperRoleDetails:[]),active=requested.includes(id);
       const button=document.createElement('button');button.textContent=active?'收起本区域的角色细化':'展开本区域已证明的角色';
-      button.onclick=()=>{snapshot();if(adaptive){state.paperAdaptive=false;state.paperExpressionDetails=adaptive.selected_expression_details;}state.paperRoleDetails=active?requested.filter(node=>node!==id):[...requested,id];state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
+      button.onclick=()=>{snapshot();if(adaptive){state.paperAdaptive=false;state.paperExpressionDetails=adaptive.selected_expression_details;}state.paperRoleDetails=active?requested.filter(node=>node!==id):[...requested,id];state.paperRolePaths=(state.paperRolePaths||[]).filter(p=>p.node!==id);state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
+      const rolePaths=document.createElement('details'),heading=document.createElement('summary');heading.textContent='选择单条已证明的角色路径';rolePaths.open=(state.paperRolePaths||[]).some(p=>p.node===id);rolePaths.append(heading);
+      const note=document.createElement('p');note.textContent='只细化选中的路径；同级必要节点仍可见，条件、未知和独立认证边界继续保留。';rolePaths.append(note);
+      const by=projection.idx.nodes,certificates=(projection.architecture.semantic_contracts||[]).filter(c=>c.node===id&&n.semantic_contracts.includes(c.id));
+      for(const c of certificates)for(const ref of window.SemanticRoleFrontier.references(c.roles,by)){
+        let at=ref.node;while(at&&at!==id)at=by.get(at)?.parent;if(ref.node===id||at!==id)continue;
+        const key=JSON.stringify([id,c.id,ref.keys]),paths=Array.isArray(state.paperRolePaths)?state.paperRolePaths:[],on=paths.some(p=>JSON.stringify([p.node,p.certificate,p.role])===key);
+        const row=document.createElement('div'),button=document.createElement('button');button.textContent=(on?'收起路径 · ':'细化路径 · ')+ref.path;button.disabled=active;button.dataset.rolePath=JSON.stringify(ref.keys);button.dataset.certificate=c.id;
+        button.onclick=()=>{snapshot();if(adaptive){state.paperAdaptive=false;state.paperRoleDetails=adaptive.selected_role_details;state.paperExpressionDetails=adaptive.selected_expression_details;}
+          state.paperRolePaths=on?paths.filter(p=>JSON.stringify([p.node,p.certificate,p.role])!==key):[...paths,{node:id,certificate:c.id,role:ref.keys}];
+          state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};
+        const label=document.createElement('small');label.textContent=' → '+(by.get(ref.node)?.source_label||by.get(ref.node)?.label||ref.node);row.append(button,label);rolePaths.append(row);
+      }
+      $('details').append(rolePaths);
+      const pathChecks=projection.publication?.role_frontier?.path_requests?.filter(r=>r.node===id)||[];
+      if(pathChecks.length){
+        const statuses={exposed:'端点已显示',boundary:'保留内部边界',contracted:'已映射到实际来源',folded:'当前仍折叠',outside:'当前范围之外',attached:'作为附注保留',deferred:'暂缓'};
+        $('details').insertAdjacentHTML('beforeend','<div><strong>所选角色路径</strong>'+pathChecks.map(r=>'<p>'+esc(r.role.join(' → '))+' · '+esc(statuses[r.status]||r.status)+(r.operand_check?.status==='fulfilled'?' · 输入绑定已接线':'')+'</p>').join('')+'<details><summary>路径证据与暂缓原因</summary><pre>'+esc(JSON.stringify(pathChecks,null,2))+'</pre></details></div>');
+      }
       const request=projection.publication?.role_frontier?.detail_requests?.find(r=>r.node===id);
       if(request)$('details').insertAdjacentHTML('beforeend','<details open><summary>本区域的角色细化状态</summary><pre>'+esc(JSON.stringify(request,null,2))+'</pre></details>');
     }

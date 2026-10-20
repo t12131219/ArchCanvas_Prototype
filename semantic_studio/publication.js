@@ -633,7 +633,7 @@
     if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);
     const stageEngine=canvas&&granularity==='roles'&&state.paperContractStages!==false?(root.SemanticContractStages||(typeof require==='function'?require('./contract-stages.js'):null)):null;
     const roleEngine=canvas&&granularity==='roles'&&!local?(root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null)):null;
-    const roleFrontier=roleEngine?.compile({plan:focused.plan,focus,details:state.paperRoleDetails});
+    const roleFrontier=roleEngine?.compile({plan:focused.plan,focus,details:state.paperRoleDetails,paths:state.paperRolePaths});
     if(roleFrontier){focused.plan=roleFrontier.plan;const all=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,all);}
     const expressionEngine=roleFrontier?(root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null)):null;
     const expressions=expressionEngine?.compile({plan:focused.plan,focus,details:state.paperExpressionDetails});

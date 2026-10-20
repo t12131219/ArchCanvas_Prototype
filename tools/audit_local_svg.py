@@ -119,7 +119,7 @@ def audit_pipeline_summaries(document, row, nodes):
             members.update(added)
             changed = bool(added)
         assert members == set(r['canonical_members'])
-        if r['rule_version'] == 'local-pipelines/2':
+        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3']:
             boundaries = [n for n in planned.values() if n['id'] in members and n['kind'] == 'composite']
             assert {n['id'] for n in boundaries} == {b['node'] for b in r['source_boundaries']}
             for boundary in r['source_boundaries']:
@@ -155,8 +155,46 @@ def audit_pipeline_summaries(document, row, nodes):
             assert (b['target'], b['target_port']) == (e['target'], e['target_port'])
             if b['producer'] in ordered:
                 adjacency.add((b['producer'], b['target']))
-        assert adjacency == set(zip(ordered, ordered[1:]))
-        if r['rule_version'] == 'local-pipelines/2':
+        if r.get('dependency_tree'):
+            visited, tree_edges = [], set()
+            binding_by = {b['edge']: b for b in r['bindings']}
+
+            def visit(t):
+                visited.append(t['node'])
+                assert len(visited) <= len(ordered)
+                for child in t['inputs']:
+                    b = binding_by[child['edge']]
+                    assert b['producer'] == child['expression']['node'] and b['target'] == t['node']
+                    assert (b['source_port'], b['target_port']) == (child['source_port'], child['target_port'])
+                    tree_edges.add((b['producer'], b['target']))
+                    visit(child['expression'])
+            visit(r['dependency_tree'])
+            assert len(visited) == len(set(visited)) and set(visited) == set(ordered)
+            assert tree_edges == adjacency
+            assert r['result_operation'] == ordered[-1] == r['dependency_tree']['node']
+            assert set(r['entry_operations']) == set(ordered) - {b for a, b in adjacency}
+            assert any(sum(b == id for a, b in adjacency) > 1 for id in ordered)
+            assert all(sum(a == id for a, b in adjacency) <= 1 for id in ordered)
+        else:
+            assert adjacency == set(zip(ordered, ordered[1:]))
+        if r['rule_version'] == 'local-pipelines/3':
+            assert r['output_bindings'] == [dict(edge=e['id'], producer=resolve(e['source'], e.get('source_port', 'out'))[0],
+                                                source_port=resolve(e['source'], e.get('source_port', 'out'))[1],
+                                                target=e['target'], target_port=e['target_port'])
+                                            for e in cuts if e['source'] in members]
+            assert all(b['producer'] == ordered[-1] for b in r['output_bindings'])
+            for resource in r['parameter_reads']:
+                n = canonical[resource['node']]
+                assert n['kind'] == 'parameter' and resource['source'] == n.get('source', [])
+                assert resource['module_identity'] == n.get('module_identity')
+                assert not ins.get(n['id'])
+                assert resource['edges'] == [e for e in edges if e['source'] == n['id']]
+                for e in resource['edges']:
+                    assert e['kind'] in ['data', 'parameter-read'] and e['target'] in ordered
+                    assert e['id'] in document['layout']['edge_accounting']['attached']
+                    title = ''.join(nodes[node].find('{http://www.w3.org/2000/svg}title').itertext())
+                    assert f"Parameter read {e['id']}: {n['id']} → {e['target']} [{e['target_port']}]" in title
+        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3']:
             outputs = [n for n in planned.values() if n['id'] in members and n.get('parent') == node and n['kind'] == 'interface' and n.get('role') == 'output']
             assert outputs
             for output in outputs:
@@ -175,7 +213,12 @@ def audit_pipeline_summaries(document, row, nodes):
         assert r['detailed_operations_exposed'] == all(id in nodes for id in ordered)
         text = re.sub(r'\s', '', ''.join(''.join(e.itertext()) for e in nodes[node] if e.tag.endswith('text')))
         if r['status'] == 'summary':
-            assert '→'.join(o['label'] for o in r['operations']).replace(' ', '') in text
+            labels = {o['node']: o['label'] for o in r['operations']}
+
+            def label(t):
+                return labels[t['node']] + (' ← {' + '; '.join(label(c['expression']) for c in t['inputs']) + '}' if t['inputs'] else '')
+            expected_title = label(r['dependency_tree']) if r.get('dependency_tree') else '→'.join(o['label'] for o in r['operations'])
+            assert re.sub(r'\s', '', expected_title) in text
             assert not r['detailed_operations_exposed']
             assert all(c['status'] != 'fulfilled' for c in document['expression_coverage'] if c['goal'] in {'goal:node:' + id for id in ordered})
         title = ''.join(nodes[node].find('{http://www.w3.org/2000/svg}title').itertext())
@@ -263,6 +306,8 @@ def main():
         sys.argv.append('--role-details')
     if '--role-details' in sys.argv:
         sys.argv.append('--dimensions')
+    if '--trees' in sys.argv:
+        sys.argv.append('--dimensions')
     if '--composed' in sys.argv:
         sys.argv.append('--dimensions')
     if '--dimensions' in sys.argv:
@@ -315,6 +360,8 @@ def main():
         OUT = ROOT / 'verification/rank-clearance/current'
     if '--adaptive' in sys.argv:
         OUT = ROOT / 'verification/adaptive-frontier/current'
+    if '--trees' in sys.argv:
+        OUT = ROOT / 'verification/dependency-trees/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:

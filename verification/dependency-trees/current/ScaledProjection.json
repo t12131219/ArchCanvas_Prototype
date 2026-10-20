@@ -1,0 +1,550 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ScaledProjection",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+    "class": "ScaledProjection",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+      "cell": null,
+      "sha256": "6dd807c54f473da20267c4b511d92b87019ef5069e9ee69aebc163a20cd484c4",
+      "unit_sha256": "6dd807c54f473da20267c4b511d92b87019ef5069e9ee69aebc163a20cd484c4"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/24:4:composite:1",
+      "kind": "composite",
+      "label": "ScaledProjection",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 24,
+          "end_line": 25,
+          "column": 4,
+          "end_column": 40,
+          "symbol": "ScaledProjection.forward",
+          "expression": "def forward(self, x):\n    return torch.relu(self.scale(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ScaledProjection"
+    },
+    {
+      "id": "model/24:4:composite:1/24:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/24:4:composite:1",
+      "source_parent": "model/24:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "ScaledProjection.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1",
+      "kind": "composite",
+      "label": "self.scale",
+      "parent": "model/24:4:composite:1",
+      "source_parent": "model/24:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 21,
+          "end_line": 22,
+          "column": 4,
+          "end_column": 54,
+          "symbol": "scale",
+          "expression": "def scale(self, x):\n    return self.project(x) * math.sqrt(self.width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1/21:20:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/24:4:composite:1/21:4:composite:1",
+      "source_parent": "model/24:4:composite:1/21:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 20,
+          "end_column": 21,
+          "symbol": "scale",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1/22:15:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/24:4:composite:1/21:4:composite:1",
+      "source_parent": "model/24:4:composite:1/21:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 15,
+          "end_column": 54,
+          "symbol": "scale",
+          "expression": "self.project(x) * math.sqrt(self.width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1/22:15:compute:2",
+      "kind": "compute",
+      "label": "project · Linear",
+      "parent": "model/24:4:composite:1/21:4:composite:1",
+      "source_parent": "model/24:4:composite:1/21:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 15,
+          "end_column": 30,
+          "symbol": "scale",
+          "expression": "self.project(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "project",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          12,
+          12
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "module_binding": {
+        "reference": "entry|project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py:18:23",
+        "selection": "self.project",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 23,
+            "end_column": 40,
+            "symbol": "constructor",
+            "expression": "nn.Linear(12, 12)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/24:4:composite:1/21:4:composite:1/22:15:compute:2",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py:18:23"
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1/18:23:parameter:1",
+      "kind": "parameter",
+      "label": "project.parameters",
+      "parent": "model/24:4:composite:1/21:4:composite:1",
+      "source_parent": "model/24:4:composite:1/21:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 18,
+          "end_line": 18,
+          "column": 23,
+          "end_column": 40,
+          "symbol": "scale",
+          "expression": "nn.Linear(12, 12)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "project",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1/22:43:state:1",
+      "kind": "state",
+      "label": "self.width",
+      "parent": "model/24:4:composite:1/21:4:composite:1",
+      "source_parent": "model/24:4:composite:1/21:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 43,
+          "end_column": 53,
+          "symbol": "scale",
+          "expression": "self.width"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "width",
+      "value": 12
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1/22:33:compute:1",
+      "kind": "compute",
+      "label": "sqrt",
+      "parent": "model/24:4:composite:1/21:4:composite:1",
+      "source_parent": "model/24:4:composite:1/21:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 33,
+          "end_column": 54,
+          "symbol": "scale",
+          "expression": "math.sqrt(self.width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sqrt",
+      "function_target": "math.sqrt",
+      "arguments": {
+        "args": [
+          12
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "math.sqrt"
+    },
+    {
+      "id": "model/24:4:composite:1/21:4:composite:1/22:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/24:4:composite:1/21:4:composite:1",
+      "source_parent": "model/24:4:composite:1/21:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 8,
+          "end_column": 54,
+          "symbol": "scale",
+          "expression": "return self.project(x) * math.sqrt(self.width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/24:4:composite:1/25:15:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/24:4:composite:1",
+      "source_parent": "model/24:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 15,
+          "end_column": 40,
+          "symbol": "ScaledProjection.forward",
+          "expression": "torch.relu(self.scale(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.scale(x)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu"
+    },
+    {
+      "id": "model/24:4:composite:1/25:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/24:4:composite:1",
+      "source_parent": "model/24:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 8,
+          "end_column": 40,
+          "symbol": "ScaledProjection.forward",
+          "expression": "return torch.relu(self.scale(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/24:4:composite:1/24:22:interface:1",
+      "target": "model/24:4:composite:1/21:4:composite:1/21:20:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/24:4:composite:1/21:4:composite:1/18:23:parameter:1",
+      "target": "model/24:4:composite:1/21:4:composite:1/22:15:compute:2",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00001"
+    },
+    {
+      "source": "model/24:4:composite:1/21:4:composite:1/21:20:interface:1",
+      "target": "model/24:4:composite:1/21:4:composite:1/22:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/24:4:composite:1/21:4:composite:1/22:15:compute:2",
+      "target": "model/24:4:composite:1/21:4:composite:1/22:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/24:4:composite:1/21:4:composite:1/22:43:state:1",
+      "target": "model/24:4:composite:1/21:4:composite:1/22:33:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/24:4:composite:1/21:4:composite:1/22:33:compute:1",
+      "target": "model/24:4:composite:1/21:4:composite:1/22:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/24:4:composite:1/21:4:composite:1/22:15:compute:1",
+      "target": "model/24:4:composite:1/21:4:composite:1/22:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/24:4:composite:1/21:4:composite:1/22:8:interface:1",
+      "target": "model/24:4:composite:1/25:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/24:4:composite:1/25:15:compute:1",
+      "target": "model/24:4:composite:1/25:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "6f6bd2f25c0852fdbe7d460db9409164340b39893bf8ad7c2cda1801271af260"
+}

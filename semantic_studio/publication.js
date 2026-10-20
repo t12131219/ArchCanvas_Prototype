@@ -226,7 +226,12 @@
       else if(n.contract_roles)caption=n.label;
     }
     if(n.contract_stage){title='Add & Norm';caption=n.contract_stage.normalization_type.split('.').at(-1)+' · Post-Norm';}
-    if(n.local_pipeline&&!n.local_pipeline_expanded){title=n.local_pipeline.operations.map(o=>o.label).join(' → ');caption='Dependency path';}
+    if(n.local_pipeline&&!n.local_pipeline_expanded){
+      const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
+      const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
+      title=p.dependency_tree?expression(p.dependency_tree):p.operations.map(o=>o.label).join(' → ');
+      caption=p.dependency_tree?'Dependency tree':'Dependency path';
+    }
     const maxWidth=n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
     const lines=wrap(title,n.kind==='composite'?maxWidth-20:maxWidth,font),captions=caption?wrap(caption,maxWidth,13):[];
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
@@ -656,11 +661,17 @@
     const contextByEdge=new Map(contextEdges.map(e=>[e.id,e]));
     const contextSources=new Set(pipelines?.size?L.contextEntries(idx,new Set(idx.nodes.keys()),contextEdges).map(r=>contextByEdge.get(r.edge).source):[]);
     const summarized=id=>{
-      const path=pipelines?.get(id);if(!path||roleFrontier?.open.has(id)||expressions?.open.has(id)||path.canonical_members.some(id=>contextSources.has(id)))return false;
+      const path=pipelines?.get(id);if(!path||roleFrontier?.open.has(id)||expressions?.open.has(id))return false;
+      // A source result can feed several later context/skip entries without
+      // exposing its producer's implementation. Only an exact single-result
+      // cut map permits this; intermediate context sources remain explicit.
+      const result=path.output_bindings?.length&&path.output_bindings.every(b=>b.producer===path.operations.at(-1).node)?path.operations.at(-1).node:null;
+      if(path.canonical_members.some(id=>contextSources.has(id)&&id!==result))return false;
       const operations=new Set(path.operations.map(o=>o.node));
       // A later external value is a meaningful context/skip entry. Keep its
       // exact consumer visible rather than reducing it to a helper interface.
-      return !path.bindings.some(b=>b.kind==='value'&&!operations.has(b.producer)&&b.target!==path.operations[0].node);
+      const entries=new Set(path.entry_operations||[path.operations[0].node]);
+      return !path.bindings.some(b=>b.kind==='value'&&!operations.has(b.producer)&&!entries.has(b.target));
     };
     let open=state.paperAuto===false?(state.open||[]):focus?[focus]:[];
     if(state.paperAuto!==false&&focus){

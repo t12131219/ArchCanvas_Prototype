@@ -1,0 +1,643 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "MergeWeave",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+    "class": "MergeWeave",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+      "cell": null,
+      "sha256": "6dd807c54f473da20267c4b511d92b87019ef5069e9ee69aebc163a20cd484c4",
+      "unit_sha256": "6dd807c54f473da20267c4b511d92b87019ef5069e9ee69aebc163a20cd484c4"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/11:4:composite:1",
+      "kind": "composite",
+      "label": "MergeWeave",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 11,
+          "end_line": 12,
+          "column": 4,
+          "end_column": 43,
+          "symbol": "MergeWeave.forward",
+          "expression": "def forward(self, x, y):\n    return torch.tanh(self.weave(x, y))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "MergeWeave"
+    },
+    {
+      "id": "model/11:4:composite:1/11:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "MergeWeave.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/11:4:composite:1/11:25:interface:1",
+      "kind": "interface",
+      "label": "y",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 25,
+          "end_column": 26,
+          "symbol": "MergeWeave.forward",
+          "expression": "y"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "y"
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1",
+      "kind": "composite",
+      "label": "self.weave",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 8,
+          "end_line": 9,
+          "column": 4,
+          "end_column": 69,
+          "symbol": "weave",
+          "expression": "def weave(self, x, y):\n    return torch.sin(torch.relu(x)) - torch.cos(torch.sigmoid(y))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/8:20:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 20,
+          "end_column": 21,
+          "symbol": "weave",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/8:23:interface:1",
+      "kind": "interface",
+      "label": "y",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 23,
+          "end_column": 24,
+          "symbol": "weave",
+          "expression": "y"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "y"
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/9:15:compute:1",
+      "kind": "compute",
+      "label": "sub",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 15,
+          "end_column": 69,
+          "symbol": "weave",
+          "expression": "torch.sin(torch.relu(x)) - torch.cos(torch.sigmoid(y))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sub",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Sub",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/9:25:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 25,
+          "end_column": 38,
+          "symbol": "weave",
+          "expression": "torch.relu(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu"
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/9:15:compute:2",
+      "kind": "compute",
+      "label": "sin",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 15,
+          "end_column": 39,
+          "symbol": "weave",
+          "expression": "torch.sin(torch.relu(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sin",
+      "function_target": "torch.sin",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "torch.relu(x)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sin"
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/9:52:compute:1",
+      "kind": "compute",
+      "label": "sigmoid",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 52,
+          "end_column": 68,
+          "symbol": "weave",
+          "expression": "torch.sigmoid(y)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "y"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sigmoid"
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/9:42:compute:1",
+      "kind": "compute",
+      "label": "cos",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 42,
+          "end_column": 69,
+          "symbol": "weave",
+          "expression": "torch.cos(torch.sigmoid(y))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "cos",
+      "function_target": "torch.cos",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "torch.sigmoid(y)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.cos"
+    },
+    {
+      "id": "model/11:4:composite:1/8:4:composite:1/9:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/11:4:composite:1/8:4:composite:1",
+      "source_parent": "model/11:4:composite:1/8:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 8,
+          "end_column": 69,
+          "symbol": "weave",
+          "expression": "return torch.sin(torch.relu(x)) - torch.cos(torch.sigmoid(y))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/11:4:composite:1/12:15:compute:1",
+      "kind": "compute",
+      "label": "tanh",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 15,
+          "end_column": 43,
+          "symbol": "MergeWeave.forward",
+          "expression": "torch.tanh(self.weave(x, y))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.weave(x, y)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.tanh"
+    },
+    {
+      "id": "model/11:4:composite:1/12:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_trees.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 8,
+          "end_column": 43,
+          "symbol": "MergeWeave.forward",
+          "expression": "return torch.tanh(self.weave(x, y))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/11:4:composite:1/11:22:interface:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/8:20:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/11:4:composite:1/11:25:interface:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/8:23:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "y",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/8:20:interface:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/9:25:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/9:25:compute:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/9:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/9:15:compute:2",
+      "target": "model/11:4:composite:1/8:4:composite:1/9:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/8:23:interface:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/9:52:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/9:52:compute:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/9:42:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/9:42:compute:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/9:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/9:15:compute:1",
+      "target": "model/11:4:composite:1/8:4:composite:1/9:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/11:4:composite:1/8:4:composite:1/9:8:interface:1",
+      "target": "model/11:4:composite:1/12:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/11:4:composite:1/12:15:compute:1",
+      "target": "model/11:4:composite:1/12:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "21d28ec3a6af425d97d3b0587b5ea56d4615207808ce9fba53e607729feb75bf"
+}

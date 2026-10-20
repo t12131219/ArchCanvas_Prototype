@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'adaptive-frontier':
+        if stage == 'dependency-trees':
+            from summarize_dependency_trees import main as summarize_stage
+        elif stage == 'adaptive-frontier':
             from summarize_adaptive_frontier import main as summarize_stage
         elif stage == 'rank-clearance':
             from summarize_rank_clearance import main as summarize_stage

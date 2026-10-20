@@ -13,6 +13,8 @@ def main():
     global OUT
     if '--adaptive' in sys.argv:
         OUT = ROOT / 'verification/adaptive-frontier/current'
+    if '--trees' in sys.argv:
+        OUT = ROOT / 'verification/dependency-trees/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     results = []
     for row in report['rows']:

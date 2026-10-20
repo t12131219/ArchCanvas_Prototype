@@ -387,6 +387,8 @@ def audit_contract_stages(document, row, nodes):
 
 def main():
     global OUT
+    if '--sample-frames' in sys.argv:
+        sys.argv.append('--entry-bands')
     if '--entry-bands' in sys.argv:
         sys.argv.append('--dags')
     if '--adaptive' in sys.argv:
@@ -473,6 +475,8 @@ def main():
         OUT = ROOT / 'verification/summary-coverage/current'
     if '--entry-bands' in sys.argv:
         OUT = ROOT / 'verification/entry-bands/current'
+    if '--sample-frames' in sys.argv:
+        OUT = ROOT / 'verification/sample-frames/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -596,6 +600,32 @@ def main():
                     assert owner['module_identity'] == parent['module_identity']
                 elif record['kind'] == 'expanded-dependency-region':
                     assert owner['presentation_only'] and owner['semantic_type'] in ['structural-region', 'computation-region', 'dependency-band', 'dependency-panel']
+                elif record['kind'] == 'sequence-sample':
+                    parent = planned[owner['parent']]
+                    seq = parent['sequence_frontier']
+                    source_parent = original[parent['id']]
+                    contract = source_parent['repeat_contract']
+                    assert owner['semantic_type'] == 'repeat-instance'
+                    assert owner['id'] in document['publication']['open']
+                    assert record['target'] == parent['id'] and parent['id'] in nodes
+                    assert len(seq['samples']) == 1 and not seq['unclassified']
+                    assert seq['samples'][0]['instance'] == owner['id']
+                    sample = record['sequence_sample']
+                    assert sample['index'] == owner['repeat_index']
+                    assert sample['module_identity'] == original[owner['id']]['module_identity']
+                    assert sample['parameter_sharing'] == contract['parameter_sharing']
+                    groups = contract['structure']['groups']
+                    assert len(groups) == 1 and groups[0]['status'] == 'proved'
+                    assert sample['source_positions'] == groups[0]['indices']
+                    suffixes = [planned[r['node']] for r in seq['remainders']]
+                    assert suffixes and all(s['id'] in nodes and s['id'] not in document['publication']['open'] for s in suffixes)
+                    positions = [sample['index']] + [i for s in suffixes for i in s['sequence_remainder']['indices']]
+                    assert sorted(positions) == list(range(contract['count']))
+                    members = closure(owner['id'])
+                    assert not any(original[id]['kind'] == 'opaque' or original[id].get('mutable') for id in members)
+                    assert not any(e['kind'] == 'state-write' and (e['source'] in members or e['target'] in members) for e in canonical.values())
+                    caption = ''.join(''.join(e.itertext()) for e in nodes[parent['id']] if e.tag.endswith('text'))
+                    assert f'Detail: source call {sample["index"] + 1}' in caption
                 else:
                     assert record['kind'] == 'source-owner'
                     assert owner['semantic_type'] in ['source-module', 'source-function']

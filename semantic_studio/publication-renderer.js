@@ -443,6 +443,15 @@
     }
     return chosen;
   }
+  function realizedRelations(r){
+      const positions=r.graph.positions,routes=new Map(r.prepared.routes.map(e=>[e.id,e])),ctx=positions.context;
+      const entries=ctx.compoundAlignments.filter(c=>L.entryGeometry(c,positions)&&c.entry_bindings.every(b=>routes.get(b.edge)?.route.ok&&routes.get(b.independent_entry)?.route.ok));
+      const columns=ctx.branchColumns.filter(c=>L.branchGeometry(c,positions)&&c.chains.every(p=>p.edges.every(id=>routes.get(id)?.route.ok)));
+      const contexts=ctx.contextLanes.filter(c=>{if(c.selected===false)return false;const p=positions.get(c.owner),route=routes.get(c.edge)?.route;
+        const lo=c.side==='left'?p.x+(p.design_gutter||0):p.x+p.w-p.context_gutter,hi=c.side==='left'?lo+p.context_gutter:p.x+p.w;
+        return route?.ok&&route.target_side===c.side&&route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi);});
+      return {entries:entries.map(c=>JSON.stringify(c.entry_bindings)),columns:columns.map(c=>JSON.stringify(c.chains)),contexts:contexts.map(c=>c.edge)};
+  }
   function prepareEntryBand(ir,state={}){
     const baseline=prepareRankClearance(ir,state),g=baseline.graph;
     if(baseline.prepared.quality.medium!=='canvas'||state.paperEntryBand!==undefined||Object.keys(state.offsets||{}).length||
@@ -451,16 +460,7 @@
     // arrangement at the same semantic frontier, then inspect real routes.
     const rank=baseline.prepared.routing.rank_clearance_refinement;
     const selectedRank=rank?.attempts.filter(a=>a.accepted).at(-1)?.configuration||{};
-    const realized=r=>{
-      const positions=r.graph.positions,routes=new Map(r.prepared.routes.map(e=>[e.id,e])),ctx=positions.context;
-      const entries=ctx.compoundAlignments.filter(c=>L.entryGeometry(c,positions)&&c.entry_bindings.every(b=>routes.get(b.edge)?.route.ok&&routes.get(b.independent_entry)?.route.ok));
-      const columns=ctx.branchColumns.filter(c=>L.branchGeometry(c,positions)&&c.chains.every(p=>p.edges.every(id=>routes.get(id)?.route.ok)));
-      const contexts=ctx.contextLanes.filter(c=>{if(c.selected===false)return false;const p=positions.get(c.owner),route=routes.get(c.edge)?.route;
-        const lo=c.side==='left'?p.x+(p.design_gutter||0):p.x+p.w-p.context_gutter,hi=c.side==='left'?lo+p.context_gutter:p.x+p.w;
-        return route?.ok&&route.target_side===c.side&&route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi);});
-      return {entries:entries.map(c=>JSON.stringify(c.entry_bindings)),columns:columns.map(c=>JSON.stringify(c.chains)),contexts:contexts.map(c=>c.edge)};
-    };
-    const before=realized(baseline);
+    const before=realizedRelations(baseline);
     const candidateState={...state,...selectedRank,paperEntryBand:true,paperFlowAlignment:'entries',
       paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest',
       paperContextEdges:state.paperContextEdges||before.contexts,paperBranchColumns:!!g.positions.context.branchColumns.length,paperContextLanes:g.positions.context.contextLanes[0]?.side||false,
@@ -468,7 +468,7 @@
     const probe=E.project(ir,{...candidateState,view:'publication'});
     if(!probe.positions.context.compoundAlignments.some(c=>L.entryBandGeometry(c,probe.positions)))return baseline;
     const trial=prepareLabels(ir,candidateState);
-    const after=realized(trial),bands=trial.graph.positions.context.compoundAlignments.filter(c=>L.entryBandGeometry(c,trial.graph.positions));
+    const after=realizedRelations(trial),bands=trial.graph.positions.context.compoundAlignments.filter(c=>L.entryBandGeometry(c,trial.graph.positions));
     const accepted=bands.length>0&&acceptClearance(baseline,trial,true)&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
     const chosen=accepted?trial:baseline;
     if(accepted)for(const key of ['topology_refinement','context_refinement','branch_refinement','flow_refinement','clearance_refinement','rank_clearance_refinement'])
@@ -478,8 +478,38 @@
       scope:'Entry interfaces occupy a separate top band; identical frontier, canonical bindings and realized relations required. No execution scheduling claim.'};
     return chosen;
   }
+  function prepareSampleFrame(ir,state={}){
+    const baseline=prepareEntryBand(ir,state),g=baseline.graph;
+    if(baseline.prepared.quality.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperSampleFrame!==undefined||
+      state.paperFrameView==='source'||Object.keys(state.offsets||{}).length||g.edges.length>128||
+      !g.nodes.some(n=>n.sequence_sample&&g.positions.get(n.id)?.expanded))return baseline;
+    const trial=prepareEntryBand(ir,{...state,paperSampleFrame:true});
+    const frames=(trial.graph.frame_ownership||[]).filter(r=>r.kind==='sequence-sample'),ids=new Set(frames.map(r=>r.node));
+    if(!ids.size)return baseline;
+    const identity=h=>JSON.stringify({nodes:h.nodes.filter(n=>!ids.has(n.id)).map(n=>n.id),open:h.publication.open,
+      edges:h.edges.map(e=>({id:e.id,source:e.source,target:e.target,source_port:e.source_port,target_port:e.target_port,
+        originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition})),
+      node_accounting:Object.fromEntries(Object.entries(h.node_accounting).map(([k,v])=>[k,v.filter(id=>!ids.has(id))])),
+      edge_accounting:h.edge_accounting,boundary:h.publication.boundary,roles:h.publication.role_frontier});
+    const q=trial.prepared.quality,b=baseline.prepared.quality,before=realizedRelations(baseline),after=realizedRelations(trial);
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    const facts=identity(g)===identity(trial.graph)&&frames.every(r=>g.positions.get(r.node)?.expanded&&
+      trial.graph.node_accounting.attached.includes(r.node)&&trial.graph.positions.has(r.target));
+    const accepted=facts&&areaMetric(q)<areaMetric(b)*.98&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&
+      q.wire_length<=b.wire_length&&q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      conflicts(trial).every(id=>conflicts(baseline).includes(id))&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const chosen=accepted?trial:baseline;
+    chosen.prepared.routing.sample_frame_refinement={accepted,facts_preserved:facts,frames,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      realized_before:before,realized_candidate:after,
+      scope:'One concrete representative shares its sequence frame; actual calls, source identities, suffixes and exact bindings retained. One measured trial; no output equality.'};
+    return chosen;
+  }
   function prepareAdaptive(ir,state={}){
-    let chosen=prepareEntryBand(ir,state);
+    let chosen=prepareSampleFrame(ir,state);
     if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
     const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     attachExpressionEvidence(ir,chosen);
@@ -512,7 +542,7 @@
       const trials=[];
       for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
         seen.add(item.candidate.id);
-        const trial=attachExpressionEvidence(ir,prepareEntryBand(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+        const trial=attachExpressionEvidence(ir,prepareSampleFrame(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
         const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
           ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
         trials.push({item,trial,assessment,receipt});

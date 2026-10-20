@@ -202,6 +202,8 @@
     if(n.observation_group)caption='Same observed structure · individual executions retained';
     const sourceOwner=n.frame_ownership?.find(r=>r.kind==='source-owner');
     if(sourceOwner)title=sourceOwner.label+' · '+title;
+    const sequenceSample=n.frame_ownership?.find(r=>r.kind==='sequence-sample');
+    if(sequenceSample)caption='Detail: source call '+(sequenceSample.sequence_sample.index+1)+' · '+caption;
     const sourceClass=n.module_path&&(n.source_class||n.source?.find(s=>s.symbol?.endsWith('.forward')&&s.expression?.startsWith('def forward('))?.symbol.slice(0,-8));
     if(sourceClass&&sourceClass!==title&&!n.contract_roles)caption=sourceClass+(caption&&caption!=='Module'?' · '+caption:'');
     if(n.operator==='structure')title=n.structure_kind==='dict'?'Pack mapping':'Pack values';
@@ -662,7 +664,7 @@
     if(base.publication?.boundary_plans?.some(p=>p.parent===focus))options.layout.inputPlacement='consumer';
     if(canvas&&state.paperFrameView!=='source'){
       const engine=root.SemanticFrameOwnership||(typeof require==='function'?require('./frame-ownership.js'):null);
-      options.frameOwnership=args=>engine.select({...args,flattenDependencyBands:canvas&&granularity==='roles'});options.decorateFrameOwner=decorate;
+      options.frameOwnership=args=>engine.select({...args,flattenDependencyBands:canvas&&granularity==='roles',flattenSequenceSamples:canvas&&granularity==='roles'&&state.paperSampleFrame===true});options.decorateFrameOwner=decorate;
     }
     // A proved source path already has a meaningful intermediate expression.
     // Keep it folded unless a role or local relationship requests its detail.

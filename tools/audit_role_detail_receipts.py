@@ -31,6 +31,8 @@ def main():
         OUT = ROOT / 'verification/summary-coverage/current'
     if '--entry-bands' in sys.argv:
         OUT = ROOT / 'verification/entry-bands/current'
+    if '--sample-frames' in sys.argv:
+        OUT = ROOT / 'verification/sample-frames/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     results = []
     for row in report['rows']:

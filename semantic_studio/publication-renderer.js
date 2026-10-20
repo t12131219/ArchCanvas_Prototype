@@ -423,8 +423,55 @@
       scope:'vertical receiving-rank clearance; unchanged semantic frontier; folded and compound layouts retain parent clearance'};
     return chosen;
   }
-  function selectFigure(ir,state={}){
+  function attachExpressionEvidence(ir,chosen){
+    const g=chosen.graph;
+    E.auditConstraintRoutes(g,chosen.prepared.routes);
+    g.expression_goals=Goals.build(ir,g.architecture);
+    g.expression_coverage=Goals.evaluate(g.expression_goals,g,chosen.prepared);
+    if(g.publication.local_expressions){
+      const expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
+      expressions.verify(g.publication.local_expressions,g,chosen.prepared);
+    }
+    return chosen;
+  }
+  function prepareAdaptive(ir,state={}){
     let chosen=prepareRankClearance(ir,state);
+    if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
+    const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
+    attachExpressionEvidence(ir,chosen);
+    const initial=engine.metrics(chosen),attempts=[],preflights=[],seen=new Set();let selectedState={...state},measured=0;
+    // At most three actual routed trials. Cheap projections rank at most 12
+    // opportunities per step; rejected trials never change the saved request.
+    while(measured<3&&preflights.length<36){
+      const opportunities=engine.candidates(chosen.graph,selectedState).filter(c=>!seen.has(c.id)),shortlist=[];
+      for(const candidate of opportunities.slice(0,Math.min(12,36-preflights.length))){
+        seen.add(candidate.id);
+        const next=engine.apply(selectedState,candidate),graph=E.project(ir,{...next,view:'publication'}),before=new Set(chosen.graph.nodes.map(n=>n.id));
+        const added=graph.nodes.filter(n=>!before.has(n.id)),request=candidate.kind==='roles'?graph.publication.role_frontier?.detail_requests.find(r=>r.node===candidate.node):null;
+        const reason=request&&request.status!=='expanded'?'protected-or-budgeted-role':!added.length?'no-new-visible-detail':null;
+        const estimate=added.filter(n=>['compute','opaque','control'].includes(n.kind)).length;
+        const row={candidate,added_nodes:added.length,estimated_operations:estimate,reason};preflights.push(row);
+        if(!reason)shortlist.push({candidate,next,estimate,added:added.length});
+      }
+      shortlist.sort((a,b)=>b.candidate.priority-a.candidate.priority||b.estimate/Math.max(1,b.added)-a.estimate/Math.max(1,a.added)||a.candidate.id.localeCompare(b.candidate.id));
+      // Untested shortlist entries remain eligible after a successful local
+      // step, with preflight repeated against that newly selected frontier.
+      for(const item of shortlist)seen.delete(item.candidate.id);
+      const item=shortlist[0];if(!item){if(opportunities.length>12)continue;break;}seen.add(item.candidate.id);
+      const trial=attachExpressionEvidence(ir,prepareRankClearance(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+      attempts.push({opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},...assessment});
+      if(assessment.accepted){chosen=trial;selectedState=item.next;}
+    }
+    const remaining=engine.candidates(chosen.graph,selectedState).filter(c=>!seen.has(c.id));
+    const receipt={rule_version:engine.VERSION,requested:true,baseline:initial,selected:engine.metrics(chosen),attempts,preflights,
+      selected_role_details:selectedState.paperRoleDetails||[],selected_expression_details:selectedState.paperExpressionDetails||[],
+      unmeasured_opportunities:remaining.length,measurement_limit:3,preflight_limit:36,
+      scope:'Bounded local role/relation refinement of the requested canvas frontier; fulfilled goals only, not coverage of all hidden instances. Canonical IR and saved requests remain unchanged.'};
+    chosen.graph.publication.adaptive_frontier=receipt;chosen.prepared.routing.semantic_refinement=receipt;
+    return chosen;
+  }
+  function selectFigure(ir,state={}){
+    let chosen=prepareAdaptive(ir,state);
     const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
     // A zoomable canvas keeps the requested semantic frontier. Route/resource
     // failures remain explicit; silently replacing it with an overview is not
@@ -456,18 +503,15 @@
     return chosen;
   }
   function prepareFigure(ir,state={}){
-    const chosen=selectFigure(ir,state),g=chosen.graph;
-    E.auditConstraintRoutes(g,chosen.prepared.routes);
-    g.expression_goals=Goals.build(ir,g.architecture);
-    g.expression_coverage=Goals.evaluate(g.expression_goals,g,chosen.prepared);
-    if(g.publication.local_expressions){
-      const expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
-      expressions.verify(g.publication.local_expressions,g,chosen.prepared);
-    }
-    return chosen;
+    return attachExpressionEvidence(ir,selectFigure(ir,state));
   }
   function render(ir,state){
-    E.validate(ir);state={...state,view:'publication'};const {graph:g,prepared}=prepareFigure(ir,state),{bounds:b,routes,labeling,quality}=prepared;
+    E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));
+  }
+  // Serialize an already measured figure, including rejected audit trials,
+  // without rerouting it or substituting a different selected frontier.
+  function renderPrepared(ir,state,{graph:g,prepared}){
+    const {bounds:b,routes,labeling,quality}=prepared;
     const expressionGoals=g.expression_goals,expressionCoverage=g.expression_coverage;
     const frames=[],nodes=[];
     for(const n of E.drawingOrder(g.nodes,g.idx)){const p=g.positions.get(n.id),body=`<g class="node" data-node-id="${esc(n.id)}" data-id="${esc(n.id)}"${n.identity_display?` data-identity="${esc(JSON.stringify(n.identity_display))}"`:''} transform="translate(${p.x},${p.y})"><title>${esc(nodeTitle(n,g.idx))}</title>${nodeBody(n,p)}</g>`;(p.expanded?frames:nodes).push(body);}
@@ -496,5 +540,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,prepareFigure,render,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

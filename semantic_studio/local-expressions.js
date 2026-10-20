@@ -7,17 +7,20 @@
     selection:'interface','unknown-boundary':'boundary','conditional-join':'condition',
     'conditional-region':'condition','iteration-binding':'iteration','iteration-template':'iteration',
     'same-object-calls':'identity','observed-parameter-aliases':'identity'};
-  function compile({plan,focus}){
+  function compile({plan,focus,details=[]}){
+    const requested=new Set(Array.isArray(details)?details.filter(id=>typeof id==='string'):[]),preferred=new Set();
     const by=new Map(plan.nodes.map(n=>[n.id,n])),open=new Set(),scopes=new Set(),requests=[];
     const within=(id,owner)=>{const seen=new Set();while(id&&!seen.has(id)){if(id===owner)return true;seen.add(id);id=by.get(id)?.parent;}return false;};
     const certificates=new Set((plan.semantic_contracts||[]).map(c=>c.node));
     const boundary=n=>n.contract_stage?'certified-role-stage':certificates.has(n.id)?'certificate':n.kind==='opaque'||n.mutable?'effects':
-      n.condition||n.kind==='control'?'condition':n.identity_display||n.observed_calls?'identity-or-observation':
+      n.condition||n.kind==='control'||n.semantic_type==='conditional-collection'?'condition':n.identity_display||n.observed_calls||n.evidence_status==='runtime-only'||n.runtime_evidence?.length?'identity-or-observation':
       ['loop-template','iteration-region','serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)&&!n.sequence_frontier?'iteration-or-repeat':null;
     for(const r of plan.relation_graph?.relations||[]){
-      if(!forms[r.type]||!within(r.node,focus))continue;
+      const explicit=requested.has(r.id);
+      if((!forms[r.type]&&!explicit)||r.type==='source-uses'||!within(r.node,focus))continue;
       const targets=[...new Set([r.node,...(forms[r.type]==='calculation'?r.members:forms[r.type]==='identity'?r.members:[]),
-        ...(r.properties.required_nodes||[]),...(forms[r.type]==='condition'?r.members.filter(id=>by.get(id)?.kind==='control'):[])])];
+        ...(r.properties.required_nodes||[]),...(forms[r.type]==='condition'?r.members.filter(id=>by.get(id)?.kind==='control'):[]),
+        ...(explicit?r.bindings.flatMap(b=>[b.producer,b.target]):[])])];
       const scope=by.get(r.source_scope)?.kind==='composite'&&within(r.source_scope,focus)?r.source_scope:focus;
       const rows=targets.filter(id=>by.has(id)).map(node=>{
         // External inputs remain external. A local relation cannot ask to
@@ -27,17 +30,17 @@
         let frontier=node,stop=null;
         for(const id of [focus,...chain]){const why=boundary(by.get(id));if(why){frontier=id;stop=why;break;}}
         at=by.get(frontier)?.parent;
-        while(at&&within(at,focus)){open.add(at);if(at===focus)break;at=by.get(at)?.parent;}
+        while(at&&within(at,focus)){open.add(at);if(explicit)preferred.add(at);if(at===focus)break;at=by.get(at)?.parent;}
         return {node,frontier_node:frontier,location:'internal',stop};
       });
       // A source scope gets a budget only when this request can reach its
       // contents. A folded certified or conditional scope is never a shortcut.
       if(scope!==focus&&rows.some(row=>row.location==='internal'&&within(row.frontier_node,scope)&&row.frontier_node!==scope))scopes.add(scope);
-      requests.push({relation:r.id,type:r.type,form:forms[r.type],scope,targets:rows,
+      requests.push({relation:r.id,type:r.type,form:forms[r.type]||'structure',scope,targets:rows,...(explicit?{requested:true}:{}),
         bindings:r.bindings,not_asserted:r.not_asserted,evidence_scope:r.evidence_scope,
         condition_scope:r.condition_scope,rule_version:r.rule_version});
     }
-    return {version:VERSION,open,scopes,requests};
+    return {version:VERSION,open,scopes,requests,preferred};
   }
   function receipt(frontier,graph){
     const positions=graph.positions,byConstraint=new Map((graph.constraint_receipts||[]).map(c=>[c.evidence.relation,c]));
@@ -68,7 +71,7 @@
     const depth=id=>{let d=0;while(by.get(id)?.parent){d++;id=by.get(id).parent;}return d;};
     // Supplement the existing frontier only along requested paths. Independent
     // budgets must not release space for unrelated automatic helper expansion.
-    for(const id of [...frontier.open].sort((a,b)=>depth(a)-depth(b))){
+    for(const id of [...frontier.open].sort((a,b)=>Number(frontier.preferred?.has(b)||false)-Number(frontier.preferred?.has(a)||false)||depth(a)-depth(b))){
       if(selected.has(id)||!leaves().includes(id))continue;
       const kids=(children.get(id)||[]).filter(eligible),childCost=kids.reduce((sum,id)=>sum+cost(id),0);
       const delta=scopes.has(id)?0:childCost-cost(id);

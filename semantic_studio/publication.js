@@ -618,7 +618,7 @@
     const roleFrontier=roleEngine?.compile({plan:focused.plan,focus,details:state.paperRoleDetails});
     if(roleFrontier){focused.plan=roleFrontier.plan;const all=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,all);}
     const expressionEngine=roleFrontier?(root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null)):null;
-    const expressions=expressionEngine?.compile({plan:focused.plan,focus});
+    const expressions=expressionEngine?.compile({plan:focused.plan,focus,details:state.paperExpressionDetails});
     const frontierScopes=new Set(roleFrontier?.owners||[]);
     const pol=policy(ir,focus,focused.inside,dimensionPaths),pipelineEngine=canvas&&granularity==='roles'&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
     const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol});

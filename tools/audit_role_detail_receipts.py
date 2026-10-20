@@ -3,12 +3,16 @@ import hashlib
 import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'verification/role-details/current'
 
 
 def main():
+    global OUT
+    if '--adaptive' in sys.argv:
+        OUT = ROOT / 'verification/adaptive-frontier/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     results = []
     for row in report['rows']:
@@ -21,7 +25,7 @@ def main():
         receipt = doc['publication']['role_frontier']
         assert receipt == row['role_frontier']
         owners = {m['node'] for m in receipt['modules']}
-        requested = row['state'].get('paperRoleDetails', [])
+        requested = doc['publication'].get('adaptive_frontier', {}).get('selected_role_details', row['state'].get('paperRoleDetails', []))
         assert {r['node'] for r in receipt['detail_requests']} == set(requested)
 
         def guarded(n):

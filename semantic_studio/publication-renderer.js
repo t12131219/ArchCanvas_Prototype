@@ -226,7 +226,7 @@
     // Print-scale optimization can squeeze recurrent/branch labels into a gap
     // that routes fit but text does not. Recheck a bounded set of larger gaps
     // only after actual label placement fails, keeping user positions intact.
-    if(!prepared.quality.unplaced_port_labels.length||state.paperAuto===false||Object.keys(state.offsets||{}).length)return {graph,prepared};
+    if(!prepared.quality.unplaced_port_labels.length||(state.paperAuto===false&&prepared.quality.medium!=='canvas')||Object.keys(state.offsets||{}).length)return {graph,prepared};
     const baseline=prepared.quality,candidates=[];
     for(const gap of [60,84,112]){
       const trialGraph=E.project(ir,{...state,view:'publication',paperLabelGapY:gap}),trial=prepare(trialGraph),q=trial.quality,b=prepared.quality;
@@ -246,8 +246,9 @@
     const baseline=prepareLabels(ir,state),b=baseline.prepared.quality;
     // Evaluate one topology alternative only where routed crossings remain.
     // Each candidate receives the same print fitting, routing and label checks.
-    // Manual arrangements and explicit profiles are not automatically replaced.
-    if(state.paperAuto===false||state.paperRankStrategy||Object.keys(state.offsets||{}).length||
+    // Manual node positions and explicit profiles are not replaced. On a
+    // canvas, manual folding selects evidence detail, not a layout profile.
+    if((state.paperAuto===false&&b.medium!=='canvas')||state.paperRankStrategy||Object.keys(state.offsets||{}).length||
       !b.line_geometry.crossings||baseline.graph.edges.length>64)return baseline;
     const trial=prepareLabels(ir,{...state,paperRankStrategy:'consumer'}),q=trial.prepared.quality;
     const accepted=q.line_geometry.crossings<b.line_geometry.crossings&&
@@ -268,7 +269,7 @@
     // Context entries are a soft geometry proposal, never a semantic rule.
     // Automatic selection must preserve the frontier and all quality gates.
     if(b.medium!=='canvas'||baseline.graph.publication.granularity!=='roles'||state.paperContextLanes!==undefined||
-      state.paperAuto===false||Object.keys(state.offsets||{}).length||!b.line_geometry.crossings||baseline.graph.edges.length>128||!L.contextEntries(baseline.graph.idx,new Set(baseline.graph.positions.keys()),baseline.graph.edges).length)return baseline;
+      Object.keys(state.offsets||{}).length||!b.line_geometry.crossings||baseline.graph.edges.length>128||!L.contextEntries(baseline.graph.idx,new Set(baseline.graph.positions.keys()),baseline.graph.edges).length)return baseline;
     const trial=prepareTopology(ir,{...state,paperContextLanes:'left'}),q=trial.prepared.quality;
     if(!trial.graph.positions.context.contextLanes.length)return baseline;
     const identity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id),edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,
@@ -288,7 +289,7 @@
   function prepareBranches(ir,state={}){
     const baseline=prepareContext(ir,state),b=baseline.prepared.quality;
     if(b.medium!=='canvas'||baseline.graph.publication.granularity!=='roles'||state.paperBranchColumns!==undefined||
-      state.paperAuto===false||Object.keys(state.offsets||{}).length||baseline.graph.edges.length>128)return baseline;
+      Object.keys(state.offsets||{}).length||baseline.graph.edges.length>128)return baseline;
     const channel=baseline.graph.positions.context.contextLanes[0]?.side||false;
     const candidateState={...state,paperBranchColumns:true,paperContextLanes:channel};
     const probe=E.project(ir,{...candidateState,view:'publication'});
@@ -313,7 +314,7 @@
   }
   function prepareFlows(ir,state={}){
     const baseline=prepareBranches(ir,state),b=baseline.prepared.quality;
-    if(b.medium!=='canvas'||state.paperFlowAlignment!==undefined||state.paperAuto===false||Object.keys(state.offsets||{}).length||
+    if(b.medium!=='canvas'||state.paperFlowAlignment!==undefined||Object.keys(state.offsets||{}).length||
       baseline.graph.edges.length>128||!baseline.graph.positions.context.compoundAlignments.some(c=>c.accepted))return baseline;
     const candidateState={...state,paperFlowAlignment:'entries',paperBranchColumns:!!baseline.graph.positions.context.branchColumns.length,
       paperContextLanes:baseline.graph.positions.context.contextLanes[0]?.side||false,

@@ -1,7 +1,7 @@
 'use strict';
 // Verify the actual editor's exported documents; no hidden UI state is read.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
-const out=path.resolve(__dirname,'../verification/contract-stages/current'),R=require('../semantic_studio/publication-renderer.js');
+const out=path.resolve(__dirname,process.argv.includes('--stability')?'../verification/stage-stability/current':'../verification/contract-stages/current'),R=require('../semantic_studio/publication-renderer.js');
 const read=f=>JSON.parse(fs.readFileSync(path.join(out,f))),sha=f=>crypto.createHash('sha256').update(fs.readFileSync(path.join(out,f))).digest('hex');
 const keys=['saved','expanded','reopened','refolded','all-expanded'],docs=keys.map(k=>read('stage-ui-'+k+'.json'));
 const results=docs.map(d=>R.render(d.ir,d.state)),observed=read('ui-observations.json'),counts=[11,13,13,11,15];

@@ -49,11 +49,13 @@ test('left and right alternatives preserve exact slots and return obstacle-free 
   assert.deepEqual(Object.values(g.edge_accounting).flat().sort(),ir.edges.map(e=>e.id).sort());
  }
 });
-test('a measured regression is rejected and manual or explicit disabled layouts stay unchanged',()=>{
+test('a measured regression is rejected equally with automatic or manually selected canvas detail',()=>{
  const ir=JSON.parse(fs.readFileSync('verification/local-relations/current/InterruptedMixer.json'));
  const state={paperMedium:'canvas',paperGranularity:'roles'},baseline=R.render(ir,{...state,paperContextLanes:false}),automatic=R.render(ir,state);
  assert.equal(automatic.prepared.routing.context_refinement.accepted,false);assert.equal(automatic.svg,baseline.svg);
  assert.ok(automatic.prepared.routing.context_refinement.candidate.crossings>automatic.prepared.routing.context_refinement.before.crossings);
- const manual=R.render(ir,{...state,paperAuto:false,open:baseline.graph.publication.open});assert.equal(manual.prepared.routing.context_refinement,undefined);
+ const manual=R.render(ir,{...state,paperAuto:false,open:baseline.graph.publication.open});assert.deepEqual(manual.graph.publication.open,baseline.graph.publication.open);assert.deepEqual(manual.prepared.routing.context_refinement,automatic.prepared.routing.context_refinement);assert.equal(manual.svg,automatic.svg);
+ const disabled=R.render(ir,{...state,paperAuto:false,open:baseline.graph.publication.open,paperContextLanes:false});assert.equal(disabled.prepared.routing.context_refinement,undefined);
+ const offset=R.render(ir,{...state,paperAuto:false,open:baseline.graph.publication.open,offsets:{[ir.nodes[0].id]:{x:20,y:0}}});assert.equal(offset.prepared.routing.context_refinement,undefined);
  assert.equal(R.render(automatic.document.ir,automatic.document.state).svg,automatic.svg);
 });

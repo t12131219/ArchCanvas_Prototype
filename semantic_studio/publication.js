@@ -606,8 +606,6 @@
     const focused=focusPlan(ir,base,focus);
     if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);
     const stageEngine=canvas&&granularity==='roles'&&state.paperContractStages!==false?(root.SemanticContractStages||(typeof require==='function'?require('./contract-stages.js'):null)):null;
-    const stages=stageEngine?.compile({ir,plan:focused.plan});
-    if(stages){focused.plan=stages.plan;const all=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,all);}
     const roleEngine=canvas&&granularity==='roles'&&!local?(root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null)):null;
     const roleFrontier=roleEngine?.compile({plan:focused.plan,focus});
     if(roleFrontier){focused.plan=roleFrontier.plan;const all=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,all);}
@@ -617,7 +615,8 @@
     const pol=policy(ir,focus,focused.inside),pipelineEngine=canvas&&granularity==='roles'&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
     const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol});
     if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id)}:n);
-    const idx=index(focused.plan),budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
+    let idx=index(focused.plan);
+    const budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
     if(structuralGroup)decorate(idx.nodes.get(focus),idx);
     // Input/output interfaces of a focused panel are real, named boundaries.
     for(const port of focused.boundary)if(!port.presentation)pol.bindings.delete(port.port_node);
@@ -694,6 +693,10 @@
       if(expressions)open=expressionEngine.select(expressions,{plan:focused.plan,focus,open,budget,eligible,budgetScopes:frontierScopes});
     }
     if(local)open=state.paperCompact&&local.minimal_open?local.minimal_open:local.open;
+    // Select evidence detail before presentation subregions change container
+    // counts. A local summary must not consume an unrelated region's budget.
+    const stages=stageEngine?.compile({ir,plan:focused.plan});
+    if(stages){focused.plan=stages.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     // A closed module owns its interface. Contracting that interface would
     // expose each internal consumer as another, misleading boundary arrow.
     for(const n of ir.nodes)if(n.kind==='interface'&&!open.includes(n.parent))pol.bindings.delete(n.id);

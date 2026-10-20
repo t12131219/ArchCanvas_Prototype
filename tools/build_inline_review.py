@@ -17,6 +17,8 @@ def sha(file):
 
 def main():
     global OUT
+    if '--stability' in sys.argv:
+        sys.argv.append('--stages')
     if '--stages' in sys.argv:
         sys.argv.append('--pipelines')
     if '--pipelines' in sys.argv:
@@ -43,6 +45,8 @@ def main():
         OUT = ROOT / 'verification/local-pipelines/current'
     if '--stages' in sys.argv:
         OUT = ROOT / 'verification/contract-stages/current'
+    if '--stability' in sys.argv:
+        OUT = ROOT / 'verification/stage-stability/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -97,6 +101,8 @@ def main():
         head = head.replace('本轮按独立入口组织相邻计算区域，真实上下文箭头可以向上连接。分列、已实现通道及更细展开能力保留', '本轮用真实局部依赖解释折叠源码区域，保留原始操作数与继续展开能力。未知、条件及中间结果外流区域保持原边界')
     if '--stages' in sys.argv:
         head = head.replace('本轮用真实局部依赖解释折叠源码区域，保留原始操作数与继续展开能力。未知、条件及中间结果外流区域保持原边界', '本轮将已认证的相加与后置归一化角色形成可展开阶段，原始绑定保留；更细展开的整图布局仍有退化')
+    if '--stability' in sys.argv:
+        head = head.replace('本轮将已认证的相加与后置归一化角色形成可展开阶段，原始绑定保留；更细展开的整图布局仍有退化', '本轮固定证据粒度后再生成语义阶段，并为手动展开保留可测量的布局优化；实际移动的位置和显式布局设置保留')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -200,6 +206,12 @@ def main():
             viewport = [x, y, max(n['x'] + n['w'] for n in geometry) + 36 - x, max(n['y'] + n['h'] for n in geometry) + 36 - y]
             view += f'<article><h2>{key}</h2><p>{row["nodes"]} 图元 / {row["edges"]} 边 · 整图交叉 {row["quality"]["line_geometry"]["crossings"]}</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
         (OUT / 'transformer-stage-comparison.html').write_text(view + '</div></html>')
+        if '--stability' in sys.argv:
+            view = simple + '<h1>手动展开后的布局稳定性</h1><p>同一份源码及相同展开列表；左：冻结实现；中：本轮实现；右：本轮语义折叠状态。没有节点手动位移。</p><div class="cards">'
+            for key in ['transformer-stage-open-before', 'transformer-stage-open', 'transformer-roles']:
+                view += card(rows[key])
+            (OUT / 'expansion-comparison.html').write_text(view + '</div></html>')
+
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

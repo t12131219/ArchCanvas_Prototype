@@ -43,7 +43,8 @@ for(const name of ['ContextWeave','BoundaryWeave'])test(name+' composes, preserv
  for(const [key,items]of [['node_accounting',ir.nodes],['edge_accounting',ir.edges]]){const ids=Object.values(a.graph[key]).flat();assert.equal(ids.length,new Set(ids).size);assert.deepEqual(ids.sort(),items.map(n=>n.id).sort());}
  for(const edge of a.graph.edges.filter(e=>ir.edges.some(x=>x.id===e.id))){const original=ir.edges.find(e=>e.id===edge.id);assert.equal(edge.target_port,original.target_port);}
  if(name==='BoundaryWeave'){const opaque=ir.nodes.find(n=>n.kind==='opaque');assert.ok(a.graph.positions.has(opaque.id));}
- const fixed=R.render(ir,{...state,paperAuto:false,open:a.graph.publication.open});assert.equal(fixed.prepared.routing.flow_refinement,undefined);
+ const fixed=R.render(ir,{...state,paperAuto:false,open:a.graph.publication.open});assert.deepEqual(fixed.graph.publication.open,a.graph.publication.open);assert.deepEqual(fixed.prepared.routing.flow_refinement,a.prepared.routing.flow_refinement);assert.equal(fixed.svg,a.svg);
+ const disabled=R.render(ir,{...state,paperAuto:false,open:a.graph.publication.open,paperFlowAlignment:false});assert.equal(disabled.prepared.routing.flow_refinement,undefined);
  const offset=R.render(ir,{...state,offsets:{[ir.nodes[0].id]:{x:20,y:0}}});assert.equal(offset.prepared.routing.flow_refinement,undefined);
  const print=R.render(ir,{paperGranularity:'roles'});assert.equal(print.prepared.routing.flow_refinement,undefined);
 });

@@ -66,3 +66,7 @@ selection. Residual capture points, whole-graph context organization, overlap
 handling beyond compatible sibling cuts and dense view readability still need
 work. Review height, width and crossings alongside semantics; fewer visible
 nodes alone are not proof of a better diagram.
+
+Follow-up: [stage stability](stage-stability.md) separates automatic evidence
+detail from stage grouping and retains measured canvas layout after manual
+unfolding. The original stage evidence above remains historical.

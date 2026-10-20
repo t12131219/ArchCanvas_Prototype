@@ -76,3 +76,25 @@ test('a folded stage output remains the exact skip source for the next certified
  for(const stage of stages){const c=r.graph.constraint_receipts.find(c=>c.id===stage.bypass_constraint);assert.ok(c);assert.equal(stage.bypass,undefined);}
  accounted(ir,r.graph);assert.deepEqual(r.prepared.quality.issues,[]);
 });
+
+
+test('presentation stages do not consume another region’s automatic evidence-detail budget',()=>{
+ const E=require('../semantic_studio/semantic-engine.js');
+ for(const name of ['ConditionalTail','TailMosaic','TailChain','InterruptedTail'])for(const paperBudget of [4,12,20,28]){
+  const ir=read(name),before=JSON.stringify(ir),options={...state,view:'publication',paperBudget};
+  const staged=E.project(ir,options),plain=E.project(ir,{...options,paperContractStages:false});
+  assert.deepEqual(staged.publication.open,plain.publication.open,name+' budget '+paperBudget);
+  const hidden=new Set(staged.publication.contract_stages.rows.filter(s=>s.status==='summary').flatMap(s=>s.canonical_members));
+  for(const n of plain.nodes)if(!hidden.has(n.id))assert.ok(staged.nodes.some(m=>m.id===n.id),'independent node '+n.id);
+  accounted(ir,staged);assert.equal(JSON.stringify(ir),before);
+ }
+});
+
+test('conditional interiors keep their original detail and final certified bypass after an independent stage forms',()=>{
+ const ir=read('ConditionalTail'),staged=R.render(ir,state),plain=R.render(ir,{...state,paperContractStages:false});
+ const conditional=ir.nodes.filter(n=>n.condition);assert.ok(conditional.length);
+ for(const n of plain.graph.nodes.filter(n=>conditional.some(c=>c.id===n.id)))assert.ok(staged.graph.nodes.some(m=>m.id===n.id));
+ const bypasses=r=>r.graph.constraint_receipts.filter(c=>c.status==='applied'&&c.id.includes('bypass')).map(c=>c.id).sort();
+ assert.ok(bypasses(plain).length);assert.deepEqual(bypasses(staged),bypasses(plain));
+ assert.deepEqual(staged.prepared.quality.issues,[]);
+});

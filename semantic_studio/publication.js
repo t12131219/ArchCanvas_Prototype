@@ -226,7 +226,7 @@
       else if(n.contract_roles)caption=n.label;
     }
     if(n.condition_predicate){title='If '+n.condition_predicate.label;caption='Conditional alternatives · exact interfaces';}
-    if(n.contract_stage){title='Add & Norm';caption=n.contract_stage.normalization_type.split('.').at(-1)+' · Post-Norm';}
+    if(n.contract_stage){title='Add & Norm';caption=(n.contract_stage.branch_tail?n.contract_stage.branch_tail.label+' → ':'')+n.contract_stage.normalization_type.split('.').at(-1)+' · Post-Norm';}
     if(n.local_pipeline&&!n.local_pipeline_expanded){
       const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
       const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
@@ -755,7 +755,7 @@
     if(local)open=state.paperCompact&&local.minimal_open?local.minimal_open:local.open;
     // Select evidence detail before presentation subregions change container
     // counts. A local summary must not consume an unrelated region's budget.
-    const stages=stageEngine?.compile({ir,plan:focused.plan});
+    const stages=stageEngine?.compile({ir,plan:focused.plan,branchTails:state.paperStageTails!==false,open:new Set(open)});
     if(stages){focused.plan=stages.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     const predicateStages=canvas&&granularity==='roles'&&state.paperConditionPredicates!==false?Regions.predicates({ir,plan:focused.plan}):null;
     if(predicateStages){focused.plan=predicateStages.plan;idx=index(focused.plan);for(const r of predicateStages.rows)idx.nodes.get(r.group).content_inventory=inventory(idx.children.get(r.group)||[],idx);for(const n of focused.plan.nodes)decorate(n,idx);}

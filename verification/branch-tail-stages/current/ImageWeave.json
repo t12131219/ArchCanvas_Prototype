@@ -1,0 +1,645 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ImageWeave",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+    "class": "ImageWeave",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+      "cell": null,
+      "sha256": "55dafa060087f3e6676f5b95f6d40adce38eda3f048c9b58dfd945eadbf6623e",
+      "unit_sha256": "55dafa060087f3e6676f5b95f6d40adce38eda3f048c9b58dfd945eadbf6623e"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/64:4:composite:1",
+      "kind": "composite",
+      "label": "ImageWeave",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 64,
+          "end_line": 65,
+          "column": 4,
+          "end_column": 55,
+          "symbol": "ImageWeave.forward",
+          "expression": "def forward(self, x):\n    return self.norm(x + self.act(self.project(x)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "convolutional network",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ImageWeave"
+    },
+    {
+      "id": "model/64:4:composite:1/64:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/64:4:composite:1",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 64,
+          "end_line": 64,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "ImageWeave.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/64:4:composite:1/65:25:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/64:4:composite:1",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 25,
+          "end_column": 54,
+          "symbol": "ImageWeave.forward",
+          "expression": "x + self.act(self.project(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/64:4:composite:1/65:38:compute:1",
+      "kind": "compute",
+      "label": "project · Conv2d",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 38,
+          "end_column": 53,
+          "symbol": "ImageWeave.forward",
+          "expression": "self.project(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "convolution",
+      "module_path": "project",
+      "framework_type": "torch.nn.Conv2d",
+      "constructor": {
+        "args": [
+          4,
+          4,
+          3
+        ],
+        "kwargs": {
+          "padding": 1
+        }
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Conv2d",
+      "module_binding": {
+        "reference": "entry|project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py:60:23",
+        "selection": "self.project",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+            "line": 60,
+            "end_line": 60,
+            "column": 23,
+            "end_column": 52,
+            "symbol": "constructor",
+            "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/64:4:composite:1/65:38:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py:60:23"
+    },
+    {
+      "id": "model/64:4:composite:1/60:23:parameter:1",
+      "kind": "parameter",
+      "label": "project.parameters",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 23,
+          "end_column": 52,
+          "symbol": "ImageWeave.forward",
+          "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "project",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/64:4:composite:1/65:29:compute:1",
+      "kind": "compute",
+      "label": "act · ReLU",
+      "parent": "motif:CNN block:0",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 29,
+          "end_column": 54,
+          "symbol": "ImageWeave.forward",
+          "expression": "self.act(self.project(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "act",
+      "framework_type": "torch.nn.ReLU",
+      "constructor": {
+        "args": [],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.ReLU",
+      "module_binding": {
+        "reference": "entry|act@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py:61:19",
+        "selection": "self.act",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+            "line": 61,
+            "end_line": 61,
+            "column": 19,
+            "end_column": 28,
+            "symbol": "constructor",
+            "expression": "nn.ReLU()"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/64:4:composite:1/65:29:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|act@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py:61:19"
+    },
+    {
+      "id": "model/64:4:composite:1/65:15:compute:1",
+      "kind": "compute",
+      "label": "norm · BatchNorm2d",
+      "parent": "model/64:4:composite:1",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 15,
+          "end_column": 55,
+          "symbol": "ImageWeave.forward",
+          "expression": "self.norm(x + self.act(self.project(x)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "normalization",
+      "module_path": "norm",
+      "framework_type": "torch.nn.BatchNorm2d",
+      "constructor": {
+        "args": [
+          4
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.BatchNorm2d",
+      "module_binding": {
+        "reference": "entry|norm@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py:62:20",
+        "selection": "self.norm",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+            "line": 62,
+            "end_line": 62,
+            "column": 20,
+            "end_column": 37,
+            "symbol": "constructor",
+            "expression": "nn.BatchNorm2d(4)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/64:4:composite:1/65:15:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|norm@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py:62:20"
+    },
+    {
+      "id": "model/64:4:composite:1/62:20:parameter:1",
+      "kind": "parameter",
+      "label": "norm.parameters",
+      "parent": "model/64:4:composite:1",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 62,
+          "end_line": 62,
+          "column": 20,
+          "end_column": 37,
+          "symbol": "ImageWeave.forward",
+          "expression": "nn.BatchNorm2d(4)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "norm",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/64:4:composite:1/65:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/64:4:composite:1",
+      "source_parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 8,
+          "end_column": 55,
+          "symbol": "ImageWeave.forward",
+          "expression": "return self.norm(x + self.act(self.project(x)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "motif:CNN block:0",
+      "kind": "composite",
+      "label": "CNN block",
+      "parent": "model/64:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 38,
+          "end_column": 53,
+          "symbol": "ImageWeave.forward",
+          "expression": "self.project(x)"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 29,
+          "end_column": 54,
+          "symbol": "ImageWeave.forward",
+          "expression": "self.act(self.project(x))"
+        },
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 23,
+          "end_column": 52,
+          "symbol": "ImageWeave.forward",
+          "expression": "nn.Conv2d(4, 4, 3, padding=1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "CNN block",
+      "runtime_evidence": [],
+      "motif": "motif:CNN block:0"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/64:4:composite:1/64:22:interface:1",
+      "target": "model/64:4:composite:1/65:25:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/64:4:composite:1/60:23:parameter:1",
+      "target": "model/64:4:composite:1/65:38:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00001"
+    },
+    {
+      "source": "model/64:4:composite:1/64:22:interface:1",
+      "target": "model/64:4:composite:1/65:38:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/64:4:composite:1/65:38:compute:1",
+      "target": "model/64:4:composite:1/65:29:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/64:4:composite:1/65:29:compute:1",
+      "target": "model/64:4:composite:1/65:25:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/64:4:composite:1/62:20:parameter:1",
+      "target": "model/64:4:composite:1/65:15:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00005"
+    },
+    {
+      "source": "model/64:4:composite:1/65:25:compute:1",
+      "target": "model/64:4:composite:1/65:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/64:4:composite:1/65:15:compute:1",
+      "target": "model/64:4:composite:1/65:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    }
+  ],
+  "branches": [],
+  "motifs": [
+    {
+      "id": "motif:CNN block:0",
+      "semantic_type": "CNN block",
+      "members": [
+        "model/64:4:composite:1/65:38:compute:1",
+        "model/64:4:composite:1/65:29:compute:1",
+        "model/64:4:composite:1/60:23:parameter:1"
+      ],
+      "evidence": [
+        "convolution → activation",
+        "source operand dependencies"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:add-and-normalization candidate:1",
+      "semantic_type": "add-and-normalization candidate",
+      "members": [
+        "model/64:4:composite:1/64:22:interface:1",
+        "model/64:4:composite:1/65:25:compute:1",
+        "model/64:4:composite:1/65:15:compute:1",
+        "model/64:4:composite:1/62:20:parameter:1",
+        "model/64:4:composite:1/65:8:interface:1",
+        "motif:CNN block:0",
+        "model/64:4:composite:1/65:38:compute:1",
+        "model/64:4:composite:1/60:23:parameter:1",
+        "model/64:4:composite:1/65:29:compute:1"
+      ],
+      "evidence": [
+        "add + normalization; residual origin unproven"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    }
+  ],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "semantic_contracts": [
+    {
+      "id": "contract:residual-postnorm:6648d30625ac",
+      "rule": "residual-postnorm",
+      "rule_version": "source-contracts/1",
+      "node": "model/64:4:composite:1/65:15:compute:1",
+      "members": [
+        "model/64:4:composite:1/65:38:compute:1",
+        "model/64:4:composite:1/65:29:compute:1",
+        "model/64:4:composite:1/65:25:compute:1",
+        "model/64:4:composite:1/65:15:compute:1"
+      ],
+      "roles": {
+        "skip": "model/64:4:composite:1/64:22:interface:1",
+        "skip_slot": "out",
+        "branch": "model/64:4:composite:1/65:29:compute:1",
+        "branch_slot": "out",
+        "add": "model/64:4:composite:1/65:25:compute:1",
+        "output": "model/64:4:composite:1/65:15:compute:1",
+        "order": "postnorm",
+        "normalization": "model/64:4:composite:1/65:15:compute:1",
+        "normalization_type": "torch.nn.BatchNorm2d",
+        "branch_path": [
+          "model/64:4:composite:1/65:38:compute:1",
+          "model/64:4:composite:1/65:29:compute:1"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/branch_tail_stages.py",
+          "line": 65,
+          "end_line": 65,
+          "column": 15,
+          "end_column": 55,
+          "symbol": "ImageWeave.forward",
+          "expression": "self.norm(x + self.act(self.project(x)))"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00000",
+        "e00001",
+        "e00002",
+        "e00003",
+        "e00004",
+        "e00005",
+        "e00006",
+        "e00007"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence"
+      ]
+    }
+  ],
+  "semantic_contract_basis": "9b1ab2c0f7820760123b9eb8de26a7461b1e7ba75a54f94ae2851d0f8041a8ab",
+  "ir_digest": "0abe1a8e10520cffe062e9f33b47cf6990185a6e2bfeecce708c314fd01bc2a2"
+}

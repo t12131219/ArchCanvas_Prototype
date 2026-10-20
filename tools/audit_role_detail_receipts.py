@@ -23,6 +23,8 @@ def main():
         OUT = ROOT / 'verification/coverage-selection/current'
     if '--condition-predicates' in sys.argv:
         OUT = ROOT / 'verification/condition-predicates/current'
+    if '--branch-tail-stages' in sys.argv:
+        OUT = ROOT / 'verification/branch-tail-stages/current'
     if '--summary-coverage' in sys.argv:
         OUT = ROOT / 'verification/summary-coverage/current'
     report = json.loads((OUT / 'render-report.json').read_text())

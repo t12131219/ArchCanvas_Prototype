@@ -290,19 +290,59 @@ def audit_contract_stages(document, row, nodes):
         assert c['rule'] == 'residual-postnorm' and c['rule_version'] == 'source-contracts/1'
         assert r['certificate_node'] == c['node'] == c['roles']['normalization']
         core = set(r['canonical_members'])
-        assert core == {c['roles']['add'], c['roles']['normalization']} and len(core) == 2
+        tail = r.get('branch_tail')
+        expected = {c['roles']['add'], c['roles']['normalization']}
+        if tail:
+            expected.update([tail['node'], *tail['aliases']])
+            assert tail['node'] == c['roles']['branch'] and c['roles']['branch_slot'] == 'out'
+            n = canonical[tail['node']]
+            assert n['kind'] == 'compute' and not any(n.get(k) for k in ['mutable', 'condition', 'identity_display', 'observed_calls', 'runtime_evidence'])
+            assert n.get('evidence_status') != 'runtime-only'
+            assert any(i != n['id'] and canonical[i]['kind'] == 'compute' for i in c['roles']['branch_path'])
+            ins = [e for e in edges if e['target'] == n['id'] and e['kind'] in ['data', 'alias', 'interface-binding']]
+            assert len(ins) == 1
+            e = ins[0]
+            assert tail['input'] == {'edge': e['id'], 'node': resolve(e['source'], e.get('source_port', 'out'))[0],
+                                     'slot': resolve(e['source'], e.get('source_port', 'out'))[1], 'target': n['id'], 'target_port': e['target_port']}
+            assert (tail['input']['node'], tail['input']['slot']) != (c['roles']['skip'], c['roles']['skip_slot'])
+            label = n.get('framework_type', '').split('.')[-1] or (n.get('function_target', '').split('.')[-1]
+                if n.get('source_framework_function') == n.get('function_target') else '') or n['operator']
+            assert tail['label'] == label
+            at = n['id']
+            for alias in tail['aliases']:
+                uses = [e for e in edges if e['source'] == at]
+                assert len(uses) == 1 and uses[0]['target'] == alias and uses[0].get('source_port', 'out') == 'out'
+                a = canonical[alias]
+                assert a['kind'] == 'value-alias' and a.get('slot') is None and not a.get('operator')
+                assert not any(a.get(k) for k in ['condition', 'mutable', 'identity_display', 'observed_calls', 'runtime_evidence'])
+                assert len(incoming[alias]) == 1
+                at = alias
+            uses = [e for e in edges if e['source'] == at]
+            assert len(uses) == 1 and uses[0]['id'] == tail['output_edge'] and uses[0]['target'] == c['roles']['add']
+            for e in edges:
+                if e['source'] == n['id'] or e['target'] == n['id']:
+                    assert not e.get('condition')
+                    assert e['kind'] in ['data', 'alias', 'interface-binding'] or (e['kind'] in ['parameter-read', 'buffer-read', 'state-read']
+                        and e['target'] == n['id'] and canonical[e['source']]['kind'] in ['parameter', 'buffer', 'state'])
+            if tail.get('placement'):
+                scope = tail['placement']['source_parent']
+                assert planned[r['node']]['parent'] == scope
+                assert all(canonical[i]['parent'] == scope for i in [tail['node'], c['roles']['add'], c['roles']['normalization']])
+                assert all(i in document['publication']['open'] for i in tail['placement']['partitions'])
+        assert core == expected
         assert set(n['id'] for n in planned.values() if n.get('parent') == r['node']) == core
-        assert all(n not in core for n in [c['roles']['branch'], c['roles']['skip']])
+        assert c['roles']['skip'] not in core
+        assert (c['roles']['branch'] in core) == bool(tail)
         assert not planned[r['node']].get('semantic_contracts')
         assert r['certificate'] in planned[c['node']]['semantic_contracts']
         assert document['architecture']['semantic_contracts'] == document['ir']['semantic_contracts']
         cuts = [e for e in edges if (e['source'] in core) != (e['target'] in core)]
         assert cuts == r['cuts'] == planned[r['node']]['boundary_ports']
         inside = [e for e in edges if e['source'] in core and e['target'] in core]
-        assert len(inside) == 1 and [e['id'] for e in inside] == r['internal_edges']
-        assert inside[0]['source'] == c['roles']['add'] and inside[0]['target'] == c['roles']['normalization']
-        assert inside[0].get('source_port', 'out') == 'out'
-        assert [e for e in edges if e['source'] == c['roles']['add']] == inside
+        assert len(inside) == 1 + (1 + len(tail['aliases']) if tail else 0) and [e['id'] for e in inside] == r['internal_edges']
+        norm_input = [e for e in inside if e['target'] == c['roles']['normalization']]
+        assert len(norm_input) == 1 and norm_input[0]['source'] == c['roles']['add'] and norm_input[0].get('source_port', 'out') == 'out'
+        assert [e for e in edges if e['source'] == c['roles']['add']] == norm_input
         for operand in r['operands']:
             e = next(e for e in edges if e['id'] == operand['edge'])
             role = operand['role']
@@ -316,14 +356,33 @@ def audit_contract_stages(document, row, nodes):
         assert r['node'] in nodes
         text = re.sub(r'\s', '', ''.join(''.join(e.itertext()) for e in nodes[r['node']] if e.tag.endswith('text')))
         assert 'Add&Norm' in text and c['roles']['normalization_type'].split('.')[-1] in text
+        if tail:
+            assert re.sub(r'\s', '', tail['label']) in text
         measured = next(n for n in document['layout']['nodes'] if n['id'] == r['node'])
         assert measured['expanded'] == (r['status'] == 'expanded')
-        assert r['detailed_operations_exposed'] == core.issubset(nodes)
+        assert r['detailed_operations_exposed'] == {i for i in core if canonical[i]['kind'] == 'compute'}.issubset(nodes)
         if r['status'] == 'summary':
             assert not core.intersection(nodes)
             assert all(g['status'] != 'fulfilled' for g in document['expression_coverage'] if g['goal'] in {'goal:node:' + n for n in core})
         title = ''.join(nodes[r['node']].find('{http://www.w3.org/2000/svg}title').itertext())
         assert r['certificate'] in title and r['scope'] in title
+
+    for repair in receipt.get('partitions', []):
+        group = planned[repair['node']]
+        assert group.get('presentation_only') and group['semantic_type'] == 'structural-region'
+        children = [n['id'] for n in planned.values() if n.get('parent') == repair['node']]
+        todo, members = children[:], []
+        for at in todo:
+            if at in canonical:
+                members.append(at)
+            todo.extend(n['id'] for n in planned.values() if n.get('parent') == at)
+        assert repair['children'] == children
+        assert repair['canonical_members'] == group['canonical_members']
+        assert len(members) == len(set(members)) == len(repair['canonical_members'])
+        assert set(repair['canonical_members']) == set(members)
+        cuts = [e for e in edges if (e['source'] in members) != (e['target'] in members)]
+        assert repair['cuts'] == group['boundary_ports'] == cuts
+        assert next(f for f in document['architecture']['findings'] if f['id'] == group['finding'])['members'] == children
 
 
 def main():
@@ -404,6 +463,8 @@ def main():
         OUT = ROOT / 'verification/coverage-selection/current'
     if '--condition-predicates' in sys.argv:
         OUT = ROOT / 'verification/condition-predicates/current'
+    if '--branch-tail-stages' in sys.argv:
+        OUT = ROOT / 'verification/branch-tail-stages/current'
     if '--summary-coverage' in sys.argv:
         OUT = ROOT / 'verification/summary-coverage/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'

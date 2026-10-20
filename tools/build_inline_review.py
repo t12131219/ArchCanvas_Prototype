@@ -17,6 +17,8 @@ def sha(file):
 
 def main():
     global OUT
+    if '--stages' in sys.argv:
+        sys.argv.append('--pipelines')
     if '--pipelines' in sys.argv:
         sys.argv.append('--flows')
     if '--flows' in sys.argv:
@@ -39,6 +41,8 @@ def main():
         OUT = ROOT / 'verification/flow-entries/current'
     if '--pipelines' in sys.argv:
         OUT = ROOT / 'verification/local-pipelines/current'
+    if '--stages' in sys.argv:
+        OUT = ROOT / 'verification/contract-stages/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -91,6 +95,8 @@ def main():
         head = head.replace('本轮按真实依赖路径建立分支列对应；仅已展开的纯展示分带转为可恢复附注。未知及条件节点独立保留', '本轮按独立入口组织相邻计算区域，真实上下文箭头可以向上连接。分列、已实现通道及更细展开能力保留')
     if '--pipelines' in sys.argv:
         head = head.replace('本轮按独立入口组织相邻计算区域，真实上下文箭头可以向上连接。分列、已实现通道及更细展开能力保留', '本轮用真实局部依赖解释折叠源码区域，保留原始操作数与继续展开能力。未知、条件及中间结果外流区域保持原边界')
+    if '--stages' in sys.argv:
+        head = head.replace('本轮用真实局部依赖解释折叠源码区域，保留原始操作数与继续展开能力。未知、条件及中间结果外流区域保持原边界', '本轮将已认证的相加与后置归一化角色形成可展开阶段，原始绑定保留；更细展开的整图布局仍有退化')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -173,6 +179,27 @@ def main():
             for key in [name+'-before',name+'-roles']+([name+'-opened'] if name=='PipelineMosaic' else []):
                 view += card(rows[key])
             (OUT / (name+'-pipeline-comparison.html')).write_text(view+'</div></html>')
+    if '--stages' in sys.argv:
+        simple = ('<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
+                  f'<meta name="render-report-sha256" content="{digest}"><title>认证局部阶段审核</title>'
+                  '<style>body{font:14px Arial,sans-serif;color:#253448;margin:16px}h1{font-size:20px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}article{min-width:0;border:1px solid #cbd3dd;padding:10px}svg{width:100%;height:540px}h2{font-size:16px}p{overflow-wrap:anywhere}</style>')
+        for name in ['TailChain', 'TailMosaic', 'EscapingTail', 'InterruptedTail', 'ConditionalTail', 'ImageResidual']:
+            view = simple + '<h1>通用认证角色阶段：' + name + '</h1><p>左：冻结基线；中：认证的相加与后置归一化阶段；右：继续展开原始操作。未知、条件、中间结果外流只限制受影响范围。</p><div class="cards">'
+            for key in [name + '-before', name + '-roles', name + '-opened']:
+                view += card(rows[key])
+            (OUT / (name + '-stage-comparison.html')).write_text(view + '</div></html>')
+        current = json.loads((OUT / rows['transformer-roles']['document']).read_text())
+        stage = next(r for r in current['publication']['contract_stages']['rows'] if r['status'] == 'summary')
+        view = simple + '<h1>Transformer 评估案例：局部阶段与更深展开</h1><p>同一套通用规则，仅截取实际 SVG 的已认证尾部。分支 Dropout 保留在阶段外；当前仍未建立与专用参考图的完整对应。</p><div class="cards">'
+        for key in ['transformer-before', 'transformer-roles', 'transformer-stage-open']:
+            row = rows[key]
+            document = json.loads((OUT / row['document']).read_text())
+            ids = set(stage['canonical_members'] + [stage['roles']['branch'], stage['node']])
+            geometry = [n for n in document['layout']['nodes'] if n['id'] in ids]
+            x, y = min(n['x'] for n in geometry) - 36, min(n['y'] for n in geometry) - 36
+            viewport = [x, y, max(n['x'] + n['w'] for n in geometry) + 36 - x, max(n['y'] + n['h'] for n in geometry) + 36 - y]
+            view += f'<article><h2>{key}</h2><p>{row["nodes"]} 图元 / {row["edges"]} 边 · 整图交叉 {row["quality"]["line_geometry"]["crossings"]}</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
+        (OUT / 'transformer-stage-comparison.html').write_text(view + '</div></html>')
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

@@ -10,7 +10,7 @@
     const candidates=new Set(nodes.filter(n=>n.kind==='composite'&&within(n.id,focus)&&attached(n).length).map(n=>n.id));
     const owners=new Set([...candidates].filter(id=>{let at=by.get(id)?.parent;while(at&&within(at,focus)){if(candidates.has(at))return false;at=by.get(at)?.parent;}return true;}));
     const open=new Set(),records=[],modules=[];
-    const protectedFrame=n=>n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.observed_calls||
+    const protectedFrame=n=>n.contract_stage||n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.observed_calls||
       ['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant','serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type);
     const ownerOf=id=>{while(id){if(owners.has(id))return id;id=by.get(id)?.parent;}return null;};
     function references(value,path=[]){

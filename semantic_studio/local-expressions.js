@@ -11,7 +11,7 @@
     const by=new Map(plan.nodes.map(n=>[n.id,n])),open=new Set(),scopes=new Set(),requests=[];
     const within=(id,owner)=>{const seen=new Set();while(id&&!seen.has(id)){if(id===owner)return true;seen.add(id);id=by.get(id)?.parent;}return false;};
     const certificates=new Set((plan.semantic_contracts||[]).map(c=>c.node));
-    const boundary=n=>certificates.has(n.id)?'certificate':n.kind==='opaque'||n.mutable?'effects':
+    const boundary=n=>n.contract_stage?'certified-role-stage':certificates.has(n.id)?'certificate':n.kind==='opaque'||n.mutable?'effects':
       n.condition||n.kind==='control'?'condition':n.identity_display||n.observed_calls?'identity-or-observation':
       ['loop-template','iteration-region','serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)&&!n.sequence_frontier?'iteration-or-repeat':null;
     for(const r of plan.relation_graph?.relations||[]){

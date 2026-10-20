@@ -78,7 +78,7 @@
       // alternatives must keep their individual boundary identities.
       const bypass=plan.design_constraints?.find(c=>c.kind==='bypass'&&c.add===raw.target&&c.skip===resolved&&c.skip_slot===port);
       projected.push({...clone(raw),id:raw.id,source:s,target:t,source_port:port,originals:[...via,raw.id],canonical_source:raw.source,canonical_target:raw.target,resolved_source:resolved,
-        ...(bypass&&s===resolved&&t===raw.target?{design_route:{kind:'bypass',certificate:bypass.certificate}}:{})});
+        ...(bypass&&(s===resolved||port==='out'&&idx.nodes.get(s)?.contract_stage?.roles.normalization===resolved)&&(t===raw.target||idx.nodes.get(t)?.contract_stage?.roles.add===raw.target&&idx.nodes.get(t).contract_stage.certificate===bypass.certificate)?{design_route:{kind:'bypass',certificate:bypass.certificate}}:{})});
     }
     const edgeAccounting={visible:projected.map(e=>e.id),internal,excluded,contracted,attached};
     // Mark semantic ports before ribbon selection so state/condition identity

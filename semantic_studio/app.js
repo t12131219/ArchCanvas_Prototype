@@ -32,6 +32,7 @@
       const button=document.createElement('button');button.textContent='恢复源码外框';button.onclick=()=>{snapshot();state.paperFrameView='source';state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
     }
     if(n.content_inventory)$('details').insertAdjacentHTML('afterbegin','<h3>摘要内容</h3><p>按当前语义单元计数，包含操作、调用和已确认的局部组合；不表示重复堆叠、执行并发或参数共享。</p>'+n.content_inventory.terms.map(t=>'<div class="source"><strong>'+esc(t.label)+' × '+t.count+'</strong><br>'+t.units.map(id=>esc(projection.idx.nodes.get(id)?.label||id)).join(' · ')+'</div>').join(''));
+    if(n.contract_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>认证角色阶段与原始绑定</summary><p>只折叠已认证的相加与后置归一化；分支计算保留在外部。双击可展开原始操作。</p><pre>'+esc(JSON.stringify(n.contract_stage,null,2))+'</pre></details>');
     if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');
     if(n.semantic_contracts?.length)$('details').insertAdjacentHTML('beforeend','<details open><summary>语义契约与证据范围</summary><pre>'+esc(JSON.stringify((ir.semantic_contracts||[]).filter(c=>n.semantic_contracts.includes(c.id)),null,2))+'</pre></details>');
     const relations=projection.architecture?.relation_graph?.relations||[],receipts=projection.constraint_receipts||[];
@@ -165,7 +166,7 @@
   svg.addEventListener('pointerup',endDrag);svg.addEventListener('pointercancel',endDrag);svg.addEventListener('auxclick',e=>e.preventDefault());
   svg.addEventListener('wheel',e=>{e.preventDefault();const at=world(e),f=Math.exp(Math.max(-.4,Math.min(.4,e.deltaY*.001)));const w=Math.max(200,Math.min(100000,camera.w*f)),ratio=w/camera.w;camera={x:at.x-(at.x-camera.x)*ratio,y:at.y-(at.y-camera.y)*ratio,w,h:camera.h*ratio};setCamera();},{passive:false});
   $('collapse').onclick=()=>{snapshot();if(state.view==='publication'){state.paperAuto=false;$('paperAuto').checked=false;}state.open=[];render();fit();persist();};
-  $('expand').onclick=()=>{snapshot();state.paperAuto=false;state.details=state.view!=='publication';$('detailsToggle').checked=state.details;$('paperAuto').checked=false;state.open=[...E.viewIndex(ir,state).children.keys()].filter(Boolean);render();fit();persist();};
+  $('expand').onclick=()=>{snapshot();state.paperAuto=false;state.details=state.view!=='publication';$('detailsToggle').checked=state.details;$('paperAuto').checked=false;state.open=[...new Set([...E.viewIndex(ir,state).children.keys(),...(state.view==='publication'?projection.idx.children.keys():[])])].filter(Boolean);render();fit();persist();};
   function optionalFold(){$('foldToggle').disabled=state.view==='source';$('detailsToggle').disabled=state.view==='publication';$('paperTools').hidden=state.view!=='publication';syncPaperControls();}
   $('foldToggle').onchange=()=>{snapshot();state.foldSerial=$('foldToggle').checked;state.offsets={};render();fit();persist();};
   $('detailsToggle').onchange=()=>{snapshot();state.details=$('detailsToggle').checked;render();fit();persist();};

@@ -158,8 +158,81 @@ def audit_pipeline_summaries(document, row, nodes):
         assert planned[node]['label'] in title and r['scope'] in title
 
 
+def audit_contract_stages(document, row, nodes):
+    """Recheck the narrow certified role cut independently of the JS recipe."""
+    receipt = document['publication'].get('contract_stages')
+    assert receipt == row.get('contract_stages')
+    if not receipt:
+        return
+    canonical = {n['id']: n for n in document['ir']['nodes']}
+    planned = {n['id']: n for n in document['architecture']['nodes']}
+    certificates = {c['id']: c for c in document['ir'].get('semantic_contracts', [])}
+    edges = document['ir']['edges']
+    incoming = {}
+    for edge in edges:
+        incoming.setdefault(edge['target'], []).append(edge)
+
+    def resolve(node, slot):
+        seen = set()
+        while node not in seen:
+            seen.add(node)
+            n, ins = canonical[node], incoming.get(node, [])
+            if n['kind'] not in ['interface', 'value-alias'] or n.get('operator') or len(ins) != 1 or ins[0].get('condition'):
+                break
+            e = ins[0]
+            if e['kind'] not in ['data', 'alias', 'interface-binding']:
+                break
+            outer = n.get('slot') if n['kind'] == 'value-alias' else None
+            outer = e.get('source_port', 'out') if outer is None else outer
+            slot = slot if outer == 'out' else outer if slot == 'out' else outer + '.' + slot
+            node = e['source']
+        return node, slot
+
+    for r in receipt['rows']:
+        c = certificates[r['certificate']]
+        assert c['rule'] == 'residual-postnorm' and c['rule_version'] == 'source-contracts/1'
+        assert r['certificate_node'] == c['node'] == c['roles']['normalization']
+        core = set(r['canonical_members'])
+        assert core == {c['roles']['add'], c['roles']['normalization']} and len(core) == 2
+        assert set(n['id'] for n in planned.values() if n.get('parent') == r['node']) == core
+        assert all(n not in core for n in [c['roles']['branch'], c['roles']['skip']])
+        assert not planned[r['node']].get('semantic_contracts')
+        assert r['certificate'] in planned[c['node']]['semantic_contracts']
+        assert document['architecture']['semantic_contracts'] == document['ir']['semantic_contracts']
+        cuts = [e for e in edges if (e['source'] in core) != (e['target'] in core)]
+        assert cuts == r['cuts'] == planned[r['node']]['boundary_ports']
+        inside = [e for e in edges if e['source'] in core and e['target'] in core]
+        assert len(inside) == 1 and [e['id'] for e in inside] == r['internal_edges']
+        assert inside[0]['source'] == c['roles']['add'] and inside[0]['target'] == c['roles']['normalization']
+        assert inside[0].get('source_port', 'out') == 'out'
+        assert [e for e in edges if e['source'] == c['roles']['add']] == inside
+        for operand in r['operands']:
+            e = next(e for e in edges if e['id'] == operand['edge'])
+            role = operand['role']
+            assert (operand['node'], operand['slot']) == resolve(e['source'], e.get('source_port', 'out'))
+            assert (operand['node'], operand['slot']) == (c['roles'][role], c['roles'][role + '_slot'])
+            assert (operand['target'], operand['target_port']) == (e['target'], e['target_port'])
+        assert {o['role'] for o in r['operands']} == {'skip', 'branch'}
+        if r['status'] == 'folded':
+            assert r['node'] not in nodes
+            continue
+        assert r['node'] in nodes
+        text = re.sub(r'\s', '', ''.join(''.join(e.itertext()) for e in nodes[r['node']] if e.tag.endswith('text')))
+        assert 'Add&Norm' in text and c['roles']['normalization_type'].split('.')[-1] in text
+        measured = next(n for n in document['layout']['nodes'] if n['id'] == r['node'])
+        assert measured['expanded'] == (r['status'] == 'expanded')
+        assert r['detailed_operations_exposed'] == core.issubset(nodes)
+        if r['status'] == 'summary':
+            assert not core.intersection(nodes)
+            assert all(g['status'] != 'fulfilled' for g in document['expression_coverage'] if g['goal'] in {'goal:node:' + n for n in core})
+        title = ''.join(nodes[r['node']].find('{http://www.w3.org/2000/svg}title').itertext())
+        assert r['certificate'] in title and r['scope'] in title
+
+
 def main():
     global OUT
+    if '--stages' in sys.argv:
+        sys.argv.append('--pipelines')
     if '--pipelines' in sys.argv:
         sys.argv.append('--flows')
     if '--flows' in sys.argv:
@@ -188,6 +261,8 @@ def main():
         OUT = ROOT / 'verification/flow-entries/current'
     if '--pipelines' in sys.argv:
         OUT = ROOT / 'verification/local-pipelines/current'
+    if '--stages' in sys.argv:
+        OUT = ROOT / 'verification/contract-stages/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -288,6 +363,7 @@ def main():
         paths = {e.attrib['data-edge-id']: e for e in tree.iter() if 'data-edge-id' in e.attrib}
         if '--pipelines' in sys.argv:
             audit_pipeline_summaries(document, row, nodes)
+        audit_contract_stages(document, row, nodes)
         if '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
             owners = document['layout'].get('frame_ownership', [])
             assert owners == row['frame_ownership'] == document['publication'].get('frame_ownership', [])

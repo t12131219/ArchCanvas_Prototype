@@ -1,0 +1,39 @@
+{
+  "schema": "contract-stages-visual-review/1",
+  "render_report_sha256": "cbc77a6f0a649e3890d170eeb2fa2bec53225c4924df46c7315f760af36adde0",
+  "goal_complete": false,
+  "review_method": "Actual Codex in-app browser screenshots and SVG DOM text bounds. Review pages embed the produced SVG; local views change only viewBox.",
+  "artifacts_sha256": {
+    "stage-comparison.png": "2c029f3ef871ff30a92e3da522165690442b62e7c8ff54e5c734f1d2e2c190f8",
+    "chain-comparison.png": "5689de79924e956fc7e571e446d3627b5615795f424876f047dc96e107d4ed1e",
+    "interrupted-comparison.png": "9e981d5a5a96d83bafdd2834c5b1ec173a0affe629d2fb642a6e7f55a6d6053b",
+    "escaping-comparison.png": "cfc34d1727686d138855ef18ed98d73117ffe34d7eddd900077e3fc7076acc5c",
+    "conditional-comparison.png": "1ef4cc9aaf60741bf1766d0688f9d99e3ef1874ee9e15984e12503b8b70d5d13",
+    "convolution-comparison.png": "555396aa3d31131bab668c0f9089b5854579095f522f5dd81afd902c6a2c8c78",
+    "transformer-stage-comparison.png": "46a93d838636ffa3d66418ffe1115f8e1e49573fcce25aaf149d6e0a5e00ed60",
+    "reference-comparison.png": "6a2baa3241fa7a1a9258cd2bac123a2bba829c81fa61f0a0228c2876f03dbaa4",
+    "TailMosaic-stage-comparison.html": "f11b65998aace9e61140979c86d0e9a7bf2c4e5a8f4e37c0c34e177b66f368a5",
+    "TailChain-stage-comparison.html": "9564de93e43747bf637eba9935cfd5635434e4c93aa3b0182f300a5c4833a394",
+    "InterruptedTail-stage-comparison.html": "11c3be654f83407ac8f9600aa93a51eadd77ada88d4e10e6eb9ccc6c50132289",
+    "EscapingTail-stage-comparison.html": "2b9d362054ed22ce5a1db482d15d16ccac6b55ca21d090e9ef7bf246c0ddf0c4",
+    "ConditionalTail-stage-comparison.html": "a02a09afdf9f72a00a6fbbdd9fb1da4024c282b503c85939ee47e438e7f6c5b1",
+    "ImageResidual-stage-comparison.html": "b19cb5f1f5c97ecb4856602bba3e2d11d607e151f03a5efe4a2d26ea10abc693",
+    "transformer-stage-comparison.html": "b16f0390a6480fbcefd5c4e16f6589f0c9639b225b87db80380c1549e109dc86",
+    "transformer-comparison.html": "7317bec53e41b80466cb14066222ee069c4b2d4e33c090e2764646fb804dc05f"
+  },
+  "observations": [
+    "The certified addition and normalization now form a named intermediate stage while original branch computations remain outside.",
+    "The same recipe handles independent vector tails, chained tails and a BatchNorm2d convolutional residual.",
+    "Unknown calls and escaping intermediate values remain independent; unaffected residual tails can still form stages.",
+    "Conditional interiors cannot form stages; their true/false boundaries and joins remain in the graph.",
+    "The actual editor exposes both original operations on expansion, preserves bindings through save/reopen/refold, and expands every stage with Expand all.",
+    "The Transformer frontier exposes five stages for the concrete representative layers; width 2588px and 57 crossings are unchanged, height falls from 4730 to 4502px.",
+    "The dedicated expanded reference remains substantially more compact and better organized; full role/frontier correspondence remains unverified."
+  ],
+  "tradeoffs": [
+    "Opening one Transformer stage increases the whole graph from 100 nodes / 106 edges to 102 / 107 and raises crossings from 57 to 81, height 4502 to 5456px. Existing routing gates pass, but this is a real detail-layout regression.",
+    "The conditional fixture has a different automatic frontier: an independent stage forms while true/false regions stay folded. Local budget/unwrap selection is sensitive to presentation grouping; atomic detail and one bypass constraint are deferred.",
+    "TailMosaic and InterruptedTail each retain one pre-existing final bypass channel conflict. A stage references the final constraint receipt instead of duplicating a preliminary applied status.",
+    "Compatible sibling operations and a direct single-use intermediate are required. Aliased/indirect tails retain their existing representation."
+  ]
+}

@@ -1,0 +1,1207 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "EscapingTail",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+    "class": "EscapingTail",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+      "cell": null,
+      "sha256": "643f638db6fe9b722d6a8b302a0a8808a5d56fd9f41c302fa3a7c9d6d991f7c3",
+      "unit_sha256": "643f638db6fe9b722d6a8b302a0a8808a5d56fd9f41c302fa3a7c9d6d991f7c3"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/33:4:composite:1",
+      "kind": "composite",
+      "label": "EscapingTail",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 33,
+          "end_line": 35,
+          "column": 4,
+          "end_column": 60,
+          "symbol": "EscapingTail.forward",
+          "expression": "def forward(self, x):\n    total = x + self.project(x)\n    return self.normalize(total) + total + self.other(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "EscapingTail"
+    },
+    {
+      "id": "model/33:4:composite:1/33:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 33,
+          "end_line": 33,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "EscapingTail.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/33:4:composite:1/34:16:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 34,
+          "end_line": 34,
+          "column": 16,
+          "end_column": 35,
+          "symbol": "EscapingTail.forward",
+          "expression": "x + self.project(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/33:4:composite:1/34:20:compute:1",
+      "kind": "compute",
+      "label": "project · Linear",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 34,
+          "end_line": 34,
+          "column": 20,
+          "end_column": 35,
+          "symbol": "EscapingTail.forward",
+          "expression": "self.project(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "project",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "module_binding": {
+        "reference": "entry|project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:29:23",
+        "selection": "self.project",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+            "line": 29,
+            "end_line": 29,
+            "column": 23,
+            "end_column": 38,
+            "symbol": "constructor",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/33:4:composite:1/34:20:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:29:23"
+    },
+    {
+      "id": "model/33:4:composite:1/29:23:parameter:1",
+      "kind": "parameter",
+      "label": "project.parameters",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 29,
+          "end_line": 29,
+          "column": 23,
+          "end_column": 38,
+          "symbol": "EscapingTail.forward",
+          "expression": "nn.Linear(8, 8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "project",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/33:4:composite:1/34:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "total",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 34,
+          "end_line": 34,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "EscapingTail.forward",
+          "expression": "total"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/33:4:composite:1/35:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 15,
+          "end_column": 60,
+          "symbol": "EscapingTail.forward",
+          "expression": "self.normalize(total) + total + self.other(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/33:4:composite:1/35:15:compute:2",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 15,
+          "end_column": 44,
+          "symbol": "EscapingTail.forward",
+          "expression": "self.normalize(total) + total"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/33:4:composite:1/35:15:compute:3",
+      "kind": "compute",
+      "label": "normalize · LayerNorm",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 15,
+          "end_column": 36,
+          "symbol": "EscapingTail.forward",
+          "expression": "self.normalize(total)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "normalization",
+      "module_path": "normalize",
+      "framework_type": "torch.nn.LayerNorm",
+      "constructor": {
+        "args": [
+          8
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.LayerNorm",
+      "module_binding": {
+        "reference": "entry|normalize@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:30:25",
+        "selection": "self.normalize",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+            "line": 30,
+            "end_line": 30,
+            "column": 25,
+            "end_column": 40,
+            "symbol": "constructor",
+            "expression": "nn.LayerNorm(8)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/33:4:composite:1/35:15:compute:3",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|normalize@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:30:25"
+    },
+    {
+      "id": "model/33:4:composite:1/30:25:parameter:1",
+      "kind": "parameter",
+      "label": "normalize.parameters",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 30,
+          "end_line": 30,
+          "column": 25,
+          "end_column": 40,
+          "symbol": "EscapingTail.forward",
+          "expression": "nn.LayerNorm(8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "normalize",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1",
+      "kind": "composite",
+      "label": "other",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 12,
+          "end_line": 13,
+          "column": 4,
+          "end_column": 50,
+          "symbol": "TailPair.forward",
+          "expression": "def forward(self, x):\n    return self.normalize(x + self.project(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "other",
+      "constructor": {},
+      "source_class": "TailPair",
+      "module_identity": "entry|other@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:31:21",
+      "module_binding": {
+        "reference": "entry|other@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:31:21",
+        "selection": "self.other",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+            "line": 31,
+            "end_line": 31,
+            "column": 21,
+            "end_column": 31,
+            "symbol": "constructor",
+            "expression": "TailPair()"
+          }
+        ],
+        "allocation": "constructor-object; parameter-sharing-unresolved",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/33:4:composite:1/12:4:composite:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      }
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1/12:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/33:4:composite:1/12:4:composite:1",
+      "source_parent": "model/33:4:composite:1/12:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "TailPair.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/33:4:composite:1/12:4:composite:1",
+      "source_parent": "model/33:4:composite:1/12:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 13,
+          "end_line": 13,
+          "column": 30,
+          "end_column": 49,
+          "symbol": "TailPair.forward",
+          "expression": "x + self.project(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+      "kind": "compute",
+      "label": "project · Linear",
+      "parent": "model/33:4:composite:1/12:4:composite:1",
+      "source_parent": "model/33:4:composite:1/12:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 13,
+          "end_line": 13,
+          "column": 34,
+          "end_column": 49,
+          "symbol": "TailPair.forward",
+          "expression": "self.project(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "other.project",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          8
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "module_binding": {
+        "reference": "entry|other@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:31:21|other.project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:9:23",
+        "selection": "self.project",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+            "line": 9,
+            "end_line": 9,
+            "column": 23,
+            "end_column": 38,
+            "symbol": "constructor",
+            "expression": "nn.Linear(8, 8)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|other@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:31:21|other.project@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:9:23"
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1/9:23:parameter:1",
+      "kind": "parameter",
+      "label": "project.parameters",
+      "parent": "model/33:4:composite:1/12:4:composite:1",
+      "source_parent": "model/33:4:composite:1/12:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 23,
+          "end_column": 38,
+          "symbol": "TailPair.forward",
+          "expression": "nn.Linear(8, 8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "other.project",
+      "identity_status": "declared-scope; sharing-unresolved",
+      "module_identity": "other.project"
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+      "kind": "compute",
+      "label": "normalize · LayerNorm",
+      "parent": "model/33:4:composite:1/12:4:composite:1",
+      "source_parent": "model/33:4:composite:1/12:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 13,
+          "end_line": 13,
+          "column": 15,
+          "end_column": 50,
+          "symbol": "TailPair.forward",
+          "expression": "self.normalize(x + self.project(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "normalization",
+      "module_path": "other.normalize",
+      "framework_type": "torch.nn.LayerNorm",
+      "constructor": {
+        "args": [
+          8
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.LayerNorm",
+      "module_binding": {
+        "reference": "entry|other@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:31:21|other.normalize@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:10:25",
+        "selection": "self.normalize",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+            "line": 10,
+            "end_line": 10,
+            "column": 25,
+            "end_column": 40,
+            "symbol": "constructor",
+            "expression": "nn.LayerNorm(8)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|other@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:31:21|other.normalize@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py:10:25"
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1/10:25:parameter:1",
+      "kind": "parameter",
+      "label": "normalize.parameters",
+      "parent": "model/33:4:composite:1/12:4:composite:1",
+      "source_parent": "model/33:4:composite:1/12:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 10,
+          "end_line": 10,
+          "column": 25,
+          "end_column": 40,
+          "symbol": "TailPair.forward",
+          "expression": "nn.LayerNorm(8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "other.normalize",
+      "identity_status": "declared-scope; sharing-unresolved",
+      "module_identity": "other.normalize"
+    },
+    {
+      "id": "model/33:4:composite:1/12:4:composite:1/13:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/33:4:composite:1/12:4:composite:1",
+      "source_parent": "model/33:4:composite:1/12:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 13,
+          "end_line": 13,
+          "column": 8,
+          "end_column": 50,
+          "symbol": "TailPair.forward",
+          "expression": "return self.normalize(x + self.project(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/33:4:composite:1/35:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/33:4:composite:1",
+      "source_parent": "model/33:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 8,
+          "end_column": 60,
+          "symbol": "EscapingTail.forward",
+          "expression": "return self.normalize(total) + total + self.other(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/33:4:composite:1/33:22:interface:1",
+      "target": "model/33:4:composite:1/34:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/33:4:composite:1/29:23:parameter:1",
+      "target": "model/33:4:composite:1/34:20:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00001"
+    },
+    {
+      "source": "model/33:4:composite:1/33:22:interface:1",
+      "target": "model/33:4:composite:1/34:20:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/33:4:composite:1/34:20:compute:1",
+      "target": "model/33:4:composite:1/34:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/33:4:composite:1/34:16:compute:1",
+      "target": "model/33:4:composite:1/34:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/33:4:composite:1/30:25:parameter:1",
+      "target": "model/33:4:composite:1/35:15:compute:3",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00005"
+    },
+    {
+      "source": "model/33:4:composite:1/34:8:value-alias:1",
+      "target": "model/33:4:composite:1/35:15:compute:3",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/33:4:composite:1/35:15:compute:3",
+      "target": "model/33:4:composite:1/35:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/33:4:composite:1/34:8:value-alias:1",
+      "target": "model/33:4:composite:1/35:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/33:4:composite:1/35:15:compute:2",
+      "target": "model/33:4:composite:1/35:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/33:4:composite:1/33:22:interface:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/12:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/12:22:interface:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/9:23:parameter:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00012"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/12:22:interface:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/10:25:parameter:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00015"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+      "target": "model/33:4:composite:1/12:4:composite:1/13:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/33:4:composite:1/12:4:composite:1/13:8:interface:1",
+      "target": "model/33:4:composite:1/35:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/33:4:composite:1/35:15:compute:1",
+      "target": "model/33:4:composite:1/35:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    }
+  ],
+  "branches": [],
+  "motifs": [
+    {
+      "id": "motif:add-and-normalization candidate:0",
+      "semantic_type": "add-and-normalization candidate",
+      "members": [
+        "model/33:4:composite:1/33:22:interface:1",
+        "model/33:4:composite:1/34:16:compute:1",
+        "model/33:4:composite:1/34:20:compute:1",
+        "model/33:4:composite:1/29:23:parameter:1",
+        "model/33:4:composite:1/34:8:value-alias:1",
+        "model/33:4:composite:1/35:15:compute:1",
+        "model/33:4:composite:1/35:15:compute:2",
+        "model/33:4:composite:1/35:15:compute:3",
+        "model/33:4:composite:1/30:25:parameter:1",
+        "model/33:4:composite:1/12:4:composite:1",
+        "model/33:4:composite:1/12:4:composite:1/12:22:interface:1",
+        "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/9:23:parameter:1",
+        "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/10:25:parameter:1",
+        "model/33:4:composite:1/12:4:composite:1/13:8:interface:1",
+        "model/33:4:composite:1/35:8:interface:1"
+      ],
+      "evidence": [
+        "add + normalization; residual origin unproven"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    },
+    {
+      "id": "motif:add-and-normalization candidate:1",
+      "semantic_type": "add-and-normalization candidate",
+      "members": [
+        "model/33:4:composite:1/12:4:composite:1/12:22:interface:1",
+        "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/9:23:parameter:1",
+        "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/10:25:parameter:1",
+        "model/33:4:composite:1/12:4:composite:1/13:8:interface:1"
+      ],
+      "evidence": [
+        "add + normalization; residual origin unproven"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    }
+  ],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "semantic_contracts": [
+    {
+      "id": "contract:residual-postnorm:7ac293890c5c",
+      "rule": "residual-postnorm",
+      "rule_version": "source-contracts/1",
+      "node": "model/33:4:composite:1/35:15:compute:3",
+      "members": [
+        "model/33:4:composite:1/34:20:compute:1",
+        "model/33:4:composite:1/34:16:compute:1",
+        "model/33:4:composite:1/35:15:compute:3"
+      ],
+      "roles": {
+        "skip": "model/33:4:composite:1/33:22:interface:1",
+        "skip_slot": "out",
+        "branch": "model/33:4:composite:1/34:20:compute:1",
+        "branch_slot": "out",
+        "add": "model/33:4:composite:1/34:16:compute:1",
+        "output": "model/33:4:composite:1/35:15:compute:3",
+        "order": "postnorm",
+        "normalization": "model/33:4:composite:1/35:15:compute:3",
+        "normalization_type": "torch.nn.LayerNorm",
+        "branch_path": [
+          "model/33:4:composite:1/34:20:compute:1"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 15,
+          "end_column": 36,
+          "symbol": "EscapingTail.forward",
+          "expression": "self.normalize(total)"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00000",
+        "e00001",
+        "e00002",
+        "e00003",
+        "e00004",
+        "e00005",
+        "e00006",
+        "e00007"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence"
+      ]
+    },
+    {
+      "id": "contract:residual-prenorm:405fe7a155c1",
+      "rule": "residual-prenorm",
+      "rule_version": "source-contracts/1",
+      "node": "model/33:4:composite:1/35:15:compute:2",
+      "members": [
+        "model/33:4:composite:1/35:15:compute:3",
+        "model/33:4:composite:1/35:15:compute:2"
+      ],
+      "roles": {
+        "skip": "model/33:4:composite:1/34:16:compute:1",
+        "skip_slot": "out",
+        "branch": "model/33:4:composite:1/35:15:compute:3",
+        "branch_slot": "out",
+        "add": "model/33:4:composite:1/35:15:compute:2",
+        "output": "model/33:4:composite:1/35:15:compute:2",
+        "order": "prenorm",
+        "normalization": "model/33:4:composite:1/35:15:compute:3",
+        "normalization_type": "torch.nn.LayerNorm",
+        "branch_path": [
+          "model/33:4:composite:1/35:15:compute:3"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 15,
+          "end_column": 44,
+          "symbol": "EscapingTail.forward",
+          "expression": "self.normalize(total) + total"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00005",
+        "e00006",
+        "e00007",
+        "e00008",
+        "e00009"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence"
+      ]
+    },
+    {
+      "id": "contract:residual-postnorm:9066a5f6f9d4",
+      "rule": "residual-postnorm",
+      "rule_version": "source-contracts/1",
+      "node": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+      "members": [
+        "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+        "model/33:4:composite:1/12:4:composite:1/13:15:compute:1"
+      ],
+      "roles": {
+        "skip": "model/33:4:composite:1/33:22:interface:1",
+        "skip_slot": "out",
+        "branch": "model/33:4:composite:1/12:4:composite:1/13:34:compute:1",
+        "branch_slot": "out",
+        "add": "model/33:4:composite:1/12:4:composite:1/13:30:compute:1",
+        "output": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+        "order": "postnorm",
+        "normalization": "model/33:4:composite:1/12:4:composite:1/13:15:compute:1",
+        "normalization_type": "torch.nn.LayerNorm",
+        "branch_path": [
+          "model/33:4:composite:1/12:4:composite:1/13:34:compute:1"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/contract_stages.py",
+          "line": 13,
+          "end_line": 13,
+          "column": 15,
+          "end_column": 50,
+          "symbol": "TailPair.forward",
+          "expression": "self.normalize(x + self.project(x))"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00011",
+        "e00012",
+        "e00013",
+        "e00014",
+        "e00015",
+        "e00016",
+        "e00017"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence"
+      ]
+    }
+  ],
+  "semantic_contract_basis": "6ea8d1131e04b6fabc9490ab1534615a67948a3e130de23216e40488756965e4",
+  "ir_digest": "ffaa3fc644ff758005aceffed8a6b1ff06115597a086b39e1e9f764d4c206f87"
+}

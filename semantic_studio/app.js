@@ -116,6 +116,7 @@
     $('paperAuto').checked=state.paperAuto!==false;$('paperWidth').value=state.paperWidthMm||180;$('paperGranularity').value=state.paperGranularity||'overview';$('paperGranularity').disabled=state.paperAuto===false;
     const canvas=state.paperMedium==='canvas';$('paperMedium').value=canvas?'canvas':'print';$('paperPrintWidth').hidden=canvas;$('nativeScale').hidden=!canvas;$('paperSequenceTools').hidden=!canvas;$('paperSequenceView').value=state.paperSequenceView==='summary'?'summary':'representatives';$('paperFrameTools').hidden=!canvas;$('paperFrameView').value=state.paperFrameView==='source'?'source':'compact';
     $('paperAdaptiveTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptive').checked=state.paperAdaptive===true;$('paperAdaptive').disabled=state.paperAuto===false;
+    $('paperAdaptivePolicyTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptivePolicy').value=state.paperAdaptivePolicy||'detail';$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;
     const plan=P.plan(ir),idx=E.index(plan),select=$('paperFocus');select.replaceChildren(new Option('模型总览',''));
     const source=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return false;id=idx.nodes.get(id)?.parent;}return true;};
     for(const n of plan.nodes)if(n.parent&&(idx.children.get(n.id)||[]).length&&(state.mode==='source'?source(n.id):state.mode==='runtime'?!source(n.id):true)){const option=new Option((n.module_path||n.label)+(n.paper.unknown_count?' · '+n.paper.unknown_count+' 未知边界':''),n.id);select.add(option);}
@@ -124,7 +125,8 @@
   $('paperFocus').onchange=()=>{if($('paperFocus').value===':relation')return;snapshot();state.paperRelation=null;state.paperFocus=$('paperFocus').value||null;state.paperRepresentative=false;state.paperAuto=true;state.offsets={};render();fit();persist();syncPaperControls();};
   $('paperAuto').onchange=()=>{snapshot();state.open=projection.publication?.open||state.open;state.paperAuto=$('paperAuto').checked;state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperGranularity').onchange=()=>{snapshot();state.paperGranularity=$('paperGranularity').value;state.paperAuto=true;state.offsets={};syncPaperControls();render();fit();persist();};
-  $('paperAdaptive').onchange=()=>{snapshot();state.paperAdaptive=$('paperAdaptive').checked;state.offsets={};render();fit();persist();};
+  $('paperAdaptivePolicy').onchange=()=>{snapshot();state.paperAdaptivePolicy=$('paperAdaptivePolicy').value;state.offsets={};render();fit();persist();};
+  $('paperAdaptive').onchange=()=>{snapshot();state.paperAdaptive=$('paperAdaptive').checked;state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperWidth').onchange=()=>{snapshot();state.paperWidthMm=Math.max(80,Math.min(400,Number($('paperWidth').value)||180));render();fit();persist();};
   $('paperMedium').onchange=()=>{snapshot();state.paperMedium=$('paperMedium').value;state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperSequenceView').onchange=()=>{snapshot();state.paperSequenceView=$('paperSequenceView').value;state.paperAuto=true;state.open=[];state.offsets={};syncPaperControls();render();fit();persist();};
@@ -164,7 +166,7 @@
     }
     labels.innerHTML=prepared.labeling.placed.map(R.labelBody).join('');svg.append(labels);refreshBundleInspector();
     const q=prepared.quality;canvasQuality=q.medium==='canvas'?q:null;showPaperQuality(q);
-    $('paperAuto').checked=state.paperAuto!==false;$('paperGranularity').disabled=state.paperAuto===false;$('paperAdaptive').disabled=state.paperAuto===false;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
+    $('paperAuto').checked=state.paperAuto!==false;$('paperGranularity').disabled=state.paperAuto===false;$('paperAdaptive').disabled=state.paperAuto===false;$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
     const limited=prepared.routing.granularity_refinement;
     message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接${projection.publication.wire_bundles.length?'（'+projection.edge_accounting.visible.length+' 条依赖）':''} · ${projection.publication.unknowns} 个未知操作${prepared.quality.route_failures.length?' · 存在待调整路径':''}${limited&&(limited.selected!==limited.requested||limited.selected_budget<limited.requested_budget)?' · 受图宽限制，部分细节请打开模块详图':''}`);
   }

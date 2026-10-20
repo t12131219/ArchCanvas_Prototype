@@ -2,7 +2,7 @@
  * are deliberately absent: candidates are existing roles or relation paths. */
 (function(root){
   'use strict';
-  const VERSION='adaptive-frontier/2';
+  const VERSION='adaptive-frontier/3';
   const Expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
   const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
   function candidates(graph,state={}){
@@ -67,11 +67,41 @@
     const summaries=new Set((g.summary_coverage||[]).filter(r=>r.status==='fulfilled').map(r=>r.goal));
     return {goals,roles,boundaries,conflicts,summaries};
   }
+  function contribution(baseline,gained,roles,summaries){
+    const fulfilled=new Set((baseline.graph.summary_coverage||[]).filter(c=>c.status==='fulfilled').map(c=>c.goal));
+    const structures=(baseline.graph.summary_goals?.goals||[]).filter(g=>fulfilled.has(g.id)).map(g=>({
+      nodes:new Set(g.operations.map(o=>o.node)),edges:new Set(g.internal_bindings.map(b=>b.edge))}));
+    const definitions=new Map(baseline.graph.expression_goals.goals.map(g=>[g.id,g]));
+    const covered=g=>{const goal=definitions.get(g.id);return goal&&structures.some(s=>goal.core.every(id=>s.nodes.has(id))&&goal.edges.every(id=>s.edges.has(id)));};
+    return {critical:gained.filter(g=>critical.has(g.kind)).reduce((s,g)=>s+g.priority,0),
+      structure:roles+2*summaries+gained.filter(g=>g.kind!=='computation'&&!critical.has(g.kind)&&!covered(g)).reduce((s,g)=>s+g.priority,0),
+      detail:gained.reduce((s,g)=>s+g.priority,0),
+      only_summary_internal:gained.length>0&&gained.every(g=>!critical.has(g.kind)&&covered(g)),
+      summary_internal_details:gained.filter(g=>!critical.has(g.kind)&&covered(g)).map(g=>g.id)};
+  }
+  function density(value,before,after){
+    const cost=Math.max(1,after.area/Math.max(1,before.area))*(1+Math.max(0,after.crossings-before.crossings)/Math.max(4,before.crossings+4));
+    return {...value,cost,score:[value.critical/cost,value.structure/cost,value.detail/cost]};
+  }
+  function compare(a,b){
+    for(let i=0;i<a.score.length;i++)if(Math.abs(a.score[i]-b.score[i])>1e-9)return b.score[i]-a.score[i];
+    return a.cost-b.cost;
+  }
+  function preview(ir,baseline,graph){
+    const before=evidence(ir,baseline),visible=new Set(graph.nodes.map(n=>n.id)),edges=new Set();
+    for(const e of graph.edges)for(const member of e.bundle_members||[e])for(const id of [member.id,...member.originals||[]])edges.add(id);
+    const gained=baseline.graph.expression_goals.goals.filter(g=>!before.goals.has(g.id)&&g.core.every(id=>visible.has(id))&&g.edges.every(id=>edges.has(id)));
+    const roles=new Set((graph.publication.role_frontier?.roles||[]).filter(r=>r.status==='exposed').map(r=>JSON.stringify([r.certificate,r.role,r.node])));
+    // Projection estimates rank trials only. Actual text, routes, cuts,
+    // evidence and resource checks still decide eligibility and selection.
+    return contribution(baseline,gained,[...roles].filter(id=>!before.roles.has(id)).length,0);
+  }
   function assess(ir,baseline,trial){
     const b=metrics(baseline),q=metrics(trial),before=evidence(ir,baseline),after=evidence(ir,trial),reasons=[];
     const gained=[...after.goals.values()].filter(g=>!before.goals.has(g.id)),lost=[...before.goals.keys()].filter(id=>!after.goals.has(id));
     const gain=gained.reduce((s,g)=>s+g.priority,0);
-    if(!gain)reasons.push('no-verified-relationship-gain');
+    const newSummaries=[...after.summaries].filter(id=>!before.summaries.has(id));
+    if(!gain&&!newSummaries.length)reasons.push('no-verified-relationship-gain');
     if(lost.length)reasons.push('previous-expression-lost');
     const lostSummaries=[...before.summaries].filter(id=>!after.summaries.has(id));
     if(lostSummaries.length)reasons.push('previous-dependency-structure-lost');
@@ -93,11 +123,12 @@
     if(q.area>b.area*2.5)reasons.push('disproportionate-area-cost');
     // Detail adds real paths; allow only a bounded, explicit crossing cost.
     // Contacts and distinct-value overlaps never receive this allowance.
-    const crossingAllowance=Math.floor(gain/2);
+    const crossingAllowance=Math.floor((gain+2*newSummaries.length)/2);
     if(q.crossings>b.crossings+crossingAllowance)reasons.push('crossing-cost');
-    return {accepted:!reasons.length,reasons,gain,gained_goals:gained,lost_goals:lost,lost_summary_goals:lostSummaries,
+    const benefit=density(contribution(baseline,gained,[...after.roles].filter(id=>!before.roles.has(id)).length,newSummaries.length),b,q);
+    return {accepted:!reasons.length,reasons,gain,gained_goals:gained,gained_summary_goals:newSummaries,selection_benefit:benefit,lost_goals:lost,lost_summary_goals:lostSummaries,
       preserved_summary_goals:[...before.summaries].filter(id=>after.summaries.has(id)),new_exposed_roles:after.roles.size-before.roles.size,
       before:b,candidate:q,crossing_allowance:crossingAllowance};
   }
-  const api={VERSION,candidates,apply,metrics,evidence,assess};root.SemanticAdaptiveFrontier=api;if(typeof module!=='undefined')module.exports=api;
+  const api={VERSION,candidates,apply,metrics,evidence,assess,preview,compare};root.SemanticAdaptiveFrontier=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

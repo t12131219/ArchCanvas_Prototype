@@ -447,34 +447,54 @@
     if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
     const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     attachExpressionEvidence(ir,chosen);
+    const planning=state.paperAdaptivePolicy==='structure';
     const initial=engine.metrics(chosen),attempts=[],preflights=[],seen=new Set();let selectedState={...state},measured=0;
-    // At most three actual routed trials. Cheap projections rank at most 12
-    // opportunities per step; rejected trials never change the saved request.
+    // Compare up to two routed alternatives against the same frontier before
+    // choosing. Three routed trials total still bound the search; projected
+    // benefit is an estimate, never a coverage or safety receipt.
     while(measured<3&&preflights.length<36){
       const opportunities=engine.candidates(chosen.graph,selectedState).filter(c=>!seen.has(c.id)),shortlist=[];
       for(const candidate of opportunities.slice(0,Math.min(12,36-preflights.length))){
         seen.add(candidate.id);
         const next=engine.apply(selectedState,candidate),graph=E.project(ir,{...next,view:'publication'}),before=new Set(chosen.graph.nodes.map(n=>n.id));
         const added=graph.nodes.filter(n=>!before.has(n.id)),request=candidate.kind==='roles'?graph.publication.role_frontier?.detail_requests.find(r=>r.node===candidate.node):null;
-        const reason=request&&request.status!=='expanded'?'protected-or-budgeted-role':!added.length?'no-new-visible-detail':null;
+        let reason=request&&request.status!=='expanded'?'protected-or-budgeted-role':!added.length?'no-new-visible-detail':null;
         const estimate=added.filter(n=>['compute','opaque','control'].includes(n.kind)).length;
-        const row={candidate,added_nodes:added.length,estimated_operations:estimate,reason};preflights.push(row);
-        if(!reason)shortlist.push({candidate,next,estimate,added:added.length});
+        const benefit=reason||!planning?null:engine.preview(ir,chosen,graph);
+        if(benefit?.only_summary_internal&&!benefit.structure&&!benefit.critical)reason='dependency-structure-already-expressed';
+        const row={candidate,added_nodes:added.length,estimated_operations:estimate,estimated_benefit:benefit,reason};preflights.push(row);
+        if(!reason)shortlist.push({candidate,next,benefit,estimate,added:added.length});
       }
-      shortlist.sort((a,b)=>b.candidate.priority-a.candidate.priority||b.estimate/Math.max(1,b.added)-a.estimate/Math.max(1,a.added)||a.candidate.id.localeCompare(b.candidate.id));
+      shortlist.sort((a,b)=>planning?(engine.compare({...a.benefit,cost:1,score:[a.benefit.critical,a.benefit.structure,a.benefit.detail]},
+        {...b.benefit,cost:1,score:[b.benefit.critical,b.benefit.structure,b.benefit.detail]})||
+        b.estimate/Math.max(1,b.added)-a.estimate/Math.max(1,a.added)||a.candidate.id.localeCompare(b.candidate.id)):
+        b.candidate.priority-a.candidate.priority||b.estimate/Math.max(1,b.added)-a.estimate/Math.max(1,a.added)||a.candidate.id.localeCompare(b.candidate.id));
       // Untested shortlist entries remain eligible after a successful local
       // step, with preflight repeated against that newly selected frontier.
       for(const item of shortlist)seen.delete(item.candidate.id);
-      const item=shortlist[0];if(!item){if(opportunities.length>12)continue;break;}seen.add(item.candidate.id);
-      const trial=attachExpressionEvidence(ir,prepareRankClearance(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
-      attempts.push({opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},...assessment});
-      if(assessment.accepted){chosen=trial;selectedState=item.next;}
+      if(!shortlist.length){if(opportunities.length>12)continue;break;}
+      const trials=[];
+      for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
+        seen.add(item.candidate.id);
+        const trial=attachExpressionEvidence(ir,prepareRankClearance(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+        const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
+          ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
+        trials.push({item,trial,assessment,receipt});
+      }
+      const eligible=trials.filter(t=>t.assessment.accepted).sort((a,b)=>engine.compare(a.assessment.selection_benefit,b.assessment.selection_benefit)||a.item.candidate.id.localeCompare(b.item.candidate.id));
+      const best=eligible[0];
+      for(const t of trials){
+        if(t===best)t.receipt.accepted=true;
+        else if(t.receipt.eligible){t.receipt.reasons=[...t.receipt.reasons,'lower-measured-benefit'];seen.delete(t.item.candidate.id);}
+        attempts.push(t.receipt);
+      }
+      if(best){chosen=best.trial;selectedState=best.item.next;}
     }
     const remaining=engine.candidates(chosen.graph,selectedState).filter(c=>!seen.has(c.id));
-    const receipt={rule_version:engine.VERSION,requested:true,baseline:initial,selected:engine.metrics(chosen),attempts,preflights,
+    const receipt={rule_version:engine.VERSION,requested:true,policy:planning?'structure':'detail',baseline:initial,selected:engine.metrics(chosen),attempts,preflights,
       selected_role_details:selectedState.paperRoleDetails||[],selected_expression_details:selectedState.paperExpressionDetails||[],
       unmeasured_opportunities:remaining.length,measurement_limit:3,preflight_limit:36,
-      scope:'Bounded local role/relation refinement of the requested canvas frontier; fulfilled goals only, not coverage of all hidden instances. Canonical IR and saved requests remain unchanged.'};
+      scope:'Bounded measured comparison of local role/relation expressions; critical boundaries, newly expressed structure and detailed paths remain distinct. Existing summaries preserve structure without fulfilling atomic detail. Canonical IR and saved requests remain unchanged; this is not global summary/detail or graph-set planning.'};
     chosen.graph.publication.adaptive_frontier=receipt;chosen.prepared.routing.semantic_refinement=receipt;
     return chosen;
   }

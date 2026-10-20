@@ -173,19 +173,25 @@
       // Source ownership, endpoints and the full compound hierarchy survive.
       if(options.compoundPorts&&scc.every(group=>group.length===1)&&kids.filter(id=>positions.get(id).expanded).length>1){
         const relative=(id,ancestor)=>{let y=0,at=id;while(at&&at!==ancestor){y+=positions.get(at)?.y||0;at=idx.nodes.get(at)?.parent;}return at===ancestor?y:null;};
-        const weights=new Map(kids.map(id=>[id,new Map()]));let late=false;
+        const weights=new Map(kids.map(id=>[id,new Map()])),entryBindings=[];let late=false;
         const reaches=(from,to)=>{const todo=[from],seen=new Set();for(let i=0;i<todo.length;i++){const at=todo[i];if(at===to)return true;if(seen.has(at))continue;seen.add(at);todo.push(...adj.get(at)||[]);}return false;};
         for(const e of edges){const a=owner(e.source),b=owner(e.target);if(!a||!b||a===b||e.design_route?.kind==='iteration-feedback')continue;
           const pa=positions.get(a),pb=positions.get(b),sy=relative(e.source,a),ty=relative(e.target,b);
           const flows=e.bundle_members||[e],data=flows.every(e=>['data','alias','interface-binding'].includes(e.kind)&&!e.condition);
           // The target needs a distinct, independently sourced entry. Merely
           // nesting a serial operation deeply inside a helper is insufficient.
-          const independent=edges.some(other=>{const from=owner(other.source);if(!from||from===a||from===b||owner(other.target)!==b||reaches(a,from))return false;
+          const independent=edges.find(other=>{const from=owner(other.source);if(!from||from===a||from===b||owner(other.target)!==b||reaches(a,from))return false;
             const uses=other.bundle_members||[other],entry=relative(other.target,b);
             return uses.every(e=>['data','alias','interface-binding'].includes(e.kind)&&!e.condition)&&entry!==null&&entry<=ty+gapY;
           });
           const internal=data&&pa.expanded&&pb.expanded&&sy!==null&&ty!==null&&e.target!==b&&independent;
-          const distance=internal?sy+positions.get(e.source).h-ty+gapY:pa.h+gapY;
+          // An independently entered region need not start below the producer
+          // of its later context input. This optional drawing convention keeps
+          // the cross-region arrow (possibly upward); it does not assert time.
+          const guarded=id=>{const n=idx.nodes.get(id);return ['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls;};
+          const entry=internal&&options.compoundStarts&&!e.design_route&&![a,b,e.source,e.target].some(guarded);
+          const distance=entry?0:internal?sy+positions.get(e.source).h-ty+gapY:pa.h+gapY;
+          if(entry)entryBindings.push({edge:e.id,source_frame:a,target_frame:b,source:e.source,target:e.target,independent_entry:independent.id});
           if(internal&&ty>pb.header+gapY)late=true;
           weights.get(a).set(b,Math.max(weights.get(a).get(b)??-Infinity,distance));
         }
@@ -205,7 +211,7 @@
           const box={w:Math.max(...placed.map(p=>p.x+p.w)),h:Math.max(...placed.map(p=>p.y+p.h))};
           const score=b=>Math.max(b.w/1.6,b.h);
           const accepted=box.h<vertical.h*.9&&score(box)<score(vertical)*.9&&box.w*box.h<=vertical.w*vertical.h*2;
-          compoundAlignments.push({parent,before:vertical,candidate:box,accepted,scope:'visible endpoint geometry; no execution-order assertion'});
+          compoundAlignments.push({parent,before:vertical,candidate:box,accepted,...(options.compoundStarts?{mode:'entries',entry_bindings:entryBindings}:{}),scope:'visible endpoint geometry; no execution-order assertion'});
           if(accepted){
             for(const [id,p]of candidate){Object.assign(positions.get(id),{x:p.x,y:p.y,arrangement:'compound-port-alignment'});}
             return box;
@@ -264,6 +270,12 @@
     if(!paths.every(ps=>ps.every((p,i)=>close(p.y,paths[0][i].y))))return false;
     if(!paths.every((ps,i)=>!i||Math.min(...ps.map(p=>p.x))>=Math.max(...paths[i-1].map(p=>p.x+p.w))))return false;
     const sink=positions.get(group.sink);return !!sink&&paths.every(ps=>sink.y>=ps.at(-1).y+ps.at(-1).h);
+  }
+  function entryGeometry(record,positions){
+    return record.accepted&&record.entry_bindings?.length>0&&record.entry_bindings.every(binding=>{
+      const a=positions.get(binding.source_frame),b=positions.get(binding.target_frame);
+      return a&&b&&(a.x+a.w<=b.x||b.x+b.w<=a.x)&&a.y<b.y+b.h&&b.y<a.y+a.h;
+    });
   }
   const point=(x,y)=>({x,y});
   function simplify(points){const out=[];for(const p of points){if(out.length&&out.at(-1).x===p.x&&out.at(-1).y===p.y)continue;while(out.length>1&&((out.at(-2).x===out.at(-1).x&&out.at(-1).x===p.x)||(out.at(-2).y===out.at(-1).y&&out.at(-1).y===p.y)))out.pop();out.push(p);}return out;}
@@ -425,5 +437,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,branchGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -311,8 +311,43 @@
       scope:'measured local path columns; original bindings retained, no stage equivalence or concurrent execution asserted'};
     return chosen;
   }
+  function prepareFlows(ir,state={}){
+    const baseline=prepareBranches(ir,state),b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||state.paperFlowAlignment!==undefined||state.paperAuto===false||Object.keys(state.offsets||{}).length||
+      baseline.graph.edges.length>128||!baseline.graph.positions.context.compoundAlignments.some(c=>c.accepted))return baseline;
+    const candidateState={...state,paperFlowAlignment:'entries',paperBranchColumns:!!baseline.graph.positions.context.branchColumns.length,
+      paperContextLanes:baseline.graph.positions.context.contextLanes[0]?.side||false,
+      paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest'};
+    const probe=E.project(ir,{...candidateState,view:'publication'});
+    if(!probe.positions.context.compoundAlignments.some(c=>L.entryGeometry(c,probe.positions)))return baseline;
+    const trial=prepareLabels(ir,candidateState),q=trial.prepared.quality;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const identity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id),edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,
+      source_port:e.source_port,target_port:e.target_port,originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition}))});
+    const conflicts=r=>new Set(r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id));
+    const routes=r=>new Map(r.prepared.routes.map(e=>[e.id,e]));
+    const columns=r=>r.graph.positions.context.branchColumns.filter(g=>L.branchGeometry(g,r.graph.positions)&&g.chains.every(c=>c.edges.every(id=>routes(r).get(id)?.route.ok))).length;
+    const contexts=r=>r.graph.positions.context.contextLanes.filter(c=>{const p=r.graph.positions.get(c.owner),route=routes(r).get(c.edge)?.route;
+      const lo=c.side==='left'?p.x+(p.design_gutter||0):p.x+p.w-p.context_gutter,hi=c.side==='left'?lo+p.context_gutter:p.x+p.w;
+      return route?.ok&&route.target_side===c.side&&route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi);}).length;
+    const entries=trial.graph.positions.context.compoundAlignments.filter(c=>L.entryGeometry(c,trial.graph.positions)&&c.entry_bindings.every(e=>routes(trial).get(e.edge)?.route.ok&&routes(trial).get(e.independent_entry)?.route.ok));
+    const accepted=identity(baseline.graph)===identity(trial.graph)&&entries.length>0&&
+      q.native_height_px<=b.native_height_px*.9&&q.native_width_px<=b.native_width_px*1.1&&areaMetric(q)<areaMetric(b)*.9&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&
+      fontMetric(q)>=fontMetric(b)&&q.wire_length<=b.wire_length*1.1&&[...conflicts(trial)].every(c=>conflicts(baseline).has(c))&&
+      columns(trial)>=columns(baseline)&&contexts(trial)>=contexts(baseline);
+    const chosen=accepted?trial:baseline;
+    if(accepted)for(const key of ['context_refinement','branch_refinement','topology_refinement'])if(baseline.prepared.routing[key])chosen.prepared.routing[key]=baseline.prepared.routing[key];
+    const metrics=r=>({width:r.prepared.quality.native_width_px,height:r.prepared.quality.native_height_px,crossings:r.prepared.quality.line_geometry.crossings,
+      contacts:r.prepared.quality.line_geometry.unrelated_contacts.length,wire_length:r.prepared.quality.wire_length,issues:r.prepared.quality.issues,
+      realized_columns:columns(r),realized_contexts:contexts(r),constraint_conflicts:[...conflicts(r)]});
+    chosen.prepared.routing.flow_refinement={accepted,before:metrics(baseline),candidate:metrics(trial),candidate_regions:entries.length,
+      scope:'independently entered compound regions; cross-region arrows remain exact and can point upward; no execution scheduling assertion'};
+    return chosen;
+  }
   function selectFigure(ir,state={}){
-    let chosen=prepareBranches(ir,state);
+    let chosen=prepareFlows(ir,state);
     const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
     // A zoomable canvas keeps the requested semantic frontier. Route/resource
     // failures remain explicit; silently replacing it with an overview is not
@@ -366,7 +401,11 @@
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" class="publication" ${dimensions} viewBox="${b.x} ${b.y} ${b.w} ${totalH}" role="img" aria-label="${esc(ir.title)}"><title>${esc(ir.title)} · architecture</title><desc>Source-backed architecture; unresolved regions remain explicit. Crossings without a node are not junctions. ${esc(notes.join('; '))}</desc><metadata>${esc(JSON.stringify({schema:'archcanvas-publication/1',canonical_digest:ir.ir_digest,quality}))}</metadata><style>${css}</style><defs>${defs}</defs><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${totalH}" fill="#fff"/><g id="frames">${frames.join('')}</g><g id="edges">${routes.map(edgeBody).join('')}</g><g id="nodes">${nodes.join('')}</g><g id="port-labels">${labeling.placed.map(labelBody).join('')}</g>${noteLines.length?`<text x="${b.x+14}" y="${b.y+b.h+20}" class="paper-port-label">${noteLines.map((line,i)=>`<tspan x="${b.x+14}" dy="${i?17:0}">${esc(line)}</tspan>`).join('')}</text>`:''}</svg>\n`;
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       layout:{bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
-        ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments}:{}),
+        ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments.map(record=>{
+          if(record.mode!=='entries')return record;
+          const geometry=L.entryGeometry(record,g.positions),valid=record.entry_bindings.every(b=>routes.find(e=>e.id===b.edge)?.route.ok&&routes.find(e=>e.id===b.independent_entry)?.route.ok);
+          return {...record,status:geometry&&valid?'realized':'deferred',geometry_verified:!!geometry,routes_verified:valid};
+        })}:{}),
         ...(g.positions.context.branchColumns.length?{branch_columns:g.positions.context.branchColumns.map(group=>{
           const geometry=L.branchGeometry(group,g.positions),pathIds=group.chains.flatMap(c=>c.edges),valid=pathIds.every(id=>routes.find(e=>e.id===id)?.route.ok);
           return {...group,status:geometry&&valid?'realized':'deferred',geometry_verified:geometry,routes_verified:valid,

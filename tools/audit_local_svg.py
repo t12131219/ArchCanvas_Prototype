@@ -75,6 +75,8 @@ def audit_atlas_coverage(manifest, panel, document, nodes, paths):
 
 def main():
     global OUT
+    if '--flows' in sys.argv:
+        sys.argv.append('--branches')
     if '--branches' in sys.argv:
         sys.argv.append('--context')
     if '--context' in sys.argv:
@@ -95,6 +97,8 @@ def main():
         OUT = ROOT / 'verification/context-lanes/current'
     if '--branches' in sys.argv:
         OUT = ROOT / 'verification/branch-columns/current'
+    if '--flows' in sys.argv:
+        OUT = ROOT / 'verification/flow-entries/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -370,6 +374,57 @@ def main():
                 if rect is not None:
                     assert (float(rect.get('width')), float(rect.get('height'))) == (p['w'], p['h'])
                 actual_boxes[node] = (x, y, p['w'], p['h'])
+            if '--flows' in sys.argv:
+                assert row['compound_alignments'] == document['layout'].get('compound_alignments', [])
+                for record in row['compound_alignments']:
+                    if record.get('mode') != 'entries':
+                        continue
+                    geometry = bool(record['accepted'] and record['entry_bindings'])
+                    valid_routes = True
+                    kids = {node for node in nodes if parents.get(node) == record['parent']}
+                    def owner(node):
+                        while node is not None and node not in kids:
+                            node = parents.get(node)
+                        return node
+                    adjacent = {node: set() for node in kids}
+                    for edge in edge_layout.values():
+                        a, b = owner(edge['source']), owner(edge['target'])
+                        if a and b and a != b and edge.get('design_route', {}).get('kind') != 'iteration-feedback':
+                            adjacent[a].add(b)
+                        if edge.get('layout_after'):
+                            a = owner(edge['layout_after'])
+                            if a and b and a != b:
+                                adjacent[a].add(b)
+                    for binding in record['entry_bindings']:
+                        edge, independent = [edge_layout[binding[key]] for key in ['edge', 'independent_entry']]
+                        a, b = binding['source_frame'], binding['target_frame']
+                        assert (edge['source'], edge['target']) == (binding['source'], binding['target'])
+                        assert owner(edge['source']) == a and owner(edge['target']) == b and edge['target'] != b
+                        assert measured[a]['expanded'] and measured[b]['expanded']
+                        assert owner(independent['target']) == b
+                        entry_owner = owner(independent['source'])
+                        assert entry_owner is not None and entry_owner not in [a, b]
+                        reached, todo = set(), [a]
+                        for node in todo:
+                            if node in reached:
+                                continue
+                            reached.add(node)
+                            todo.extend(adjacent[node])
+                        assert entry_owner not in reached, 'entry source depends on context-producing region'
+                        assert actual_boxes[independent['target']][1] <= actual_boxes[edge['target']][1] + 60
+                        for e in [edge, independent]:
+                            assert all(m['kind'] in ['data', 'alias', 'interface-binding'] and not m.get('condition') for m in e.get('bundle_members', [e]))
+                        assert not edge.get('design_route')
+                        for node in [a, b, edge['source'], edge['target']]:
+                            n = planned[node]
+                            assert n['kind'] not in ['opaque', 'control'] and not any(n.get(k) for k in ['condition', 'mutable', 'identity_display', 'observed_calls'])
+                        ax, ay, aw, ah = actual_boxes[a]
+                        bx, by, bw, bh = actual_boxes[b]
+                        geometry &= (ax + aw <= bx or bx + bw <= ax) and ay < by + bh and by < ay + ah
+                        valid_routes &= all(e['route']['ok'] and paths[e['id']].get('data-route-valid') == 'true' for e in [edge, independent])
+                    assert record['geometry_verified'] == bool(geometry)
+                    assert record['routes_verified'] == bool(valid_routes)
+                    assert (record['status'] == 'realized') == bool(geometry and valid_routes)
             for group in row.get('branch_columns', []):
                 chains, sink = group['chains'], group['sink']
                 assert 2 <= len(chains) <= 6 and len(chains[0]['nodes']) >= 2

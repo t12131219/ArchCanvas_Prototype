@@ -17,6 +17,8 @@ def sha(file):
 
 def main():
     global OUT
+    if '--flows' in sys.argv:
+        sys.argv.append('--branches')
     if '--branches' in sys.argv:
         sys.argv.append('--context')
     if '--context' in sys.argv:
@@ -31,6 +33,8 @@ def main():
         OUT = ROOT / 'verification/context-lanes/current'
     if '--branches' in sys.argv:
         OUT = ROOT / 'verification/branch-columns/current'
+    if '--flows' in sys.argv:
+        OUT = ROOT / 'verification/flow-entries/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -79,6 +83,8 @@ def main():
         head = head.replace('本轮将独立门控、状态、选择、条件、未知与身份关系纳入局部表达请求和预算；证书及控制边界保留', '本轮比较按真实跨边生成的侧端口与通道候选，只有实际几何改善才采用；模块与更深的展开能力保留')
     if '--branches' in sys.argv:
         head = head.replace('本轮比较按真实跨边生成的侧端口与通道候选，只有实际几何改善才采用；模块与更深的展开能力保留', '本轮按真实依赖路径建立分支列对应；仅已展开的纯展示分带转为可恢复附注。未知及条件节点独立保留')
+    if '--flows' in sys.argv:
+        head = head.replace('本轮按真实依赖路径建立分支列对应；仅已展开的纯展示分带转为可恢复附注。未知及条件节点独立保留', '本轮按独立入口组织相邻计算区域，真实上下文箭头可以向上连接。分列、已实现通道及更细展开能力保留')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -149,6 +155,12 @@ def main():
                     note += f'；候选交叉 {decision["crossings_before"]} → {decision["crossings_candidate"]}，线长 {decision["wire_before"]} → {decision["wire_candidate"]}；线长增长上限 10%。'
                 view += '<article><h2>' + key + '</h2><p>' + escape(note) + '</p>' + svg(OUT / row['svg'], row['svg_sha256']) + '</article>'
             (OUT / (name + '-comparison.html')).write_text(view + '</div></html>')
+    if '--flows' in sys.argv:
+        for name in ['transformer', 'ContextWeave', 'BoundaryWeave']:
+            view = simple + '<h1>独立入口与跨区域上下文：' + name + '</h1><p>左侧冻结基线，右侧通用入口候选。箭头表达真实值依赖；区域位置不代表执行时间。未知调用保留自身边界。</p><div class="cards">'
+            for key in [name + '-before', name + '-roles']:
+                view += card(rows[key])
+            (OUT / (name + '-flow-comparison.html')).write_text(view + '</div></html>')
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

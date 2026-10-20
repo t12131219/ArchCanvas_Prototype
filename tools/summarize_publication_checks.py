@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'branch-columns':
+        if stage == 'flow-entries':
+            from summarize_flow_entries import main as summarize_stage
+        elif stage == 'branch-columns':
             from summarize_branch_columns import main as summarize_stage
         elif stage == 'context-lanes':
             from summarize_context_lanes import main as summarize_stage

@@ -28,5 +28,5 @@
     }
     results.push({name, node_texts: nodeTexts, nodes: nodes.length, paths: svg.querySelectorAll('path[data-edge-id]').length, port_texts: portTexts});
   }
-  return {schema: 'branch-columns-browser-text/1', browser: 'Codex In-app Browser 2; actual SVG DOM bounding rectangles', render_report_sha256: document.querySelector('meta[name="inline-render-report-sha256"]').content, results, failures};
+  return {schema: 'publication-browser-text/1', browser: 'Codex In-app Browser 2; actual SVG DOM bounding rectangles', render_report_sha256: document.querySelector('meta[name="inline-render-report-sha256"]').content, results, failures};
 }

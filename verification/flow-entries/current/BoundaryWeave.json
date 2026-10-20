@@ -1,0 +1,858 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "BoundaryWeave",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+    "class": "BoundaryWeave",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+      "cell": null,
+      "sha256": "6e071666a48aca24e74dd9a5758f6719adf0a6d334728d8b3b3f63557ff5eace",
+      "unit_sha256": "6e071666a48aca24e74dd9a5758f6719adf0a6d334728d8b3b3f63557ff5eace"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/27:4:composite:1",
+      "kind": "composite",
+      "label": "BoundaryWeave",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 27,
+          "end_line": 29,
+          "column": 4,
+          "end_column": 43,
+          "symbol": "BoundaryWeave.forward",
+          "expression": "def forward(self, left, right):\n    context = self.produce(left)\n    return self.receive(right, context)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "BoundaryWeave"
+    },
+    {
+      "id": "model/27:4:composite:1/27:22:interface:1",
+      "kind": "interface",
+      "label": "left",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 22,
+          "end_column": 26,
+          "symbol": "BoundaryWeave.forward",
+          "expression": "left"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "left"
+    },
+    {
+      "id": "model/27:4:composite:1/27:28:interface:1",
+      "kind": "interface",
+      "label": "right",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 28,
+          "end_column": 33,
+          "symbol": "BoundaryWeave.forward",
+          "expression": "right"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "right"
+    },
+    {
+      "id": "model/27:4:composite:1/20:4:composite:1",
+      "kind": "composite",
+      "label": "self.produce",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 20,
+          "end_line": 21,
+          "column": 4,
+          "end_column": 54,
+          "symbol": "produce",
+          "expression": "def produce(self, left):\n    return torch.tanh(torch.sin(torch.relu(left)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/27:4:composite:1/20:4:composite:1/20:22:interface:1",
+      "kind": "interface",
+      "label": "left",
+      "parent": "model/27:4:composite:1/20:4:composite:1",
+      "source_parent": "model/27:4:composite:1/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 22,
+          "end_column": 26,
+          "symbol": "produce",
+          "expression": "left"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "left"
+    },
+    {
+      "id": "model/27:4:composite:1/20:4:composite:1/21:36:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/27:4:composite:1/20:4:composite:1",
+      "source_parent": "model/27:4:composite:1/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 36,
+          "end_column": 52,
+          "symbol": "produce",
+          "expression": "torch.relu(left)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "left"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu"
+    },
+    {
+      "id": "model/27:4:composite:1/20:4:composite:1/21:26:compute:1",
+      "kind": "compute",
+      "label": "sin",
+      "parent": "model/27:4:composite:1/20:4:composite:1",
+      "source_parent": "model/27:4:composite:1/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 26,
+          "end_column": 53,
+          "symbol": "produce",
+          "expression": "torch.sin(torch.relu(left))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sin",
+      "function_target": "torch.sin",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "torch.relu(left)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sin"
+    },
+    {
+      "id": "model/27:4:composite:1/20:4:composite:1/21:15:compute:1",
+      "kind": "compute",
+      "label": "tanh",
+      "parent": "model/27:4:composite:1/20:4:composite:1",
+      "source_parent": "model/27:4:composite:1/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 15,
+          "end_column": 54,
+          "symbol": "produce",
+          "expression": "torch.tanh(torch.sin(torch.relu(left)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "torch.sin(torch.relu(left))"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.tanh"
+    },
+    {
+      "id": "model/27:4:composite:1/20:4:composite:1/21:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/27:4:composite:1/20:4:composite:1",
+      "source_parent": "model/27:4:composite:1/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 8,
+          "end_column": 54,
+          "symbol": "produce",
+          "expression": "return torch.tanh(torch.sin(torch.relu(left)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/27:4:composite:1/28:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "context",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 28,
+          "end_line": 28,
+          "column": 8,
+          "end_column": 15,
+          "symbol": "BoundaryWeave.forward",
+          "expression": "context"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1",
+      "kind": "composite",
+      "label": "self.receive",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 23,
+          "end_line": 25,
+          "column": 4,
+          "end_column": 42,
+          "symbol": "receive",
+          "expression": "def receive(self, right, context):\n    early = torch.tanh(external_unresolved(right))\n    return torch.relu(early + context)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/23:22:interface:1",
+      "kind": "interface",
+      "label": "right",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 22,
+          "end_column": 27,
+          "symbol": "receive",
+          "expression": "right"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "right"
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/23:29:interface:1",
+      "kind": "interface",
+      "label": "context",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 29,
+          "end_column": 36,
+          "symbol": "receive",
+          "expression": "context"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "context"
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/24:27:opaque:1",
+      "kind": "opaque",
+      "label": "external_unresolved",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 27,
+          "end_column": 53,
+          "symbol": "receive",
+          "expression": "external_unresolved(right)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "external_unresolved",
+      "function_target": "external_unresolved",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "right"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/24:16:compute:1",
+      "kind": "compute",
+      "label": "tanh",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 16,
+          "end_column": 54,
+          "symbol": "receive",
+          "expression": "torch.tanh(external_unresolved(right))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "external_unresolved(right)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.tanh"
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/24:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "early",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "receive",
+          "expression": "early"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/25:26:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 26,
+          "end_column": 41,
+          "symbol": "receive",
+          "expression": "early + context"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/25:15:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 15,
+          "end_column": 42,
+          "symbol": "receive",
+          "expression": "torch.relu(early + context)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "early + context"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu"
+    },
+    {
+      "id": "model/27:4:composite:1/23:4:composite:1/25:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/27:4:composite:1/23:4:composite:1",
+      "source_parent": "model/27:4:composite:1/23:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 8,
+          "end_column": 42,
+          "symbol": "receive",
+          "expression": "return torch.relu(early + context)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/27:4:composite:1/29:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/27:4:composite:1",
+      "source_parent": "model/27:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/flow_entries.py",
+          "line": 29,
+          "end_line": 29,
+          "column": 8,
+          "end_column": 43,
+          "symbol": "BoundaryWeave.forward",
+          "expression": "return self.receive(right, context)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/27:4:composite:1/27:22:interface:1",
+      "target": "model/27:4:composite:1/20:4:composite:1/20:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "left",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/27:4:composite:1/20:4:composite:1/20:22:interface:1",
+      "target": "model/27:4:composite:1/20:4:composite:1/21:36:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/27:4:composite:1/20:4:composite:1/21:36:compute:1",
+      "target": "model/27:4:composite:1/20:4:composite:1/21:26:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/27:4:composite:1/20:4:composite:1/21:26:compute:1",
+      "target": "model/27:4:composite:1/20:4:composite:1/21:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/27:4:composite:1/20:4:composite:1/21:15:compute:1",
+      "target": "model/27:4:composite:1/20:4:composite:1/21:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/27:4:composite:1/20:4:composite:1/21:8:interface:1",
+      "target": "model/27:4:composite:1/28:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/27:4:composite:1/27:28:interface:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/23:22:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "right",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/27:4:composite:1/28:8:value-alias:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/23:29:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "context",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/23:22:interface:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/24:27:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/24:27:opaque:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/24:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/24:16:compute:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/24:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/24:8:value-alias:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/25:26:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/23:29:interface:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/25:26:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/25:26:compute:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/25:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/25:15:compute:1",
+      "target": "model/27:4:composite:1/23:4:composite:1/25:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/27:4:composite:1/23:4:composite:1/25:8:interface:1",
+      "target": "model/27:4:composite:1/29:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "aafce5ed23dc603970e5da824fbfca28d9c2d9cc0ba4a4aced3565b712b78bdb"
+}

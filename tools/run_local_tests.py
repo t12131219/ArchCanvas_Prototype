@@ -40,6 +40,7 @@ COMMANDS = {
     'diagram-set': ['node', 'tests/diagram-set.test.cjs'],
     'entry-bands': ['node', 'tests/entry-bands.test.cjs'],
     'sample-frames': ['node', 'tests/sample-frames.test.cjs'],
+    'return-regions': ['node', 'tests/return-regions.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],

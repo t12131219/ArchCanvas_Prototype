@@ -387,6 +387,8 @@ def audit_contract_stages(document, row, nodes):
 
 def main():
     global OUT
+    if '--return-regions' in sys.argv:
+        sys.argv.append('--sample-frames')
     if '--sample-frames' in sys.argv:
         sys.argv.append('--entry-bands')
     if '--entry-bands' in sys.argv:
@@ -477,6 +479,8 @@ def main():
         OUT = ROOT / 'verification/entry-bands/current'
     if '--sample-frames' in sys.argv:
         OUT = ROOT / 'verification/sample-frames/current'
+    if '--return-regions' in sys.argv:
+        OUT = ROOT / 'verification/return-regions/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -520,6 +524,9 @@ def main():
         source = OUT / row['svg']
         assert hashlib.sha256(source.read_bytes()).hexdigest() == row['svg_sha256']
         document = json.loads((OUT / row['document']).read_text())
+        if '--return-regions' in sys.argv:
+            from audit_return_region_receipts import verify
+            verify(document, ET.parse(source))
         canonical = {e['id']: e for e in document['ir']['edges']}
         if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
             # JS JSON serialization normalizes 1.0 to 1. Python's existing

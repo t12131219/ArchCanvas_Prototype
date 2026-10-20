@@ -228,6 +228,7 @@
       else if(n.contract_roles)caption=n.label;
     }
     if(n.condition_predicate){title='If '+n.condition_predicate.label;caption='Conditional alternatives · exact interfaces';}
+    if(n.return_region){title='Return alternatives';caption='If '+n.return_region.predicate+' · '+n.return_region.return_sites.length+' source returns';}
     if(n.contract_stage){title='Add & Norm';caption=(n.contract_stage.branch_tail?n.contract_stage.branch_tail.label+' → ':'')+n.contract_stage.normalization_type.split('.').at(-1)+' · Post-Norm';}
     if(n.local_pipeline&&!n.local_pipeline_expanded){
       const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
@@ -761,9 +762,14 @@
     if(stages){focused.plan=stages.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     const predicateStages=canvas&&granularity==='roles'&&state.paperConditionPredicates!==false?Regions.predicates({ir,plan:focused.plan}):null;
     if(predicateStages){focused.plan=predicateStages.plan;idx=index(focused.plan);for(const r of predicateStages.rows)idx.nodes.get(r.group).content_inventory=inventory(idx.children.get(r.group)||[],idx);for(const n of focused.plan.nodes)decorate(n,idx);}
+    const returnStages=canvas&&granularity==='roles'&&state.paperReturnRegions!==false?Regions.returns({ir,plan:focused.plan}):null;
+    if(returnStages){focused.plan=returnStages.plan;idx=index(focused.plan);for(const r of returnStages.rows)idx.nodes.get(r.group).content_inventory=inventory(idx.children.get(r.group)||[],idx);for(const n of focused.plan.nodes)decorate(n,idx);}
     // A closed module owns its interface. Contracting that interface would
     // expose each internal consumer as another, misleading boundary arrow.
     for(const n of ir.nodes)if(n.kind==='interface'&&!open.includes(n.parent))pol.bindings.delete(n.id);
+    // A return-region's source return sites are inspectable interfaces, not
+    // transparent aliases. Their parent branches still control visibility.
+    for(const r of returnStages?.rows||[])for(const site of r.return_sites)pol.bindings.delete(site.node);
     if(pipelines)for(const id of pipelines.keys()){const n=idx.nodes.get(id);n.local_pipeline_expanded=open.includes(id);decorate(n,idx);}
     let projected=E.project(ir,{...state,view:'architecture',details:false,open},focused.plan,options);
     const edgePairs=new Map(),labeledPairs=new Set();
@@ -821,6 +827,9 @@
       if(roleFrontier)projected.publication.role_frontier=roleEngine.receipt(roleFrontier,projected);
       if(stages)projected.publication.contract_stages=stageEngine.receipt(stages,projected);
       if(predicateStages)projected.publication.condition_predicates={rule_version:'condition-predicates/1',rows:predicateStages.rows.map(r=>({...r,
+        canonical_members:idx.nodes.get(r.group).canonical_members,cuts:idx.nodes.get(r.group).boundary_ports,
+        status:projected.positions.has(r.group)?projected.positions.get(r.group).expanded?'expanded':'summary':'folded'}))};
+      if(returnStages)projected.publication.return_regions={rule_version:'return-regions/1',rows:returnStages.rows.map(r=>({...r,
         status:projected.positions.has(r.group)?projected.positions.get(r.group).expanded?'expanded':'summary':'folded'}))};
       if(pipelines)projected.publication.local_pipelines=pipelineEngine.receipt(pipelines,projected);
       if(expressions)projected.publication.local_expressions=expressionEngine.receipt(expressions,projected);

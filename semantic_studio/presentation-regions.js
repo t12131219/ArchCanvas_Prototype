@@ -2,7 +2,7 @@
  * result is a presentation partition, never a certificate of an algorithm. */
 (function(root){
   'use strict';
-  const VERSION='presentation-regions/2';
+  const VERSION='presentation-regions/2',copy=x=>JSON.parse(JSON.stringify(x));
   function candidates({nodes,children,parent,edges,relations,resolve,eligible,maxUnits=8}){
     const by=new Map(nodes.map(n=>[n.id,n])),units=(children.get(parent)||[]).filter(eligible),active=new Set(units);
     const owner=id=>{while(id!=null&&!active.has(id)){if(id===parent)return null;id=by.get(id)?.parent;}return id;};
@@ -120,5 +120,63 @@
       proof:[...f.proof,'The direct comparison is exclusively consumed by this source if; predicate and branch details remain expandable.']}:f);
     return {plan:{...plan,nodes,publication,findings},rows};
   }
-  const api={VERSION,candidates,predicates};root.SemanticPresentationRegions=api;if(typeof module!=='undefined')module.exports=api;
+  function returns({ir,plan}){
+    const nodes=plan.nodes.map(n=>({...n})),by=new Map(nodes.map(n=>[n.id,n])),raw=new Map(ir.nodes.map(n=>[n.id,n]));
+    const children=new Map(),ins=new Map(),uses=new Map(),rows=[],claimed=new Set(),changes=new Map();
+    for(const n of nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
+    for(const e of ir.edges){if(!ins.has(e.target))ins.set(e.target,[]);ins.get(e.target).push(e);if(!uses.has(e.source))uses.set(e.source,[]);uses.get(e.source).push(e);}
+    const closure=id=>{const out=[],todo=[id];for(let i=0;i<todo.length;i++){out.push(todo[i]);todo.push(...children.get(todo[i])||[]);}return out;};
+    const flow=e=>['data','alias','interface-binding'].includes(e.kind);
+    const protectedNode=n=>!n||n.kind==='opaque'||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||
+      n.evidence_status==='runtime-only'||['state','buffer','parameter'].includes(n.kind)||n.repeat_contract||n.iteration||n.semantic_contracts?.length||n.contract_roles;
+    for(const group of nodes){
+      if(!group.presentation_only||group.semantic_type!=='conditional-collection'||!group.boundary_selection)continue;
+      const members=closure(group.id).filter(id=>raw.has(id)),inside=new Set(members),selection=group.boundary_selection;
+      if(members.length!==group.canonical_members?.length||group.canonical_members.some(id=>!inside.has(id))||members.some(id=>protectedNode(raw.get(id))||protectedNode(by.get(id))))continue;
+      const controls=members.filter(id=>raw.get(id).kind==='control');
+      if(controls.length!==1||raw.get(controls[0]).operator!=='if')continue;
+      const control=raw.get(controls[0]),sourceScope=control.parent;
+      const exits=ir.edges.filter(e=>inside.has(e.source)&&!inside.has(e.target));
+      const targets=new Set(exits.map(e=>e.target));if(targets.size!==1)continue;
+      const aggregate=by.get(exits[0].target),original=raw.get(aggregate?.id),incoming=ins.get(aggregate?.id)||[],outgoing=uses.get(aggregate?.id)||[];
+      // This is a local output boundary with real downstream use. Top-level
+      // external output terminals remain physically exposed in their own right.
+      if(!original||original.kind!=='interface'||original.role!=='output'||aggregate.kind!=='interface'||aggregate.role!=='output'||aggregate.parent!==group.parent||original.parent!==sourceScope||
+        aggregate.condition||original.condition||protectedNode(aggregate)||protectedNode(original)||!outgoing.length||incoming.length<2||incoming.length>8||
+        incoming.some(e=>e.kind!=='interface-binding'||e.condition)||new Set(incoming.map(e=>e.target_port??'in')).size!==incoming.length)continue;
+      const sites=incoming.map(e=>by.get(e.source));
+      if(new Set(sites.map(n=>n?.id)).size!==sites.length||sites.some(n=>!n||n.kind!=='interface'||n.role!=='output'||n.condition||
+        protectedNode(n)||protectedNode(raw.get(n.id))||raw.get(n.id).kind!=='interface'||raw.get(n.id).role!=='output'||raw.get(n.id).condition||claimed.has(n.id)||
+        !inside.has(n.id)&&(n.parent!==group.parent||raw.get(n.id).parent!==sourceScope)||
+        (uses.get(n.id)||[]).length!==1||(ins.get(n.id)||[]).length!==1||
+        (ins.get(n.id)||[]).some(e=>!flow(e)||e.condition)))continue;
+      // Every old outgoing edge must be one of these concrete return bindings;
+      // arbitrary escaping values, effects and other conditional scopes veto.
+      if(exits.some(e=>!incoming.includes(e))||claimed.has(aggregate.id))continue;
+      const extra=sites.filter(n=>!inside.has(n.id)).map(n=>n.id),canonical=[...members,...extra,aggregate.id],all=new Set(canonical);
+      const incident=ir.edges.filter(e=>all.has(e.source)||all.has(e.target));
+      if(incident.some(e=>!flow(e)&&e.kind!=='control'||e.iteration||e.condition&&(!all.has(e.condition.branch))))continue;
+      const cuts=incident.filter(e=>all.has(e.source)!==all.has(e.target));
+      const paths=id=>{const result=[];let at=raw.get(id)?.parent;while(at&&at!==sourceScope){const n=raw.get(at);if(n?.condition)result.push(copy(n.condition));at=n?.parent;}return result;};
+      const row={rule_version:'return-regions/1',group:group.id,control:control.id,predicate:control.label||'if',aggregate:aggregate.id,
+        added_members:[...extra,aggregate.id],canonical_members:canonical,return_sites:incoming.map(e=>({node:e.source,edge:e.id,source_port:e.source_port??'out',
+          aggregate_slot:e.target_port??'in',source_conditions:paths(e.source)})),cuts:cuts.map(copy),
+        scope:'Source return sites and their common local output interface; source ancestry conditions only, no fallthrough negation, value equality or selected execution inferred.'};
+      const next={...selection,members:[...selection.members,...extra,aggregate.id],canonical_members:canonical,boundary_edges:cuts.map(e=>e.id),
+        input_edges:cuts.filter(e=>all.has(e.target)).map(e=>e.id),output_edges:cuts.filter(e=>all.has(e.source)).map(e=>e.id),
+        escaping_results:[...new Set(cuts.filter(e=>all.has(e.source)).map(e=>JSON.stringify([e.source,e.source_port])))].map(s=>JSON.parse(s)),
+        internal_edges:incident.length-cuts.length,cut_edges:cuts.length,return_boundary:{aggregate:aggregate.id,sites:row.return_sites}};
+      next.cohesion=next.internal_edges/Math.max(1,incident.length);
+      group.boundary_selection=next;group.canonical_members=canonical;group.boundary_ports=cuts.map(copy);group.return_region=row;
+      group.label='Return alternatives';group.region_summary='If '+row.predicate+' · '+sites.length+' source returns';
+      for(const id of row.added_members){by.get(id).parent=group.id;claimed.add(id);}
+      changes.set(group.id,next);rows.push(row);
+    }
+    const publication=plan.publication?{...plan.publication,boundary_plans:plan.publication.boundary_plans?.map(p=>({...p,proposals:p.proposals.map(c=>changes.get(c.id)||c)}))}:plan.publication;
+    const findings=plan.findings?.map(f=>changes.has(f.id)?{...f,label:by.get(f.id).label,members:changes.get(f.id).members.slice(),
+      roles:{...f.roles,units:changes.get(f.id).members.slice(),boundary_selection:changes.get(f.id)},
+      proof:[...f.proof,'The concrete return sites share this local output interface; original branches, return slots and cuts remain expandable.']}:f);
+    return {plan:{...plan,nodes,publication,findings},rows};
+  }
+  const api={VERSION,candidates,predicates,returns};root.SemanticPresentationRegions=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

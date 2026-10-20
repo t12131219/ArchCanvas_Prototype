@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'diagram-set':
+        if stage == 'entry-bands':
+            from summarize_entry_bands import main as summarize_stage
+        elif stage == 'diagram-set':
             from summarize_diagram_sets import main as summarize_stage
         elif stage == 'branch-tail-stages':
             from summarize_branch_tail_stages import main as summarize_stage

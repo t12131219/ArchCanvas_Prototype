@@ -38,6 +38,7 @@ COMMANDS = {
     'condition-predicates': ['node', 'tests/condition-predicates.test.cjs'],
     'branch-tail-stages': ['node', 'tests/branch-tail-stages.test.cjs'],
     'diagram-set': ['node', 'tests/diagram-set.test.cjs'],
+    'entry-bands': ['node', 'tests/entry-bands.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],

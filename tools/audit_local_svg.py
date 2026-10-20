@@ -387,6 +387,8 @@ def audit_contract_stages(document, row, nodes):
 
 def main():
     global OUT
+    if '--entry-bands' in sys.argv:
+        sys.argv.append('--dags')
     if '--adaptive' in sys.argv:
         sys.argv.append('--rank-clearance')
     if '--rank-clearance' in sys.argv:
@@ -469,6 +471,8 @@ def main():
         OUT = ROOT / 'verification/diagram-set/current'
     if '--summary-coverage' in sys.argv:
         OUT = ROOT / 'verification/summary-coverage/current'
+    if '--entry-bands' in sys.argv:
+        OUT = ROOT / 'verification/entry-bands/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -801,6 +805,22 @@ def main():
                     assert record['geometry_verified'] == bool(geometry)
                     assert record['routes_verified'] == bool(valid_routes)
                     assert (record['status'] == 'realized') == bool(geometry and valid_routes)
+                    if 'input_band' in record:
+                        band = record['input_band']
+                        inputs, regions = set(band['inputs']), set(band['regions'])
+                        assert len(inputs) == len(band['inputs']) >= 2 and not inputs & regions
+                        assert inputs | regions == kids
+                        for node in inputs:
+                            assert planned[node]['kind'] == 'interface' and planned[node]['role'] == 'input'
+                            assert not any(node in targets for targets in adjacent.values())
+                        floor = max(actual_boxes[node][1] + actual_boxes[node][3] for node in inputs) + band['gap_y']
+                        fits = geometry and all(actual_boxes[node][1] >= floor for node in regions)
+                        assert record['input_band_verified'] == bool(fits)
+                        for a in inputs:
+                            for b in inputs - {a}:
+                                ax, ay, aw, ah = actual_boxes[a]
+                                bx, by, bw, bh = actual_boxes[b]
+                                assert ax + aw <= bx or bx + bw <= ax or ay + ah <= by or by + bh <= ay
             for group in row.get('branch_columns', []):
                 chains, sink = group['chains'], group['sink']
                 assert 2 <= len(chains) <= 6 and len(chains[0]['nodes']) >= 2
@@ -854,6 +874,10 @@ def main():
             for entry in row['context_lanes']:
                 edge = edge_layout[entry['edge']]
                 element = paths[entry['edge']]
+                if entry.get('selected') is False:
+                    assert entry['status'] == 'deferred' and not edge.get('context_lane')
+                    assert element.get('data-context-owner') is None
+                    continue
                 assert element.get('data-context-owner') == entry['owner']
                 assert element.get('data-context-side') == entry['side'] == edge['route']['target_side']
                 assert entry['internal_inputs'] and not edge.get('design_route')

@@ -360,12 +360,13 @@
   const clearanceMetrics=q=>({width:q.native_width_px,height:q.native_height_px,area:areaMetric(q),
     crossings:q.line_geometry.crossings,contacts:q.line_geometry.unrelated_contacts.length,wire_length:q.wire_length,
     overlaps:q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length,unplaced_labels:q.unplaced_port_labels.length,issues:q.issues});
-  function acceptClearance(baseline,trial){
+  function acceptClearance(baseline,trial,wireBenefit=false){
     const b=baseline.prepared.quality,q=trial.prepared.quality;
     for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
     const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
     return clearanceIdentity(baseline.graph)===clearanceIdentity(trial.graph)&&conflicts(trial).every(id=>conflicts(baseline).includes(id))&&
-      areaMetric(q)<areaMetric(b)*.98&&q.native_width_px<=b.native_width_px*1.05&&q.native_height_px<=b.native_height_px&&
+      (areaMetric(q)<areaMetric(b)*.98||wireBenefit&&areaMetric(q)<=areaMetric(b)&&q.wire_length<=b.wire_length*.9)&&
+      q.native_width_px<=b.native_width_px*1.05&&q.native_height_px<=b.native_height_px&&
       q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
       q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
       q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
@@ -442,8 +443,43 @@
     }
     return chosen;
   }
+  function prepareEntryBand(ir,state={}){
+    const baseline=prepareRankClearance(ir,state),g=baseline.graph;
+    if(baseline.prepared.quality.medium!=='canvas'||state.paperEntryBand!==undefined||Object.keys(state.offsets||{}).length||
+      g.edges.length>128||!g.positions.context.compoundAlignments.some(c=>c.accepted))return baseline;
+    // Keep all previously selected geometric policies. Trial one additional
+    // arrangement at the same semantic frontier, then inspect real routes.
+    const rank=baseline.prepared.routing.rank_clearance_refinement;
+    const selectedRank=rank?.attempts.filter(a=>a.accepted).at(-1)?.configuration||{};
+    const realized=r=>{
+      const positions=r.graph.positions,routes=new Map(r.prepared.routes.map(e=>[e.id,e])),ctx=positions.context;
+      const entries=ctx.compoundAlignments.filter(c=>L.entryGeometry(c,positions)&&c.entry_bindings.every(b=>routes.get(b.edge)?.route.ok&&routes.get(b.independent_entry)?.route.ok));
+      const columns=ctx.branchColumns.filter(c=>L.branchGeometry(c,positions)&&c.chains.every(p=>p.edges.every(id=>routes.get(id)?.route.ok)));
+      const contexts=ctx.contextLanes.filter(c=>{if(c.selected===false)return false;const p=positions.get(c.owner),route=routes.get(c.edge)?.route;
+        const lo=c.side==='left'?p.x+(p.design_gutter||0):p.x+p.w-p.context_gutter,hi=c.side==='left'?lo+p.context_gutter:p.x+p.w;
+        return route?.ok&&route.target_side===c.side&&route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi);});
+      return {entries:entries.map(c=>JSON.stringify(c.entry_bindings)),columns:columns.map(c=>JSON.stringify(c.chains)),contexts:contexts.map(c=>c.edge)};
+    };
+    const before=realized(baseline);
+    const candidateState={...state,...selectedRank,paperEntryBand:true,paperFlowAlignment:'entries',
+      paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest',
+      paperContextEdges:state.paperContextEdges||before.contexts,paperBranchColumns:!!g.positions.context.branchColumns.length,paperContextLanes:g.positions.context.contextLanes[0]?.side||false,
+      ...(g.publication.label_clearance?{paperLabelSpacing:g.publication.label_clearance.mode}:{})};
+    const probe=E.project(ir,{...candidateState,view:'publication'});
+    if(!probe.positions.context.compoundAlignments.some(c=>L.entryBandGeometry(c,probe.positions)))return baseline;
+    const trial=prepareLabels(ir,candidateState);
+    const after=realized(trial),bands=trial.graph.positions.context.compoundAlignments.filter(c=>L.entryBandGeometry(c,trial.graph.positions));
+    const accepted=bands.length>0&&acceptClearance(baseline,trial,true)&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const chosen=accepted?trial:baseline;
+    if(accepted)for(const key of ['topology_refinement','context_refinement','branch_refinement','flow_refinement','clearance_refinement','rank_clearance_refinement'])
+      if(baseline.prepared.routing[key])chosen.prepared.routing[key]=baseline.prepared.routing[key];
+    chosen.prepared.routing.entry_band_refinement={accepted,before:clearanceMetrics(baseline.prepared.quality),candidate:clearanceMetrics(trial.prepared.quality),
+      realized_before:before,realized_candidate:after,candidate_regions:bands.map(c=>c.parent),configuration:{paperEntryBand:true,paperContextEdges:candidateState.paperContextEdges},
+      scope:'Entry interfaces occupy a separate top band; identical frontier, canonical bindings and realized relations required. No execution scheduling claim.'};
+    return chosen;
+  }
   function prepareAdaptive(ir,state={}){
-    let chosen=prepareRankClearance(ir,state);
+    let chosen=prepareEntryBand(ir,state);
     if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
     const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     attachExpressionEvidence(ir,chosen);
@@ -476,7 +512,7 @@
       const trials=[];
       for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
         seen.add(item.candidate.id);
-        const trial=attachExpressionEvidence(ir,prepareRankClearance(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+        const trial=attachExpressionEvidence(ir,prepareEntryBand(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
         const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
           ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
         trials.push({item,trial,assessment,receipt});
@@ -554,7 +590,8 @@
         ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments.map(record=>{
           if(record.mode!=='entries')return record;
           const geometry=L.entryGeometry(record,g.positions),valid=record.entry_bindings.every(b=>routes.find(e=>e.id===b.edge)?.route.ok&&routes.find(e=>e.id===b.independent_entry)?.route.ok);
-          return {...record,status:geometry&&valid?'realized':'deferred',geometry_verified:!!geometry,routes_verified:valid};
+          return {...record,status:geometry&&valid?'realized':'deferred',geometry_verified:!!geometry,routes_verified:valid,
+            ...(record.input_band?{input_band_verified:!!L.entryBandGeometry(record,g.positions)}:{})};
         })}:{}),
         ...(g.positions.context.branchColumns.length?{branch_columns:g.positions.context.branchColumns.map(group=>{
           const geometry=L.branchGeometry(group,g.positions),pathIds=group.chains.flatMap(c=>c.edges),valid=pathIds.every(id=>routes.find(e=>e.id===id)?.route.ok);
@@ -564,8 +601,8 @@
         ...(g.positions.context.contextLanes.length?{context_lanes:g.positions.context.contextLanes.map(entry=>{
           const owner=g.positions.get(entry.owner),edge=routes.find(e=>e.id===entry.edge),low=entry.side==='left'?owner.x+(owner.design_gutter||0):owner.x+owner.w-owner.context_gutter;
           const high=entry.side==='left'?low+owner.context_gutter:owner.x+owner.w;
-          const used=edge.route.ok&&edge.route.target_side===entry.side&&edge.route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>low&&p.x<high);
-          return {...entry,status:used?'realized':'deferred',reason:used?'final side terminal and vertical channel verified':'obstacle-aware fallback did not realize a vertical channel'};
+          const used=entry.selected!==false&&edge.route.ok&&edge.route.target_side===entry.side&&edge.route.points.some((p,i,ps)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>low&&p.x<high);
+          return {...entry,status:used?'realized':'deferred',reason:used?'final side terminal and vertical channel verified':entry.selected===false?'unrealized baseline proposal retained without reserving a gutter':'obstacle-aware fallback did not realize a vertical channel'};
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }

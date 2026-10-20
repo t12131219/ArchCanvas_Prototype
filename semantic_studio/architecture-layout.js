@@ -53,6 +53,8 @@
       if(owner){e.design_route.owner=owner;laneOwners.set(owner,(laneOwners.get(owner)||0)+1);}
     }
     if(options.contextLanes)for(const entry of contextEntries(idx,visible,edges,options.contextLanes)){
+      if(Array.isArray(options.contextEdges)&&!options.contextEdges.includes(entry.edge)){contextLanes.push({...entry,selected:false});continue;}
+      entry.index=contextOwners.get(entry.owner)||0;
       const e=edges.find(e=>e.id===entry.edge);e.context_lane={...entry};delete e.context_lane.edge;
       contextOwners.set(entry.owner,(contextOwners.get(entry.owner)||0)+1);contextLanes.push(entry);
     }
@@ -226,7 +228,8 @@
           // An independently entered region need not start below the producer
           // of its later context input. This optional drawing convention keeps
           // the cross-region arrow (possibly upward); it does not assert time.
-          const guarded=id=>{const n=idx.nodes.get(id);return ['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls;};
+          const guarded=id=>{const n=idx.nodes.get(id);return ['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||
+            ['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant'].includes(n.semantic_type);};
           const entry=internal&&options.compoundStarts&&!e.design_route&&![a,b,e.source,e.target].some(guarded);
           const distance=entry?0:internal?sy+positions.get(e.source).h-ty+gapY:pa.h+gapY;
           if(entry)entryBindings.push({edge:e.id,source_frame:a,target_frame:b,source:e.source,target:e.target,independent_entry:independent.id});
@@ -237,7 +240,15 @@
         // conservative full-frame distance. No control boundary is crossed.
         for(const [a,targets]of adj)for(const b of targets)if(!weights.get(a).has(b))weights.get(a).set(b,positions.get(a).h+gapY);
         if(late){
-          const tops=new Map(kids.map(id=>[id,!pred.get(id).size&&idx.nodes.get(id)?.kind==='interface'?positions.get(id).y:0]));
+          // A wrapped row of entry interfaces must not push an entire expanded
+          // column sideways. Reserve their existing rows above the regions.
+          // This is only a geometry candidate: no interface is copied and no
+          // dependency, condition, state or execution order is changed.
+          const inputs=kids.filter(id=>!pred.get(id).size&&idx.nodes.get(id)?.kind==='interface'&&idx.nodes.get(id)?.role==='input');
+          const band=options.compoundInputBand&&options.compoundStarts&&entryBindings.length&&inputs.length>1?
+            {inputs,regions:kids.filter(id=>!inputs.includes(id)),gap_y:gapY}:null;
+          const floor=band?Math.max(...inputs.map(id=>positions.get(id).y+positions.get(id).h))+gapY:0;
+          const tops=new Map(kids.map(id=>[id,band?(inputs.includes(id)?positions.get(id).y:floor):!pred.get(id).size&&idx.nodes.get(id)?.kind==='interface'?positions.get(id).y:0]));
           for(const u of queue){const a=scc[u][0];for(const [b,distance]of weights.get(a))tops.set(b,Math.max(tops.get(b),tops.get(a)+distance));}
           const placed=[],candidate=new Map(),ordinal=new Map(queue.map((u,i)=>[scc[u][0],i]));
           for(const id of kids.slice().sort((a,b)=>tops.get(a)-tops.get(b)||ordinal.get(a)-ordinal.get(b))){
@@ -246,10 +257,30 @@
             const x=xs.find(x=>overlap.every(q=>x+p.w+gapX<=q.x||x>=q.x+q.w+gapX));
             const box={id,x,y:top,w:p.w,h:p.h};candidate.set(id,box);placed.push(box);
           }
+          if(band){
+            // Use the regions' available width instead of the global rank's
+            // column count. Order entries by their actual consumer positions;
+            // shared inputs keep one terminal and all of their distinct uses.
+            const available=Math.max(...band.regions.map(id=>{const p=candidate.get(id);return p.x+p.w;}),...inputs.map(id=>positions.get(id).w));
+            const relativeX=(id,ancestor)=>{let x=0;while(id&&id!==ancestor){x+=positions.get(id).x;id=idx.nodes.get(id)?.parent;}return x;};
+            const desired=id=>{const uses=edges.filter(e=>owner(e.source)===id&&band.regions.includes(owner(e.target)));
+              return uses.length?uses.reduce((sum,e)=>sum+candidate.get(owner(e.target)).x+relativeX(e.target,owner(e.target))+positions.get(e.target).w/2,0)/uses.length:0;};
+            const ordered=inputs.map((id,i)=>({id,i,w:positions.get(id).w,h:positions.get(id).h,desired:desired(id)})).sort((a,b)=>a.desired-b.desired||a.i-b.i);
+            const rows=[];let row=[],used=0;
+            for(const cell of ordered){if(row.length&&used+gapX+cell.w>available){rows.push(row);row=[];used=0;}row.push(cell);used+=(row.length>1?gapX:0)+cell.w;}
+            if(row.length)rows.push(row);let top=0;
+            for(const cells of rows){
+              let right=-gapX;for(const cell of cells){cell.x=Math.max(right+gapX,Math.min(available-cell.w,cell.desired-cell.w/2));right=cell.x+cell.w;}
+              let left=available+gapX;for(const cell of cells.slice().reverse()){cell.x=Math.min(cell.x,left-gapX-cell.w);left=cell.x;}
+              for(const cell of cells)Object.assign(candidate.get(cell.id),{x:cell.x,y:top});
+              top+=Math.max(...cells.map(c=>c.h))+gapY;
+            }
+            const shift=top-floor;for(const id of band.regions)candidate.get(id).y+=shift;
+          }
           const box={w:Math.max(...placed.map(p=>p.x+p.w)),h:Math.max(...placed.map(p=>p.y+p.h))};
           const score=b=>Math.max(b.w/1.6,b.h);
           const accepted=box.h<vertical.h*.9&&score(box)<score(vertical)*.9&&box.w*box.h<=vertical.w*vertical.h*2;
-          compoundAlignments.push({parent,before:vertical,candidate:box,accepted,...(options.compoundStarts?{mode:'entries',entry_bindings:entryBindings}:{}),scope:'visible endpoint geometry; no execution-order assertion'});
+          compoundAlignments.push({parent,before:vertical,candidate:box,accepted,...(options.compoundStarts?{mode:'entries',entry_bindings:entryBindings}:{}),...(band?{input_band:band}:{}),scope:'visible endpoint geometry; no execution-order assertion'});
           if(accepted){
             if(rankRecord){rankRecord.applied=false;rankRecord.reason='Compound port alignment uses its existing clearance policy.';}
             for(const [id,p]of candidate){Object.assign(positions.get(id),{x:p.x,y:p.y,arrangement:'compound-port-alignment'});}
@@ -299,7 +330,8 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances};return positions;
+    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,
+      entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){
     const paths=group.chains.map(c=>c.nodes.map(id=>positions.get(id)));
@@ -315,6 +347,13 @@
       const a=positions.get(binding.source_frame),b=positions.get(binding.target_frame);
       return a&&b&&(a.x+a.w<=b.x||b.x+b.w<=a.x)&&a.y<b.y+b.h&&b.y<a.y+a.h;
     });
+  }
+  function entryBandGeometry(record,positions){
+    const band=record.input_band;
+    if(!band||!entryGeometry(record,positions)||band.inputs.length<2||!band.regions.length)return false;
+    if(![...band.inputs,...band.regions].every(id=>positions.has(id)))return false;
+    const floor=Math.max(...band.inputs.map(id=>{const p=positions.get(id);return p.y+p.h;}))+band.gap_y;
+    return band.regions.every(id=>positions.get(id).y>=floor);
   }
   const point=(x,y)=>({x,y});
   function simplify(points){const out=[];for(const p of points){if(out.length&&out.at(-1).x===p.x&&out.at(-1).y===p.y)continue;while(out.length>1&&((out.at(-2).x===out.at(-1).x&&out.at(-1).x===p.x)||(out.at(-2).y===out.at(-1).y&&out.at(-1).y===p.y)))out.pop();out.push(p);}return out;}
@@ -421,6 +460,20 @@
       laneCandidates.push([start,point(x,start.y),point(x,end.y),end]);
       const corridors=[...new Set([start.y,a.y+a.h+16,...boxes.flatMap(r=>[r.y-2,r.y+r.h+2])])];
       for(const y of corridors)laneCandidates.push([start,point(start.x,y),point(x,y),point(x,end.y),end]);
+      // An entry above a region cannot descend through that region's title
+      // to reach its internal gutter. Approach around an ancestor boundary,
+      // then enter the gutter below the title. Every segment still passes the
+      // same actual obstacle and congestion checks as an ordinary route.
+      if(context.entryBandRouting){
+        const escapes=[...new Set([...targetAnc].map(id=>positions.get(id)).filter(p=>p?.expanded)
+          .map(p=>e.context_lane.side==='left'?p.x-16:p.x+p.w+16))];
+        const entries=[...new Set([contextOwner.y+contextOwner.header+8,b.y-16,...boxes.flatMap(r=>[r.y-2,r.y+r.h+2])])]
+          .filter(y=>y!==end.y).sort((a,b)=>Math.abs(a-end.y)-Math.abs(b-end.y)).slice(0,8);
+        const leaves=[...new Set([start.y,a.y+a.h+16,...boxes.map(r=>r.y+r.h+2)])]
+          .filter(y=>y>=start.y).sort((a,b)=>a-b).slice(0,6);
+        for(const outside of escapes)for(const leave of leaves)for(const enter of entries)
+          laneCandidates.push([start,point(start.x,leave),point(outside,leave),point(outside,enter),point(x,enter),point(x,end.y),end]);
+      }
     }
     const reserved=context?.reserved||[];
     if(reserved.length)for(const delta of [-12,12,-24,24,-40,40]){
@@ -466,7 +519,13 @@
             push({x,y,d,g,k,f:g+Math.abs(p.x-end.x)+Math.abs(p.y-end.y)});
           }
         }
-        if(final){const found=[];for(let k=final;k;k=prev.get(k)){const [x,y]=k.split(',').map(Number);found.push(point(xs[x],ys[y]));}found.reverse();if((!semanticBypass||!best||found.some(p=>p.x>laneOwner.x&&p.x<laneOwner.x+laneOwner.design_gutter))&&(!best||length(found)<length(best)))best=found;break;}
+        if(final){const found=[];for(let k=final;k;k=prev.get(k)){const [x,y]=k.split(',').map(Number);found.push(point(xs[x],ys[y]));}found.reverse();
+          const inContext=ps=>{const lo=e.context_lane.side==='left'?contextOwner.x+(contextOwner.design_gutter||0):contextOwner.x+contextOwner.w-contextOwner.context_gutter;
+            const hi=e.context_lane.side==='left'?lo+contextOwner.context_gutter:contextOwner.x+contextOwner.w;
+            return ps.some((p,i)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi);};
+          const preserveContext=context?.entryBandRouting&&contextLane&&best&&inContext(best);
+          if((!semanticBypass||!best||found.some(p=>p.x>laneOwner.x&&p.x<laneOwner.x+laneOwner.design_gutter))&&
+            (!preserveContext||inContext(found))&&(!best||length(found)<length(best)))best=found;break;}
       }
     }
     if(!best)return {points:simplify([s,start,point(start.x,end.y),end,t]),ok:false,reason:'no-obstacle-free-route-within-budget'};
@@ -476,5 +535,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry,entryBandGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

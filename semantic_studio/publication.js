@@ -623,7 +623,7 @@
     const exposedResources=new Set(local?originalPlan.relation_graph.relations.find(r=>r.id===state.paperRelation)?.properties.required_nodes?.filter(id=>idx.nodes.get(id)?.kind==='parameter')||[]:[]);
     const eligible=id=>{const n=idx.nodes.get(id);return allowed(id)&&!pol.bindings.has(id)&&!pol.metadata.has(id)&&(n.kind!=='parameter'||exposedResources.has(id));};
     const options={roots:focus?[focus]:[],bindings:pol.bindings,metadata:pol.metadata,boundaryReps:focused.boundaryReps,presentEdges,exposedResources,
-      layout:{semanticLanes:true,contextLanes:canvas&&granularity==='roles'&&['left','right'].includes(state.paperContextLanes)&&state.paperContextLanes,alignForks:true,compoundPorts:inline,rankStrategy:state.paperRankStrategy==='consumer'?'consumer':'earliest',foldSerial:state.paperCompact?false:state.foldSerial!==false,nodeSize:n=>({...n.paper,w:n.paper.w,h:n.paper.h}),rankColumns:3,rankColumnsFor:n=>['branch-region','branch-panel','dependency-band','dependency-panel'].includes(n?.semantic_type)?3:null,gapX:28,gapY:state.paperCompact?28:60,foldGapX:36,framePadding:state.paperCompact?16:24,headerClearance:state.paperCompact?12:20,frameHeader:n=>Math.max(state.paperCompact?56:66,24+n.paper.lines.length*20+(n.paper.layout_caption_rows??n.paper.captions.length)*16),maxWidth:700}};
+      layout:{semanticLanes:true,branchColumns:canvas&&granularity==='roles'&&state.paperBranchColumns===true,contextLanes:canvas&&granularity==='roles'&&['left','right'].includes(state.paperContextLanes)&&state.paperContextLanes,alignForks:true,compoundPorts:inline,rankStrategy:state.paperRankStrategy==='consumer'?'consumer':'earliest',foldSerial:state.paperCompact?false:state.foldSerial!==false,nodeSize:n=>({...n.paper,w:n.paper.w,h:n.paper.h}),rankColumns:3,rankColumnsFor:n=>['branch-region','branch-panel','dependency-band','dependency-panel'].includes(n?.semantic_type)?3:null,gapX:28,gapY:state.paperCompact?28:60,foldGapX:36,framePadding:state.paperCompact?16:24,headerClearance:state.paperCompact?12:20,frameHeader:n=>Math.max(state.paperCompact?56:66,24+n.paper.lines.length*20+(n.paper.layout_caption_rows??n.paper.captions.length)*16),maxWidth:700}};
     if(state.paperCompact)options.layout.nodeSize=n=>{
       const a=n.paper,size={...a,w:a.w,h:a.h};
       if(!a.symbol&&['compute','opaque'].includes(n.kind))size.w=Math.max(180,Math.ceil(Math.max(...a.lines.map(s=>width(s,a.font)),...a.captions.map(s=>width(s,13)))+28));
@@ -632,7 +632,7 @@
     if(base.publication?.boundary_plans?.some(p=>p.parent===focus))options.layout.inputPlacement='consumer';
     if(canvas&&state.paperFrameView!=='source'){
       const engine=root.SemanticFrameOwnership||(typeof require==='function'?require('./frame-ownership.js'):null);
-      options.frameOwnership=engine.select;options.decorateFrameOwner=decorate;
+      options.frameOwnership=args=>engine.select({...args,flattenDependencyBands:canvas&&granularity==='roles'});options.decorateFrameOwner=decorate;
     }
     let open=state.paperAuto===false?(state.open||[]):focus?[focus]:[];
     if(state.paperAuto!==false&&focus){

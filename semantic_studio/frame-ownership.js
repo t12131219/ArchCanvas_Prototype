@@ -2,7 +2,7 @@
  * redundant enclosures can become inspectable ownership annotations. */
 (function(root){
   'use strict';
-  function select({ir,idx,visible,open,roots}){
+  function select({ir,idx,visible,open,roots,flattenDependencyBands=false}){
     const frames=new Map(),rootSet=new Set(roots),incidents=new Set(ir.edges.flatMap(e=>[e.source,e.target]));
     const descendants=id=>{const all=[],todo=[id];for(let i=0;i<todo.length;i++){all.push(todo[i]);todo.push(...idx.children.get(todo[i])||[]);}return all;};
     const guarded=id=>{const members=new Set(descendants(id));return [...members].some(id=>{const n=idx.nodes.get(id);return n.kind==='opaque'||n.mutable||n.identity_display||n.observed_calls;})||
@@ -12,11 +12,16 @@
     function attach(n,target,kind,reason){frames.set(n.id,{node:n.id,target,kind,reason,label:n.label,semantic_type:n.semantic_type,
       module_identity:n.module_identity??null,source:n.source||[],source_parent:n.source_parent??n.parent,
       scope:'source/drawing ownership only; no value substitution or object equivalence inferred'});}
-    for(const id of visible){const n=idx.nodes.get(id);if(!eligible(n)||guarded(id))continue;const parent=idx.nodes.get(n.parent);
+    for(const id of visible){const n=idx.nodes.get(id);
+      // Count/rank bands carry no source or semantic boundary of their own.
+      // Removing their outline never removes the enclosed unknown, condition,
+      // state or identity node. Actual source/semantic frames keep their guards.
+      const rankBand=flattenDependencyBands&&n.presentation_only&&['dependency-band','dependency-panel'].includes(n.semantic_type);
+      if(!eligible(n)||guarded(id)&&!rankBand)continue;const parent=idx.nodes.get(n.parent);
       if(['source-module','source-function'].includes(n.semantic_type)&&parent?.semantic_type==='repeat-instance'&&
         visible.has(parent.id)&&open.has(parent.id)&&n.module_identity&&n.module_identity===parent.module_identity){
         attach(n,parent.id,'same-call-source','Source wrapper and concrete repeat call explicitly bind the same module object.');
-      }else if(n.presentation_only&&['structural-region','computation-region'].includes(n.semantic_type)&&visible.has(n.parent)){
+      }else if(n.presentation_only&&['structural-region','computation-region',...(flattenDependencyBands?['dependency-band','dependency-panel']:[])].includes(n.semantic_type)&&visible.has(n.parent)){
         attach(n,n.parent,'expanded-dependency-region','An expanded presentation grouping adds no computation, identity or control boundary; its membership and cuts remain in the plan.');
       }
     }

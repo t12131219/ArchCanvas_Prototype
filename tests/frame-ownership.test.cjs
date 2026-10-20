@@ -67,3 +67,15 @@ test('restoring source frames reproduces frozen SVG and compact documents save a
  assert.equal(R.render(ir,{...state,paperAuto:false,open:a.graph.publication.open}).svg,a.svg);
  assert.equal(JSON.stringify(ir),before);assert.ok(a.svg.includes('Source ownership:'));assert.ok(a.graph.frame_ownership.every(r=>a.document.architecture.nodes.some(n=>n.id===r.node)));
 });
+
+test('expanded presentation rank bands can become annotations while exact unknown and conditional boundaries stay visible',()=>{
+ const ir=fixture();const group=ir.nodes.find(n=>n.id==='region');group.semantic_type='dependency-band';
+ ir.nodes.find(n=>n.id==='a').kind='opaque';ir.nodes.find(n=>n.id==='b').condition={branch:'if',outcome:true};
+ const idx=E.index(ir),args={ir,idx,visible:new Set(ir.nodes.map(n=>n.id)),open:new Set(['root','call','owner','region']),roots:['root']};
+ assert.equal(F.select(args).has('region'),false);
+ const frames=F.select({...args,flattenDependencyBands:true});assert.equal(frames.get('region').kind,'expanded-dependency-region');
+ assert.equal(frames.has('owner'),false);assert.equal(frames.has('a'),false);assert.equal(frames.has('b'),false);
+ const g=E.project(ir,{view:'architecture',open:['root','call','owner','region'],details:true},ir,{frameOwnership:args=>F.select({...args,flattenDependencyBands:true})});
+ assert.ok(g.positions.has('a')&&g.positions.has('b'));assert.deepEqual(g.idx.nodes.get('b').condition,{branch:'if',outcome:true});assert.deepEqual(g.edges[0].condition,'flag');accounting(ir,g);
+ const focused=F.select({...args,roots:['region'],flattenDependencyBands:true});assert.equal(focused.has('region'),false);
+});

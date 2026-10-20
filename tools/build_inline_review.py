@@ -17,6 +17,8 @@ def sha(file):
 
 def main():
     global OUT
+    if '--branches' in sys.argv:
+        sys.argv.append('--context')
     if '--context' in sys.argv:
         sys.argv.append('--expressions')
     if '--expressions' in sys.argv:
@@ -27,6 +29,8 @@ def main():
         OUT = ROOT / 'verification/frame-ownership/current'
     if '--context' in sys.argv:
         OUT = ROOT / 'verification/context-lanes/current'
+    if '--branches' in sys.argv:
+        OUT = ROOT / 'verification/branch-columns/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     serial = 0
 
@@ -73,6 +77,8 @@ def main():
         head = head.replace('本轮依据已有证书角色选择局部内部层级；嵌套契约、条件与未知边界保留进一步展开', '本轮将独立门控、状态、选择、条件、未知与身份关系纳入局部表达请求和预算；证书及控制边界保留')
     if '--context' in sys.argv:
         head = head.replace('本轮将独立门控、状态、选择、条件、未知与身份关系纳入局部表达请求和预算；证书及控制边界保留', '本轮比较按真实跨边生成的侧端口与通道候选，只有实际几何改善才采用；模块与更深的展开能力保留')
+    if '--branches' in sys.argv:
+        head = head.replace('本轮比较按真实跨边生成的侧端口与通道候选，只有实际几何改善才采用；模块与更深的展开能力保留', '本轮按真实依赖路径建立分支列对应；仅已展开的纯展示分带转为可恢复附注。未知及条件节点独立保留')
     rows = {r['name']: r for r in report['rows']}
     reference_cards = {}
     for ref in report['reference']:
@@ -114,6 +120,35 @@ def main():
             viewport = [scope['x'] - 36, scope['y'] - 36, scope['w'] + 72, scope['h'] + 72]
             detail += f'<article><h2>{escape(key)}</h2><p>整图交叉 {row["quality"]["line_geometry"]["crossings"]}；{row["nodes"]} 图元 / {row["edges"]} 边</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
         (OUT / 'context-comparison.html').write_text(detail + '</div></html>')
+    if '--branches' in sys.argv:
+        simple = ('<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
+                  f'<meta name="render-report-sha256" content="{digest}"><title>通用依赖路径分列审核</title>'
+                  '<style>body{font:14px Arial,sans-serif;color:#253448;margin:12px}h1{font-size:20px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}article{min-width:0;border:1px solid #cbd3dd;padding:10px}svg{width:100%;height:510px}h2{font-size:16px}</style>')
+        group = rows['transformer-roles']['branch_columns'][0]
+        view = simple + '<h1>同一语义前沿：依赖路径的分支列对应</h1><p>左侧冻结基线；右侧通用路径规则。仅修改实际 SVG 的 viewBox。没有推断并行执行、阶段等价或新的模型语义。</p><div class="cards">'
+        for key in ['transformer-before', 'transformer-roles']:
+            row = rows[key]
+            document = json.loads((OUT / row['document']).read_text())
+            scope = next(n for n in document['layout']['nodes'] if n['id'] == group['parent'])
+            viewport = [scope['x'] - 24, scope['y'] - 24, scope['w'] + 48, scope['h'] + 48]
+            view += f'<article><h2>{escape(key)}</h2><p>{row["nodes"]} 图元 / {row["edges"]} 边 · 整图交叉 {row["quality"]["line_geometry"]["crossings"]}</p>' + svg(OUT / row['svg'], row['svg_sha256'], viewport) + '</article>'
+        (OUT / 'branch-visual.html').write_text(view + '</div></html>')
+        for name in ['WovenInputs', 'InterruptedPaths']:
+            view = simple + '<h1>陌生路径组合：' + name + '</h1><p>同一通用规则；不需要完整家族证书。未知调用保留独立边界。明确区分自动采用与未采用的实验。</p><div class="cards">'
+            keys = [name + '-before', name + '-roles']
+            if name == 'InterruptedPaths':
+                keys.append(name + '-explicit')
+            for key in keys:
+                row = rows[key]
+                decision = row['branch_refinement']
+                note = '冻结基线'
+                if key.endswith('-explicit'):
+                    note = '手动启用实验：两条已知路径分列，未知调用仍保留；此版式未被自动采用。'
+                elif decision:
+                    note = ('自动采用' if decision['accepted'] else '候选未采用，保留原拓扑布局')
+                    note += f'；候选交叉 {decision["crossings_before"]} → {decision["crossings_candidate"]}，线长 {decision["wire_before"]} → {decision["wire_candidate"]}；线长增长上限 10%。'
+                view += '<article><h2>' + key + '</h2><p>' + escape(note) + '</p>' + svg(OUT / row['svg'], row['svg_sha256']) + '</article>'
+            (OUT / (name + '-comparison.html')).write_text(view + '</div></html>')
     print(json.dumps({'panels': len(report['rows']), 'render_report_sha256': digest}))
 
 

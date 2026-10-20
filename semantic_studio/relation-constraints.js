@@ -50,7 +50,17 @@
         const c=r.properties,edge=edges.find(e=>e.design_route?.certificate===c.certificate&&e.design_route.kind==='bypass');
         if(edge&&positions.get(edge.design_route.owner)?.design_gutter)applied('exact skip operand has a reserved layout lane','reserved-lane');else defer('exact bypass endpoints are not both exposed or semantic lanes are disabled');continue;
       }
-      if(['parallel-projections','serial-sequence'].includes(r.type)){defer('legacy declaration; geometry has no unified handler yet');continue;}
+      if(r.type==='parallel-projections'){
+        const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
+        const group=positions.context.branchColumns?.find(g=>r.members.length>1&&r.members.every(id=>positions.has(id))&&
+          new Set(r.members.map(id=>g.chains.findIndex(c=>c.nodes.includes(id)))).size===r.members.length&&r.members.every(id=>g.chains.some(c=>c.nodes.includes(id))));
+        const ps=r.members.map(id=>positions.get(id));
+        if(group&&ps.every(p=>p.y===ps[0].y)&&L.branchGeometry(group,positions)){
+          r.path_columns=copy(group);applied('exact members occupy distinct dependency columns and one measured row; execution parallelism is not asserted','branch-columns');
+        }else defer('exact members are folded, do not form independent paths, or column geometry is not realized');
+        continue;
+      }
+      if(r.type==='serial-sequence'){defer('legacy declaration; geometry has no unified handler yet');continue;}
       if(!node){defer('outside current evidence or panel scope');continue;}
       if(!mapped){defer('one or more exact roles are folded, attached or outside this panel');continue;}
       if(['object-invocations','parameter-aliases'].includes(r.type)){
@@ -91,6 +101,12 @@
       const okay=relevant.length&&relevant.every(e=>{const p=positions.get(e?.design_route?.owner);return p&&e.route?.ok&&e.route.points.some(v=>v.x>p.x&&v.x<p.x+p.design_gutter);});
       receipt.route_verified=!!okay;
       if(!okay){receipt.status='conflict';receipt.reason='reserved channel was not realized by the final obstacle-aware routes';}
+    }
+    for(const receipt of receipts)if(receipt.status==='applied'&&receipt.consumption==='branch-columns'){
+      const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null),group=receipt.path_columns;
+      const okay=L.branchGeometry(group,positions)&&group.chains.every(c=>c.edges.every(id=>by.get(id)?.route.ok));
+      receipt.route_verified=!!okay;
+      if(!okay){receipt.status='conflict';receipt.reason='dependency columns or their final paths were not realized';}
     }
     return receipts;
   }

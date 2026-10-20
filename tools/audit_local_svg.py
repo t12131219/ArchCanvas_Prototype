@@ -75,6 +75,8 @@ def audit_atlas_coverage(manifest, panel, document, nodes, paths):
 
 def main():
     global OUT
+    if '--branches' in sys.argv:
+        sys.argv.append('--context')
     if '--context' in sys.argv:
         sys.argv.append('--expressions')
     if '--symbolic' in sys.argv:
@@ -91,6 +93,8 @@ def main():
         OUT = ROOT / 'verification/inline-sequences/current'
     if '--context' in sys.argv:
         OUT = ROOT / 'verification/context-lanes/current'
+    if '--branches' in sys.argv:
+        OUT = ROOT / 'verification/branch-columns/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:
@@ -207,7 +211,7 @@ def main():
                     assert parent['semantic_type'] == 'repeat-instance'
                     assert owner['module_identity'] == parent['module_identity']
                 elif record['kind'] == 'expanded-dependency-region':
-                    assert owner['presentation_only'] and owner['semantic_type'] in ['structural-region', 'computation-region']
+                    assert owner['presentation_only'] and owner['semantic_type'] in ['structural-region', 'computation-region', 'dependency-band', 'dependency-panel']
                 else:
                     assert record['kind'] == 'source-owner'
                     assert owner['semantic_type'] in ['source-module', 'source-function']
@@ -354,6 +358,68 @@ def main():
                     result.add(node)
                     node = parents.get(node)
                 return result
+            assert row.get('branch_columns', []) == document['layout'].get('branch_columns', [])
+            actual_boxes = {}
+            for node, element in nodes.items():
+                transform = re.fullmatch(r'translate\((-?[\d.eE+]+),(-?[\d.eE+]+)\)', element.get('transform'))
+                assert transform
+                x, y = map(float, transform.groups())
+                p = measured[node]
+                assert (x, y) == (p['x'], p['y'])
+                rect = element.find('{http://www.w3.org/2000/svg}rect')
+                if rect is not None:
+                    assert (float(rect.get('width')), float(rect.get('height'))) == (p['w'], p['h'])
+                actual_boxes[node] = (x, y, p['w'], p['h'])
+            for group in row.get('branch_columns', []):
+                chains, sink = group['chains'], group['sink']
+                assert 2 <= len(chains) <= 6 and len(chains[0]['nodes']) >= 2
+                ids = [node for chain in chains for node in chain['nodes']]
+                assert len(ids) == len(set(ids))
+                assert all(parents[node] == group['parent'] for node in [sink, *ids])
+                geometry = True
+                previous_right = None
+                for chain in chains:
+                    assert len(chain['nodes']) == len(chains[0]['nodes'])
+                    boxes = [actual_boxes[node] for node in chain['nodes']]
+                    for i, (x, y, w, h) in enumerate(boxes):
+                        element = nodes[chain['nodes'][i]]
+                        if element.find('{http://www.w3.org/2000/svg}rect') is None:
+                            circle = element.find('{http://www.w3.org/2000/svg}circle')
+                            assert circle is not None, 'unmeasured path-column node shape'
+                            assert (float(circle.get('cx')), float(circle.get('cy')), float(circle.get('r'))) == (w / 2, h / 2, min(w, h) / 2 - 1)
+                        first = boxes[0]
+                        geometry &= abs(x + w / 2 - first[0] - first[2] / 2) < 1e-6
+                        counterpart = actual_boxes[chains[0]['nodes'][i]]
+                        geometry &= abs(y - counterpart[1]) < 1e-6
+                        if i:
+                            geometry &= y >= boxes[i - 1][1] + boxes[i - 1][3]
+                    if previous_right is not None:
+                        geometry &= min(b[0] for b in boxes) >= previous_right
+                    previous_right = max(b[0] + b[2] for b in boxes)
+                    geometry &= actual_boxes[sink][1] >= boxes[-1][1] + boxes[-1][3]
+                    for i, node in enumerate(chain['nodes']):
+                        next_node = chain['nodes'][i + 1] if i + 1 < len(boxes) else sink
+                        uses = [edge for edge in edge_layout.values() if edge['source'] == node and edge['target'] == next_node]
+                        assert uses and all(edge['id'] in chain['edges'] for edge in uses)
+                        assert all(not e.get('design_route') and not e.get('layout_after') and all(m['kind'] in ['data', 'alias', 'interface-binding'] and not m.get('condition') for m in e.get('bundle_members', [e])) for e in uses)
+                        assert {edge['target'] for edge in edge_layout.values() if edge['source'] == node} == {next_node}
+                        n = planned[node]
+                        assert n['kind'] in ['compute', 'composite'] and not any(n.get(k) for k in ['condition', 'mutable', 'identity_display', 'observed_calls'])
+                    for binding in chain['ports']:
+                        edge = edge_layout[binding['edge']]
+                        assert edge['source'] == chain['nodes'][-1] and edge['target'] == sink
+                        assert binding['port'] == edge['target_port']
+                valid_routes = all(edge_layout[e]['route']['ok'] and paths[e].get('data-route-valid') == 'true' for chain in chains for e in chain['edges'])
+                assert group['geometry_verified'] == bool(geometry)
+                assert group['routes_verified'] == valid_routes
+                assert (group['status'] == 'realized') == bool(geometry and valid_routes)
+            for receipt in document['layout'].get('constraint_receipts', []):
+                if receipt.get('consumption') == 'branch-columns' and receipt['status'] == 'applied':
+                    assert receipt['route_verified']
+                    group = receipt['path_columns']
+                    realized = next(g for g in row['branch_columns'] if g['sink'] == group['sink'] and g['parent'] == group['parent'])
+                    assert realized['status'] == 'realized'
+                    assert len({next(i for i, c in enumerate(group['chains']) if node in c['nodes']) for node in receipt['members']}) == len(receipt['members'])
             for entry in row['context_lanes']:
                 edge = edge_layout[entry['edge']]
                 element = paths[entry['edge']]

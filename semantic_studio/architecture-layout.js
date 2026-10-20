@@ -28,7 +28,7 @@
     return result;
   }
   function layout(idx,roots,visible,edges,offsets={},options={}){
-    const positions=new Map(),feedback=new Set(),compoundAlignments=[];
+    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[];
     const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
     const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
     const laneKinds=['bypass','state-interface','iteration-feedback'];
@@ -110,13 +110,60 @@
         const input=id=>idx.nodes.get(id)?.kind==='interface'&&idx.nodes.get(id)?.role==='input';
         return Number(input(b))-Number(input(a));
       });
+      // Trace independent local chains into a common consumer. Columns are
+      // dependency paths, not semantic names or execution-parallel branches.
+      const branchGroups=[],claimed=new Set();
+      if(options.branchColumns)for(const sink of kids){
+        const safe=id=>{const n=idx.nodes.get(id);return scc[unit.get(id)].length===1&&!positions.get(id).expanded&&
+          ['compute','composite'].includes(n.kind)&&!n.condition&&!n.mutable&&!n.identity_display&&!n.observed_calls&&
+          !['conditional-region','conditional-collection','loop-template','iteration-region','serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type);};
+        if(!safe(sink))continue;
+        const chains=[];
+        for(const tip of pred.get(sink)){
+          const path=[];let at=tip,next=sink;
+          while(safe(at)&&adj.get(at).size===1&&adj.get(at).has(next)&&!claimed.has(at)){
+            const uses=edges.filter(e=>owner(e.source)===at&&owner(e.target)===next);
+            if(!uses.length||uses.some(e=>e.design_route||e.layout_after||(e.bundle_members||[e]).some(m=>!['data','alias','interface-binding'].includes(m.kind)||m.condition)))break;
+            path.unshift(at);if(pred.get(at).size!==1)break;next=at;at=[...pred.get(at)][0];
+          }
+          if(path.length>=2)chains.push({nodes:path,edges:edges.filter(e=>path.includes(owner(e.source))&&(path.includes(owner(e.target))||owner(e.target)===sink)).map(e=>e.id),
+            ports:edges.filter(e=>owner(e.source)===tip&&owner(e.target)===sink).map(e=>({edge:e.id,port:e.target_port}))});
+        }
+        if(chains.length<2||chains.length>6)continue;
+        // Rank equality is a local placement prerequisite, not stage or
+        // operator equivalence. Unequal chains retain ordinary DAG geometry.
+        const levels=chains[0].nodes.map(id=>rank[unit.get(id)]);
+        if(chains.some(c=>c.nodes.length!==levels.length||c.nodes.some((id,i)=>rank[unit.get(id)]!==levels[i])))continue;
+        chains.sort((a,b)=>edges.findIndex(e=>e.id===a.ports[0].edge)-edges.findIndex(e=>e.id===b.ports[0].edge));
+        const group={parent,sink,chains,widths:chains.map(c=>Math.max(...c.nodes.map(id=>positions.get(id).w))),ranks:levels,
+          scope:'visible serial paths into distinct consumer operands; scheduling and stage equivalence not asserted'};
+        branchGroups.push(group);for(const c of chains)for(const id of c.nodes)claimed.add(id);branchColumns.push(group);
+      }
       const grids=sorted.map(r=>{const ids=rows.get(r),cols=Math.min(rankColumns||ids.length,ids.length),widths=Array(cols).fill(0),heights=Array(Math.ceil(ids.length/cols)).fill(0);
         ids.forEach((id,i)=>{const p=positions.get(id);widths[i%cols]=Math.max(widths[i%cols],p.w);heights[Math.floor(i/cols)]=Math.max(heights[Math.floor(i/cols)],p.h);});
         return {cols,widths,heights,w:widths.reduce((s,w)=>s+w,0)+(cols-1)*gapX,h:heights.reduce((s,h)=>s+h,0)+(heights.length-1)*gapY};});
+      if(branchGroups.length)for(const [i,r]of sorted.entries()){
+        const groups=branchGroups.filter(g=>g.ranks.includes(r));if(!groups.length)continue;
+        const assigned=new Set(groups.flatMap(g=>g.chains.flatMap(c=>c.nodes.filter(id=>rank[unit.get(id)]===r))));
+        const rest=rows.get(r).filter(id=>!assigned.has(id)),bands=[];
+        if(rest.length){
+          const cols=Math.min(rankColumns||rest.length,rest.length),widths=Array(cols).fill(0),heights=Array(Math.ceil(rest.length/cols)).fill(0);
+          rest.forEach((id,j)=>{const p=positions.get(id);widths[j%cols]=Math.max(widths[j%cols],p.w);heights[Math.floor(j/cols)]=Math.max(heights[Math.floor(j/cols)],p.h);});
+          bands.push({w:widths.reduce((a,b)=>a+b,0)+(cols-1)*gapX,h:heights.reduce((a,b)=>a+b,0)+(heights.length-1)*gapY,
+            cells:rest.map((id,j)=>({id,x:widths.slice(0,j%cols).reduce((a,b)=>a+b+gapX,0)+(widths[j%cols]-positions.get(id).w)/2,y:heights.slice(0,Math.floor(j/cols)).reduce((a,b)=>a+b+gapY,0)}))});
+        }
+        for(const g of groups){const step=g.ranks.indexOf(r),ids=g.chains.map(c=>c.nodes[step]);
+          bands.push({w:g.widths.reduce((a,b)=>a+b,0)+(ids.length-1)*gapX,h:Math.max(...ids.map(id=>positions.get(id).h)),
+            cells:ids.map((id,j)=>({id,x:g.widths.slice(0,j).reduce((a,b)=>a+b+gapX,0)+(g.widths[j]-positions.get(id).w)/2,y:0}))});
+        }
+        const w=Math.max(...bands.map(b=>b.w)),cells=[];let y=0;
+        for(const band of bands){cells.push(...band.cells.map(c=>({...c,x:c.x+(w-band.w)/2,y:c.y+y})));y+=band.h+gapY;}
+        grids[i]={...grids[i],w,h:y-gapY,cells};
+      }
       const rowWidths=grids.map(g=>g.w);
       const width=Math.max(0,...rowWidths);let y=0;
       sorted.forEach((r,i)=>{const row=rows.get(r),grid=grids[i],left=(width-rowWidths[i])/2;
-        row.forEach((id,j)=>{const p=positions.get(id),col=j%grid.cols,gr=Math.floor(j/grid.cols);p.x=left+grid.widths.slice(0,col).reduce((s,w)=>s+w+gapX,0)+(grid.widths[col]-p.w)/2;p.y=y+grid.heights.slice(0,gr).reduce((s,h)=>s+h+gapY,0);p.cyclic=scc[unit.get(id)].length>1;});
+        if(grid.cells){for(const c of grid.cells){const p=positions.get(c.id);p.x=left+c.x;p.y=y+c.y;p.cyclic=scc[unit.get(c.id)].length>1;}}else row.forEach((id,j)=>{const p=positions.get(id),col=j%grid.cols,gr=Math.floor(j/grid.cols);p.x=left+grid.widths.slice(0,col).reduce((s,w)=>s+w+gapX,0)+(grid.widths[col]-p.w)/2;p.y=y+grid.heights.slice(0,gr).reduce((s,h)=>s+h+gapY,0);p.cyclic=scc[unit.get(id)].length>1;});
         y+=grid.h+gapY;
       });
       const vertical={w:width,h:Math.max(0,y-gapY)};
@@ -207,7 +254,16 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={idx,edges,feedback,compoundAlignments,contextLanes};return positions;
+    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns};return positions;
+  }
+  function branchGeometry(group,positions){
+    const paths=group.chains.map(c=>c.nodes.map(id=>positions.get(id)));
+    if(paths.some(ps=>ps.some(p=>!p)))return false;
+    const close=(a,b)=>Math.abs(a-b)<1e-6;
+    if(!paths.every(ps=>ps.every((p,i)=>close(p.x+p.w/2,ps[0].x+ps[0].w/2)&&(!i||p.y>=ps[i-1].y+ps[i-1].h))))return false;
+    if(!paths.every(ps=>ps.every((p,i)=>close(p.y,paths[0][i].y))))return false;
+    if(!paths.every((ps,i)=>!i||Math.min(...ps.map(p=>p.x))>=Math.max(...paths[i-1].map(p=>p.x+p.w))))return false;
+    const sink=positions.get(group.sink);return !!sink&&paths.every(ps=>sink.y>=ps.at(-1).y+ps.at(-1).h);
   }
   const point=(x,y)=>({x,y});
   function simplify(points){const out=[];for(const p of points){if(out.length&&out.at(-1).x===p.x&&out.at(-1).y===p.y)continue;while(out.length>1&&((out.at(-2).x===out.at(-1).x&&out.at(-1).x===p.x)||(out.at(-2).y===out.at(-1).y&&out.at(-1).y===p.y)))out.pop();out.push(p);}return out;}
@@ -369,5 +425,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,branchGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

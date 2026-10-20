@@ -285,8 +285,34 @@
       scope:'measured visible dependency geometry; no semantic or execution claim'};
     return chosen;
   }
+  function prepareBranches(ir,state={}){
+    const baseline=prepareContext(ir,state),b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||baseline.graph.publication.granularity!=='roles'||state.paperBranchColumns!==undefined||
+      state.paperAuto===false||Object.keys(state.offsets||{}).length||baseline.graph.edges.length>128)return baseline;
+    const channel=baseline.graph.positions.context.contextLanes[0]?.side||false;
+    const candidateState={...state,paperBranchColumns:true,paperContextLanes:channel};
+    const probe=E.project(ir,{...candidateState,view:'publication'});
+    if(!probe.positions.context.branchColumns.length)return baseline;
+    const trial=prepareTopology(ir,candidateState),groups=trial.graph.positions.context.branchColumns,q=trial.prepared.quality;
+    const aligned=positions=>groups.filter(group=>L.branchGeometry(group,positions)).length;
+    const before=aligned(baseline.graph.positions),after=aligned(trial.graph.positions);
+    const identity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id),edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,
+      source_port:e.source_port,target_port:e.target_port,originals:e.originals,bundle_members:e.bundle_members,kind:e.kind,condition:e.condition}))});
+    const accepted=identity(baseline.graph)===identity(trial.graph)&&after>before&&q.line_geometry.crossings<=b.line_geometry.crossings&&
+      q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&q.issues.every(issue=>b.issues.includes(issue))&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&
+      fontMetric(q)>=fontMetric(b)&&areaMetric(q)<=areaMetric(b)*1.1&&q.wire_length<=b.wire_length*1.1;
+    const chosen=accepted?trial:baseline;
+    if(accepted&&baseline.prepared.routing.context_refinement)chosen.prepared.routing.context_refinement=baseline.prepared.routing.context_refinement;
+    chosen.prepared.routing.branch_refinement={accepted,aligned_groups_before:before,aligned_groups_after:after,
+      crossings_before:b.line_geometry.crossings,crossings_candidate:q.line_geometry.crossings,
+      issues_before:b.issues,issues_candidate:q.issues,contacts_before:b.line_geometry.unrelated_contacts.length,contacts_candidate:q.line_geometry.unrelated_contacts.length,
+      wire_before:b.wire_length,wire_candidate:q.wire_length,max_area_ratio:1.1,max_wire_ratio:1.1,
+      scope:'measured local path columns; original bindings retained, no stage equivalence or concurrent execution asserted'};
+    return chosen;
+  }
   function selectFigure(ir,state={}){
-    let chosen=prepareContext(ir,state);
+    let chosen=prepareBranches(ir,state);
     const base=chosen,requested=chosen.graph.publication.budget,granularity=chosen.graph.publication.granularity;
     // A zoomable canvas keeps the requested semantic frontier. Route/resource
     // failures remain explicit; silently replacing it with an overview is not
@@ -341,6 +367,11 @@
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       layout:{bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
         ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments}:{}),
+        ...(g.positions.context.branchColumns.length?{branch_columns:g.positions.context.branchColumns.map(group=>{
+          const geometry=L.branchGeometry(group,g.positions),pathIds=group.chains.flatMap(c=>c.edges),valid=pathIds.every(id=>routes.find(e=>e.id===id)?.route.ok);
+          return {...group,status:geometry&&valid?'realized':'deferred',geometry_verified:geometry,routes_verified:valid,
+            reason:geometry&&valid?'exact dependency paths aligned in separate columns with final routes':'final geometry or path routing did not realize column correspondence'};
+        })}:{}),
         ...(g.positions.context.contextLanes.length?{context_lanes:g.positions.context.contextLanes.map(entry=>{
           const owner=g.positions.get(entry.owner),edge=routes.find(e=>e.id===entry.edge),low=entry.side==='left'?owner.x+(owner.design_gutter||0):owner.x+owner.w-owner.context_gutter;
           const high=entry.side==='left'?low+owner.context_gutter:owner.x+owner.w;

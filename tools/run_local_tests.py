@@ -21,6 +21,7 @@ COMMANDS = {
     'representative-atlas': ['node', 'tests/representative-atlas.test.cjs'],
     'canvas-medium': ['node', 'tests/canvas-medium.test.cjs'],
     'role-frontier': ['node', 'tests/role-frontier.test.cjs'],
+    'branch-columns': ['node', 'tests/branch-columns.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],
     'frame-ownership': ['node', 'tests/frame-ownership.test.cjs'],

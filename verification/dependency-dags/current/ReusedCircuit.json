@@ -1,0 +1,558 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ReusedCircuit",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+    "class": "ReusedCircuit",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+      "cell": null,
+      "sha256": "45d274ed831717caf6cfc0c65e4dd68b2436bac2e9bda6a2a0f63a1ae7eeafe4",
+      "unit_sha256": "45d274ed831717caf6cfc0c65e4dd68b2436bac2e9bda6a2a0f63a1ae7eeafe4"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/11:4:composite:1",
+      "kind": "composite",
+      "label": "ReusedCircuit",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 11,
+          "end_line": 12,
+          "column": 4,
+          "end_column": 40,
+          "symbol": "ReusedCircuit.forward",
+          "expression": "def forward(self, x):\n    return torch.relu(self.weave(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ReusedCircuit"
+    },
+    {
+      "id": "model/11:4:composite:1/11:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "ReusedCircuit.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1",
+      "kind": "composite",
+      "label": "self.weave",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 7,
+          "end_line": 9,
+          "column": 4,
+          "end_column": 51,
+          "symbol": "weave",
+          "expression": "def weave(self, x):\n    value = torch.sin(x)\n    return torch.tanh(value) - torch.cos(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/11:4:composite:1/7:4:composite:1",
+      "source_parent": "model/11:4:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 20,
+          "end_column": 21,
+          "symbol": "weave",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1/8:16:compute:1",
+      "kind": "compute",
+      "label": "sin",
+      "parent": "model/11:4:composite:1/7:4:composite:1",
+      "source_parent": "model/11:4:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 16,
+          "end_column": 28,
+          "symbol": "weave",
+          "expression": "torch.sin(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sin",
+      "function_target": "torch.sin",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sin"
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1/8:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "value",
+      "parent": "model/11:4:composite:1/7:4:composite:1",
+      "source_parent": "model/11:4:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "weave",
+          "expression": "value"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1/9:15:compute:1",
+      "kind": "compute",
+      "label": "sub",
+      "parent": "model/11:4:composite:1/7:4:composite:1",
+      "source_parent": "model/11:4:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 15,
+          "end_column": 51,
+          "symbol": "weave",
+          "expression": "torch.tanh(value) - torch.cos(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sub",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Sub",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1/9:15:compute:2",
+      "kind": "compute",
+      "label": "tanh",
+      "parent": "model/11:4:composite:1/7:4:composite:1",
+      "source_parent": "model/11:4:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 15,
+          "end_column": 32,
+          "symbol": "weave",
+          "expression": "torch.tanh(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.tanh",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "value"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.tanh"
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1/9:35:compute:1",
+      "kind": "compute",
+      "label": "cos",
+      "parent": "model/11:4:composite:1/7:4:composite:1",
+      "source_parent": "model/11:4:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 35,
+          "end_column": 51,
+          "symbol": "weave",
+          "expression": "torch.cos(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "cos",
+      "function_target": "torch.cos",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "value"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.cos"
+    },
+    {
+      "id": "model/11:4:composite:1/7:4:composite:1/9:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/11:4:composite:1/7:4:composite:1",
+      "source_parent": "model/11:4:composite:1/7:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 8,
+          "end_column": 51,
+          "symbol": "weave",
+          "expression": "return torch.tanh(value) - torch.cos(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/11:4:composite:1/12:15:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 15,
+          "end_column": 40,
+          "symbol": "ReusedCircuit.forward",
+          "expression": "torch.relu(self.weave(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.weave(x)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu"
+    },
+    {
+      "id": "model/11:4:composite:1/12:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/dependency_dags.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 8,
+          "end_column": 40,
+          "symbol": "ReusedCircuit.forward",
+          "expression": "return torch.relu(self.weave(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/11:4:composite:1/11:22:interface:1",
+      "target": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/7:20:interface:1",
+      "target": "model/11:4:composite:1/7:4:composite:1/8:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/8:16:compute:1",
+      "target": "model/11:4:composite:1/7:4:composite:1/8:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/8:8:value-alias:1",
+      "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/9:15:compute:2",
+      "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/8:8:value-alias:1",
+      "target": "model/11:4:composite:1/7:4:composite:1/9:35:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/9:35:compute:1",
+      "target": "model/11:4:composite:1/7:4:composite:1/9:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/9:15:compute:1",
+      "target": "model/11:4:composite:1/7:4:composite:1/9:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/11:4:composite:1/7:4:composite:1/9:8:interface:1",
+      "target": "model/11:4:composite:1/12:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/11:4:composite:1/12:15:compute:1",
+      "target": "model/11:4:composite:1/12:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "3dc9b11c10473f4d932196ddc702c3451191590918ad5cf8e060bac8feb15196"
+}

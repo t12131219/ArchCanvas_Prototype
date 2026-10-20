@@ -51,7 +51,8 @@ test('left and right alternatives preserve exact slots and return obstacle-free 
 });
 test('a measured regression is rejected equally with automatic or manually selected canvas detail',()=>{
  const ir=JSON.parse(fs.readFileSync('verification/local-relations/current/InterruptedMixer.json'));
- const state={paperMedium:'canvas',paperGranularity:'roles'},baseline=R.render(ir,{...state,paperContextLanes:false}),automatic=R.render(ir,state);
+ // Exercise the actual context-entry topology, independently of source summaries.
+ const state={paperMedium:'canvas',paperGranularity:'roles',paperPipelineSummaries:false},baseline=R.render(ir,{...state,paperContextLanes:false}),automatic=R.render(ir,state);
  assert.equal(automatic.prepared.routing.context_refinement.accepted,false);assert.equal(automatic.svg,baseline.svg);
  assert.ok(automatic.prepared.routing.context_refinement.candidate.crossings>automatic.prepared.routing.context_refinement.before.crossings);
  const manual=R.render(ir,{...state,paperAuto:false,open:baseline.graph.publication.open});assert.deepEqual(manual.graph.publication.open,baseline.graph.publication.open);assert.deepEqual(manual.prepared.routing.context_refinement,automatic.prepared.routing.context_refinement);assert.equal(manual.svg,automatic.svg);

@@ -229,14 +229,23 @@
     if(n.local_pipeline&&!n.local_pipeline_expanded){
       const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
       const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
-      title=p.dependency_tree?expression(p.dependency_tree):p.operations.map(o=>o.label).join(' → ');
-      caption=p.dependency_tree?'Dependency tree':'Dependency path';
+      title=p.dependency_dag?'Result '+p.dependency_dag.result:p.dependency_tree?expression(p.dependency_tree):p.operations.map(o=>o.label).join(' → ');
+      caption=p.dependency_dag?'Dependency DAG':p.dependency_tree?'Dependency tree':'Dependency path';
     }
-    const maxWidth=n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
+    const dagSummary=n.local_pipeline?.dependency_dag&&!n.local_pipeline_expanded;
+    const maxWidth=dagSummary?292:n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
     const lines=wrap(title,n.kind==='composite'?maxWidth-20:maxWidth,font),captions=caption?wrap(caption,maxWidth,13):[];
+    if(dagSummary){
+      const labels=new Map(n.local_pipeline.operations.map(o=>[o.node,o.label]));
+      for(const step of n.local_pipeline.dependency_dag.nodes){
+        const inputs=step.inputs.slice().sort((a,b)=>String(a.target_port).localeCompare(String(b.target_port))||a.edge.localeCompare(b.edge));
+        const ref=input=>input.reference+(input.source_port==='out'?'':'['+input.source_port+']');
+        captions.push(...wrap(step.reference+' '+labels.get(step.node)+(inputs.length?' ← '+inputs.map(i=>i.target_port+'='+ref(i)).join('; '):''),maxWidth,13));
+      }
+    }
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
-      w:symbol?48:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
-    if(n.content_inventory&&!n.identity_display&&!n.role_annotations?.length){
+      w:symbol?48:dagSummary?320:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
+    if(n.content_inventory&&!n.identity_display&&!n.role_annotations?.length&&!dagSummary){
       const summary=inventoryCaption(n.content_inventory,opaque,captions.length,maxWidth);
       if(summary){n.paper.caption=summary.text;n.paper.captions=summary.lines;n.paper.caption_scope='unit-inventory';n.paper.layout_caption_rows=captions.length;
         n.paper.inventory_summary={shown_terms:summary.shown_terms,omitted_kinds:summary.omitted_kinds};}

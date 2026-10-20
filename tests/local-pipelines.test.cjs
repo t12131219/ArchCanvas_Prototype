@@ -23,10 +23,12 @@ test('unknown, condition, effects, identity, observation, nested and certified b
  }
  const ir=fixture();ir.edges[1].condition={branch:'if'};assert.equal(derive(ir).size,0);
 });
-test('forks, cycles, escaping results and non-value dependencies retain the original representation',()=>{
- for(const mutate of [ir=>ir.edges.push({id:'fork',source:'a',target:'c',source_port:'out',target_port:'side',kind:'data'}),
-  ir=>ir.edges.push({id:'cycle',source:'c',target:'a',kind:'data'}),ir=>ir.edges.push({id:'escape',source:'b',target:'sink',kind:'data'}),
+test('cycles, escaping results and non-value dependencies retain the original representation',()=>{
+ for(const mutate of [ir=>ir.edges.push({id:'cycle',source:'c',target:'a',kind:'data'}),ir=>ir.edges.push({id:'escape',source:'b',target:'sink',kind:'data'}),
   ir=>ir.edges[1].kind='state-write']){const ir=fixture();mutate(ir);assert.equal(derive(ir).size,0);}
+ const fork=fixture();fork.edges.push({id:'fork',source:'a',target:'c',source_port:'out',target_port:'side',kind:'data'});
+ const row=derive(fork).get('scope');assert.equal(row.form,'dependency-dag-summary');
+ assert.deepEqual(row.dependency_dag.nodes.at(-1).inputs.map(i=>i.reference),['#2','#1']);
 });
 test('symbolic reads stay auxiliary, unresolved values are not evaluated, and nonconfiguration uses reject the summary',()=>{
  const ir=fixture();ir.nodes.push({id:'shape',kind:'compute',operator:'attribute',parent:'scope',symbolic_value:{kind:'tensor-attribute',attribute:'shape'}});

@@ -2,7 +2,7 @@
  * presentation form, not fusion, purity, scheduling or a new family contract. */
 (function(root){
   'use strict';
-  const VERSION='local-pipelines/3',flow=e=>['data','alias','interface-binding'].includes(e.kind);
+  const VERSION='local-pipelines/4',flow=e=>['data','alias','interface-binding'].includes(e.kind);
   function compile({ir,plan,bindings,metadata,configurationUses}){
     const by=new Map(plan.nodes.map(n=>[n.id,n])),canonical=new Map(ir.nodes.map(n=>[n.id,n])),children=new Map(),result=new Map();
     for(const n of plan.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
@@ -53,16 +53,22 @@
         if(aux.has(e.target)&&(!active.has(from.node)&&inside.has(from.node)&&by.get(from.node)?.kind!=='interface'))valid=false;
       }
       if(steps.some(n=>{const ports=traces.filter(t=>t.target===n.id).map(t=>t.target_port);return ports.length!==new Set(ports).size;}))valid=false;
-      // A bounded converging dependency tree can summarize independent inputs
-      // without claiming parallel execution. Fan-out of an internal operation
-      // remains explicit: duplicating its label could imply duplicated work.
-      if(!valid||steps.some(n=>adj.get(n.id).size>1||new Set(incoming.get(n.id).map(t=>t.producer)).size!==incoming.get(n.id).length))continue;
+      if(!valid)continue;
+      // Internal reuse requires references, never recursive inlining of the
+      // producer. Multiple operand uses count once for topological indegree,
+      // while every use and its exact result/operand slot stays in the proof.
+      const dag=steps.some(n=>adj.get(n.id).size>1||new Set(incoming.get(n.id).map(t=>t.producer)).size!==incoming.get(n.id).length);
       const starts=steps.filter(n=>!incoming.get(n.id).length),sinks=steps.filter(n=>!adj.get(n.id).size);
       if(!starts.length||sinks.length!==1)continue;
-      const ordered=[],degree=new Map(steps.map(n=>[n.id,incoming.get(n.id).length])),todo=starts.map(n=>n.id);
-      for(let i=0;i<todo.length;i++){const at=todo[i];ordered.push(at);for(const next of adj.get(at)){degree.set(next,degree.get(next)-1);if(!degree.get(next))todo.push(next);}}
+      // A tuple pack is not a single semantic result: its externally selectable
+      // components need a dedicated output presentation. Internal tuple packs
+      // remain legal when a later operation consumes their exact result slots.
+      if(dag&&sinks[0].operator==='structure')continue;
+      const ordered=[],degree=new Map(steps.map(n=>[n.id,new Set(incoming.get(n.id).map(t=>t.producer)).size])),todo=starts.map(n=>n.id);
+      if(dag)todo.sort();
+      for(let i=0;i<todo.length;i++){const at=todo[i];ordered.push(at);for(const next of adj.get(at)){degree.set(next,degree.get(next)-1);if(!degree.get(next))todo.push(next);}if(dag)todo.splice(i+1,todo.length-i-1,...todo.slice(i+1).sort());}
       if(ordered.length!==steps.length)continue;
-      const tree=steps.some(n=>incoming.get(n.id).length>1);
+      const tree=!dag&&steps.some(n=>incoming.get(n.id).length>1);
       // An intermediate result escaping the helper requires its own interface;
       // a single output-path summary would hide the distinguishing connection.
       const cuts=edges.filter(e=>inside.has(e.source)!==inside.has(e.target));
@@ -74,9 +80,13 @@
           label:n.framework_type?.split('.').at(-1)||(framework?n.function_target.split('.').at(-1):n.operator),
           label_basis:n.framework_type?'framework-type':framework?'source-framework-function':'operator'};});
       const expression=id=>({node:id,inputs:incoming.get(id).map(t=>({edge:t.edge,target_port:t.target_port,source_port:t.source_port,expression:expression(t.producer)}))});
-      result.set(owner.id,{rule_version:tree||resources.size?VERSION:'local-pipelines/2',node:owner.id,form:tree?'dependency-tree-summary':'dependency-path-summary',operations,
+      const references=new Map(ordered.map((id,i)=>[id,'#'+(i+1)]));
+      const dependencyDag=dag?{result:references.get(sinks[0].id),nodes:ordered.map(id=>({node:id,reference:references.get(id),
+        inputs:incoming.get(id).map(t=>({edge:t.edge,reference:references.get(t.producer),source_port:t.source_port,target_port:t.target_port}))}))}:null;
+      result.set(owner.id,{rule_version:dag?VERSION:tree||resources.size?'local-pipelines/3':'local-pipelines/2',node:owner.id,form:dag?'dependency-dag-summary':tree?'dependency-tree-summary':'dependency-path-summary',operations,
         ...(tree?{entry_operations:starts.map(n=>n.id),result_operation:sinks[0].id,dependency_tree:expression(sinks[0].id)}:{}),
-        ...(tree||resources.size?{parameter_reads:parameters.map(n=>({node:n.id,source:n.source||[],module_identity:n.module_identity??null,
+        ...(dag?{entry_operations:starts.map(n=>n.id).sort(),result_operation:sinks[0].id,dependency_dag:dependencyDag}:{}),
+        ...(dag||tree||resources.size?{parameter_reads:parameters.map(n=>({node:n.id,source:n.source||[],module_identity:n.module_identity??null,
           edges:ir.edges.filter(e=>e.source===n.id).map(e=>({...e}))})),
           output_bindings:cuts.filter(e=>inside.has(e.source)).map(e=>({edge:e.id,producer:resolve(e.source,e.source_port??'out').node,
             source_port:resolve(e.source,e.source_port??'out').slot,target:e.target,target_port:e.target_port}))}:{}),
@@ -84,7 +94,7 @@
         canonical_members:ids.filter(id=>canonical.has(id)),
         source_boundaries:boundaries.map(n=>{const members=new Set(closure(n.id));return {node:n.id,parent:n.parent,semantic_type:n.semantic_type,
           source:n.source||[],module_identity:n.module_identity??null,cuts:ir.edges.filter(e=>members.has(e.source)!==members.has(e.target)).map(e=>({...e}))};}),
-        scope:tree?'Modeled converging dependency tree across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No scalar evaluation, purity, fusion, parallel execution or model-family assertion.':'Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion.'});
+        scope:dag?'Modeled bounded dependency DAG; each operation occurs once and internal result uses retain explicit references and slots. Reference numbering does not assert execution order. Exact operands, resources and source cuts retained. No scalar evaluation, purity, fusion, parallel execution, tensor equality or model-family assertion.':tree?'Modeled converging dependency tree across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No scalar evaluation, purity, fusion, parallel execution or model-family assertion.':'Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion.'});
     }
     return result;
   }

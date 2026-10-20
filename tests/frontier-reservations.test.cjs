@@ -48,12 +48,15 @@ test('shared-source expression goals require the producer, every consumer and bo
  assert.ok(relation.not_asserted.includes('parallel execution'));
 });
 
-test('measured source-use detail can be rejected for cost and adopted in another unfamiliar composition',()=>{
+test('measured source-use detail gains survive DAG lowering and disproportionate cost still rejects',()=>{
  const tight=render(read('FrontierMosaic'),{paperBudget:8,paperAdaptive:true}),wide=render(read('BranchedMosaic'),{paperBudget:8,paperAdaptive:true});
  const a=tight.graph.publication.adaptive_frontier.attempts.find(t=>t.opportunity.type==='source-uses'),b=wide.graph.publication.adaptive_frontier.attempts.find(t=>t.opportunity.type==='source-uses');
- assert.ok(a.gain>0);assert.equal(a.accepted,false);assert.ok(a.reasons.includes('disproportionate-area-cost'));
+ assert.ok(a.gain>0);assert.equal(a.accepted,true);assert.deepEqual(a.lost_goals,[]);
  assert.equal(b.accepted,true);assert.ok(b.gained_goals.some(g=>g.kind==='source-uses'));assert.deepEqual(b.lost_goals,[]);
  assert.deepEqual(wide.prepared.quality.issues,[]);assert.ok(wide.graph.publication.adaptive_frontier.selected_expression_details.length);
+ const baseline=render(read('FrontierMosaic'),{paperBudget:8}),trial={...tight,prepared:{...tight.prepared,quality:structuredClone(tight.prepared.quality)}};
+ trial.prepared.quality.native_width_px*=100;
+ const rejected=A.assess(baseline.document.ir,baseline,trial);assert.equal(rejected.accepted,false);assert.ok(rejected.reasons.includes('disproportionate-area-cost'));
 });
 
 test('unknown boundaries survive reservation and measured refinement',()=>{

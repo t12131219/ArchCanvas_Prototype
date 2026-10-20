@@ -79,7 +79,8 @@ test('bounded selection preserves local budget deferral and previous independent
  }
  const small=render('SameSource',{paperAdaptive:true,paperBudget:4});assert.equal(small.graph.publication.adaptive_frontier.attempts.length,0);
 });
-test('unrequested existing SVG states remain byte-identical to the actual frozen baseline',()=>{
+test('unaffected SVG states and disabled-summary source detail match the actual frozen baseline',()=>{
  const old=require('../tools/load_publication_renderer.cjs')(path.resolve('verification/local-relations/iteration-25-before-adaptive-frontier/implementation/semantic_studio'));
- for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry','SameSource'])assert.equal(render(name).svg,old.render(load(name),state).svg);
+ for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry'])assert.equal(render(name).svg,old.render(load(name),state).svg);
+ const disabled={...state,paperPipelineSummaries:false};assert.equal(render('SameSource',disabled).svg,old.render(load('SameSource'),disabled).svg);
 });

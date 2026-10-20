@@ -119,7 +119,7 @@ def audit_pipeline_summaries(document, row, nodes):
             members.update(added)
             changed = bool(added)
         assert members == set(r['canonical_members'])
-        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3']:
+        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4']:
             boundaries = [n for n in planned.values() if n['id'] in members and n['kind'] == 'composite']
             assert {n['id'] for n in boundaries} == {b['node'] for b in r['source_boundaries']}
             for boundary in r['source_boundaries']:
@@ -155,7 +155,30 @@ def audit_pipeline_summaries(document, row, nodes):
             assert (b['target'], b['target_port']) == (e['target'], e['target_port'])
             if b['producer'] in ordered:
                 adjacency.add((b['producer'], b['target']))
-        if r.get('dependency_tree'):
+        if r.get('dependency_dag'):
+            assert r['rule_version'] == 'local-pipelines/4' and r['form'] == 'dependency-dag-summary'
+            steps = r['dependency_dag']['nodes']
+            assert [s['node'] for s in steps] == ordered
+            assert [s['reference'] for s in steps] == ['#' + str(i + 1) for i in range(len(ordered))]
+            references = {s['reference']: s['node'] for s in steps}
+            indices = {n: i for i, n in enumerate(ordered)}
+            actual_dag = []
+            for step in steps:
+                expected_uses = [b for b in r['bindings'] if b['target'] == step['node'] and b['producer'] in ordered]
+                assert len(step['inputs']) == len(expected_uses)
+                for use, binding in zip(step['inputs'], expected_uses):
+                    assert set(use) == {'edge', 'reference', 'source_port', 'target_port'}
+                    assert references[use['reference']] == binding['producer']
+                    assert indices[binding['producer']] < indices[binding['target']], 'cyclic or non-topological DAG reference'
+                    assert (use['edge'], use['source_port'], use['target_port']) == (binding['edge'], binding['source_port'], binding['target_port'])
+                    actual_dag.append((binding['producer'], binding['target']))
+            assert set(actual_dag) == adjacency
+            sinks = set(ordered) - {a for a, b in adjacency}
+            assert sinks == {ordered[-1]} and r['result_operation'] == ordered[-1]
+            assert references[r['dependency_dag']['result']] == ordered[-1]
+            assert set(r['entry_operations']) == set(ordered) - {b for a, b in adjacency}
+            assert len(actual_dag) > len(set(actual_dag)) or any(sum(a == id for a, b in adjacency) > 1 for id in ordered)
+        elif r.get('dependency_tree'):
             visited, tree_edges = [], set()
             binding_by = {b['edge']: b for b in r['bindings']}
 
@@ -177,7 +200,7 @@ def audit_pipeline_summaries(document, row, nodes):
             assert all(sum(a == id for a, b in adjacency) <= 1 for id in ordered)
         else:
             assert adjacency == set(zip(ordered, ordered[1:]))
-        if r['rule_version'] == 'local-pipelines/3':
+        if r['rule_version'] in ['local-pipelines/3', 'local-pipelines/4']:
             assert r['output_bindings'] == [dict(edge=e['id'], producer=resolve(e['source'], e.get('source_port', 'out'))[0],
                                                 source_port=resolve(e['source'], e.get('source_port', 'out'))[1],
                                                 target=e['target'], target_port=e['target_port'])
@@ -194,7 +217,7 @@ def audit_pipeline_summaries(document, row, nodes):
                     assert e['id'] in document['layout']['edge_accounting']['attached']
                     title = ''.join(nodes[node].find('{http://www.w3.org/2000/svg}title').itertext())
                     assert f"Parameter read {e['id']}: {n['id']} → {e['target']} [{e['target_port']}]" in title
-        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3']:
+        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4']:
             outputs = [n for n in planned.values() if n['id'] in members and n.get('parent') == node and n['kind'] == 'interface' and n.get('role') == 'output']
             assert outputs
             for output in outputs:
@@ -217,8 +240,15 @@ def audit_pipeline_summaries(document, row, nodes):
 
             def label(t):
                 return labels[t['node']] + (' ← {' + '; '.join(label(c['expression']) for c in t['inputs']) + '}' if t['inputs'] else '')
-            expected_title = label(r['dependency_tree']) if r.get('dependency_tree') else '→'.join(o['label'] for o in r['operations'])
+            expected_title = ('Result' + r['dependency_dag']['result']) if r.get('dependency_dag') else label(r['dependency_tree']) if r.get('dependency_tree') else '→'.join(o['label'] for o in r['operations'])
             assert re.sub(r'\s', '', expected_title) in text
+            if r.get('dependency_dag'):
+                assert 'DependencyDAG' in text
+                for step in r['dependency_dag']['nodes']:
+                    uses = sorted(step['inputs'], key=lambda i: (str(i['target_port']), i['edge']))
+                    ref = lambda i: i['reference'] + ('[' + i['source_port'] + ']' if i['source_port'] != 'out' else '')
+                    line = step['reference'] + labels[step['node']] + ('←' + ';'.join(i['target_port'] + '=' + ref(i) for i in uses) if uses else '')
+                    assert re.sub(r'\s', '', line) in text, ('missing physical DAG formula', line)
             assert not r['detailed_operations_exposed']
             assert all(c['status'] != 'fulfilled' for c in document['expression_coverage'] if c['goal'] in {'goal:node:' + id for id in ordered})
         title = ''.join(nodes[node].find('{http://www.w3.org/2000/svg}title').itertext())
@@ -310,6 +340,8 @@ def main():
         sys.argv.append('--dimensions')
     if '--reservations' in sys.argv:
         sys.argv.append('--dimensions')
+    if '--dags' in sys.argv:
+        sys.argv.append('--dimensions')
     if '--composed' in sys.argv:
         sys.argv.append('--dimensions')
     if '--dimensions' in sys.argv:
@@ -366,6 +398,8 @@ def main():
         OUT = ROOT / 'verification/dependency-trees/current'
     if '--reservations' in sys.argv:
         OUT = ROOT / 'verification/frontier-reservations/current'
+    if '--dags' in sys.argv:
+        OUT = ROOT / 'verification/dependency-dags/current'
     report_file = 'representative-atlas-report.json' if '--atlases' in sys.argv else 'repeat-report.json' if '--repeats' in sys.argv else 'identity-report.json' if '--identities' in sys.argv else 'iteration-report.json' if '--iterations' in sys.argv else 'holdout-report.json' if '--holdout' in sys.argv else 'render-report.json'
     report = json.loads((OUT / report_file).read_text())
     if '--inline' in sys.argv or '--frames' in sys.argv or '--roles' in sys.argv or '--expressions' in sys.argv:

@@ -1,0 +1,46 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>通用路由缓存 · 隔离实验</title>
+<style>
+body{font:15px system-ui,sans-serif;color:#263447;margin:28px;background:#f5f7fa}h1{font-size:25px}p{max-width:1000px;line-height:1.6}
+button{padding:10px 18px;border:1px solid #526f98;border-radius:6px;background:white;color:#263447;cursor:pointer}table{border-collapse:collapse;background:white;width:100%;margin-top:20px}td,th{text-align:left;border-bottom:1px solid #dce2ea;padding:11px}th{background:#e8edf4}#status{padding:12px 0;font-weight:600}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:white;padding:12px;border:1px solid #dce2ea}.panel svg{width:100%;height:520px}pre{white-space:pre-wrap;max-height:300px;overflow:auto;font-size:12px}details{margin-top:20px}
+</style>
+<h1>通用路由缓存 · 隔离实验</h1>
+<p>同一份 IR、同一可见语义状态，比较原始路由器与缓存候选。每种实现单独创建 Worker，先预热一次，再测量三次；记录实际 SVG 与路线摘要。此页不修改正式编辑器，也不替代完整自动规划对照。</p>
+<button id="run">运行浏览器对照</button><div id="status">尚未运行</div>
+<table><thead><tr><th>案例</th><th>节点 / 边</th><th>原始中位数</th><th>候选中位数</th><th>加速比</th><th>SVG / 路线一致</th></tr></thead><tbody id="results"></tbody></table>
+<h2>实际输出预览</h2><p>显示最近完成案例的两份实际 SVG。缓存优化应保持画面相同。</p>
+<div class="pair"><div class="panel"><h3>原始</h3><div id="before"></div></div><div class="panel"><h3>缓存候选</h3><div id="candidate"></div></div></div>
+<details><summary>浏览器实测记录</summary><pre id="report"></pre></details>
+<script>
+const $=id=>document.getElementById(id),median=xs=>xs.slice().sort((a,b)=>a-b)[Math.floor(xs.length/2)];
+const execute=(variant,ir,state)=>new Promise((resolve,reject)=>{const worker=new Worker('benchmark-worker.js');worker.onerror=e=>{worker.terminate();reject(Error(e.message))};worker.onmessage=e=>{worker.terminate();e.data.error?reject(Error(e.data.error)):resolve(e.data)};worker.postMessage({variant,ir,state})});
+$('run').onclick=async()=>{
+ $('run').disabled=true;$('results').replaceChildren();
+ const report={schema:'route-memoization-browser/1',scope:'Fixed projected frontiers; one warmup and three measured full routing passes in separate workers. Not adaptive or full editor latency.',
+  user_agent:navigator.userAgent,started_at:new Date().toISOString(),rows:[]};
+ try{
+  const manifestText=await(await fetch('render-report.json')).text(),manifest=JSON.parse(manifestText);
+  if(manifest.status!=='complete')throw Error('CLI comparison is still running');
+  report.kernel_report_sha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(manifestText)))).map(v=>v.toString(16).padStart(2,'0')).join('');
+  report.implementation_sha256=manifest.implementation_sha256;
+  const cases=manifest.rows.filter(r=>r.variant==='before');
+  for(const [index,item]of cases.entries()){
+   $('status').textContent=`正在运行 ${index+1}/${cases.length}：${item.case}`;
+   const ir=await(await fetch('../../../'+item.input)).json(),variants=index%2?['candidate','before']:['before','candidate'],pair={};
+   for(const v of variants)pair[v]=await execute(v,ir,item.state);
+   const a=pair.before,b=pair.candidate,exact=a.svg===b.svg&&a.svg_sha256.every(h=>h===a.svg_sha256[0])&&b.svg_sha256.every(h=>h===a.svg_sha256[0])&&
+    a.routes_sha256.every(h=>h===a.routes_sha256[0])&&b.routes_sha256.every(h=>h===a.routes_sha256[0])&&JSON.stringify(a.quality)===JSON.stringify(b.quality);
+   $('before').innerHTML=a.svg;$('candidate').innerHTML=b.svg;
+   const {svg:svgA,...before}=a,{svg:svgB,...candidate}=b;
+   const row={case:item.case,input:item.input,input_sha256:item.input_sha256,state:item.state,order:variants,before,candidate,
+    before_median_ms:median(a.measured_ms),candidate_median_ms:median(b.measured_ms),exact_match:exact,
+    cli_svg_match:a.svg_sha256[0]===item.svg_sha256};
+   row.speedup=row.before_median_ms/row.candidate_median_ms;report.rows.push(row);
+   const tr=document.createElement('tr');for(const value of [row.case,a.nodes+' / '+a.edges,row.before_median_ms.toFixed(1)+' ms',row.candidate_median_ms.toFixed(1)+' ms',row.speedup.toFixed(2)+'×',exact?'一致':'不一致']){const td=document.createElement('td');td.textContent=value;tr.append(td)}$('results').append(tr);
+   $('report').textContent=JSON.stringify(report,null,2);
+   if(!exact)throw Error('Output mismatch: '+item.case);
+  }
+  report.completed_at=new Date().toISOString();report.status='complete';$('status').textContent=`已完成 ${report.rows.length} 组；SVG、路线和质量指标全部一致。`;
+ }catch(error){report.status='failed';report.error=String(error.stack||error);$('status').textContent=report.error;}
+ $('report').textContent=JSON.stringify(report,null,2);$('run').disabled=false;
+};
+</script></html>

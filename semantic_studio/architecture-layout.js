@@ -529,24 +529,33 @@
       }
     }
     const reserved=context?.reserved||[];
+    // Normalize the fixed reservation snapshot once. Keep its original order
+    // so fractional overlap penalties are accumulated in exactly the same
+    // sequence as before, including zero-length reserved segments.
+    const reservationBounds=reserved.map(([c,d])=>({vertical:c.x===d.x,x:c.x,y:c.y,
+      left:Math.min(c.x,d.x),right:Math.max(c.x,d.x),top:Math.min(c.y,d.y),bottom:Math.max(c.y,d.y)}));
     if(reserved.length)for(const delta of [-12,12,-24,24,-40,40]){
       candidates.push([start,point(start.x,middle+delta),point(end.x,middle+delta),end]);
       const x=(start.x+end.x)/2+delta;candidates.push([start,point(x,start.y),point(x,end.y),end]);
     }
     const clear=ps=>ps.every((p,i)=>!i||!blocked(ps[i-1],p,boxes));
-    function congestion(a,b){let penalty=0;for(const [c,d]of reserved){
-      const vertical=a.x===b.x,otherVertical=c.x===d.x;
-      if(vertical===otherVertical){
-        if(vertical?a.x!==c.x:a.y!==c.y)continue;
-        const overlap=vertical?Math.min(Math.max(a.y,b.y),Math.max(c.y,d.y))-Math.max(Math.min(a.y,b.y),Math.min(c.y,d.y)):Math.min(Math.max(a.x,b.x),Math.max(c.x,d.x))-Math.max(Math.min(a.x,b.x),Math.min(c.x,d.x));
+    function congestion(a,b){let penalty=0;
+      const vertical=a.x===b.x,left=Math.min(a.x,b.x),right=Math.max(a.x,b.x),top=Math.min(a.y,b.y),bottom=Math.max(a.y,b.y);
+      for(const r of reservationBounds){
+      if(vertical===r.vertical){
+        if(vertical?a.x!==r.x:a.y!==r.y)continue;
+        const overlap=vertical?Math.min(bottom,r.bottom)-Math.max(top,r.top):Math.min(right,r.right)-Math.max(left,r.left);
         penalty+=Math.max(0,overlap)*24;
       }else{
-        const v=vertical?[a,b]:[c,d],h=vertical?[c,d]:[a,b];
-        if(v[0].x>Math.min(h[0].x,h[1].x)&&v[0].x<Math.max(h[0].x,h[1].x)&&h[0].y>Math.min(v[0].y,v[1].y)&&h[0].y<Math.max(v[0].y,v[1].y))penalty+=context?.crossingCost??18;
-        else if(context?.contactCost&&v[0].x>=Math.min(h[0].x,h[1].x)&&v[0].x<=Math.max(h[0].x,h[1].x)&&h[0].y>=Math.min(v[0].y,v[1].y)&&h[0].y<=Math.max(v[0].y,v[1].y))penalty+=context.contactCost;
+        const vx=vertical?a.x:r.x,hy=vertical?r.y:a.y,hleft=vertical?r.left:left,hright=vertical?r.right:right,vtop=vertical?top:r.top,vbottom=vertical?bottom:r.bottom;
+        if(vx>hleft&&vx<hright&&hy>vtop&&hy<vbottom)penalty+=context?.crossingCost??18;
+        else if(context?.contactCost&&vx>=hleft&&vx<=hright&&hy>=vtop&&hy<=vbottom)penalty+=context.contactCost;
       }
     }return penalty;}
-    const length=ps=>ps.reduce((s,p,i)=>s+(i?Math.abs(p.x-ps[i-1].x)+Math.abs(p.y-ps[i-1].y)+congestion(ps[i-1],p):0),0)+ps.length*12;
+    // Candidate arrays and the obstacle/reservation snapshot do not change
+    // during one route. Reuse scores without changing comparison or tie order.
+    const lengths=new WeakMap();
+    const length=ps=>{if(!lengths.has(ps))lengths.set(ps,ps.reduce((s,p,i)=>s+(i?Math.abs(p.x-ps[i-1].x)+Math.abs(p.y-ps[i-1].y)+congestion(ps[i-1],p):0),0)+ps.length*12);return lengths.get(ps);};
     let best=laneCandidates.filter(clear).sort((a,b)=>length(a)-length(b))[0]||candidates.filter(clear).sort((a,b)=>length(a)-length(b))[0];
     const crowded=best&&best.some((p,i)=>i&&congestion(best[i-1],p)>100);
     if(!best||crowded){
@@ -558,6 +567,11 @@
         const xs=[...new Set([start.x,end.x,...local.flatMap(r=>[r.x-2,r.x+r.w+2]),...nearby.flatMap(([a,b])=>a.x===b.x?[a.x-12,a.x+12]:[])])].sort((a,b)=>a-b);
         const ys=[...new Set([start.y,end.y,...local.flatMap(r=>[r.y-2,r.y+r.h+2]),...nearby.flatMap(([a,b])=>a.y===b.y?[a.y-12,a.y+12]:[])])].sort((a,b)=>a-b);
         const sx=xs.indexOf(start.x),sy=ys.indexOf(start.y),tx=xs.indexOf(end.x),ty=ys.indexOf(end.y);
+        // Both direction states may visit the same undirected adjacent grid
+        // segment. Only its obstacle/penalty result is shared; search costs,
+        // turn penalties, heap order and the visit budget remain unchanged.
+        // This cache belongs to this grid and route, never to another trial.
+        const segments=new Map();
         const key=(x,y,d)=>`${x},${y},${d}`,cost=new Map(),prev=new Map(),heap=[];
         function push(item){heap.push(item);let i=heap.length-1;while(i){const p=(i-1)>>1;if(heap[p].f<=item.f)break;heap[i]=heap[p];i=p;}heap[i]=item;}
         function pop(){const top=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let j=i*2+1;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[j].f>=last.f)break;heap[i]=heap[j];i=j;}heap[i]=last;}return top;}
@@ -566,8 +580,12 @@
           if(cur.x===tx&&cur.y===ty){final=cur.k;break;}
           for(const [dx,dy,d]of [[-1,0,'h'],[1,0,'h'],[0,-1,'v'],[0,1,'v']]){
             const x=cur.x+dx,y=cur.y+dy;if(x<0||y<0||x>=xs.length||y>=ys.length)continue;
-            const p=point(xs[x],ys[y]),from=point(xs[cur.x],ys[cur.y]);if(blocked(from,p,boxes))continue;
-            const g=cur.g+Math.abs(p.x-from.x)+Math.abs(p.y-from.y)+congestion(from,p)+(cur.d!==d&&cur.d!=='s'?24:0),k=key(x,y,d);
+            const p=point(xs[x],ys[y]),from=point(xs[cur.x],ys[cur.y]);
+            const segmentKey=(Math.min(y,cur.y)*xs.length+Math.min(x,cur.x))*2+(d==='v'?1:0);
+            let segment=segments.get(segmentKey);
+            if(!segment){const hit=blocked(from,p,boxes);segment={blocked:hit,penalty:hit?0:congestion(from,p)};segments.set(segmentKey,segment);}
+            if(segment.blocked)continue;
+            const g=cur.g+Math.abs(p.x-from.x)+Math.abs(p.y-from.y)+segment.penalty+(cur.d!==d&&cur.d!=='s'?24:0),k=key(x,y,d);
             if(g>=(cost.get(k)??Infinity))continue;cost.set(k,g);prev.set(k,cur.k);
             push({x,y,d,g,k,f:g+Math.abs(p.x-end.x)+Math.abs(p.y-end.y)});
           }

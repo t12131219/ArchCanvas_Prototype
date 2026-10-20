@@ -78,7 +78,7 @@ def main():
     assert len(read('receipt-report.json')['rows']) == len(read('svg-report.json')['results']) == len(rows)
     assert all(r['passed'] for r in read('receipt-report.json')['rows'] + read('svg-report.json')['results'])
     tests = read('test-report.json')
-    assert sum(tests['counts'].values()) == 539 and tests['counts']['adaptive-role-paths'] == 6
+    assert sum(tests['counts'].values()) == 543 and tests['counts']['adaptive-role-paths'] == 6 and tests['counts']['route-memoization'] == 4
     for file, expected in tests['implementation_sha256'].items():
         assert sha(ROOT / file) == expected, ('stale tests', file)
     for row in tests['commands']:
@@ -119,7 +119,7 @@ def main():
     files = ['render-report.json', 'receipt-report.json', 'svg-report.json', 'native-text-report.json', 'test-report.json', 'ui-report.json', 'ui-svg-report.json', 'visual-review.json', 'source-expandability.json']
     support = ['tools/summarize_adaptive_role_paths.py', 'tools/summarize_publication_checks.py', 'tools/build_adaptive_role_path_review.py', 'tools/render_adaptive_role_transformer.cjs']
     result = {'schema': 'adaptive-role-paths-validation/1', 'evidence_consistent': True, 'goal_complete': False, 'pending_checks': pending,
-        'render_report_sha256': digest, 'tests': 539, 'svg_panels': len(rows), 'additional_ui_svg_panels': 2,
+        'render_report_sha256': digest, 'tests': sum(tests['counts'].values()), 'svg_panels': len(rows), 'additional_ui_svg_panels': 2,
         'native_node_texts': sum(r['node_texts'] for r in native['results']), 'native_edge_labels': sum(r['port_texts'] for r in native['results']),
         'generic_sequence': ui['generic_sequence'], 'comparisons': report['comparisons'],
         'limitations': ['Partial role paths improve local granularity, not global summary/detail optimization or complete dedicated-reference convergence.',

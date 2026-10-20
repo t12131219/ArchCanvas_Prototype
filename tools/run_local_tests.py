@@ -35,6 +35,7 @@ COMMANDS = {
     'dependency-dags': ['node', 'tests/dependency-dags.test.cjs'],
     'summary-coverage': ['node', 'tests/summary-coverage.test.cjs'],
     'coverage-selection': ['node', 'tests/coverage-selection.test.cjs'],
+    'condition-predicates': ['node', 'tests/condition-predicates.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],

@@ -225,6 +225,7 @@
       title=role;if(operation)caption=operation+(caption?' · '+caption:'');
       else if(n.contract_roles)caption=n.label;
     }
+    if(n.condition_predicate){title='If '+n.condition_predicate.label;caption='Conditional alternatives · exact interfaces';}
     if(n.contract_stage){title='Add & Norm';caption=n.contract_stage.normalization_type.split('.').at(-1)+' · Post-Norm';}
     if(n.local_pipeline&&!n.local_pipeline_expanded){
       const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
@@ -756,6 +757,8 @@
     // counts. A local summary must not consume an unrelated region's budget.
     const stages=stageEngine?.compile({ir,plan:focused.plan});
     if(stages){focused.plan=stages.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
+    const predicateStages=canvas&&granularity==='roles'&&state.paperConditionPredicates!==false?Regions.predicates({ir,plan:focused.plan}):null;
+    if(predicateStages){focused.plan=predicateStages.plan;idx=index(focused.plan);for(const r of predicateStages.rows)idx.nodes.get(r.group).content_inventory=inventory(idx.children.get(r.group)||[],idx);for(const n of focused.plan.nodes)decorate(n,idx);}
     // A closed module owns its interface. Contracting that interface would
     // expose each internal consumer as another, misleading boundary arrow.
     for(const n of ir.nodes)if(n.kind==='interface'&&!open.includes(n.parent))pol.bindings.delete(n.id);
@@ -815,6 +818,8 @@
       projected.publication.frame_ownership=projected.frame_ownership||[];
       if(roleFrontier)projected.publication.role_frontier=roleEngine.receipt(roleFrontier,projected);
       if(stages)projected.publication.contract_stages=stageEngine.receipt(stages,projected);
+      if(predicateStages)projected.publication.condition_predicates={rule_version:'condition-predicates/1',rows:predicateStages.rows.map(r=>({...r,
+        status:projected.positions.has(r.group)?projected.positions.get(r.group).expanded?'expanded':'summary':'folded'}))};
       if(pipelines)projected.publication.local_pipelines=pipelineEngine.receipt(pipelines,projected);
       if(expressions)projected.publication.local_expressions=expressionEngine.receipt(expressions,projected);
       projected.publication.canvas_limits={width_px:limit('width_px',8192,512,16384),height_px:limit('height_px',16384,512,32768),

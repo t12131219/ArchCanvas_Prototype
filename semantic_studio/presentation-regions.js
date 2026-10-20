@@ -2,7 +2,7 @@
  * result is a presentation partition, never a certificate of an algorithm. */
 (function(root){
   'use strict';
-  const VERSION='presentation-regions/1';
+  const VERSION='presentation-regions/2';
   function candidates({nodes,children,parent,edges,relations,resolve,eligible,maxUnits=8}){
     const by=new Map(nodes.map(n=>[n.id,n])),units=(children.get(parent)||[]).filter(eligible),active=new Set(units);
     const owner=id=>{while(id!=null&&!active.has(id)){if(id===parent)return null;id=by.get(id)?.parent;}return id;};
@@ -83,5 +83,42 @@
     return {schema:VERSION,parent,proposals,rejected,protected:units.filter(id=>reasons.get(id).length&&!claimed.has(id)).map(id=>({id,reasons:reasons.get(id)})),
       ungrouped:units.filter(id=>!claimed.has(id)),basis:'local-boundaries-and-connected-acyclic-computation'};
   }
-  const api={VERSION,candidates};root.SemanticPresentationRegions=api;if(typeof module!=='undefined')module.exports=api;
+  function predicates({ir,plan}){
+    const nodes=plan.nodes.map(n=>({...n})),by=new Map(nodes.map(n=>[n.id,n])),raw=new Map(ir.nodes.map(n=>[n.id,n])),rows=[],claimed=new Set();
+    const guarded=n=>!n||n.condition||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||n.kind==='opaque';
+    const effect=n=>!n||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||
+      ['opaque','state','buffer'].includes(n.kind)||n.repeat_contract||n.iteration;
+    const changes=new Map();
+    for(const group of nodes){
+      const selection=group.boundary_selection;
+      if(!group.presentation_only||group.semantic_type!=='conditional-collection'||!selection||selection.members.length>=8)continue;
+      const controls=nodes.filter(n=>n.parent===group.id&&n.kind==='control'&&n.operator==='if');
+      if(controls.length!==1)continue;
+      const control=controls[0],inputs=ir.edges.filter(e=>e.target===control.id),edge=inputs.length===1?inputs[0]:null,test=edge&&by.get(edge.source);
+      // The comparison joins its existing if container only after logical
+      // detail allocation. It cannot release budget to open unrelated scopes.
+      if(guarded(control)||edge?.kind!=='control'||edge.condition||!test||test.kind!=='compute'||test.operator!=='compare'||
+        !raw.has(test.id)||test.parent!==group.parent||guarded(test)||test.semantic_contracts?.length||claimed.has(test.id)||
+        ir.edges.filter(e=>e.source===test.id).length!==1||ir.edges.some(e=>e.target===test.id&&(e.condition||!['data','alias','interface-binding'].includes(e.kind)))||
+        selection.canonical_members.some(id=>effect(raw.get(id)))||ir.edges.some(e=>e.target===test.id&&selection.canonical_members.includes(e.source))||
+        plan.relation_graph?.relations.some(r=>r.node===test.id&&['state-interface','selection','same-object-calls','observed-parameter-aliases'].includes(r.type)))continue;
+      const members=[test.id,...group.canonical_members],inside=new Set(members);
+      const cuts=ir.edges.filter(e=>inside.has(e.source)!==inside.has(e.target)),incoming=cuts.filter(e=>inside.has(e.target)),outgoing=cuts.filter(e=>inside.has(e.source));
+      const predicate={node:test.id,control:control.id,edge:edge.id,source_port:edge.source_port??'out',target_port:edge.target_port??'in',
+        label:control.label||'if',scope:'Direct exclusive comparison input to this source if; no purity or branch reachability claim.'};
+      const next={...selection,members:[test.id,...selection.members],canonical_members:members,boundary_edges:cuts.map(e=>e.id),
+        input_edges:incoming.map(e=>e.id),output_edges:outgoing.map(e=>e.id),escaping_results:[...new Set(outgoing.map(e=>JSON.stringify([e.source,e.source_port])))].map(s=>JSON.parse(s)),
+        internal_edges:ir.edges.filter(e=>inside.has(e.source)&&inside.has(e.target)).length,cut_edges:cuts.length,predicate};
+      next.cohesion=next.internal_edges/Math.max(1,next.internal_edges+cuts.length);
+      group.canonical_members=members;group.boundary_ports=cuts.map(e=>({...e}));group.boundary_selection=next;group.condition_predicate=predicate;
+      group.label='If '+predicate.label;group.region_summary='Conditional alternatives · exact interfaces';test.parent=group.id;
+      changes.set(group.id,next);claimed.add(test.id);rows.push({group:group.id,...predicate,canonical_members:members,cuts:group.boundary_ports});
+    }
+    const publication=plan.publication?{...plan.publication,boundary_plans:plan.publication.boundary_plans?.map(p=>({...p,proposals:p.proposals.map(c=>changes.get(c.id)||c)}))}:plan.publication;
+    const findings=plan.findings?.map(f=>changes.has(f.id)?{...f,label:by.get(f.id).label,members:changes.get(f.id).members.slice(),
+      roles:{...f.roles,units:changes.get(f.id).members.slice(),boundary_selection:changes.get(f.id)},
+      proof:[...f.proof,'The direct comparison is exclusively consumed by this source if; predicate and branch details remain expandable.']}:f);
+    return {plan:{...plan,nodes,publication,findings},rows};
+  }
+  const api={VERSION,candidates,predicates};root.SemanticPresentationRegions=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

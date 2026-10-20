@@ -131,28 +131,89 @@ class Contracts:
                     not_asserted=['identity branch computation', 'in-place alias equivalence'])
                 break
 
+    def local_unary_chain(self, frame, allowed):
+        """Prove a whole source scope from its return and exact unary operands.
+
+        Source helpers are retained as independently identified enclosures;
+        only their explicit one-to-one interface bindings are traversed. A
+        containing wrapper is not a second semantic owner of the same chain.
+        """
+        members = [frame, *self.descendants(frame)]
+        scope = set(members)
+        nodes = [self.by[i] for i in members]
+        computations = {n['id'] for n in nodes if n['kind'] == 'compute'}
+        if not computations or any(self.by[i].get('operator') not in allowed for i in computations):
+            return None
+        for n in nodes:
+            if (n['kind'] in {'opaque', 'control', 'state', 'buffer'} or n.get('mutable') or n.get('condition') or
+                n.get('iteration_contract') or n.get('repeat_contract') or n.get('iteration') or n.get('return_selection') or
+                n.get('evidence_status') == 'runtime-only' or n.get('operator') == 'phi' or
+                n.get('constructor', {}).get('kwargs', {}).get('inplace') is True):
+                return None
+        edges = [e for e in self.ir['edges'] if e['source'] in scope or e['target'] in scope]
+        if any(e.get('condition') or e['kind'] not in FLOW | {'parameter-read'} for e in edges):
+            return None
+        outputs = [self.by[i] for i in self.children.get(frame, []) if self.by[i]['kind'] == 'interface' and self.by[i].get('role') == 'output']
+        if len(outputs) != 1:
+            return None
+        current = self.resolve(outputs[0]['id'], stop=frame)
+        reverse, seen = [], set()
+        while current and current not in seen and current[0] in computations:
+            seen.add(current)
+            if current[1] != 'out':
+                return None
+            incoming = self.incoming(current[0])
+            if len(incoming) != 1 or incoming[0]['target_port'] != 'arg:0':
+                return None
+            reverse.append(current[0])
+            current = self.operand(current[0], 'arg:0', frame)
+        if set(reverse) != computations or not current or current[1] != 'out':
+            return None
+        start = self.node(current)
+        if start.get('source_parent', start.get('parent')) != frame or start.get('role') != 'input' or start['kind'] != 'interface':
+            return None
+        operations = list(reversed(reverse))
+        # Nearest common source ancestor, independent of motif/drawing parents.
+        ancestors = []
+        for identity in operations:
+            chain = []
+            parent = self.by[identity].get('source_parent', self.by[identity].get('parent'))
+            while parent in self.by:
+                chain.append(parent)
+                parent = self.by[parent].get('source_parent', self.by[parent].get('parent'))
+            ancestors.append(chain)
+        common = next((i for i in ancestors[0] if all(i in chain for chain in ancestors[1:])), None)
+        if common != frame:
+            return None
+        helpers = []
+        for n in nodes:
+            if n['kind'] != 'composite' or n['id'] == frame:
+                continue
+            closure = [n['id'], *self.descendants(n['id'])]
+            inside = set(closure)
+            if inside & computations:
+                helpers.append({'node': n['id'], 'source_parent': n.get('source_parent', n.get('parent')),
+                    'members': closure, 'cuts': [e['id'] for e in self.ir['edges'] if (e['source'] in inside) != (e['target'] in inside)]})
+        return {'rule_version': 'source-local-chain/1', 'operations': operations,
+                'input': {'node': current[0], 'slot': current[1]}, 'output': outputs[0]['id'], 'helpers': helpers}
+
     def feedforward(self, frame):
-        children = [self.by[i] for i in self.children.get(frame, [])]
-        computations = [n for n in children if n['kind'] == 'compute']
-        if len([n for n in computations if n.get('operator') == 'linear']) != 2 or any(n['kind'] in {'opaque', 'control', 'state'} or n.get('mutable') for n in children): return
-        if any(n.get('operator') not in {'linear', 'activation', 'dropout', 'identity'} for n in computations): return
-        ends = [n for n in computations if n.get('operator') == 'linear']
-        for last in ends:
-            current = self.operand(last['id'], 'arg:0', frame)
-            activated, members, seen = None, [last['id']], set()
-            while current and current not in seen:
-                seen.add(current)
-                n = self.node(current)
-                if n.get('operator') == 'linear':
-                    if activated and n['id'] != last['id'] and len(members) + 1 == len(computations):
-                        self.ffn[frame] = self.certify('feed-forward', frame,
-                            {'input_projection': n['id'], 'activation': activated, 'output_projection': last['id'], 'output': last['id']},
-                            ['the entire local computation is a Linear → activation → Linear dependency chain; explicit wrappers retained'])
-                    break
-                if n.get('operator') not in {'activation', 'dropout', 'identity'}: break
-                members.append(n['id'])
-                if n.get('operator') == 'activation': activated = n['id']
-                current = self.operand(n['id'], 'arg:0', frame)
+        chain = self.local_unary_chain(frame, {'linear', 'activation', 'dropout', 'identity'})
+        if not chain:
+            return
+        operations = chain['operations']
+        if (self.by[operations[0]].get('operator') != 'linear' or self.by[operations[-1]].get('operator') != 'linear' or
+            sum(self.by[i].get('operator') == 'linear' for i in operations) != 2):
+            return
+        activations = [i for i in operations if self.by[i].get('operator') == 'activation']
+        if not activations:
+            return
+        cert = self.certify('feed-forward', frame,
+            {'input_projection': operations[0], 'activation': activations[0], 'output_projection': operations[-1], 'output': operations[-1]},
+            ['the entire local computation is a Linear → activation → Linear dependency chain; explicit wrappers retained'],
+            not_asserted=['independent projection parameters', 'helper purity or arbitrary alias equivalence'])
+        cert['source_chain'] = chain
+        self.ffn[frame] = cert
 
     def _variants(self, value, leaf, allowed, seen=None):
         """All value alternatives must reach the same certified base.
@@ -317,3 +378,20 @@ def recognize_contracts(ir):
         ir['semantic_contracts'] = certificates
         ir['semantic_contract_basis'] = source_graph_digest(ir)
     return ir
+
+
+def validate_source_chains(ir):
+    """Re-derive the new chain witness; a sealed list of IDs is insufficient."""
+    errors = []
+    for cert in ir.get('semantic_contracts', []):
+        if 'source_chain' not in cert:
+            continue
+        try:
+            engine = Contracts(ir)
+            engine.feedforward(cert['node'])
+            actual = engine.ffn.get(cert['node'])
+            if cert['rule'] != 'feed-forward' or not actual or any(cert.get(key) != actual[key] for key in ['source_chain', 'roles', 'members', 'edges', 'proof']):
+                errors.append('invalid source chain evidence: ' + cert['id'])
+        except (KeyError, TypeError, RecursionError):
+            errors.append('invalid source chain evidence: ' + cert['id'])
+    return errors

@@ -96,6 +96,8 @@ def validate_ir(ir):
             errors.append('invalid semantic certificate: ' + c['id'])
         if not set(c.get('dependencies', [])) <= certificates.keys() or not c.get('proof') or not c.get('scope'):
             errors.append('missing semantic certificate evidence: ' + c['id'])
+    from .contracts import validate_source_chains
+    errors.extend(validate_source_chains(ir))
     for n in nodes:
         if n.get('return_selection'):
             selected = n['return_selection']['selected']

@@ -7,7 +7,16 @@ const goals=ir=>G.build(ir,P.plan(ir)).goals;
 function atlas(ir,options={}){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'representative-atlas-'));return{dir,manifest:exportAtlas(ir,dir,options)};}
 test('one common structure panel covers different source wrappers while every concrete boundary is direct',()=>{
   const ir=read('EquivalentSteps'),before=JSON.stringify(ir),{manifest:m,dir}=atlas(ir);
-  assert.equal(m.complete,true);assert.equal(m.quality_pass,true);assert.equal(m.panels.length,3);
+  assert.equal(m.complete,true);assert.equal(m.quality_pass,true);
+  // Shared computations can use a representative; a real result feeding the
+  // next instance must retain its own producer and both receiving operations.
+  const fanout=m.expression_goals.filter(g=>g.kind==='source-uses');assert.equal(fanout.length,3);
+  assert.equal(m.panels.length,3+fanout.length);
+  for(const goal of fanout){
+    assert.deepEqual(goal.coverage_methods,['direct']);assert.equal(goal.status,'fulfilled');
+    assert.ok(goal.panels.some(file=>{const panel=m.panels.find(p=>p.svg===file),doc=JSON.parse(fs.readFileSync(path.join(dir,panel.document)));
+      return goal.core.every(id=>doc.layout.nodes.some(n=>n.id===id))&&goal.edges.every(id=>doc.layout.edges.some(e=>e.route.ok&&(e.id===id||e.originals?.includes(id))));}));
+  }
   for(const file of ['symbolic-values.js','structural-representatives.js','sequence-frontier.js'])assert.match(m.implementation_sha256['semantic_studio/'+file],/^[a-f0-9]{64}$/);
   const shared=m.expression_goals.filter(g=>g.coverage_methods.includes('structural-representative'));
   assert.equal(shared.length,6);

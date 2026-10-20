@@ -31,6 +31,7 @@ COMMANDS = {
     'local-pipelines': ['node', 'tests/local-pipelines.test.cjs'],
     'composed-paths': ['node', 'tests/composed-paths.test.cjs'],
     'dependency-trees': ['node', 'tests/dependency-trees.test.cjs'],
+    'frontier-reservations': ['node', 'tests/frontier-reservations.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],

@@ -2,12 +2,15 @@
  * Goals are evaluated against the selected, routed panel, not export intent. */
 (function(root){
   'use strict';
-  const VERSION='expression-goals/1';
+  const VERSION='expression-goals/2';
   function build(ir,plan){
     const by=new Map(ir.nodes.map(n=>[n.id,n])),goals=[],covered=new Set();
     for(const r of plan.relation_graph?.relations||[]){
-      if(r.type==='source-uses')continue;
       const core=[r.node];
+      // Reusing one result is an independently expressible relationship even
+      // when no larger module is recognized. The producer and every receiving
+      // operation must be physically present, with all exact operand paths.
+      if(r.type==='source-uses')core.push(...r.bindings.map(b=>b.target));
       if(['gated-product','gated-join'].includes(r.type))core.push(...r.bindings.filter(b=>b.role==='gate'||b.role.endsWith(':gate')||b.role.startsWith('sum:')).map(b=>b.producer));
       if(r.type==='conditional-join'||r.type==='conditional-region')core.push(...r.members.filter(id=>by.get(id)?.kind==='control'));
       core.push(...r.properties.required_nodes||[]);

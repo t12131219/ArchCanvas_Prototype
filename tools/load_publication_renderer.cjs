@@ -3,10 +3,10 @@
  * and can accidentally mix an old layout engine with the current renderer. */
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-module.exports=function loadRenderer(directory){
+module.exports=function loadRenderer(directory,{engine=false}={}){
   const context=vm.createContext({});
   for(const name of ['symbolic-values.js','structural-representatives.js','sequence-frontier.js','frame-ownership.js','role-frontier.js','contract-stages.js','dimension-paths.js','local-pipelines.js','local-expressions.js','local-relations.js','relation-constraints.js','expression-goals.js','architecture.js','architecture-layout.js','semantic-engine.js','branch-regions.js','presentation-regions.js','publication.js','adaptive-frontier.js','publication-renderer.js']){
     const file=path.join(directory,name);if(['adaptive-frontier.js','symbolic-values.js','structural-representatives.js','sequence-frontier.js','frame-ownership.js','role-frontier.js','contract-stages.js','dimension-paths.js','local-pipelines.js','local-expressions.js','local-relations.js','relation-constraints.js','expression-goals.js','presentation-regions.js'].includes(name)&&!fs.existsSync(file))continue;vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
   }
-  return context.SemanticPublicationRenderer;
+  return engine?context.SemanticEngine:context.SemanticPublicationRenderer;
 };

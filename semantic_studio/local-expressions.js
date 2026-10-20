@@ -17,7 +17,7 @@
       ['loop-template','iteration-region','serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)&&!n.sequence_frontier?'iteration-or-repeat':null;
     for(const r of plan.relation_graph?.relations||[]){
       const explicit=requested.has(r.id);
-      if((!forms[r.type]&&!explicit)||r.type==='source-uses'||!within(r.node,focus))continue;
+      if((!forms[r.type]&&!explicit)||!within(r.node,focus))continue;
       const targets=[...new Set([r.node,...(forms[r.type]==='calculation'?r.members:forms[r.type]==='identity'?r.members:[]),
         ...(r.properties.required_nodes||[]),...(forms[r.type]==='condition'?r.members.filter(id=>by.get(id)?.kind==='control'):[]),
         ...(explicit?r.bindings.flatMap(b=>[b.producer,b.target]):[])])];

@@ -15,6 +15,8 @@ def main():
         OUT = ROOT / 'verification/adaptive-frontier/current'
     if '--trees' in sys.argv:
         OUT = ROOT / 'verification/dependency-trees/current'
+    if '--reservations' in sys.argv:
+        OUT = ROOT / 'verification/frontier-reservations/current'
     report = json.loads((OUT / 'render-report.json').read_text())
     results = []
     for row in report['rows']:

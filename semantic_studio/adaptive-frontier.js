@@ -2,7 +2,7 @@
  * are deliberately absent: candidates are existing roles or relation paths. */
 (function(root){
   'use strict';
-  const VERSION='adaptive-frontier/1';
+  const VERSION='adaptive-frontier/2';
   const Expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
   const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
   function candidates(graph,state={}){
@@ -17,7 +17,7 @@
       const targets=[...new Set(refs(c.roles))];
       if(targets.some(id=>id!==c.node))out.push({id:'roles:'+c.node,kind:'roles',node:c.node,priority:2,targets,scope:c.scope});
     }
-    const relations=(plan.relation_graph?.relations||[]).filter(r=>r.type!=='source-uses'&&!selectedExpressions.has(r.id)&&
+    const relations=(plan.relation_graph?.relations||[]).filter(r=>!selectedExpressions.has(r.id)&&
       (graph.positions.has(r.node)||graph.positions.has(graph.representatives[r.node])));
     const frontier=Expressions.compile({plan,focus:graph.publication.focus,details:relations.map(r=>r.id)}),dedup=new Set();
     for(const r of frontier.requests.filter(r=>r.requested).sort((a,b)=>Number(critical.has(b.type))-Number(critical.has(a.type))||a.relation.localeCompare(b.relation))){

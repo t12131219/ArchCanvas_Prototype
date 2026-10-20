@@ -683,7 +683,7 @@
         const sourceWrapper=id=>{const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(eligible).map(id=>idx.nodes.get(id));return ['source-function','source-module'].includes(n.semantic_type)&&!n.semantic_contracts?.length&&kids.some(n=>n.kind==='composite')&&kids.every(n=>['interface','composite','state','buffer'].includes(n.kind));};
         const cost=id=>idx.nodes.get(id).kind==='interface'?.25:1;
         const used=leaves.reduce((s,id)=>s+cost(id),0);
-        const candidate=containers.filter(id=>{if(idx.nodes.get(id).contract_stage||summarized(id))return false;if(roleFrontier?.ownerOf(id)&&!roleFrontier.open.has(id))return false;const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(eligible);return !['boundary-interface-group','dependency-band','dependency-panel','serial-repeat'].includes(n.semantic_type)&&(containers.length===1||wrapper(id)||sourceWrapper(id))&&used+kids.reduce((s,id)=>s+cost(id),0)-cost(id)<=budget;}).sort((a,b)=>{
+        const candidate=containers.filter(id=>{if(idx.nodes.get(id).contract_stage)return false;if(roleFrontier?.ownerOf(id)&&!roleFrontier.open.has(id))return false;const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(eligible);return !['boundary-interface-group','dependency-band','dependency-panel','serial-repeat'].includes(n.semantic_type)&&(containers.length===1||wrapper(id)||sourceWrapper(id))&&used+kids.reduce((s,id)=>s+cost(id),0)-cost(id)<=budget;}).sort((a,b)=>{
           const score=id=>{const n=idx.nodes.get(id);return (n.semantic_type==='sequential'?10:0)+(n.semantic_type==='structural-region'?-10:0)-(idx.children.get(id)||[]).filter(eligible).length;};return score(b)-score(a);
         })[0];
         if(!candidate)break;
@@ -699,7 +699,7 @@
       if(granularity!=='overview'){
         const frontier=()=>{const leaves=[],todo=[focus];for(let i=0;i<todo.length;i++){const id=todo[i];if(!eligible(id))continue;if(open.includes(id))todo.push(...idx.children.get(id)||[]);else leaves.push(id);}return leaves;};
         const cost=id=>idx.nodes.get(id).kind==='interface'?.25:1;
-        const blocked=n=>n.contract_stage||summarized(n.id)||(roleFrontier?.ownerOf(n.id)?!roleFrontier.open.has(n.id):['semantic','roles'].includes(granularity)&&n.semantic_contracts?.length)||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
+        const blocked=n=>n.contract_stage||(roleFrontier?.ownerOf(n.id)?!roleFrontier.open.has(n.id):['semantic','roles'].includes(granularity)&&n.semantic_contracts?.length)||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
         const scopeOf=id=>{let at=idx.nodes.get(id)?.parent;while(at){if(idx.nodes.get(at)?.sequence_frontier||frontierScopes.has(at))return at;at=idx.nodes.get(at)?.parent;}return null;};
         const usedIn=scope=>{const seen=new Set();return frontier().reduce((total,id)=>{const localScope=scopeOf(id);if(scope)return total+(localScope===scope?cost(id):0);if(localScope){if(seen.has(localScope))return total;seen.add(localScope);return total+1;}return total+cost(id);},0);};
         const localUsed=scope=>{
@@ -723,6 +723,24 @@
         }
       }
       if(expressions)open=expressionEngine.select(expressions,{plan:focused.plan,focus,open,budget,eligible,budgetScopes:frontierScopes});
+    }
+    // Choose the logical frontier before lowering a proved helper to its
+    // smaller presentation. Otherwise a new summary silently spends its
+    // released node budget opening unrelated computations. Role/relation
+    // requests still veto a summary; measured adaptive trials may explicitly
+    // reinvest the actual space later. Manual open states bypass this step.
+    let reservations=null;
+    if(pipelines&&state.paperAuto!==false&&!local){
+      const planned=open.slice(),selected=[...pipelines.values()].filter(p=>open.includes(p.node)&&summarized(p.node));
+      const outer=selected.filter(p=>!selected.some(other=>other!==p&&other.canonical_members.includes(p.node)));
+      const reserved=new Set(),rows=outer.map(p=>{
+        const members=new Set([p.node,...descendants(p.node,idx.children)]),reservedOpen=planned.filter(id=>members.has(id));
+        for(const id of reservedOpen)reserved.add(id);
+        return {node:p.node,reserved_open:reservedOpen,canonical_members:p.canonical_members};
+      });
+      open=open.filter(id=>!reserved.has(id));
+      if(rows.length)reservations={rule_version:'frontier-reservations/1',planned_open:planned,selected_open:open.slice(),summaries:rows,
+        scope:'Logical detail allocation precedes summary lowering. Released display space does not automatically open unrelated regions; explicit role/relation requests and manual expansion retain their own contracts.'};
     }
     if(local)open=state.paperCompact&&local.minimal_open?local.minimal_open:local.open;
     // Select evidence detail before presentation subregions change container
@@ -778,6 +796,7 @@
       wire_bundles:projected.edges.filter(e=>e.bundle_members).map(e=>({id:e.id,members:e.bundle_members.map(m=>m.id),values:e.bundle_values,tensor_equality:'not-asserted'})),
       configuration_arithmetic:pol.configurationArithmetic.filter(row=>allowed(row.node)),
       paper_width_mm:Math.max(80,Math.min(400,Number(state.paperWidthMm)||180)),fit_page:state.paperFitPage!==false,min_font_pt:8,unknowns:projected.nodes.filter(n=>!projected.positions.get(n.id).expanded).reduce((s,n)=>s+n.paper.unknown_count,0)};
+    if(reservations)projected.publication.frontier_reservations=reservations;
     if(canvas){
       const input=state.paperCanvasLimits||{},limit=(key,fallback,min,max)=>Number.isFinite(input[key])?Math.max(min,Math.min(max,input[key])):fallback;
       projected.publication.medium='canvas';

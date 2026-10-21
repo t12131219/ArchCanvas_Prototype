@@ -27,9 +27,39 @@
     }
     return result;
   }
-  // Parallel labelled wires need clearance where their visible branches meet,
-  // not in every helper in the figure. Use the drawing hierarchy after frame
-  // ownership; source nesting may no longer be the visible containment tree.
+  // Follow an expanded region's actual exit with its existing downstream
+  // nodes. Horizontal drawing alignment only; ranks, ownership and all
+  // dependencies remain unchanged. Multiple source regions keep DAG layout.
+  function regionFollowers(idx,nodes,edges,original){
+    const positions=new Map([...original].map(([id,p])=>[id,{...p}])),records=[],moved=new Set();
+    positions.context={...original.context,routeCache:new Map(),reserved:[]};
+    const owner=(id,parent)=>{while(id&&idx.nodes.get(id)?.parent!==parent)id=idx.nodes.get(id)?.parent;return id;};
+    const ordinary=e=>!e.design_route&&!e.layout_after&&(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition);
+    const overlap=(a,b)=>a.x<b.x+b.w+8&&a.x+a.w+8>b.x&&a.y<b.y+b.h+8&&a.y+a.h+8>b.y;
+    for(const n of nodes.slice().sort((a,b)=>positions.get(a.id).y-positions.get(b.id).y)){
+      const p=positions.get(n.id),parent=positions.get(n.parent);
+      if(p.expanded||p.cyclic||!parent?.expanded||!['compute','composite','interface','opaque'].includes(n.kind)||
+        n.condition||n.mutable||n.identity_display||n.observed_calls)continue;
+      const incoming=edges.filter(e=>e.target===n.id),incident=edges.filter(e=>e.source===n.id||e.target===n.id);
+      if(!incoming.length||incident.some(e=>!ordinary(e)))continue;
+      const regions=[...new Set(incoming.map(e=>owner(e.source,n.parent)))];
+      if(regions.length!==1||!regions[0]||regions[0]===n.id)continue;
+      const source=positions.get(regions[0]);
+      if(!source||source.cyclic||(!source.expanded&&!moved.has(regions[0]))||p.y<source.y+source.h)continue;
+      const center=incoming.reduce((sum,e)=>{const at=positions.get(e.source);return sum+at.x+at.w/2;},0)/incoming.length;
+      const lanes=positions.context.contextLanes.filter(c=>c.owner===n.parent&&c.selected!==false);
+      const left=parent.x+16+(parent.design_gutter||0)+(lanes.some(c=>c.side==='left')?(parent.context_gutter||0):0);
+      const right=parent.x+parent.w-16-(lanes.some(c=>c.side==='right')?(parent.context_gutter||0):0)-p.w;
+      if(right<left)continue;
+      const x=Math.max(left,Math.min(right,center-p.w/2));
+      if(Math.abs(x-p.x)<1||nodes.some(k=>k.parent===n.parent&&k.id!==n.id&&overlap({...p,x},positions.get(k.id))))continue;
+      records.push({node:n.id,parent:n.parent,source_region:regions[0],before:{x:p.x,y:p.y},after:{x,y:p.y},
+        inputs:incoming.map(e=>({edge:e.id,source:e.source,target:e.target,source_port:e.source_port,target_port:e.target_port})),
+        scope:'Existing region exit and downstream terminals; horizontal drawing alignment only, no sequencing or equivalence assertion.'});
+      p.x=x;moved.add(n.id);
+    }
+    return {positions,records};
+  }
   // Only an existing, unguarded side entry may face its receiving region.
   // Ancestor boundaries and semantic state/bypass terminals keep their policy.
   function contextSourceSide(edge,positions){
@@ -42,6 +72,9 @@
     if(from.x>=owner.x+owner.w)return 'left';
     return null;
   }
+  // Parallel labelled wires need clearance where their visible branches meet,
+  // not in every helper in the figure. Use the drawing hierarchy after frame
+  // ownership; source nesting may no longer be the visible containment tree.
   function labelClearances(idx,edges){
     const pairs=new Map(),regions=new Map();
     for(const e of edges){const key=JSON.stringify([e.source,e.target]);if(!pairs.has(key))pairs.set(key,[]);pairs.get(key).push(e);}
@@ -646,5 +679,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

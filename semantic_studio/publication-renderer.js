@@ -754,8 +754,32 @@
       scope:'One source-facing routing candidate at identical node geometry and semantic frontier. Exact operands, distinct uses and existing realized relations are retained.'};
     return chosen;
   }
+  function prepareRegionFollowers(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperRegionFollowers===false||
+      Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
+    const proposal=L.regionFollowers(g.idx,g.nodes,g.edges,g.positions);
+    if(!proposal.records.length)return baseline;
+    const graph={...g,positions:proposal.positions,constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
+    const trial={graph,prepared:prepare(graph)},q=trial.prepared.quality;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const before=realizedRelations(baseline),after=realizedRelations(trial),conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    const accepted=(q.line_geometry.crossings<b.line_geometry.crossings||q.wire_length<b.wire_length-1)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      areaMetric(q)<=areaMetric(b)&&q.wire_length<=b.wire_length&&conflicts(trial).every(id=>conflicts(baseline).includes(id))&&
+      Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const chosen=accepted?trial:baseline;
+    if(accepted)chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing};
+    chosen.prepared.routing.region_follower_refinement={accepted,records:proposal.records,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      realized_before:before,realized_candidate:after,
+      scope:'One measured horizontal alignment of existing downstream nodes with a single expanded source region. Identical semantic frontier, ranks, containment and exact operand identities.'};
+    return chosen;
+  }
   function prepareFigure(ir,state={}){
-    return attachExpressionEvidence(ir,prepareContextSources(ir,state,selectFigure(ir,state)));
+    return attachExpressionEvidence(ir,prepareRegionFollowers(ir,state,prepareContextSources(ir,state,selectFigure(ir,state))));
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));

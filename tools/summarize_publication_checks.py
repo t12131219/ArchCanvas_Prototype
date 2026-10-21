@@ -373,6 +373,8 @@ if __name__ == '__main__':
             from summarize_contract_stages import main as summarize_stage
         elif stage == 'local-pipelines':
             from summarize_local_pipelines import main as summarize_stage
+        elif stage == 'region-followers':
+            from summarize_region_followers import main as summarize_stage
         elif stage == 'flow-entries':
             from summarize_flow_entries import main as summarize_stage
         elif stage == 'branch-columns':

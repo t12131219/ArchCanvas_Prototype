@@ -1,4 +1,4 @@
-"""Compare actual pre-repair/current SVGs without changing their geometry."""
+"""Reproduce the isolated rail repair using its two immutable Git snapshots."""
 import hashlib
 import json
 from pathlib import Path
@@ -9,20 +9,21 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'verification/cohort-folds/current'
 BASE = '41db091'
+REPAIRED = '3bce795'
 REPORT = OUT / 'large-render-report.json'
 sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
 
 
 def main():
-    report = json.loads(REPORT.read_text())
+    frozen = lambda path: subprocess.check_output(['git', 'show', REPAIRED + ':' + str(path.relative_to(ROOT))], cwd=ROOT)
+    report_bytes = frozen(REPORT)
+    report = json.loads(report_bytes)
+    prior_checks = json.loads(frozen(OUT / 'rail-report.json'))['checks']
     candidates = []
-    for row in report['rows']:
-        if '-current-' not in row['name']:
-            continue
-        doc = json.loads((OUT / row['document']).read_text())
-        receipt = doc['diagnostics']['routing'].get('parallel_rail_repair')
-        if receipt and receipt['accepted']:
-            candidates.append((row, receipt))
+    for check in prior_checks:
+        row = next(r for r in report['rows'] if r['name'] == check['name'])
+        assert row['svg_sha256'] == check['current_sha256']
+        candidates.append((row, check['receipt']))
     assert candidates, 'No accepted final rail repair was measured.'
     checks, sections = [], []
     for row, receipt in candidates:
@@ -30,7 +31,10 @@ def main():
         old_path = OUT / old_name
         old_path.write_bytes(subprocess.check_output(
             ['git', 'show', BASE + ':' + str((OUT / row['svg']).relative_to(ROOT))], cwd=ROOT))
-        old, new = [ET.fromstring(p.read_text()) for p in [old_path, OUT / row['svg']]]
+        fixed_path = OUT / (row['name'] + '-rail-fixed.svg')
+        fixed_path.write_bytes(frozen(OUT / row['svg']))
+        assert sha(fixed_path) == row['svg_sha256']
+        old, new = [ET.fromstring(p.read_text()) for p in [old_path, fixed_path]]
         select = lambda t, key: {n.get(key): n for n in t.iter() if n.get(key)}
         old_nodes, new_nodes = select(old, 'data-node-id'), select(new, 'data-node-id')
         assert set(old_nodes) == set(new_nodes)
@@ -47,8 +51,8 @@ def main():
                 aa, bb = terminals(a), terminals(b)
                 assert aa[0] == bb[0] and aa[-1] == bb[-1]
         assert changed
-        check = dict(name=row['name'], previous_commit=BASE, previous=old_name,
-                     current=row['svg'], previous_sha256=sha(old_path), current_sha256=sha(OUT / row['svg']),
+        check = dict(name=row['name'], previous_commit=BASE, repaired_commit=REPAIRED, previous=old_name,
+                     current=fixed_path.name, previous_sha256=sha(old_path), current_sha256=sha(fixed_path),
                      changed_edges=changed, nodes_byte_identical=True,
                      canonical_edge_attributes_identical=True, terminals_identical=True, receipt=receipt)
         checks.append(check)
@@ -56,16 +60,16 @@ def main():
         # remain available in the full comparison page linked below.
         sections.append('<h2>' + row['name'] + '</h2><div class="pair">' + ''.join(
             '<section><h3>' + label + '</h3><div class="crop">' + p.read_text() + '</div></section>'
-            for label, p in [('修复前', old_path), ('修复后', OUT / row['svg'])]) + '</div>')
+            for label, p in [('修复前', old_path), ('修复后', fixed_path)]) + '</div>')
     (OUT / 'rail-review.html').write_text('<!doctype html><meta charset="utf-8"><title>固定节点与端口的局部绕线对照</title>'
         '<style>body{font:16px Arial;margin:24px;background:#f6f8fb;color:#293746}.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}'
         'section{min-width:0;background:white;border:1px solid #ccd5e1;padding:12px}.crop{width:100%;height:420px;overflow:auto}'
         '.crop svg{max-width:none;display:block;position:relative;top:-60px}</style>'
-        '<h1>固定节点与端口的局部绕线对照</h1><p>原生 SVG 局部。所有节点、端口和依赖属性不变；'
+        '<h1>固定节点与端口的局部绕线对照</h1><p>固定历史输入 '+BASE+' → '+REPAIRED+'；后续列布局改动不混入此对照。</p><p>原生 SVG 局部。所有节点、端口和依赖属性不变；'
         '仅在障碍检查通过后选择更窄的平行通道。字号、面积和交叉数不退化。</p>'
         '<p><a href="review-transformer.html">完整图组与专用参考</a></p>' + ''.join(sections))
     (OUT / 'rail-report.json').write_text(json.dumps(dict(schema='rail-comparison/1', passed=True,
-        auditor_sha256=sha(Path(__file__)), report_sha256=sha(REPORT), checks=checks), indent=2) + '\n')
+        auditor_sha256=sha(Path(__file__)), report_commit=REPAIRED, report_sha256=hashlib.sha256(report_bytes).hexdigest(), checks=checks), indent=2) + '\n')
     print(json.dumps(dict(passed=True, panels=len(checks), changed_edges=[c['changed_edges'] for c in checks])))
 
 

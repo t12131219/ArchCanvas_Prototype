@@ -1,6 +1,6 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
-const E=require('../semantic_studio/semantic-engine.js'),L=require('../semantic_studio/architecture-layout.js'),C=require('../semantic_studio/relation-constraints.js'),R=require('../semantic_studio/publication-renderer.js');
+const E=require('../semantic_studio/semantic-engine.js'),L=require('../semantic_studio/architecture-layout.js'),C=require('../semantic_studio/relation-constraints.js'),R=require('../semantic_studio/publication-renderer.js'),D=require('../semantic_studio/diagram-set.js');
 function fixture(){
  const nodes=[{id:'root',parent:null,kind:'composite',label:'root'},...['input','context'].map(id=>({id,parent:'root',kind:'interface',role:'input',label:id})),{id:'attribute',parent:'root',kind:'state',label:'attribute'},
  ...['a0','b0','c0','a1','b1','c1','join'].map(id=>({id,parent:'root',kind:'compute',label:id,operator:'foreign'}))];
@@ -11,6 +11,36 @@ function fixture(){
 function draw(ir=fixture(),extra={}){return E.project(ir,{view:'source',mode:'source',open:['root'],...extra},ir,{layout:{branchColumns:true,rankColumns:3,gapX:28,gapY:28,nodeSize:n=>({w:n.id.endsWith('0')?140:180,h:56})}});}
 const routes=g=>g.edges.map(e=>({...e,route:L.route(e,g.positions)}));
 function accounted(ir,g){assert.deepEqual(Object.values(g.edge_accounting).flat().sort(),ir.edges.map(e=>e.id).sort());assert.equal(g.edges.length,ir.edges.length);}
+function expandedFixture(){
+ const ir=fixture();
+ for(const id of ['a1','b1','c1','join']){
+  Object.assign(ir.nodes.find(n=>n.id===id),{kind:'composite',semantic_type:'source-function'});
+  ir.nodes.push({id:id+'-in',parent:id,kind:'compute',operator:'foreign'},
+   {id:id+'-out',parent:id,kind:'compute',operator:'foreign'});
+  for(const e of ir.edges){if(e.source===id)e.source=id+'-out';if(e.target===id)e.target=id+'-in';}
+  ir.edges.push({id:'inside-'+id,source:id+'-in',target:id+'-out',source_port:'out',target_port:'0',kind:'data',evidence:'source-dependency'});
+ }
+ return ir;
+}
+test('expanded source containers retain path columns and their exact internal dependencies',()=>{
+ const ir=expandedFixture(),before=JSON.stringify(ir),open=['root','a1','b1','c1','join'],g=draw(ir,{open});
+ const group=g.positions.context.branchColumns.find(r=>r.sink==='join');assert.ok(group);assert.equal(group.chains.length,3);
+ assert.ok(L.branchGeometry(group,g.positions));assert.ok(g.positions.get('join').expanded);
+ for(const id of ['a1','b1','c1']){
+  assert.ok(g.positions.get(id).expanded);assert.ok(g.positions.has(id+'-in')&&g.positions.has(id+'-out'));
+  assert.equal(ir.nodes.find(n=>n.id===id+'-in').parent,id);
+ }
+ for(const e of g.edges){const original=ir.edges.find(x=>x.id===e.id);assert.deepEqual([e.source,e.target,e.source_port,e.target_port],
+  [original.source,original.target,original.source_port,original.target_port]);}
+ accounted(ir,g);assert.equal(JSON.stringify(ir),before);assert.ok(routes(g).every(e=>e.route.ok));
+});
+test('an expanded guarded path stays separate while the other expanded paths align',()=>{
+ for(const guard of [{condition:{test:'flag'}},{mutable:true},{identity_display:{object:'shared'}}]){
+  const ir=expandedFixture();Object.assign(ir.nodes.find(n=>n.id==='b1'),guard);
+  const g=draw(ir,{open:['root','a1','b1','c1','join']}),group=g.positions.context.branchColumns.find(r=>r.sink==='join');
+  assert.ok(group);assert.deepEqual(group.chains.map(c=>c.nodes),[['a0','a1'],['c0','c1']]);accounted(ir,g);
+ }
+});
 test('independent paths use stable columns, corresponding rows and exact operand bindings',()=>{
  const ir=fixture(),before=JSON.stringify(ir),g=draw(ir),group=g.positions.context.branchColumns[0];assert.ok(group);assert.equal(group.chains.length,3);assert.ok(L.branchGeometry(group,g.positions));
  assert.deepEqual(group.chains.map(c=>c.nodes),[['a0','a1'],['b0','b1'],['c0','c1']]);assert.equal(JSON.stringify(ir),before);accounted(ir,g);
@@ -53,6 +83,17 @@ for(const name of ['WovenInputs','InterruptedPaths'])test(name+' composes withou
  const r=name==='WovenInputs'?auto:R.render(ir,{...state,paperBranchColumns:true});assert.ok(r.document.layout.branch_columns.every(g=>g.status==='realized'));assert.deepEqual(r.prepared.quality.issues,[]);
  assert.equal(JSON.stringify(ir),before);assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
  if(name==='WovenInputs'){assert.equal(r.document.layout.branch_columns[0].chains.length,3);assert.ok(r.graph.frame_ownership.some(f=>f.semantic_type==='dependency-band'));}
- else{assert.equal(r.document.layout.branch_columns[0].chains.length,2);const opaque=ir.nodes.find(n=>n.kind==='opaque');assert.ok(r.graph.positions.has(opaque.id));assert.ok(r.document.layout.branch_columns.every(g=>g.chains.every(c=>!c.nodes.includes(opaque.id))));}
+ else{
+  const group=r.document.layout.branch_columns[0],opaque=ir.nodes.find(n=>n.kind==='opaque');
+  // Its expanded source wrapper may occupy a column; the unresolved call
+  // remains a visible boundary with its own exact incoming and outgoing uses.
+  assert.equal(group.chains.length,3);assert.ok(group.chains.some(c=>c.nodes.includes(opaque.parent)));
+  assert.ok(r.graph.positions.has(opaque.id));assert.ok(r.document.layout.branch_columns.every(g=>g.chains.every(c=>!c.nodes.includes(opaque.id))));
+  for(const e of ir.edges.filter(e=>e.source===opaque.id||e.target===opaque.id)){
+   const routed=r.prepared.routes.find(p=>p.id===e.id||p.originals?.includes(e.id));assert.ok(routed?.route.ok);
+  }
+  const goal=r.graph.expression_goals.goals.find(g=>g.kind==='unknown-boundary'&&g.focus_node===opaque.id);assert.ok(goal);
+  assert.equal(D.coverage(ir,{goals:[goal]},[{id:'main',result:r}])[0].status,'fulfilled');
+ }
  const output=Object.values(r.graph.edge_accounting).flat();assert.equal(output.length,new Set(output).size);assert.deepEqual(output.sort(),ir.edges.map(e=>e.id).sort());
 });

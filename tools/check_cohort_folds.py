@@ -78,6 +78,7 @@ def main():
             exposed.add(json.dumps([r['certificate'], r['role_keys'], r['node']]))
         roles[name] = exposed
     comparisons = []
+    replacements_checked = 0
     for c in reports[0]['comparisons'] + reports[1]['comparisons']:
         baseline, current, old = c['baseline'], c['current'], c['previous']
         assert current['plan']['goals'] == old['plan']['goals']
@@ -94,6 +95,7 @@ def main():
             return set().union(*(values(n) for n in names))
 
         initial = direct(baseline)
+        assert initial == direct(old.get('baseline', baseline)), 'Default geometry changed exact evidence coverage.'
         for version in [old, current]:
             names = [p['capture'] for p in version['panels']]
             assert all(not docs[n]['diagnostics']['publication']['issues'] for n in names)
@@ -103,11 +105,12 @@ def main():
             for row in version['coverage']:
                 assert row['panels'] == [p['id'] for p in version['panels'] if row['goal'] in direct(p['capture'])]
             assert len(names) <= 3 and version['rendered_trials'] <= 6
+        selection = [dict(id='main', capture=baseline)]
+        candidates = [r['name'] for r in rows if r['name'].startswith(c['name'] + '-current-trial-')]
+        matching = lambda name, state: all(docs[name]['state'].get(k) == v for k, v in state.items())
         for t in current['attempts']:
             if t['form'] != 'summary-set':
                 continue
-            candidates = [r['name'] for r in rows if r['name'].startswith(c['name'] + '-current-trial-')]
-            matching = lambda name, state: all(docs[name]['state'].get(k) == v for k, v in state.items())
             main_name = next(n for n in candidates if matching(n, t['state']))
             names = [main_name]
             raw = {n['id']: n for n in ir['nodes']}
@@ -148,6 +151,46 @@ def main():
                 assert not t['lost_goals'] and not any(t['recovery'].values()) and t['main_cost'] < 1
                 assert a['nodes'] < b['nodes'] and a['width'] * a['height'] < b['width'] * b['height']
                 assert t['gained_goals'] or total_area < b['width'] * b['height'] and total_wire < b['wire_length']
+                selection = [dict(id='main', capture=main_name)] + [
+                    dict(id='recovery:' + r['scope'], capture=n) for r, n in zip(t['recoveries'], names[1:])]
+        rounds = {}
+        for t in current['attempts']:
+            if t['form'] != 'summary-set':
+                rounds.setdefault(t['comparison_round'], []).append(t)
+        for group in rounds.values():
+            before_direct = union([p['capture'] for p in selection], direct)
+            accepted = []
+            for t in group:
+                assert t['before_panels'] == [p['id'] for p in selection]
+                name = next(n for n in candidates if matching(n, t['state']))
+                target = t.get('target_panel', 'main') if t['form'] == 'inline' else None
+                candidate = dict(id=target if target is not None else t['request'], capture=name)
+                next_selection = [candidate if p['id'] == target else p for p in selection] if target is not None else [*selection, candidate]
+                actual = union([p['capture'] for p in next_selection], direct)
+                assert set(t['gained_goals']) == actual - before_direct
+                assert set(t['lost_goals']) == before_direct - actual
+                if target is not None:
+                    replacements_checked += 1
+                    previous = next(p['capture'] for p in selection if p['id'] == target)
+                    b, a = docs[previous], docs[name]
+                    assert a['publication']['focus'] == b['publication']['focus']
+                    cuts = lambda d: [{k: v for k, v in r.items() if k != 'visible_node'} for r in d['publication']['boundary']]
+                    assert cuts(a) == cuts(b)
+                    assessment = t['inline_assessment']
+                    assert assessment['before']['crossings'] == metrics[previous]['crossings']
+                    assert assessment['candidate']['crossings'] == metrics[name]['crossings']
+                    if 'crossing-cost' in assessment['reasons']:
+                        assert metrics[name]['crossings'] > metrics[previous]['crossings'] + assessment['crossing_allowance']
+                    if t['accepted']:
+                        assert roles[previous] <= roles[name] and coarse[previous] <= coarse[name]
+                if t['accepted']:
+                    assert t['eligible'] and not t['reasons'] and not t['lost_goals'] and t['gained_goals']
+                    assert not docs[name]['diagnostics']['publication']['issues']
+                    accepted.append(next_selection)
+            assert len(accepted) <= 1
+            if accepted:
+                selection = accepted[0]
+        assert selection == [dict(id=p['id'], capture=p['capture']) for p in current['panels']]
         names = [p['capture'] for p in current['panels']]
         assert roles[baseline] <= union(names, lambda n: roles[n]) and coarse[baseline] <= union(names, lambda n: coarse[n])
         old_direct = union([p['capture'] for p in old['panels']], direct)
@@ -159,7 +202,7 @@ def main():
                                 total_area=sum(metrics[n]['width'] * metrics[n]['height'] for n in names),
                                 panels=len(names), main_changed=not current['main_unchanged']))
     result = dict(schema='cohort-folds-independent/1', passed=True, goal_complete=False, auditor_sha256=sha(Path(__file__)),
-                  panels=len(rows), fixtures_reextracted=len(extraction['rows']), metrics=metrics, comparisons=comparisons,
+                  panels=len(rows), fixtures_reextracted=len(extraction['rows']), replacements_checked=replacements_checked, metrics=metrics, comparisons=comparisons,
                   legacy_expression_discrepancies=discrepancies,
                   geometry_issue_panels=geometry_issue_panels,
                   scope='Independent canonical stage proof, roles, helper summaries, exact operands, actual SVG geometry and frozen direct goals. Atomic coverage is never granted to a summary.')

@@ -79,3 +79,54 @@ test('joint CLI export includes the selected main, actual details and truthful m
  assert.equal(manifest.policy,'joint');assert.equal(manifest.main_unchanged,false);assert.deepEqual(manifest.coverage,set.coverage);
  assert.equal(fs.readFileSync(path.join(out,manifest.panels[0].svg),'utf8'),set.panels[0].result.svg);
 });
+
+function frozenLocal(){
+ const ir=read('NestedWorkshop','detail-alternatives/experiment'),s={...state,paperAdaptive:false,paperBudget:4},base=R.render(ir,s);
+ const manual={...s,paperAuto:false,open:base.graph.publication.open},main=R.render(ir,manual);
+ const scope=D.plan(ir,main,manual).candidates.find(c=>c.kind==='computation-paths').state.paperFocus;
+ const localState={...s,paperFocus:scope,paperAuto:false,open:[scope]},local=R.render(ir,localState);
+ return {ir,state:manual,main,initialPanels:[{id:'main',state:manual,result:main},
+   {id:'local',anchor:scope,label:'Exact local scope',state:localState,result:local,refinable:true}]};
+}
+test('an automatic local figure can refine in place when the panel budget is full',()=>{
+ const x=frozenLocal(),before=JSON.stringify({ir:x.ir,state:x.state,states:x.initialPanels.map(p=>p.state)});
+ const set=D.joint(x.ir,x.state,R,{main:x.main,initialPanels:x.initialPanels,maxPanels:2,maxTrials:2});
+ assert.equal(set.panels.length,2);assert.equal(set.panels[0].result.svg,x.main.svg);
+ assert.ok(set.attempts.some(t=>t.accepted&&t.target_panel==='local'&&t.form==='inline'));
+ assert.ok(fulfilled(set.coverage).length>fulfilled(set.baseline_coverage).length);
+ assert.ok(fulfilled(set.baseline_coverage).every(id=>fulfilled(set.coverage).includes(id)));
+ const local=set.panels[1],original=x.initialPanels[1];
+ for(const key of ['id','anchor','label'])assert.equal(local[key],original[key]);
+ assert.equal(local.result.graph.publication.focus,original.result.graph.publication.focus);
+ assert.deepEqual(local.result.graph.publication.boundary,original.result.graph.publication.boundary);
+ assert.equal(local.state.paperAuto,false);assert.ok(original.state.open.every(id=>local.state.open.includes(id)));
+ assert.equal(R.render(x.ir,local.state).svg,local.result.svg);
+ assert.equal(JSON.stringify({ir:x.ir,state:x.state,states:x.initialPanels.map(p=>p.state)}),before);
+});
+test('refining an existing figure still requires exact operands and cannot replace it with a bad route',()=>{
+ const x=frozenLocal(),renderer={render:(ir,s)=>{const r=R.render(ir,s);return {...r,prepared:{...r.prepared,
+  routes:r.prepared.routes.map(e=>({...e,target_port:'wrong',...(e.bundle_members?{bundle_members:e.bundle_members.map(m=>({...m,target_port:'wrong'}))}:{})}))}};}};
+ const set=D.joint(x.ir,x.state,renderer,{main:x.main,initialPanels:x.initialPanels,maxPanels:2,maxTrials:2});
+ assert.ok(set.attempts.length);assert.ok(set.attempts.every(t=>!t.accepted));
+ assert.ok(set.attempts.some(t=>t.reasons.includes('previous-direct-goals-lost')));
+ assert.equal(set.panels[1].result.svg,x.initialPanels[1].result.svg);assert.deepEqual(set.coverage,set.baseline_coverage);
+});
+test('explicit local figures are not automatically refined without planner ownership',()=>{
+ const x=frozenLocal();delete x.initialPanels[1].refinable;let renders=0;
+ const set=D.joint(x.ir,x.state,{render:()=>{renders++;throw Error('manual figure must remain fixed');}},
+  {main:x.main,initialPanels:x.initialPanels,maxPanels:2,maxTrials:4});
+ assert.equal(renders,0);assert.equal(set.attempts.length,0);assert.equal(set.panels[1].result.svg,x.initialPanels[1].result.svg);
+});
+test('a frozen automatic detail tries the complete nested role layer before equal-priority partial paths',()=>{
+ const ir=read('SameSource','semantic-design/current/after'),s={...state,paperAdaptive:false},base=R.render(ir,s);
+ const manual={...s,paperAuto:false,open:base.graph.publication.open},main=R.render(ir,manual);
+ const owner=base.graph.nodes.find(n=>n.contract_roles?.attention).id,localState={...s,paperFocus:owner,paperAuto:false,open:[owner]},local=R.render(ir,localState);
+ const set=D.joint(ir,manual,R,{main,initialPanels:[{id:'main',state:manual,result:main},
+  {id:'local',anchor:owner,state:localState,result:local,refinable:true}],maxPanels:2,maxTrials:1});
+ assert.equal(set.rendered_trials,1);assert.equal(set.attempts.length,1);
+ const t=set.attempts[0];assert.equal(t.target_panel,'local');assert.ok(t.request.includes(':roles:'));assert.ok(t.accepted);
+ assert.ok(fulfilled(set.coverage).length>fulfilled(set.baseline_coverage).length);
+ const selected=set.panels[1];assert.equal(selected.state.paperAuto,false);assert.ok(selected.state.open.length>localState.open.length);
+ assert.ok(selected.result.graph.publication.role_frontier.detail_requests.some(r=>r.status==='expanded'));
+ assert.equal(set.panels[0].result.svg,main.svg);assert.equal(selected.result.graph.publication.focus,owner);
+});

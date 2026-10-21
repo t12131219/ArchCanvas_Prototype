@@ -135,7 +135,7 @@
           // and protected scopes retain their independent boundaries.
           const detail=renderer.render(ir,recovery.state);renders++;
           recoveries.push({...recovery,result:detail});
-          next.push({id:'recovery:'+recovery.scope,anchor:recovery.scope,label:raw.get(recovery.scope).label,state:recovery.state,result:detail});
+          next.push({id:'recovery:'+recovery.scope,anchor:recovery.scope,label:raw.get(recovery.scope).label,state:recovery.state,result:detail,refinable:true});
         }
         coverage=D.coverage(ir,planned,next);
       }

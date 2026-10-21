@@ -77,8 +77,10 @@ def main():
                 done=expressed(panels);eligible=[]
                 for a in group:
                     assert a['before_panels']==[p['id'] for p in panels]
-                    candidate={'id':'main' if a['form']=='inline' else a['request'],'row':a['row']}
-                    next_panels=[candidate,*panels[1:]] if a['form']=='inline' else [*panels,candidate]
+                    target=a.get('target_panel','main') if a['form']=='inline' else None
+                    assert target is None or sum(p['id']==target for p in panels)==1
+                    candidate={'id':target if target is not None else a['request'],'row':a['row']}
+                    next_panels=[candidate if p['id']==target else p for p in panels] if target is not None else [*panels,candidate]
                     new=expressed(next_panels);gained=new-done;lost=done-new
                     assert a['gained_goals']==[g['id'] for g in goals if g['id'] in gained]
                     assert a['lost_goals']==[g['id'] for g in goals if g['id'] in lost]

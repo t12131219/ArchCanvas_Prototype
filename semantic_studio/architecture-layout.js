@@ -241,7 +241,11 @@
       // dependency paths, not semantic names or execution-parallel branches.
       const branchGroups=[],claimed=new Set();
       if(options.branchColumns)for(const sink of kids){
-        const safe=id=>{const n=idx.nodes.get(id);return scc[unit.get(id)].length===1&&!positions.get(id).expanded&&
+        // An expanded source container is still one geometric child here.
+        // Its visible internals and exact cut edges remain intact; excluding
+        // it would wrap independent paths among unrelated context inputs.
+        // The renderer still measures the whole candidate before selecting it.
+        const safe=id=>{const n=idx.nodes.get(id);return scc[unit.get(id)].length===1&&
           ['compute','composite'].includes(n.kind)&&!n.condition&&!n.mutable&&!n.identity_display&&!n.observed_calls&&
           !['conditional-region','conditional-collection','loop-template','iteration-region','serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type);};
         if(!safe(sink))continue;

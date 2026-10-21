@@ -25,7 +25,7 @@ c = comparisons['Transformer']
 (OUT / 'dedicated-reference.svg').write_bytes((ROOT / 'snapshots/transformer_programmatic_guide/generated/figure3_detailed.svg').read_bytes())
 t = next(t for t in c['current']['attempts'] if t['form'] == 'summary-set')
 accepted = t['accepted']
-description = ('当前采用多区域协同折叠；原始直接目标由对应实例详图补回。' if accepted else '多区域协同候选仍被真实成本或证据检查拒绝，完整保留落选图；没有降低验收门槛。')
+description = ('当前采用多区域协同折叠；对应实例详图保留被本次折叠替代的直接目标。相对历史图组仍有目标未直接表达，底层事实保留；详见独立审核报告。' if accepted else '多区域协同候选仍被真实成本或证据检查拒绝，完整保留落选图；没有降低验收门槛。')
 page('review-transformer.html', 'Transformer：上一轮、当前与专用参考', '<p>' + description + ' 通用规则不读取专用参考的坐标、名称或案例 ID。仍需核对模块组织、来源外框、长连接和留白差距。</p><div class="grid">' + panel('上一轮主图', c['previous']['panels'][0]['capture'] + '.svg') + panel('当前主图', c['current']['panels'][0]['capture'] + '.svg') + panel('专用参考', 'dedicated-reference.svg') + '</div><div class="grid">' + ''.join(panel('对应实例详图 ' + str(i), p['capture'] + '.svg') for i, p in enumerate(c['current']['panels'][1:], 1)) + '</div>')
 page('review.html', '多区域语义折叠与精确实例恢复：审核入口', '<p>依据原始作用域、认证角色和实际布局，协同选择多个区域；细节仍可展开。完整目标尚未完成。</p><ul><li><a href="review-parallel.html">两路协同折叠</a></li><li><a href="review-split.html">四区域与两作用域</a></li><li><a href="review-mixed.html">条件、未知与状态</a></li><li><a href="review-transformer.html">Transformer 与专用参考</a></li></ul>')
 ui = read(OUT / 'ui-report.json')['rows']

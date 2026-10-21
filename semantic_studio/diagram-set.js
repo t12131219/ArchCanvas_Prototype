@@ -2,7 +2,7 @@
  * explicit expression obligations. Planning intent never counts as coverage. */
 (function(root){
   'use strict';
-  const VERSION='diagram-set/4',clone=x=>JSON.parse(JSON.stringify(x));
+  const VERSION='diagram-set/5',clone=x=>JSON.parse(JSON.stringify(x));
   const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const protectedScope=n=>!n||['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||
     n.evidence_status==='runtime-only'||n.runtime_evidence?.length||n.repeat_contract||n.iteration||
@@ -168,32 +168,51 @@
     let panels=initialPanels?initialPanels.slice():[{id:'main',anchor:null,state:clone(state),result:main}],assignments=coverage(ir,planned,panels);
     const initial=clone(assignments),attempts=[],preflights=[],preflightDeferred=[],seen=new Set(),cache=new Map(),projections=new Map(),preflightLimit=24;let renders=0;
     const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
+    const Roles=root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null);
     const fulfilled=rows=>new Set(rows.filter(r=>r.status==='fulfilled').map(r=>r.goal));
     const area=p=>p.result.prepared.quality.native_width_px*p.result.prepared.quality.native_height_px;
     const weight=ids=>ids.reduce((v,id)=>{const g=definitions.get(id);if(g)v[critical.has(g.kind)?0:g.kind==='computation'?2:1]+=g.priority;return v;},[0,0,0]);
     const compare=(a,b)=>{for(let i=0;i<3;i++)if(Math.abs(a.score[i]-b.score[i])>1e-9)return b.score[i]-a.score[i];return a.cost-b.cost;};
     while(true){
       const current=panels[0],done=fulfilled(assignments),pending=planned.goals.filter(g=>!done.has(g.id)),requests=[];
-      const by=new Map(current.result.graph.architecture.nodes.map(n=>[n.id,n]));
-      const within=(id,parent)=>{const visited=new Set();while(id&&!visited.has(id)){if(id===parent)return true;visited.add(id);id=by.get(id)?.parent;}return false;};
       // Compare local inline expansion with an independently focused figure.
       // Candidate claims only rank work; physically routed coverage decides it.
-      const automatic=current.result.graph.publication.adaptive_frontier;
-      const effective=automatic?{...current.state,paperRoleDetails:automatic.selected_role_details,paperRolePaths:automatic.selected_role_paths,
-        paperExpressionDetails:automatic.selected_expression_details,paperAdaptive:false}:current.state;
-      if(state.paperAuto!==false&&!state.paperRelation&&!Object.keys(state.offsets||{}).length)
-        for(const c of A.candidates(current.result.graph,{...effective,paperAdaptivePolicy:'structure'})){
+      // A selected automatic detail still has a frontier. Refine it in place
+      // when panel slots are full instead of forcing every next computation
+      // onto the main. Explicit user figures remain outside this search.
+      for(const [index,panel]of panels.entries()){
+        if(index===0?state.paperAuto===false:panel.refinable!==true)continue;
+        if(panel.state.paperRelation||Object.keys(panel.state.offsets||{}).length)continue;
+        const by=new Map(panel.result.graph.architecture.nodes.map(n=>[n.id,n]));
+        const within=(id,parent)=>{const visited=new Set();while(id&&!visited.has(id)){if(id===parent)return true;visited.add(id);id=by.get(id)?.parent;}return false;};
+        const automatic=panel.result.graph.publication.adaptive_frontier;
+        const effective=automatic?{...panel.state,paperRoleDetails:automatic.selected_role_details,paperRolePaths:automatic.selected_role_paths,
+          paperExpressionDetails:automatic.selected_expression_details,paperAdaptive:false}:panel.state;
+        for(const c of A.candidates(panel.result.graph,{...effective,paperAdaptivePolicy:'structure'})){
           const goals=pending.filter(g=>g.core.every(id=>within(id,c.node)||c.targets.includes(id))).map(g=>g.id);
           if(!goals.length)continue;
-          requests.push({id:'inline:'+c.id,form:'inline',anchor:c.node||current.result.graph.representatives[c.targets[0]],label:by.get(c.node)?.label||c.type,
-            state:{...A.apply(effective,c),paperAdaptive:false},goals,opportunity:c});
+          const nextState={...A.apply(effective,c),paperAdaptive:false};
+          if(index&&nextState.paperAuto===false){
+            // Recovery figures freeze their existing frontier with explicit
+            // open state. Add only the new compiler-authorized ancestor path;
+            // merely setting a role request cannot override that frozen list.
+            const authorized=s=>Roles.compile({plan:panel.result.graph.architecture,focus:panel.result.graph.publication.focus,
+              details:s.paperRoleDetails,paths:s.paperRolePaths}).open;
+            const previous=authorized(effective),selected=authorized(nextState);
+            nextState.open=[...new Set([...panel.result.graph.publication.open,...c.required_open||[],...[...selected].filter(id=>!previous.has(id))])];
+          }
+          requests.push({id:(index?'inline-panel:'+panel.id+':':'inline:')+c.id,form:'inline',target_panel:panel.id,
+            anchor:c.node||panel.result.graph.representatives[c.targets[0]],label:by.get(c.node)?.label||c.type,
+            state:nextState,goals,opportunity:c});
         }
+      }
       if(panels.length<limit)for(const c of plan(ir,current.result,current.state).candidates){
         const goals=c.goals.filter(id=>definitions.has(id)&&!done.has(id));if(!goals.length)continue;
         requests.push({...c,form:'detail',goals});
       }
-      for(const r of requests){r.key=JSON.stringify([r.form,r.state]);r.priority_vector=weight(r.goals);}
-      const available=requests.filter(r=>!seen.has(r.key)&&(cache.has(r.key)||renders<trialLimit)).sort((a,b)=>compare({score:a.priority_vector,cost:1},{score:b.priority_vector,cost:1})||a.goals.length-b.goals.length||a.id.localeCompare(b.id));
+      for(const r of requests){r.key=JSON.stringify([r.form,r.target_panel,r.state]);r.priority_vector=weight(r.goals);}
+      const available=requests.filter(r=>!seen.has(r.key)&&(cache.has(r.key)||renders<trialLimit)).sort((a,b)=>compare({score:a.priority_vector,cost:1},{score:b.priority_vector,cost:1})||
+        Number(a.opportunity?.kind==='role-path')-Number(b.opportunity?.kind==='role-path')||a.goals.length-b.goals.length||a.id.localeCompare(b.id));
       if(!available.length)break;
       const batch=[];
       const admit=request=>{
@@ -220,22 +239,25 @@
         seen.add(request.key);
         let result=cache.get(request.key);const reused=!!result;
         if(!result){result=renderer.render(ir,request.state);cache.set(request.key,result);renders++;}
-        const candidate={id:request.form==='inline'?'main':request.id,anchor:request.form==='inline'?null:request.anchor,state:clone(request.state),result,label:request.label};
-        const next=request.form==='inline'?[candidate,...panels.slice(1)]:[...panels,candidate],rows=coverage(ir,planned,next),expressed=fulfilled(rows);
+        const target=request.form==='inline'?panels.find(p=>p.id===request.target_panel):null;
+        const candidate=target?{...target,state:clone(request.state),result}:
+          {id:request.id,anchor:request.anchor,state:clone(request.state),result,label:request.label,refinable:true};
+        const next=target?panels.map(p=>p===target?candidate:p):[...panels,candidate],rows=coverage(ir,planned,next),expressed=fulfilled(rows);
         const gained=[...expressed].filter(id=>!done.has(id)),lost=[...done].filter(id=>!expressed.has(id));
-        const assessment=request.form==='inline'?A.assess(ir,current.result,result):null,reasons=[];
+        const assessment=target?A.assess(ir,target.result,result):null,reasons=[];
         if(!acceptable(result))reasons.push('figure-quality');
         if(assessment&&!assessment.accepted)reasons.push(...assessment.reasons);
-        if(preserveStages&&request.form==='inline'){
+        if(target&&result.graph.publication.focus!==target.result.graph.publication.focus)reasons.push('changed-panel-focus');
+        if(preserveStages&&target){
           const selected=new Set((result.graph.publication.role_path_stages?.rows||[]).filter(r=>r.status==='summary').map(r=>r.node));
-          if((current.result.graph.publication.role_path_stages?.rows||[]).some(r=>r.status==='summary'&&!selected.has(r.node)))reasons.push('selected-summary-lost');
+          if((target.result.graph.publication.role_path_stages?.rows||[]).some(r=>r.status==='summary'&&!selected.has(r.node)))reasons.push('selected-summary-lost');
         }
         if(!gained.length)reasons.push('no-new-direct-goals');
         if(lost.length)reasons.push('previous-direct-goals-lost');
         const beforeArea=panels.reduce((s,p)=>s+area(p),0),afterArea=next.reduce((s,p)=>s+area(p),0);
         const cost=Math.max(1,afterArea/Math.max(1,beforeArea))*(next.length/panels.length);
         const benefit={score:weight(gained).map(n=>n/cost),cost};
-        const receipt={request:request.id,form:request.form,anchor:request.anchor,label:request.label,state:clone(request.state),
+        const receipt={request:request.id,form:request.form,...(target?{target_panel:target.id}:{}),anchor:request.anchor,label:request.label,state:clone(request.state),
           before_panels:panels.map(p=>p.id),comparison_round:attempts.length,rendered:!reused,eligible:!reasons.length,accepted:false,reasons,
           gained_goals:gained,lost_goals:lost,quality:clone(result.prepared.quality),metrics:A.metrics(result),
           selection_benefit:{...benefit,before_area:beforeArea,after_area:afterArea,before_panels:panels.length,after_panels:next.length},
@@ -252,7 +274,7 @@
     return {schema:VERSION,policy:'joint',plan:planned,panels,attempts,coverage:assignments,deferred_goals:deferred,
       complete:!deferred.length,main_unchanged:panels[0].result.svg===main.svg,rendered_trials:renders,
       baseline_coverage:initial,preflights,preflight_deferred:preflightDeferred,projected_trials:projections.size,limits:{max_panels:limit,max_trials:trialLimit,max_preflights:preflightLimit},
-      scope:'Bounded joint choice of inline detail versus independent detail figures. Original main dependencies, roles and summaries are protected; direct goals count only on actual qualified canonical paths. Total area and figure count are measured. This is a local search, not a global optimum.'};
+      scope:'Bounded joint choice of inline refinement on the main or planner-owned detail figures versus independent details. Each refined figure retains its original scope, dependencies, roles and summaries; direct goals count only on actual qualified canonical paths. Total area and figure count are measured. Explicit user figures remain fixed. This is a local search, not a global optimum.'};
   }
   function render(ir,state,renderer,{maxPanels=6,maxTrials=8,main:provided,policy=state.paperDiagramPolicy}={}){
     if(policy==='compact'){

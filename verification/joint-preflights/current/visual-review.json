@@ -1,0 +1,38 @@
+{
+  "schema": "joint-preflights-visual-review/1",
+  "reviewed": true,
+  "goal_complete": false,
+  "files_sha256": {
+    "review.html": "ec143fedf769c3f1eea19ebbe81b302891787fa0463df09e8265cfd4915ad5e8",
+    "text-qa.html": "2330adea14d5e36149a2834ebfdb1bf8bad639da4e36eb5d41f0d17f124f861a",
+    "review-boundaries.html": "e4adaf2e02433105e1899cda686b116e86506028ce8512f7aaaa81cd52a29ac5",
+    "review-mixed.html": "4daba9cd233c313f1faa4e3c144a232d3ed7449d2078dda542a0f43b04971e59",
+    "review-source.html": "54290ac7f008b25e3752c4dce07e8a50559e8e070884a16f5ded431b4ed41fb0",
+    "review-transformer.html": "e98196f924286ef27304afd911e42338bab562f1f9cc09f41e2ab599206bf9c0",
+    "review-broken.png": "52ce36dbc1e749b85ba8bfb90cf930ad2fc92092eeaca89d88cae5457421fdbb",
+    "review-conditional.png": "d59bfd0e65e14134d68096aa264f30ffdfab45bc44ebec01537b916656eeb5a9",
+    "review-mixed-details.png": "99c960a4eb75610d6fa3125d8564742b0126ffdcbb09c2e4e248165c12e9f070",
+    "review-mixed.png": "b0ef2e3868544cf59fb9a3af67f564df8f76943813e3edf34108c4de705ddccd",
+    "review-nested.png": "6e99ebef094e7ab53b7a321d2d2cdad23c6f987b25643fb5ba58a36da85800b7",
+    "review-source.png": "d7aaedd8b0ea21fc295903be7799ceeb46fb76ae5d3525163143913d67ce5904",
+    "review-transformer-detail.png": "0b84190e64e82a4a358849bb4391f388bf0f9795a855116a7c9b6b50b79498c9",
+    "review-transformer-main.png": "c9a6b11d3f489d9d824687398abc4c6aea768c9bbc9bbddb55b2f3fd695e5666",
+    "review-transformer-reference.png": "8994e4f8994354a2a79c7a27a351db6ceb59173e007c12f30b2d5e510ba98bc8",
+    "editor-handoff.png": "629e5579725349403ec502cb665b3f14af70d01595be79e5f289e7e1ea28590e",
+    "ui-SourceMosaic-planned.png": "8b0f3c59619d08d97e528e8abec0a4e837964ac221f05023f1bfee234f76a975",
+    "ui-MixedWeave-planned.png": "cf97835d60ab9bbec12b48ef634a691d5c090a2faa2f4aff5d32d3b7d669f366",
+    "ui-MixedWeave-detail.png": "f9afb566812f9d7e0ea1943365b7f8dcbb0feae3af0f8e29c87899af26612bde",
+    "ui-MixedWeave-detail-2.png": "114d0371cd6a1b4f2ffb94d6f3dcb7937a04b2b639a6d55b7e02caba1852ea1b"
+  },
+  "observations": [
+    "SourceMosaic keeps the same one-figure local computation with cos/sin/tanh/sub and the same dependency paths.",
+    "MixedWeave main is unchanged in structure. An additional self.collect detail exposes transpose, contiguous, shape-derived product and view. Long audit headings now wrap; the set uses more area and one extra figure.",
+    "Nested figures preserve explicit unresolved boundaries. BrokenWorkshop keeps unfinished_weight and unfamiliar_bridge, TopK values/indices and the residual route. ConditionalWorkshop retains true/false regions and distinct branch joins.",
+    "Transformer mains are byte-identical and remain visually dense at comparison thumbnail size. Selected details show masks, guards and primitive computation. The dedicated reference has clearer semantic hierarchy and more compact visual organization; convergence is not achieved.",
+    "Reopened real editor displays MixedWeave with 21 nodes, 21 edges and three planned figures; two detail buttons remain available."
+  ],
+  "limits": [
+    "Native text geometry covers all 92 panels; manual screenshots sample selected source, mixed, nested, broken, conditional and Transformer/reference regions, not every rejected candidate.",
+    "Projected candidates only schedule routing. More direct goals here cost additional figures and total area. Broader held-out mixtures and thousands-node SVG/UI remain unfinished."
+  ]
+}

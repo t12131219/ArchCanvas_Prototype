@@ -21,7 +21,7 @@ function exportSet(ir,output,{state={paperMedium:'canvas',paperGranularity:'role
   const manifest={schema:D.VERSION,canonical_sha256:sha(before),state,limits:{max_panels:maxPanels,max_trials:maxTrials},
     scope:set.scope,plan:set.plan,panels,attempts:set.attempts,coverage:set.coverage,deferred_goals:set.deferred_goals,
     complete:set.complete,main_unchanged:set.main_unchanged,policy:set.policy||'sequential',
-    ...(set.policy==='joint'?{baseline_coverage:set.baseline_coverage,rendered_trials:set.rendered_trials,selection_scope:set.scope}:{}),
+    ...(set.policy==='joint'?{baseline_coverage:set.baseline_coverage,rendered_trials:set.rendered_trials,preflights:set.preflights,preflight_deferred:set.preflight_deferred,projected_trials:set.projected_trials,selection_scope:set.scope}:{}),
     quality_pass:panels.every(p=>!p.quality.issues.length),
     implementation_sha256:Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.resolve(__dirname,'..',f)))]))};
   fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');

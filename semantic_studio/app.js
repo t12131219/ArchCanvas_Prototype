@@ -159,7 +159,7 @@
     const mainState=E.clone(set.panels[0].state);
     state={...mainState,paperDiagramPlan:{schema:'joint-diagram-plan/1',main_state:E.clone(mainState),requested_state:requested,
       details:set.panels.slice(1).map(p=>({id:p.id,anchor:p.anchor,label:p.label,state:p.state})),
-      coverage:set.coverage,attempts:set.attempts,limits:set.limits,complete:set.complete}};
+      coverage:set.coverage,attempts:set.attempts,preflights:set.preflights,preflight_deferred:set.preflight_deferred,projected_trials:set.projected_trials,limits:set.limits,complete:set.complete}};
     selected=null;syncPaperControls();render();fit();persist();
   };
   $('nativeScale').onclick=()=>{const b=projection.bounds;camera={x:b.x-20,y:b.y-20,w:svg.clientWidth,h:svg.clientHeight};setCamera();};

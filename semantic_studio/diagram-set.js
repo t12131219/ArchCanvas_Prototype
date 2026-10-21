@@ -2,7 +2,7 @@
  * explicit expression obligations. Planning intent never counts as coverage. */
 (function(root){
   'use strict';
-  const VERSION='diagram-set/3',clone=x=>JSON.parse(JSON.stringify(x));
+  const VERSION='diagram-set/4',clone=x=>JSON.parse(JSON.stringify(x));
   const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const protectedScope=n=>!n||['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||
     n.evidence_status==='runtime-only'||n.runtime_evidence?.length||n.repeat_contract||n.iteration||
@@ -144,18 +144,35 @@
       return {goal:goal.id,kind:goal.kind,status:expressed.length?'fulfilled':'deferred',panels:expressed.map(check=>check.panel),
         method:expressed.length?'direct-canonical-paths':null};});
   }
+  // Projection only filters work. It cannot certify text, routing, quality,
+  // or direct coverage: those still require a measured and routed figure.
+  function preflight(ir,goals,graph,opportunity){
+    const nodes=new Set(graph.nodes.map(n=>n.id)),edges=new Set();
+    for(const path of graph.edges)for(const member of path.bundle_members||[path])for(const id of [member.id,...member.originals||[]])edges.add(id);
+    const reasons=[],frontier=graph.publication.role_frontier;
+    const request=opportunity.kind==='roles'?frontier?.detail_requests?.find(r=>r.node===opportunity.node):
+      opportunity.kind==='role-path'?frontier?.path_requests?.find(r=>r.node===opportunity.node&&r.certificate===opportunity.certificate&&JSON.stringify(r.role)===JSON.stringify(opportunity.role)):null;
+    if(opportunity.kind==='roles'&&request?.status!=='expanded'||opportunity.kind==='role-path'&&request?.status!=='exposed')reasons.push('protected-or-deferred-role');
+    const possible=goals.filter(g=>g.core.every(id=>nodes.has(id))&&g.edges.every(id=>edges.has(id))&&
+      (g.kind!=='computation'||ir.edges.filter(e=>e.target===g.focus_node&&['data','alias','interface-binding'].includes(e.kind)).every(e=>edges.has(e.id))));
+    if(!possible.length)reasons.push('no-new-projected-goals');
+    return {schema:'diagram-set-preflight/1',eligible:!reasons.length,reasons,possible_goals:possible.map(g=>g.id),
+      projected_nodes:[...nodes],projected_edges:[...edges],role_request:request?clone(request):null,
+      scope:'Unrouted projection for scheduling only. Possible goals are not assigned coverage; final canonical paths and figure quality remain mandatory.'};
+  }
   function joint(ir,state,renderer,{maxPanels=3,maxTrials=6,main:provided}={}){
     const A=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     const main=provided||renderer.render(ir,state),planned=plan(ir,main,state),definitions=new Map(planned.goals.map(g=>[g.id,g]));
     const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
     const limit=Number.isFinite(maxPanels)?Math.max(1,Math.floor(maxPanels)):3,trialLimit=Number.isFinite(maxTrials)?Math.max(0,Math.floor(maxTrials)):6;
     let panels=[{id:'main',anchor:null,state:clone(state),result:main}],assignments=coverage(ir,planned,panels);
-    const initial=clone(assignments),attempts=[],seen=new Set(),cache=new Map();let renders=0;
+    const initial=clone(assignments),attempts=[],preflights=[],preflightDeferred=[],seen=new Set(),cache=new Map(),projections=new Map(),preflightLimit=24;let renders=0;
+    const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
     const fulfilled=rows=>new Set(rows.filter(r=>r.status==='fulfilled').map(r=>r.goal));
     const area=p=>p.result.prepared.quality.native_width_px*p.result.prepared.quality.native_height_px;
     const weight=ids=>ids.reduce((v,id)=>{const g=definitions.get(id);if(g)v[critical.has(g.kind)?0:g.kind==='computation'?2:1]+=g.priority;return v;},[0,0,0]);
     const compare=(a,b)=>{for(let i=0;i<3;i++)if(Math.abs(a.score[i]-b.score[i])>1e-9)return b.score[i]-a.score[i];return a.cost-b.cost;};
-    while(renders<trialLimit){
+    while(true){
       const current=panels[0],done=fulfilled(assignments),pending=planned.goals.filter(g=>!done.has(g.id)),requests=[];
       const by=new Map(current.result.graph.architecture.nodes.map(n=>[n.id,n]));
       const within=(id,parent)=>{const visited=new Set();while(id&&!visited.has(id)){if(id===parent)return true;visited.add(id);id=by.get(id)?.parent;}return false;};
@@ -176,14 +193,32 @@
         requests.push({...c,form:'detail',goals});
       }
       for(const r of requests){r.key=JSON.stringify([r.form,r.state]);r.priority_vector=weight(r.goals);}
-      const available=requests.filter(r=>!seen.has(r.key)).sort((a,b)=>compare({score:a.priority_vector,cost:1},{score:b.priority_vector,cost:1})||a.goals.length-b.goals.length||a.id.localeCompare(b.id));
+      const available=requests.filter(r=>!seen.has(r.key)&&(cache.has(r.key)||renders<trialLimit)).sort((a,b)=>compare({score:a.priority_vector,cost:1},{score:b.priority_vector,cost:1})||a.goals.length-b.goals.length||a.id.localeCompare(b.id));
       if(!available.length)break;
-      const batch=[available[0]],alternative=available.find(r=>r.form!==batch[0].form&&r.goals.some(id=>batch[0].goals.includes(id)));
-      if(alternative)batch.push(alternative);else if(available[1])batch.push(available[1]);
+      const batch=[];
+      const admit=request=>{
+        if(request.form!=='inline'||cache.has(request.key))return true;
+        let graph=projections.get(request.key);
+        if(!graph){
+          if(projections.size>=preflightLimit){seen.add(request.key);preflightDeferred.push({request:request.id,state:clone(request.state),comparison_round:attempts.length,reason:'projection-budget'});return false;}
+          graph=E.project(ir,{...request.state,view:'publication'});projections.set(request.key,graph);
+        }
+        const receipt=preflight(ir,pending,graph,request.opportunity);
+        preflights.push({...receipt,request:request.id,state:clone(request.state),opportunity:clone(request.opportunity),comparison_round:attempts.length});
+        if(!receipt.eligible)seen.add(request.key);
+        return receipt.eligible;
+      };
+      const first=available.find(admit);if(!first)break;batch.push(first);
+      const alternative=available.find(r=>r!==first&&!seen.has(r.key)&&r.form!==first.form&&r.goals.some(id=>first.goals.includes(id)));
+      if(alternative&&admit(alternative))batch.push(alternative);
+      // Compare only two forms of the same opportunity. If the alternative is
+      // deferred, accept/reject this actual trial before scheduling another
+      // scope; unrelated figures must not consume each other's panel slots.
       const trials=[];
-      for(const request of batch.slice(0,trialLimit-renders)){
+      for(const request of batch){
+        if(!cache.has(request.key)&&renders>=trialLimit)continue;
         seen.add(request.key);
-        let result=cache.get(request.key);
+        let result=cache.get(request.key);const reused=!!result;
         if(!result){result=renderer.render(ir,request.state);cache.set(request.key,result);renders++;}
         const candidate={id:request.form==='inline'?'main':request.id,anchor:request.form==='inline'?null:request.anchor,state:clone(request.state),result,label:request.label};
         const next=request.form==='inline'?[candidate,...panels.slice(1)]:[...panels,candidate],rows=coverage(ir,planned,next),expressed=fulfilled(rows);
@@ -197,7 +232,7 @@
         const cost=Math.max(1,afterArea/Math.max(1,beforeArea))*(next.length/panels.length);
         const benefit={score:weight(gained).map(n=>n/cost),cost};
         const receipt={request:request.id,form:request.form,anchor:request.anchor,label:request.label,state:clone(request.state),
-          before_panels:panels.map(p=>p.id),comparison_round:attempts.length,eligible:!reasons.length,accepted:false,reasons,
+          before_panels:panels.map(p=>p.id),comparison_round:attempts.length,rendered:!reused,eligible:!reasons.length,accepted:false,reasons,
           gained_goals:gained,lost_goals:lost,quality:clone(result.prepared.quality),metrics:A.metrics(result),
           selection_benefit:{...benefit,before_area:beforeArea,after_area:afterArea,before_panels:panels.length,after_panels:next.length},
           ...(assessment?{inline_assessment:assessment}:{})};
@@ -212,7 +247,7 @@
     const deferred=assignments.filter(r=>r.status!=='fulfilled').map(r=>r.goal);
     return {schema:VERSION,policy:'joint',plan:planned,panels,attempts,coverage:assignments,deferred_goals:deferred,
       complete:!deferred.length,main_unchanged:panels[0].result.svg===main.svg,rendered_trials:renders,
-      baseline_coverage:initial,limits:{max_panels:limit,max_trials:trialLimit},
+      baseline_coverage:initial,preflights,preflight_deferred:preflightDeferred,projected_trials:projections.size,limits:{max_panels:limit,max_trials:trialLimit,max_preflights:preflightLimit},
       scope:'Bounded joint choice of inline detail versus independent detail figures. Original main dependencies, roles and summaries are protected; direct goals count only on actual qualified canonical paths. Total area and figure count are measured. This is a local search, not a global optimum.'};
   }
   function render(ir,state,renderer,{maxPanels=6,maxTrials=8,main:provided,policy=state.paperDiagramPolicy}={}){
@@ -235,5 +270,5 @@
     return {schema:VERSION,plan:planned,panels,attempts,coverage:assignments,deferred_goals:deferred,
       complete:!deferred.length,main_unchanged:true,scope:planned.scope};
   }
-  const api={VERSION,plan,acceptable,coverage,joint,render};root.SemanticDiagramSet=api;if(typeof module!=='undefined')module.exports=api;
+  const api={VERSION,plan,acceptable,coverage,preflight,joint,render};root.SemanticDiagramSet=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

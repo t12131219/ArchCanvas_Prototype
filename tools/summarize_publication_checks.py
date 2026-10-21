@@ -373,6 +373,8 @@ if __name__ == '__main__':
             from summarize_contract_stages import main as summarize_stage
         elif stage == 'local-pipelines':
             from summarize_local_pipelines import main as summarize_stage
+        elif stage == 'joint-preflights':
+            from summarize_joint_preflights import main as summarize_stage
         elif stage == 'joint-expressions':
             from summarize_joint_expressions import main as summarize_stage
         elif stage == 'measured-frontiers':

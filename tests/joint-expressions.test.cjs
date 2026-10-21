@@ -21,7 +21,7 @@ test('a bounded set can keep a compact main and express unfamiliar nested paths 
  const {main,set}=draw('NestedWorkshop','detail-alternatives/experiment',{paperBudget:4});
  assert.equal(set.panels[0].result.svg,main.svg);assert.equal(set.panels.length,3);assert.equal(set.complete,true);
  assert.equal(fulfilled(set.coverage).length,28);assert.equal(fulfilled(set.baseline_coverage).length,4);
- assert.ok(set.attempts.some(t=>t.form==='inline'&&!t.eligible));assert.ok(set.attempts.some(t=>t.form==='detail'&&t.accepted));
+ assert.ok(set.preflights.some(t=>!t.eligible));assert.ok(set.attempts.some(t=>t.form==='detail'&&t.accepted));
 });
 test('the same measured plan may select both inline roles and an independent detail without losing earlier goals',()=>{
  const {ir,main,set}=draw('MixedWeave','coverage-selection/current');

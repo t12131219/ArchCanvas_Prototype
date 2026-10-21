@@ -455,7 +455,7 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={protectFrameTitles:options.protectFrameTitles===true,contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
+    positions.context={protectFrameTitles:options.protectFrameTitles===true,preserveContextEdges:options.contextEdges,contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
       entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){
@@ -650,6 +650,9 @@
       const x=(start.x+end.x)/2+delta;candidates.push([start,point(x,start.y),point(x,end.y),end]);
     }
     const clear=ps=>ps.every((p,i)=>!i||!blocked(ps[i-1],p,boxes));
+    const contextLow=contextLane?(e.context_lane.side==='left'?contextOwner.x+(contextOwner.design_gutter||0):contextOwner.x+contextOwner.w-contextOwner.context_gutter):null;
+    const contextHigh=contextLane?(e.context_lane.side==='left'?contextLow+contextOwner.context_gutter:contextOwner.x+contextOwner.w):null;
+    const inContext=ps=>contextLane&&ps.some((p,i)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>contextLow&&p.x<contextHigh);
     function congestion(a,b){let penalty=0;
       const vertical=a.x===b.x,left=Math.min(a.x,b.x),right=Math.max(a.x,b.x),top=Math.min(a.y,b.y),bottom=Math.max(a.y,b.y);
       for(const r of reservationBounds){
@@ -675,12 +678,19 @@
     let best=(repair?repairCandidates.filter(clear).sort((a,b)=>length(a)-length(b))[0]:null)||routeCandidates.filter(clear).sort((a,b)=>length(a)-length(b))[0]||candidates.filter(clear).sort((a,b)=>length(a)-length(b))[0];
     const crowded=best&&best.some((p,i)=>i&&congestion(best[i-1],p)>100);
     if(!best||crowded){
+      // Keep an already selected, feasible side-entry relation during congestion
+      // search, independently of the optional entry-band arrangement. Unselected
+      // proposals remain soft preferences. Search both
+      // direction and gutter-visit state, so an ordinary shortcut cannot win
+      // by abandoning the relation and an alternative gutter route can compete.
+      const preserveContext=inContext(best||[])&&(context?.entryBandRouting||Array.isArray(context?.preserveContextEdges)&&context.preserveContextEdges.includes(e.id));
+      const contextRail=preserveContext?(e.context_lane.side==='left'?contextLow+16+e.context_lane.index*16:contextHigh-16-e.context_lane.index*16):null;
       // Compressed visibility grid; obstacles contribute only their boundaries.
       // First try the endpoint corridor, then expand to include all obstacles.
       for(const margin of [160,Infinity]){
         const local=boxes.filter(r=>r.x+r.w>=Math.min(start.x,end.x)-margin&&r.x<=Math.max(start.x,end.x)+margin&&r.y+r.h>=Math.min(start.y,end.y)-margin&&r.y<=Math.max(start.y,end.y)+margin);
         const nearby=reserved.filter(([a,b])=>Math.max(a.x,b.x)>=Math.min(start.x,end.x)-margin&&Math.min(a.x,b.x)<=Math.max(start.x,end.x)+margin&&Math.max(a.y,b.y)>=Math.min(start.y,end.y)-margin&&Math.min(a.y,b.y)<=Math.max(start.y,end.y)+margin);
-        const xs=[...new Set([start.x,end.x,...local.flatMap(r=>[r.x-2,r.x+r.w+2]),...nearby.flatMap(([a,b])=>a.x===b.x?[a.x-12,a.x+12]:[])])].sort((a,b)=>a-b);
+        const xs=[...new Set([start.x,end.x,...(preserveContext?[contextRail]:[]),...local.flatMap(r=>[r.x-2,r.x+r.w+2]),...nearby.flatMap(([a,b])=>a.x===b.x?[a.x-12,a.x+12]:[])])].sort((a,b)=>a-b);
         const ys=[...new Set([start.y,end.y,...local.flatMap(r=>[r.y-2,r.y+r.h+2]),...nearby.flatMap(([a,b])=>a.y===b.y?[a.y-12,a.y+12]:[])])].sort((a,b)=>a-b);
         const sx=xs.indexOf(start.x),sy=ys.indexOf(start.y),tx=xs.indexOf(end.x),ty=ys.indexOf(end.y);
         // Both direction states may visit the same undirected adjacent grid
@@ -688,12 +698,12 @@
         // turn penalties, heap order and the visit budget remain unchanged.
         // This cache belongs to this grid and route, never to another trial.
         const segments=new Map();
-        const key=(x,y,d)=>`${x},${y},${d}`,cost=new Map(),prev=new Map(),heap=[];
+        const key=(x,y,d,lane=false)=>`${x},${y},${d}`+(preserveContext?`,${Number(lane)}`:''),cost=new Map(),prev=new Map(),heap=[];
         function push(item){heap.push(item);let i=heap.length-1;while(i){const p=(i-1)>>1;if(heap[p].f<=item.f)break;heap[i]=heap[p];i=p;}heap[i]=item;}
         function pop(){const top=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let j=i*2+1;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[j].f>=last.f)break;heap[i]=heap[j];i=j;}heap[i]=last;}return top;}
         const initial=key(sx,sy,'s');cost.set(initial,0);push({x:sx,y:sy,d:'s',g:0,f:0,k:initial});let final=null,visits=0;
         while(heap.length&&visits++<24000){const cur=pop();if(cur.g!==cost.get(cur.k))continue;
-          if(cur.x===tx&&cur.y===ty){final=cur.k;break;}
+          if(cur.x===tx&&cur.y===ty&&(!preserveContext||cur.lane)){final=cur.k;break;}
           for(const [dx,dy,d]of [[-1,0,'h'],[1,0,'h'],[0,-1,'v'],[0,1,'v']]){
             const x=cur.x+dx,y=cur.y+dy;if(x<0||y<0||x>=xs.length||y>=ys.length)continue;
             const p=point(xs[x],ys[y]),from=point(xs[cur.x],ys[cur.y]);
@@ -701,16 +711,13 @@
             let segment=segments.get(segmentKey);
             if(!segment){const hit=blocked(from,p,boxes);segment={blocked:hit,penalty:hit?0:congestion(from,p)};segments.set(segmentKey,segment);}
             if(segment.blocked)continue;
-            const g=cur.g+Math.abs(p.x-from.x)+Math.abs(p.y-from.y)+segment.penalty+(cur.d!==d&&cur.d!=='s'?24:0),k=key(x,y,d);
+            const lane=preserveContext&&(cur.lane||d==='v'&&p.x>contextLow&&p.x<contextHigh);
+            const g=cur.g+Math.abs(p.x-from.x)+Math.abs(p.y-from.y)+segment.penalty+(cur.d!==d&&cur.d!=='s'?24:0),k=key(x,y,d,lane);
             if(g>=(cost.get(k)??Infinity))continue;cost.set(k,g);prev.set(k,cur.k);
-            push({x,y,d,g,k,f:g+Math.abs(p.x-end.x)+Math.abs(p.y-end.y)});
+            push({x,y,d,lane,g,k,f:g+Math.abs(p.x-end.x)+Math.abs(p.y-end.y)});
           }
         }
         if(final){const found=[];for(let k=final;k;k=prev.get(k)){const [x,y]=k.split(',').map(Number);found.push(point(xs[x],ys[y]));}found.reverse();
-          const inContext=ps=>{const lo=e.context_lane.side==='left'?contextOwner.x+(contextOwner.design_gutter||0):contextOwner.x+contextOwner.w-contextOwner.context_gutter;
-            const hi=e.context_lane.side==='left'?lo+contextOwner.context_gutter:contextOwner.x+contextOwner.w;
-            return ps.some((p,i)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>lo&&p.x<hi);};
-          const preserveContext=context?.entryBandRouting&&contextLane&&best&&inContext(best);
           if((!semanticBypass||!best||found.some(p=>p.x>laneOwner.x&&p.x<laneOwner.x+laneOwner.design_gutter))&&
             (!preserveContext||inContext(found))&&(!best||length(found)<length(best)))best=found;break;}
       }

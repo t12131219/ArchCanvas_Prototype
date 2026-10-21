@@ -572,6 +572,21 @@
       [start,point(end.x,start.y),end],
       [start,point(start.x,middle),point(end.x,middle),end]
     ];
+    // A visibility search can exhaust its budget before finding a nearby
+    // parallel rail. During contact repair, also try shifting one interior
+    // segment of the existing valid route. Terminals stay fixed; all trial
+    // segments still face the same obstacle and congestion checks below.
+    const repair=context?.repairRoute?.points,repairCandidates=[];
+    if(repair?.length>3&&repair[0].x===s.x&&repair[0].y===s.y&&repair.at(-1).x===t.x&&repair.at(-1).y===t.y){
+      for(let i=1;i<repair.length-2;i++)for(const delta of [-12,12,-24,24]){
+        const a=repair[i],b=repair[i+1],vertical=a.x===b.x,horizontal=a.y===b.y;
+        if(!vertical&&!horizontal)continue;
+        const trial=repair.map(p=>({...p}));
+        if(vertical){trial[i].x+=delta;trial[i+1].x+=delta;}else{trial[i].y+=delta;trial[i+1].y+=delta;}
+        if(trial.some((p,j)=>j&&p.x!==trial[j-1].x&&p.y!==trial[j-1].y))continue;
+        candidates.push(trial);repairCandidates.push(trial);
+      }
+    }
     const laneCandidates=semanticBypass?[16,36,56].filter(x=>x<laneOwner.design_gutter).flatMap(dx=>{
       const x=laneOwner.x+dx,leave=a.y+a.h+16,enter=b.y-16;
       const corridors=[...new Set([start.y,end.y,a.y-16,leave,enter,b.y+b.h+16,...boxes.flatMap(r=>[r.y-2,r.y+r.h+2])])];
@@ -629,7 +644,12 @@
     // during one route. Reuse scores without changing comparison or tie order.
     const lengths=new WeakMap();
     const length=ps=>{if(!lengths.has(ps))lengths.set(ps,ps.reduce((s,p,i)=>s+(i?Math.abs(p.x-ps[i-1].x)+Math.abs(p.y-ps[i-1].y)+congestion(ps[i-1],p):0),0)+ps.length*12);return lengths.get(ps);};
-    let best=laneCandidates.filter(clear).sort((a,b)=>length(a)-length(b))[0]||candidates.filter(clear).sort((a,b)=>length(a)-length(b))[0];
+    // During an explicitly requested repair, compare the shifted rails with
+    // the ordinary lane candidates. The normal router keeps its historical
+    // lane preference; a repair must be allowed to choose a slightly longer
+    // rail when it removes a false junction.
+    const routeCandidates=repair?[...repairCandidates,...laneCandidates,...candidates]:laneCandidates;
+    let best=(repair?repairCandidates.filter(clear).sort((a,b)=>length(a)-length(b))[0]:null)||routeCandidates.filter(clear).sort((a,b)=>length(a)-length(b))[0]||candidates.filter(clear).sort((a,b)=>length(a)-length(b))[0];
     const crowded=best&&best.some((p,i)=>i&&congestion(best[i-1],p)>100);
     if(!best||crowded){
       // Compressed visibility grid; obstacles contribute only their boundaries.

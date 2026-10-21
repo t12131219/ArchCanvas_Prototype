@@ -142,7 +142,7 @@
     if(labeling.suppressed.length)quality.issues.push('port-label-requires-note');
     return {routes,bounds:b,labeling,quality,notes,noteLines,totalH};
   }
-  function prepare(graph){
+  function prepare(graph,{parallelRepairs=false}={}){
     const baseline=prepareTrial(graph,'canonical-short'),trials=[baseline];let best=baseline;
     if(baseline.quality.line_geometry.crossings||baseline.quality.issues.length){
       const strategies=['neighbors-short','neighbors-long','canonical-long','neighbors-clear-short','neighbors-clear-long'];
@@ -189,7 +189,8 @@
           for(const [crossingCost,stubLength]of policies){
             const current=best.routes.find(e=>e.id===edge.id);
             context.routeCache=new Map();context.reserved=segments(best.routes.filter(e=>e.id!==edge.id));context.crossingCost=crossingCost;context.contactCost=crossingCost*(phase==='crossings'?1:2);context.stubLength=stubLength;
-            const route=E.route(current,graph.positions);refinement.attempts++;
+            context.repairRoute=parallelRepairs&&phase!=='crossings'?current.route:null;
+            let route;try{route=E.route(current,graph.positions);}finally{context.repairRoute=null;}refinement.attempts++;
             if(!route.ok)continue;
             const candidate=evaluateRoutes(graph,best.routes.map(e=>e.id===edge.id?{...e,route}:e),strategy),q=candidate.quality,b=best.quality;
             const contactPairs=new Set(b.line_geometry.unrelated_contacts.map(c=>JSON.stringify(c.edges)));
@@ -786,7 +787,28 @@
     return chosen;
   }
   function prepareFigure(ir,state={}){
-    return attachExpressionEvidence(ir,selectFigure(ir,state));
+    let chosen=selectFigure(ir,state);
+    const g=chosen.graph,b=chosen.prepared.quality;
+    // Repair only an actual unresolved final overlap. Feeding extra route
+    // choices into every speculative layout can change a previously valid
+    // frontier's geometry. This final pass holds all node positions fixed.
+    if(state.paperParallelRailRepair===true&&b.medium==='canvas'&&g.edges.length<=128&&b.line_geometry.overlapping_paths.some(p=>!p.same_value)){
+      const context={...g.positions.context},receipts=JSON.parse(JSON.stringify(g.constraint_receipts)),before=realizedRelations(chosen);
+      E.auditConstraintRoutes(g,chosen.prepared.routes);
+      const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+      const candidate=prepare(g,{parallelRepairs:true}),q=candidate.quality,trial={graph:g,prepared:candidate},after=realizedRelations(trial);
+      E.auditConstraintRoutes(g,candidate.routes);
+      const accepted=q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.line_geometry.unrelated_contacts.length<b.line_geometry.unrelated_contacts.length&&q.line_geometry.crossings<=b.line_geometry.crossings+1&&
+        q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&
+        fontMetric(q)>=fontMetric(b)&&areaMetric(q)<=areaMetric(b)&&q.wire_length<=b.wire_length*1.02&&
+        g.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+      if(accepted){candidate.routing={...chosen.prepared.routing,...candidate.routing};chosen=trial;}
+      else{Object.assign(g.positions.context,context);g.constraint_receipts=receipts;}
+      chosen.prepared.routing.parallel_rail_repair={accepted,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+        realized_before:before,realized_candidate:after,scope:'Fixed nodes and exact terminals; only a remaining final ambiguous overlap authorizes local parallel-rail trials. At most one additional crossing and 2% wire increase, no area or font regression.'};
+    }
+    return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));

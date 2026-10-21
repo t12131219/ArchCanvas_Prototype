@@ -164,7 +164,7 @@
   $('paperFrameView').onchange=()=>{snapshot();state.paperFrameView=$('paperFrameView').value;state.offsets={};render();fit();persist();};
   $('planDiagramSet').onclick=()=>{
     snapshot();const requested=E.clone(state);delete requested.paperDiagramPlan;
-    const main=R.renderPrepared(ir,requested,displayedFigure),set=window.SemanticDiagramSet.render(ir,requested,R,{main,maxPanels:3,maxTrials:4,policy:'compact'});
+    const main=R.renderPrepared(ir,requested,displayedFigure),set=window.SemanticDiagramSet.render(ir,requested,R,{main,maxPanels:3,maxTrials:6,policy:'compact'});
     const mainState=E.clone(set.panels[0].state);
     state={...mainState,paperDiagramPlan:{schema:'joint-diagram-plan/1',main_state:E.clone(mainState),requested_state:requested,
       details:set.panels.slice(1).map(p=>({id:p.id,anchor:p.anchor,label:p.label,state:p.state})),

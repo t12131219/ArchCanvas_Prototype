@@ -1,7 +1,9 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const L=require('../semantic_studio/architecture-layout.js'),R=require('../semantic_studio/publication-renderer.js');
-const {fixture,state}=require('./cross-scope-fixtures.cjs');
+const {fixture,state:request}=require('./cross-scope-fixtures.cjs');
+// Isolate the scope-port policy from the later coupled-route pass.
+const state={...request,paperCoupledRoutes:false};
 function scene(right=false){
  const nodes=[{id:'root',parent:null},{id:'from',parent:'root'},{id:'region',parent:'root'},{id:'to',parent:'region'}];
  const positions=new Map([{id:'root',x:0,y:0,w:700,h:700,expanded:true},{id:'from',x:right?600:20,y:550,w:60,h:40},

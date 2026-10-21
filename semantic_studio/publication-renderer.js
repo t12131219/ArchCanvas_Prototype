@@ -847,6 +847,70 @@
     chosen.prepared.routing={...baseline.prepared.routing,selected_route_refinement:record};
     return chosen;
   }
+  function prepareCoupledRoutes(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||state.paperCoupledRoutes===false||Object.keys(state.offsets||{}).length||
+      g.edges.length>128||!b.line_geometry.crossings)return baseline;
+    // Single-wire repair cannot leave a local minimum when either wire needs
+    // the corridor currently occupied by the other. Release only an actual
+    // crossing pair, keep every other selected path, and measure both orders.
+    const ordinary=e=>e.route.ok&&!e.design_route&&!e.context_lane&&!e.iteration&&!e.layout_after&&
+      !g.positions.context.feedback?.has(e.id)&&(e.bundle_members||[e]).every(m=>
+        ['data','alias','interface-binding','parameter-read','buffer-read'].includes(m.kind)&&!m.design_route&&!m.context_lane&&!m.iteration&&!m.layout_after);
+    const pairs=[];
+    for(let i=0;i<baseline.prepared.routes.length;i++)for(let j=i+1;j<baseline.prepared.routes.length;j++){
+      const a=baseline.prepared.routes[i],c=baseline.prepared.routes[j];
+      if(!ordinary(a)||!ordinary(c))continue;
+      const crossings=lineGeometry([a,c]).crossings;
+      if(crossings)pairs.push({edges:[a.id,c.id].sort(),crossings});
+    }
+    pairs.sort((a,c)=>c.crossings-a.crossings||a.edges[0].localeCompare(c.edges[0])||a.edges[1].localeCompare(c.edges[1]));
+    if(!pairs.length)return baseline;
+    const copy=x=>JSON.parse(JSON.stringify(x)),samePoint=(a,c)=>a.x===c.x&&a.y===c.y;
+    const identity=clearanceIdentity(g),goals=Goals.build(ir,g.architecture),record={max_pairs:12,max_attempts:48,max_wire_ratio:1.02,before:clearanceMetrics(b),attempts:[]};
+    let chosen=baseline,relations=realizedRelations(baseline);
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
+    let applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+    let covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    for(const pair of pairs.slice(0,record.max_pairs))for(const reverse of [false,true])for(const cost of [180,540]){
+      const base=chosen,old=base.prepared.quality,previous=new Map(base.prepared.routes.map(e=>[e.id,e]));
+      if(!lineGeometry(pair.edges.map(id=>previous.get(id))).crossings)continue;
+      const positions=new Map([...base.graph.positions].map(([id,p])=>[id,{...p}]));
+      const ctx=positions.context={...base.graph.positions.context,routeCache:new Map(),
+        portOrder:b.route_strategy.startsWith('neighbors')?'neighbors':'canonical',ancestorPorts:b.route_strategy.includes('-header-')?'header':'boundary',
+        crossingCost:cost,contactCost:cost*2,stubLength:16,repairRoute:null,
+        reserved:base.prepared.routes.filter(e=>!pair.edges.includes(e.id)).flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]))};
+      const graph={...base.graph,positions,constraint_receipts:copy(base.graph.constraint_receipts)},fresh=new Map();
+      const order=reverse?pair.edges.slice().reverse():pair.edges;
+      for(const id of order){const e=previous.get(id),route=L.route(e,positions);fresh.set(id,{...e,route});
+        ctx.reserved.push(...route.points.slice(1).map((p,i)=>[route.points[i],p]));}
+      const prepared=evaluateRoutes(graph,base.prepared.routes.map(e=>fresh.get(e.id)||e),b.route_strategy),q=prepared.quality;
+      const physical=[...fresh.values()].every(e=>{const was=previous.get(e.id);return e.route.ok&&
+        e.route.source_side===was.route.source_side&&e.route.target_side===was.route.target_side&&
+        samePoint(e.route.points[0],was.route.points[0])&&samePoint(e.route.points.at(-1),was.route.points.at(-1));});
+      const facts=clearanceIdentity(graph)===identity;
+      const contacts=new Set(old.line_geometry.unrelated_contacts.map(c=>JSON.stringify(c.edges)));
+      const geometry=physical&&facts&&q.line_geometry.crossings<old.line_geometry.crossings&&q.wire_length<=b.wire_length*record.max_wire_ratio&&
+        q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&
+        q.line_geometry.unrelated_contacts.every(c=>contacts.has(JSON.stringify(c.edges)))&&
+        q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.issues.every(issue=>old.issues.includes(issue))&&q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&
+        fontMetric(q)>=fontMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px;
+      let accepted=false,after,coverage;
+      if(geometry){
+        E.auditConstraintRoutes(graph,prepared.routes);after=realizedRelations({graph,prepared});
+        coverage=new Set(Goals.evaluate(goals,graph,prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+        accepted=graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
+          Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
+      }
+      record.attempts.push({edges:pair.edges,order,crossing_cost:cost,accepted,physical_terminals_preserved:physical,facts_preserved:facts,
+        before:clearanceMetrics(old),candidate:clearanceMetrics(q),...(geometry?{realized_before:relations,realized_candidate:after,direct_goals_before:covered.size,direct_goals_candidate:coverage.size}:{})});
+      if(accepted){chosen={graph,prepared};relations=after;covered=coverage;applied=new Set(graph.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));}
+    }
+    record.after=clearanceMetrics(chosen.prepared.quality);
+    record.scope='At most twelve actual crossing pairs and forty-eight route measurements after final compaction; fixed nodes, exact physical terminals and all distant paths retained. Existing facts, constraints, realized relations and direct expression goals are acceptance requirements. No semantic inference.';
+    chosen.prepared.routing={...baseline.prepared.routing,coupled_route_refinement:record};return chosen;
+  }
   function prepareCrossScopePorts(ir,state,baseline,{final=false}={}){
     const g=baseline.graph,b=baseline.prepared.quality;
     if(b.medium!=='canvas'||state.paperCrossScopePorts===false||(final&&state.paperFinalScopeEntries===false)||Object.keys(state.offsets||{}).length||g.edges.length>128||
@@ -1261,6 +1325,7 @@
     chosen=prepareCoincidentPorts(ir,state,chosen);
     chosen=prepareLocalBypasses(ir,state,chosen);
     chosen=prepareEmptyBandCompaction(ir,state,chosen);
+    chosen=prepareCoupledRoutes(ir,state,chosen);
     chosen=attachExpressionEvidence(ir,chosen);
     const normal=chosen.graph.publication.normal_returns?.rows.filter(r=>r.attached_edges.length);
     if(!normal?.length||state.paperNormalReturns===false)return chosen;
@@ -1337,5 +1402,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

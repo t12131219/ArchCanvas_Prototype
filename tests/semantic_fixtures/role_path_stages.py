@@ -93,3 +93,30 @@ class MixedPaths(nn.Module):
         z = self.interrupted(other)
         seq, state = self.recur(y + z, hidden)
         return seq, state
+
+
+class ParallelPaths(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.left = PrismPath()
+        self.right = OtherNames()
+
+    def forward(self, x, context):
+        return self.left(x) + self.right(context)
+
+
+class InterleavedPaths(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.first = PrismPath()
+        self.second = OtherNames()
+        self.memory = nn.GRU(8, 8, batch_first=True)
+
+    def forward(self, x, context, hidden, flag):
+        a = self.first(x)
+        if flag:
+            b = unresolved_kernel(context)
+        else:
+            b = context
+        seq, state = self.memory(a + b, hidden)
+        return self.second(seq), state

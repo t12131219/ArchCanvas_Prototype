@@ -160,15 +160,16 @@
   $('paperMedium').onchange=()=>{snapshot();state.paperMedium=$('paperMedium').value;state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperSequenceView').onchange=()=>{snapshot();state.paperSequenceView=$('paperSequenceView').value;state.paperAuto=true;state.open=[];state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperRoleOperationStages').onchange=()=>{snapshot();state.paperRoleOperationStages=$('paperRoleOperationStages').checked;state.offsets={};render();fit();persist();};
-  $('paperRolePathStages').onchange=()=>{snapshot();state.paperRolePathStages=$('paperRolePathStages').checked;state.offsets={};render();fit();persist();};
+  $('paperRolePathStages').onchange=()=>{snapshot();state.paperRolePathStages=$('paperRolePathStages').checked;delete state.paperRolePathStageOwners;state.offsets={};render();fit();persist();};
   $('paperFrameView').onchange=()=>{snapshot();state.paperFrameView=$('paperFrameView').value;state.offsets={};render();fit();persist();};
   $('planDiagramSet').onclick=()=>{
     snapshot();const requested=E.clone(state);delete requested.paperDiagramPlan;
-    const main=R.renderPrepared(ir,requested,displayedFigure),set=window.SemanticDiagramSet.joint(ir,requested,R,{main,maxPanels:3,maxTrials:4});
+    const main=R.renderPrepared(ir,requested,displayedFigure),set=window.SemanticDiagramSet.render(ir,requested,R,{main,maxPanels:3,maxTrials:4,policy:'compact'});
     const mainState=E.clone(set.panels[0].state);
     state={...mainState,paperDiagramPlan:{schema:'joint-diagram-plan/1',main_state:E.clone(mainState),requested_state:requested,
       details:set.panels.slice(1).map(p=>({id:p.id,anchor:p.anchor,label:p.label,state:p.state})),
-      coverage:set.coverage,attempts:set.attempts,preflights:set.preflights,preflight_deferred:set.preflight_deferred,projected_trials:set.projected_trials,limits:set.limits,complete:set.complete}};
+      coverage:set.coverage,baseline_coverage:set.baseline_coverage,policy:set.policy,summary_deferred:set.summary_deferred,
+      attempts:set.attempts,preflights:set.preflights,preflight_deferred:set.preflight_deferred,projected_trials:set.projected_trials,limits:set.limits,complete:set.complete}};
     selected=null;syncPaperControls();render();fit();persist();
   };
   $('nativeScale').onclick=()=>{const b=projection.bounds;camera={x:b.x-20,y:b.y-20,w:svg.clientWidth,h:svg.clientHeight};setCamera();};

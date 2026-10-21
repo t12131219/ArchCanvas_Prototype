@@ -160,12 +160,12 @@
       projected_nodes:[...nodes],projected_edges:[...edges],role_request:request?clone(request):null,
       scope:'Unrouted projection for scheduling only. Possible goals are not assigned coverage; final canonical paths and figure quality remain mandatory.'};
   }
-  function joint(ir,state,renderer,{maxPanels=3,maxTrials=6,main:provided}={}){
+  function joint(ir,state,renderer,{maxPanels=3,maxTrials=6,main:provided,initialPanels,frozenPlan,preserveStages=false}={}){
     const A=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
-    const main=provided||renderer.render(ir,state),planned=plan(ir,main,state),definitions=new Map(planned.goals.map(g=>[g.id,g]));
+    const main=provided||renderer.render(ir,state),planned=frozenPlan||plan(ir,main,state),definitions=new Map(planned.goals.map(g=>[g.id,g]));
     const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
     const limit=Number.isFinite(maxPanels)?Math.max(1,Math.floor(maxPanels)):3,trialLimit=Number.isFinite(maxTrials)?Math.max(0,Math.floor(maxTrials)):6;
-    let panels=[{id:'main',anchor:null,state:clone(state),result:main}],assignments=coverage(ir,planned,panels);
+    let panels=initialPanels?initialPanels.slice():[{id:'main',anchor:null,state:clone(state),result:main}],assignments=coverage(ir,planned,panels);
     const initial=clone(assignments),attempts=[],preflights=[],preflightDeferred=[],seen=new Set(),cache=new Map(),projections=new Map(),preflightLimit=24;let renders=0;
     const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
     const fulfilled=rows=>new Set(rows.filter(r=>r.status==='fulfilled').map(r=>r.goal));
@@ -226,6 +226,10 @@
         const assessment=request.form==='inline'?A.assess(ir,current.result,result):null,reasons=[];
         if(!acceptable(result))reasons.push('figure-quality');
         if(assessment&&!assessment.accepted)reasons.push(...assessment.reasons);
+        if(preserveStages&&request.form==='inline'){
+          const selected=new Set((result.graph.publication.role_path_stages?.rows||[]).filter(r=>r.status==='summary').map(r=>r.node));
+          if((current.result.graph.publication.role_path_stages?.rows||[]).some(r=>r.status==='summary'&&!selected.has(r.node)))reasons.push('selected-summary-lost');
+        }
         if(!gained.length)reasons.push('no-new-direct-goals');
         if(lost.length)reasons.push('previous-direct-goals-lost');
         const beforeArea=panels.reduce((s,p)=>s+area(p),0),afterArea=next.reduce((s,p)=>s+area(p),0);
@@ -251,6 +255,10 @@
       scope:'Bounded joint choice of inline detail versus independent detail figures. Original main dependencies, roles and summaries are protected; direct goals count only on actual qualified canonical paths. Total area and figure count are measured. This is a local search, not a global optimum.'};
   }
   function render(ir,state,renderer,{maxPanels=6,maxTrials=8,main:provided,policy=state.paperDiagramPolicy}={}){
+    if(policy==='compact'){
+      const C=root.SemanticCompactDiagrams||(typeof require==='function'?require('./compact-diagrams.js'):null);
+      return C.solve(ir,state,renderer,{maxPanels,maxTrials,main:provided,diagrams:api});
+    }
     if(policy==='joint')return joint(ir,state,renderer,{maxPanels,maxTrials,main:provided});
     const main=provided||renderer.render(ir,state),planned=plan(ir,main,state),panels=[{id:'main',anchor:null,state:clone(state),result:main}],attempts=[];
     const limit=Number.isFinite(maxPanels)?Math.max(1,Math.floor(maxPanels)):6,trialLimit=Number.isFinite(maxTrials)?Math.max(0,Math.floor(maxTrials)):8;

@@ -22,7 +22,7 @@ PROTECTED = ['mutable', 'condition', 'identity_display', 'observed_calls', 'runt
              'semantic_contracts', 'contract_roles', 'repeat_contract', 'iteration', 'contract_stage', 'role_operation_stage']
 
 
-def check(row):
+def check(row, *, compare_expression=True, require_quality=True):
     doc = read(OUT / row['document'])
     assert sha(OUT / row['document']) == row['document_sha256'] and sha(OUT / row['svg']) == row['svg_sha256']
     assert doc['ir'] == read(ROOT / row['input']) and sha(ROOT / row['input']) == row['input_sha256']
@@ -188,14 +188,17 @@ def check(row):
                     v, w, h, k = (a, b, c, d) if a[0] == b[0] else (c, d, a, b)
                     crossings += min(h[0], k[0]) < v[0] < max(h[0], k[0]) and min(v[1], w[1]) < h[1] < max(v[1], w[1])
     q = doc['diagnostics']['publication']
-    assert q == row['quality'] and not q['issues'] and not q['route_failures'] and not q['unplaced_port_labels']
+    assert q == row['quality'] and not q['route_failures'] and not q['unplaced_port_labels']
+    if require_quality:
+        assert not q['issues']
     assert not q['line_geometry']['unrelated_contacts'] and round(length, 1) == q['wire_length'] and crossings == q['line_geometry']['crossings']
     assert list(map(float, tree.getroot().get('viewBox').split()))[2:] == [q['native_width_px'], q['native_height_px']]
     docks(doc, tree)
     returns(doc, tree)
     actual = assignments(doc['ir'], doc['expression_goals']['goals'], {**doc, 'quality': q}, tree.getroot())
     reported = {r['goal']: r['status'] == 'fulfilled' for r in doc['expression_coverage']}
-    assert actual == [reported[g['id']] for g in doc['expression_goals']['goals']]
+    if compare_expression:
+        assert actual == [reported[g['id']] for g in doc['expression_goals']['goals']]
     return dict(nodes=len(visible), edges=len(paths), width=q['native_width_px'], height=q['native_height_px'], crossings=crossings,
                 wire_length=round(length, 1), stages=len(receipt['rows']), direct_goals=sum(actual), expression_goals=len(actual))
 

@@ -4,7 +4,7 @@
   'use strict';
   const VERSION='role-path-stages/1',copy=x=>JSON.parse(JSON.stringify(x));
   const flow=e=>['data','alias','interface-binding'].includes(e.kind);
-  function compile({ir,plan,open=new Set(),requested=[]}){
+  function compile({ir,plan,open=new Set(),requested=[],owners=null}){
     const nodes=plan.nodes.map(n=>({...n})),by=new Map(nodes.map(n=>[n.id,n])),canonical=new Map(ir.nodes.map(n=>[n.id,n]));
     const children=new Map(),incoming=new Map(),outgoing=new Map(),rows=[],claimed=new Set(),wanted=new Set(requested);
     for(const n of nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
@@ -21,6 +21,7 @@
       operator:n.operator,framework_type:n.framework_type??null,configuration:copy(Object.hasOwn(n,'constructor')?n.constructor:null)};};
     for(const anchor of nodes.slice()){
       const roles=anchor.role_annotations||[],uses=outgoing.get(anchor.id)||[];
+      if(Array.isArray(owners)&&!roles.every(r=>owners.includes(r.owner)))continue;
       if(anchor.kind!=='compute'||!roles.length||guarded(anchor)||guarded(canonical.get(anchor.id))||wanted.has(anchor.id)||claimed.has(anchor.id)||!open.has(anchor.parent)||uses.length!==1)continue;
       const edge=uses[0],input=by.get(edge.target),helper=by.get(input?.parent),p=helper?.local_pipeline;
       if(!p||p.form!=='dependency-path-summary'||p.operations.length>6||!certifiedPaths.has(helper.id)||guarded(helper)||

@@ -21,7 +21,8 @@ function exportSet(ir,output,{state={paperMedium:'canvas',paperGranularity:'role
   const manifest={schema:D.VERSION,canonical_sha256:sha(before),state,limits:{max_panels:maxPanels,max_trials:maxTrials},
     scope:set.scope,plan:set.plan,panels,attempts:set.attempts,coverage:set.coverage,deferred_goals:set.deferred_goals,
     complete:set.complete,main_unchanged:set.main_unchanged,policy:set.policy||'sequential',
-    ...(set.policy==='joint'?{baseline_coverage:set.baseline_coverage,rendered_trials:set.rendered_trials,preflights:set.preflights,preflight_deferred:set.preflight_deferred,projected_trials:set.projected_trials,selection_scope:set.scope}:{}),
+    ...(['joint','compact'].includes(set.policy)?{baseline_coverage:set.baseline_coverage,rendered_trials:set.rendered_trials,preflights:set.preflights,preflight_deferred:set.preflight_deferred,projected_trials:set.projected_trials,selection_scope:set.scope}:{}),
+    ...(set.policy==='compact'?{summary_projected_trials:set.summary_projected_trials,summary_deferred:set.summary_deferred,summary_trial_limit:set.summary_trial_limit}:{}),
     quality_pass:panels.every(p=>!p.quality.issues.length),
     implementation_sha256:Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.resolve(__dirname,'..',f)))]))};
   fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
@@ -41,7 +42,7 @@ ${i?'<p><a href="#panel-0">返回主图</a> · 主图对应区域：<code>'+esc(
 if(require.main===module){
   const [input,output,...args]=process.argv.slice(2);if(!input||!output)throw Error('Usage: node tools/export_diagram_set.cjs INPUT OUTPUT [--max-panels N] [--max-trials N]');
   const option=(key,fallback)=>args.includes(key)?Number(args[args.indexOf(key)+1]):fallback,value=JSON.parse(fs.readFileSync(input));
-  const {manifest:m}=exportSet(value.ir||value,output,{state:value.state||{paperMedium:'canvas',paperGranularity:'roles'},maxPanels:option('--max-panels',6),maxTrials:option('--max-trials',8),policy:args.includes('--joint')?'joint':undefined});
+  const {manifest:m}=exportSet(value.ir||value,output,{state:value.state||{paperMedium:'canvas',paperGranularity:'roles'},maxPanels:option('--max-panels',6),maxTrials:option('--max-trials',8),policy:args.includes('--compact')?'compact':args.includes('--joint')?'joint':undefined});
   console.log(JSON.stringify({panels:m.panels.length,fulfilled:m.coverage.filter(c=>c.status==='fulfilled').length,goals:m.coverage.length,deferred:m.deferred_goals.length,complete:m.complete}));
 }
 module.exports={exportSet};

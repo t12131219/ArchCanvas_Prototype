@@ -815,7 +815,7 @@
     const roleStages=roleStageEngine?.compile({ir,plan:focused.plan,open:new Set(open),requested:[...explicitRoles]});
     if(roleStages){focused.plan=roleStages.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     const rolePathEngine=canvas&&granularity==='roles'&&state.paperRolePathStages===true?(root.SemanticRolePathStages||(typeof require==='function'?require('./role-path-stages.js'):null)):null;
-    const rolePaths=rolePathEngine?.compile({ir,plan:focused.plan,open:new Set(open),requested:[...explicitRoles]});
+    const rolePaths=rolePathEngine?.compile({ir,plan:focused.plan,open:new Set(open),requested:[...explicitRoles],owners:state.paperRolePathStageOwners});
     if(rolePaths){focused.plan=rolePaths.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     const predicateStages=canvas&&granularity==='roles'&&state.paperConditionPredicates!==false?Regions.predicates({ir,plan:focused.plan}):null;
     if(predicateStages){focused.plan=predicateStages.plan;idx=index(focused.plan);for(const r of predicateStages.rows)idx.nodes.get(r.group).content_inventory=inventory(idx.children.get(r.group)||[],idx);for(const n of focused.plan.nodes)decorate(n,idx);}

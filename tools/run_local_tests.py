@@ -58,6 +58,7 @@ COMMANDS = {
     'joint-expressions': ['node', 'tests/joint-expressions.test.cjs'],
     'role-operation-stages': ['node', 'tests/role-operation-stages.test.cjs'],
     'role-path-stages': ['node', 'tests/role-path-stages.test.cjs'],
+    'compact-main': ['node', 'tests/compact-main.test.cjs'],
     'joint-preflights': ['node', 'tests/joint-preflights.test.cjs'],
     'context-sources': ['node', 'tests/context-sources.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],

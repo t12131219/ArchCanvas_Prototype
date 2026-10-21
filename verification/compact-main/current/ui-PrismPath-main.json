@@ -1,0 +1,1157 @@
+{
+  "schema": "semantic-canvas/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "PrismPath",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+      "class": "PrismPath",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+        "cell": null,
+        "sha256": "c96bfdff8ada0a0f21fa1f0db5ce8dba9949df6625ad27f81d8059cd0963d7d4",
+        "unit_sha256": "c96bfdff8ada0a0f21fa1f0db5ce8dba9949df6625ad27f81d8059cd0963d7d4"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/17:4:composite:1",
+        "kind": "composite",
+        "label": "PrismPath",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 17,
+            "end_line": 18,
+            "column": 4,
+            "end_column": 63,
+            "symbol": "PrismPath.forward",
+            "expression": "def forward(self, x):\n    return self.leave(self.tail(self.curve(self.enter(x))))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "PrismPath"
+      },
+      {
+        "id": "model/17:4:composite:1/17:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 17,
+            "end_line": 17,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "PrismPath.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/17:4:composite:1/18:47:compute:1",
+        "kind": "compute",
+        "label": "enter · Linear",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 47,
+            "end_column": 60,
+            "symbol": "PrismPath.forward",
+            "expression": "self.enter(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "enter",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            8,
+            12
+          ],
+          "kwargs": {}
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.Linear",
+        "module_binding": {
+          "reference": "entry|enter@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:8:21",
+          "selection": "self.enter",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+              "line": 8,
+              "end_line": 8,
+              "column": 21,
+              "end_column": 37,
+              "symbol": "constructor",
+              "expression": "nn.Linear(8, 12)"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/17:4:composite:1/18:47:compute:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "module_identity": "entry|enter@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:8:21"
+      },
+      {
+        "id": "model/17:4:composite:1/8:21:parameter:1",
+        "kind": "parameter",
+        "label": "enter.parameters",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 21,
+            "end_column": 37,
+            "symbol": "PrismPath.forward",
+            "expression": "nn.Linear(8, 12)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "enter",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/17:4:composite:1/18:36:compute:1",
+        "kind": "compute",
+        "label": "curve · GELU",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 36,
+            "end_column": 61,
+            "symbol": "PrismPath.forward",
+            "expression": "self.curve(self.enter(x))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "module_path": "curve",
+        "framework_type": "torch.nn.GELU",
+        "constructor": {
+          "args": [],
+          "kwargs": {}
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.GELU",
+        "module_binding": {
+          "reference": "entry|curve@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:9:21",
+          "selection": "self.curve",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+              "line": 9,
+              "end_line": 9,
+              "column": 21,
+              "end_column": 30,
+              "symbol": "constructor",
+              "expression": "nn.GELU()"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/17:4:composite:1/18:36:compute:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "module_identity": "entry|curve@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:9:21"
+      },
+      {
+        "id": "model/17:4:composite:1/14:4:composite:1",
+        "kind": "composite",
+        "label": "self.tail",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 14,
+            "end_line": 15,
+            "column": 4,
+            "end_column": 46,
+            "symbol": "tail",
+            "expression": "def tail(self, x):\n    return self.pass_through(self.damp(x))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-function",
+        "module_path": "",
+        "constructor": {},
+        "source_class": null
+      },
+      {
+        "id": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/17:4:composite:1/14:4:composite:1",
+        "source_parent": "model/17:4:composite:1/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 14,
+            "end_line": 14,
+            "column": 19,
+            "end_column": 20,
+            "symbol": "tail",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+        "kind": "compute",
+        "label": "damp · Dropout",
+        "parent": "model/17:4:composite:1/14:4:composite:1",
+        "source_parent": "model/17:4:composite:1/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 15,
+            "end_line": 15,
+            "column": 33,
+            "end_column": 45,
+            "symbol": "tail",
+            "expression": "self.damp(x)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "dropout",
+        "module_path": "damp",
+        "framework_type": "torch.nn.Dropout",
+        "constructor": {
+          "args": [
+            0.2
+          ],
+          "kwargs": {}
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.Dropout",
+        "module_binding": {
+          "reference": "entry|damp@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:10:20",
+          "selection": "self.damp",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+              "line": 10,
+              "end_line": 10,
+              "column": 20,
+              "end_column": 35,
+              "symbol": "constructor",
+              "expression": "nn.Dropout(0.2)"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "module_identity": "entry|damp@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:10:20"
+      },
+      {
+        "id": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+        "kind": "compute",
+        "label": "pass_through · Identity",
+        "parent": "model/17:4:composite:1/14:4:composite:1",
+        "source_parent": "model/17:4:composite:1/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 15,
+            "end_line": 15,
+            "column": 15,
+            "end_column": 46,
+            "symbol": "tail",
+            "expression": "self.pass_through(self.damp(x))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "identity",
+        "module_path": "pass_through",
+        "framework_type": "torch.nn.Identity",
+        "constructor": {
+          "args": [],
+          "kwargs": {}
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.Identity",
+        "module_binding": {
+          "reference": "entry|pass_through@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:11:28",
+          "selection": "self.pass_through",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+              "line": 11,
+              "end_line": 11,
+              "column": 28,
+              "end_column": 41,
+              "symbol": "constructor",
+              "expression": "nn.Identity()"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "module_identity": "entry|pass_through@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:11:28"
+      },
+      {
+        "id": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/17:4:composite:1/14:4:composite:1",
+        "source_parent": "model/17:4:composite:1/14:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 15,
+            "end_line": 15,
+            "column": 8,
+            "end_column": 46,
+            "symbol": "tail",
+            "expression": "return self.pass_through(self.damp(x))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/17:4:composite:1/18:15:compute:1",
+        "kind": "compute",
+        "label": "leave · Linear",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 15,
+            "end_column": 63,
+            "symbol": "PrismPath.forward",
+            "expression": "self.leave(self.tail(self.curve(self.enter(x))))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "linear",
+        "module_path": "leave",
+        "framework_type": "torch.nn.Linear",
+        "constructor": {
+          "args": [
+            12,
+            8
+          ],
+          "kwargs": {}
+        },
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [
+              {
+                "operand": ".args:0"
+              }
+            ],
+            "keywords": []
+          }
+        },
+        "source_framework_module": "torch.nn.Linear",
+        "module_binding": {
+          "reference": "entry|leave@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:12:21",
+          "selection": "self.leave",
+          "construction_evidence": [
+            {
+              "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+              "line": 12,
+              "end_line": 12,
+              "column": 21,
+              "end_column": 37,
+              "symbol": "constructor",
+              "expression": "nn.Linear(12, 8)"
+            }
+          ],
+          "allocation": "fresh-framework-construction",
+          "rule_version": "source-module-binding/1",
+          "invocation": "model/17:4:composite:1/18:15:compute:1",
+          "status": "proved",
+          "scope": "constructor binding selected in a modeled effect-free source prefix",
+          "parameter_identity": "unresolved",
+          "allocation_distinctness": "not-asserted"
+        },
+        "module_identity": "entry|leave@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py:12:21"
+      },
+      {
+        "id": "model/17:4:composite:1/12:21:parameter:1",
+        "kind": "parameter",
+        "label": "leave.parameters",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 12,
+            "end_line": 12,
+            "column": 21,
+            "end_column": 37,
+            "symbol": "PrismPath.forward",
+            "expression": "nn.Linear(12, 8)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "resource",
+          "fill": "#f3dff1"
+        },
+        "runtime_evidence": [],
+        "parameter_scope": "leave",
+        "identity_status": "declared-scope; sharing-unresolved"
+      },
+      {
+        "id": "model/17:4:composite:1/18:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/17:4:composite:1",
+        "source_parent": "model/17:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 18,
+            "end_line": 18,
+            "column": 8,
+            "end_column": 63,
+            "symbol": "PrismPath.forward",
+            "expression": "return self.leave(self.tail(self.curve(self.enter(x))))"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/17:4:composite:1/8:21:parameter:1",
+        "target": "model/17:4:composite:1/18:47:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00000"
+      },
+      {
+        "source": "model/17:4:composite:1/17:22:interface:1",
+        "target": "model/17:4:composite:1/18:47:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/17:4:composite:1/18:47:compute:1",
+        "target": "model/17:4:composite:1/18:36:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/17:4:composite:1/18:36:compute:1",
+        "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+        "target": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+        "target": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+        "target": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/17:4:composite:1/12:21:parameter:1",
+        "target": "model/17:4:composite:1/18:15:compute:1",
+        "kind": "parameter-read",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "framework-contract",
+        "id": "e00007"
+      },
+      {
+        "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+        "target": "model/17:4:composite:1/18:15:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/17:4:composite:1/18:15:compute:1",
+        "target": "model/17:4:composite:1/18:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      }
+    ],
+    "branches": [],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "semantic_contracts": [
+      {
+        "id": "contract:feed-forward:0c4ba3b74e65",
+        "rule": "feed-forward",
+        "rule_version": "source-contracts/1",
+        "node": "model/17:4:composite:1",
+        "members": [
+          "model/17:4:composite:1",
+          "model/17:4:composite:1/17:22:interface:1",
+          "model/17:4:composite:1/18:47:compute:1",
+          "model/17:4:composite:1/8:21:parameter:1",
+          "model/17:4:composite:1/18:36:compute:1",
+          "model/17:4:composite:1/14:4:composite:1",
+          "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+          "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+          "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+          "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+          "model/17:4:composite:1/18:15:compute:1",
+          "model/17:4:composite:1/12:21:parameter:1",
+          "model/17:4:composite:1/18:8:interface:1"
+        ],
+        "roles": {
+          "input_projection": "model/17:4:composite:1/18:47:compute:1",
+          "activation": "model/17:4:composite:1/18:36:compute:1",
+          "output_projection": "model/17:4:composite:1/18:15:compute:1",
+          "output": "model/17:4:composite:1/18:15:compute:1"
+        },
+        "proof": [
+          "the entire local computation is a Linear → activation → Linear dependency chain; explicit wrappers retained"
+        ],
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+            "line": 17,
+            "end_line": 18,
+            "column": 4,
+            "end_column": 63,
+            "symbol": "PrismPath.forward",
+            "expression": "def forward(self, x):\n    return self.leave(self.tail(self.curve(self.enter(x))))"
+          }
+        ],
+        "dependencies": [],
+        "edges": [
+          "e00000",
+          "e00001",
+          "e00002",
+          "e00003",
+          "e00004",
+          "e00005",
+          "e00006",
+          "e00007",
+          "e00008",
+          "e00009"
+        ],
+        "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+        "not_asserted": [
+          "arbitrary-input execution coverage",
+          "independent projection parameters",
+          "helper purity or arbitrary alias equivalence"
+        ],
+        "source_chain": {
+          "rule_version": "source-local-chain/1",
+          "operations": [
+            "model/17:4:composite:1/18:47:compute:1",
+            "model/17:4:composite:1/18:36:compute:1",
+            "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+            "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+            "model/17:4:composite:1/18:15:compute:1"
+          ],
+          "input": {
+            "node": "model/17:4:composite:1/17:22:interface:1",
+            "slot": "out"
+          },
+          "output": "model/17:4:composite:1/18:8:interface:1",
+          "helpers": [
+            {
+              "node": "model/17:4:composite:1/14:4:composite:1",
+              "source_parent": "model/17:4:composite:1",
+              "members": [
+                "model/17:4:composite:1/14:4:composite:1",
+                "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+              ],
+              "cuts": [
+                "e00003",
+                "e00008"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "semantic_contract_basis": "a0de686f1a7849935a5402789a03cc0cf4453428bab86582a8ee871c631abbdb",
+    "ir_digest": "79772ebe559a2d35011368363d28ff2929155db16e073ef28b20fbcbc3d3baee"
+  },
+  "state": {
+    "open": [
+      "model/17:4:composite:1"
+    ],
+    "offsets": {},
+    "mode": "source",
+    "view": "publication",
+    "paperMedium": "canvas",
+    "paperGranularity": "roles",
+    "paperAdaptive": false,
+    "paperRolePathStages": true,
+    "paperRolePathStageOwners": [
+      "model/17:4:composite:1"
+    ],
+    "paperDiagramPlan": {
+      "schema": "joint-diagram-plan/1",
+      "main_state": {
+        "open": [
+          "model/17:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false,
+        "paperRolePathStages": true,
+        "paperRolePathStageOwners": [
+          "model/17:4:composite:1"
+        ]
+      },
+      "requested_state": {
+        "open": [
+          "model/17:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false
+      },
+      "details": [
+        {
+          "id": "recovery:model/17:4:composite:1",
+          "anchor": "model/17:4:composite:1",
+          "label": "PrismPath",
+          "state": {
+            "mode": "source",
+            "view": "publication",
+            "paperMedium": "canvas",
+            "paperGranularity": "roles",
+            "paperAdaptive": false,
+            "paperFocus": "model/17:4:composite:1",
+            "paperAuto": false,
+            "offsets": {},
+            "open": [
+              "model/17:4:composite:1",
+              "model/17:4:composite:1",
+              "model/17:4:composite:1/14:4:composite:1"
+            ]
+          }
+        }
+      ],
+      "coverage": [
+        {
+          "goal": "goal:relation:linear-transform:model/17:4:composite:1/18:47:compute:1",
+          "kind": "linear-transform",
+          "status": "fulfilled",
+          "panels": [
+            "main",
+            "recovery:model/17:4:composite:1"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:relation:linear-transform:model/17:4:composite:1/18:15:compute:1",
+          "kind": "linear-transform",
+          "status": "fulfilled",
+          "panels": [
+            "main",
+            "recovery:model/17:4:composite:1"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/17:22:interface:1",
+          "kind": "external-interface",
+          "status": "fulfilled",
+          "panels": [
+            "main",
+            "recovery:model/17:4:composite:1"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/18:36:compute:1",
+          "kind": "computation",
+          "status": "fulfilled",
+          "panels": [
+            "recovery:model/17:4:composite:1"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+          "kind": "computation",
+          "status": "fulfilled",
+          "panels": [
+            "recovery:model/17:4:composite:1"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+          "kind": "computation",
+          "status": "fulfilled",
+          "panels": [
+            "recovery:model/17:4:composite:1"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/18:8:interface:1",
+          "kind": "external-interface",
+          "status": "fulfilled",
+          "panels": [
+            "main",
+            "recovery:model/17:4:composite:1"
+          ],
+          "method": "direct-canonical-paths"
+        }
+      ],
+      "baseline_coverage": [
+        {
+          "goal": "goal:relation:linear-transform:model/17:4:composite:1/18:47:compute:1",
+          "kind": "linear-transform",
+          "status": "fulfilled",
+          "panels": [
+            "main"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:relation:linear-transform:model/17:4:composite:1/18:15:compute:1",
+          "kind": "linear-transform",
+          "status": "fulfilled",
+          "panels": [
+            "main"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/17:22:interface:1",
+          "kind": "external-interface",
+          "status": "fulfilled",
+          "panels": [
+            "main"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/18:36:compute:1",
+          "kind": "computation",
+          "status": "fulfilled",
+          "panels": [
+            "main"
+          ],
+          "method": "direct-canonical-paths"
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+          "kind": "computation",
+          "status": "deferred",
+          "panels": [],
+          "method": null
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+          "kind": "computation",
+          "status": "deferred",
+          "panels": [],
+          "method": null
+        },
+        {
+          "goal": "goal:node:model/17:4:composite:1/18:8:interface:1",
+          "kind": "external-interface",
+          "status": "fulfilled",
+          "panels": [
+            "main"
+          ],
+          "method": "direct-canonical-paths"
+        }
+      ],
+      "policy": "compact",
+      "summary_deferred": [],
+      "attempts": [
+        {
+          "request": "summary:model/17:4:composite:1",
+          "form": "summary-set",
+          "anchor": "model/17:4:composite:1",
+          "state": {
+            "open": [
+              "model/17:4:composite:1"
+            ],
+            "offsets": {},
+            "mode": "source",
+            "view": "publication",
+            "paperMedium": "canvas",
+            "paperGranularity": "roles",
+            "paperAdaptive": false,
+            "paperRolePathStages": true,
+            "paperRolePathStageOwners": [
+              "model/17:4:composite:1"
+            ]
+          },
+          "detail_state": {
+            "mode": "source",
+            "view": "publication",
+            "paperMedium": "canvas",
+            "paperGranularity": "roles",
+            "paperAdaptive": false,
+            "paperFocus": "model/17:4:composite:1",
+            "paperAuto": false,
+            "offsets": {},
+            "open": [
+              "model/17:4:composite:1",
+              "model/17:4:composite:1",
+              "model/17:4:composite:1/14:4:composite:1"
+            ]
+          },
+          "rendered": true,
+          "eligible": true,
+          "accepted": true,
+          "reasons": [],
+          "gained_goals": [
+            "goal:node:model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+            "goal:node:model/17:4:composite:1/14:4:composite:1/15:15:compute:1"
+          ],
+          "lost_goals": [],
+          "main_lost_goals": [
+            "goal:node:model/17:4:composite:1/18:36:compute:1"
+          ],
+          "recovery": {
+            "roles": [],
+            "summaries": [],
+            "paths": []
+          },
+          "stages": [
+            "paper:role-path-stage:model/17:4:composite:1/18:36:compute:1"
+          ],
+          "before": {
+            "nodes": 7,
+            "edges": 5,
+            "width": 300,
+            "height": 644,
+            "area": 193200,
+            "crossings": 0,
+            "contacts": 0,
+            "overlaps": 0,
+            "route_failures": 0,
+            "unplaced_labels": 0,
+            "font": 13,
+            "issues": [],
+            "wire_length": 140
+          },
+          "metrics": {
+            "nodes": 6,
+            "edges": 4,
+            "width": 300,
+            "height": 562,
+            "area": 168600,
+            "crossings": 0,
+            "contacts": 0,
+            "overlaps": 0,
+            "route_failures": 0,
+            "unplaced_labels": 0,
+            "font": 13,
+            "issues": [],
+            "wire_length": 112
+          },
+          "total_area": 420000,
+          "total_wire_length": 584,
+          "main_cost": 0.8726708074534162,
+          "selection_benefit": {
+            "score": 0.11027397260273972,
+            "cost": 18.13664596273292
+          },
+          "quality": {
+            "schema": "publication-quality/2",
+            "route_strategy": "canonical-short",
+            "wire_length": 112,
+            "min_print_font_pt": 15.74,
+            "target_min_font_pt": 8,
+            "requested_width_mm": 180,
+            "width_mm": 128.1138790035587,
+            "height_mm": 240,
+            "route_failures": [],
+            "unplaced_port_labels": [],
+            "line_geometry": {
+              "crossings": 0,
+              "overlapping_paths": [],
+              "unrelated_contacts": []
+            },
+            "issues": [],
+            "medium": "canvas",
+            "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+            "native_width_px": 300,
+            "native_height_px": 562,
+            "min_canvas_font_px": 13,
+            "target_min_canvas_font_px": 12,
+            "canvas_limits": {
+              "width_px": 8192,
+              "height_px": 16384,
+              "area_px2": 16777216,
+              "nodes": 512,
+              "edges": 2048
+            }
+          },
+          "detail_quality": {
+            "schema": "publication-quality/2",
+            "route_strategy": "canonical-short",
+            "wire_length": 472,
+            "min_print_font_pt": 10.55,
+            "target_min_font_pt": 8,
+            "requested_width_mm": 180,
+            "width_mm": 85.91885441527447,
+            "height_mm": 240,
+            "route_failures": [],
+            "unplaced_port_labels": [],
+            "line_geometry": {
+              "crossings": 0,
+              "overlapping_paths": [],
+              "unrelated_contacts": []
+            },
+            "issues": [],
+            "medium": "canvas",
+            "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+            "native_width_px": 300,
+            "native_height_px": 838,
+            "min_canvas_font_px": 13,
+            "target_min_canvas_font_px": 12,
+            "canvas_limits": {
+              "width_px": 8192,
+              "height_px": 16384,
+              "area_px2": 16777216,
+              "nodes": 512,
+              "edges": 2048
+            }
+          }
+        }
+      ],
+      "preflights": [],
+      "preflight_deferred": [],
+      "projected_trials": 0,
+      "limits": {
+        "max_panels": 3,
+        "max_trials": 4,
+        "max_preflights": 24
+      },
+      "complete": true
+    }
+  }
+}

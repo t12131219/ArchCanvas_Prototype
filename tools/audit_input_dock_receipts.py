@@ -19,10 +19,17 @@ def verify(document, tree):
             drawn.setdefault(e.attrib['data-node-id'], []).append(e)
     paths = {e.attrib['data-edge-id']: e for e in tree.iter() if e.tag.endswith('path') and 'data-edge-id' in e.attrib}
     docks = document['layout'].get('input_docks', [])
+    def guarded(n):
+        return (n['kind'] in ['opaque', 'control', 'state', 'buffer', 'parameter'] or
+                any(n.get(k) for k in ['condition', 'mutable', 'identity_display', 'observed_calls']) or
+                n.get('evidence_status') == 'runtime-only' or n.get('semantic_type') in
+                ['conditional-region', 'conditional-collection', 'loop-template', 'iteration-region', 'observed-variant'])
+
     for dock in docks:
         node, parent = nodes[dock['node']], nodes[dock['parent']]
         source = planned[dock['node']]
         assert source['kind'] == 'interface' and source['role'] == 'input'
+        assert not guarded(source)
         assert source['parent'] == dock['parent']
         assert len(drawn[dock['node']]) == 1
         transform = re.fullmatch(r'translate\(([-\d.eE+]+),([-\d.eE+]+)\)', drawn[dock['node']][0].attrib['transform'])
@@ -36,10 +43,25 @@ def verify(document, tree):
         uses = [e for e in edges.values() if e['source'] == dock['node']]
         assert dock['edges'] == [{k: e[k] for k in ['target', 'source_port', 'target_port']} | {'edge': e['id']} for e in uses]
         assert len(uses) >= 2 and not any(e['target'] == dock['node'] for e in edges.values())
+        conditions = []
         for e in uses:
             assert e['id'] in paths and e['route']['ok'] and not e.get('design_route') and not e.get('layout_after')
             for member in e.get('bundle_members', [e]):
-                assert member['kind'] in ['data', 'alias', 'interface-binding'] and not member.get('condition') and not member.get('iteration')
+                assert member['kind'] in ['data', 'alias', 'interface-binding'] and not member.get('iteration')
+                if member.get('condition'):
+                    conditions.append(dict(edge=member['id'], condition=member['condition']))
+            at, first = e['target'], True
+            while at not in dock['regions']:
+                n = planned[at]
+                endpoint = (not any(n.get(k) for k in ['mutable', 'identity_display', 'observed_calls']) and
+                            n.get('evidence_status') != 'runtime-only' and
+                            (n['kind'] in ['opaque', 'control'] or n.get('condition') or
+                             n.get('semantic_type') in ['conditional-region', 'conditional-collection']))
+                assert not guarded(n) or first and endpoint
+                at, first = n['parent'], False
+                assert at is not None
+            assert not guarded(planned[at])
+        assert dock.get('conditional_uses', []) == conditions
         for region in dock['regions']:
             other = nodes[region]
             assert node['x'] + node['w'] <= other['x'] if dock['side'] == 'left' else node['x'] >= other['x'] + other['w']

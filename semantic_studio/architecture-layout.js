@@ -141,9 +141,14 @@
           ['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant'].includes(n.semantic_type);};
         const regions=kids.filter(id=>positions.get(id).expanded&&!guarded(id));
         if(!regions.length)return box;
-        const relative=id=>{let x=0,y=0;while(id!=null&&!kidSet.has(id)){const p=positions.get(id);if(!p||guarded(id))return null;x+=p.x;y+=p.y;id=idx.nodes.get(id)?.parent;}
+        // A visible conditional/unknown boundary is a valid wire endpoint.
+        // Do not traverse its interior or a guarded ancestor. The source
+        // stays outside the receiving region with every guarded use intact.
+        const endpoint=id=>{const n=idx.nodes.get(id);return n&&!n.mutable&&!n.identity_display&&!n.observed_calls&&n.evidence_status!=='runtime-only'&&
+          (['opaque','control'].includes(n.kind)||n.condition||['conditional-region','conditional-collection'].includes(n.semantic_type));};
+        const relative=target=>{let id=target,x=0,y=0;while(id!=null&&!kidSet.has(id)){const p=positions.get(id);if(!p||guarded(id)&&!(id===target&&endpoint(id)))return null;x+=p.x;y+=p.y;id=idx.nodes.get(id)?.parent;}
           return regions.includes(id)?{region:id,x:x+positions.get(id).x,y:y+positions.get(id).y}:null;};
-        const ordinary=e=>!e.design_route&&!e.layout_after&&(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
+        const ordinary=e=>!e.design_route&&!e.layout_after&&(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.iteration);
         const inputs=kids.filter(id=>{const n=idx.nodes.get(id);return n.kind==='interface'&&n.role==='input'&&!guarded(id)&&!pred.get(id).size;});
         let remaining=inputs.length;
         const overlap=(a,b)=>a.x<b.x+b.w+gapX&&a.x+a.w+gapX>b.x&&a.y<b.y+b.h+gapY/2&&a.y+a.h+gapY/2>b.y;
@@ -165,8 +170,9 @@
           const candidate=trials.filter(a=>kids.every(other=>other===id||!overlap(a,positions.get(other)))).sort((a,b)=>cost(a)-cost(b))[0];
           if(!candidate||cost(candidate)>before*.85)continue;
           const record={parent,node:id,side:candidate.side,edges:uses.map(e=>({edge:e.id,target:e.target,source_port:e.source_port,target_port:e.target_port})),regions:[...new Set(targets.map(t=>t.region))],
+            conditional_uses:uses.flatMap(e=>(e.bundle_members||[e]).filter(m=>m.condition).map(m=>({edge:m.id,condition:JSON.parse(JSON.stringify(m.condition))}))),
             initial:{x:p.x,y:p.y},candidate:{x:candidate.x,y:candidate.y},estimated_before:before,estimated_after:cost(candidate),
-            scope:'One existing source terminal, exact uses and source ownership retained; geometry only, no scheduling or input-role assertion.'};
+            scope:'One existing source terminal outside receiving regions; exact uses, conditions and source ownership retained. Visible boundaries may receive wires; guarded ancestors are not traversed. Geometry only, no branch pruning, scheduling or input-role assertion.'};
           Object.assign(p,{x:candidate.x,y:candidate.y,arrangement:'input-dock'});inputDocks.push(record);remaining--;
           if(band){band.inputs=band.inputs.filter(other=>other!==id);(band.docked_inputs||=[]).push(id);}
         }

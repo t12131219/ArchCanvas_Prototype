@@ -20,9 +20,14 @@ test('a short-wire candidate with excess width or height is rejected and exact b
  assert.ok(receipt.candidate.height>receipt.before.height||receipt.candidate.width>receipt.before.width*1.12);
  assert.equal(a.svg,b.svg);assert.equal(facts(a),facts(b));assert.equal(b.document.layout.input_docks,undefined);
 });
-test('unknown, source conditions and mutation fixtures preserve the baseline',()=>{
+test('unknown, source conditions and mutation fixtures retain exact facts and visible boundaries',()=>{
  for(const name of ['GuardedInputs','UnknownInputs','StatefulInputs']){const ir=load(name),a=R.render(ir,{...state,paperInputDocks:false}),b=R.render(ir,state);
-  assert.equal(a.svg,b.svg,name);assert.equal(facts(a),facts(b));assert.ok(!b.prepared.routing.input_dock_refinement?.accepted);}
+  assert.equal(facts(a),facts(b),name);
+  if(b.prepared.routing.input_dock_refinement?.accepted){
+   assert.ok(b.prepared.quality.wire_length<=a.prepared.quality.wire_length*.9);
+   assert.ok(b.prepared.quality.line_geometry.crossings<=a.prepared.quality.line_geometry.crossings);
+   assert.ok(b.graph.positions.context.inputDocks.every(d=>L.inputDockGeometry(d,b.graph.positions)));
+  }else assert.equal(a.svg,b.svg,name);}
 });
 function fixture(){
  const nodes=[{id:'root',parent:null,kind:'composite'},...['x','y','c'].map(id=>({id,parent:'root',kind:'interface',role:'input'})),{id:'region',parent:'root',kind:'composite'},
@@ -36,11 +41,24 @@ test('the geometry primitive preserves all endpoints, slots, source ownership an
  assert.deepEqual(dock.edges,ir.edges.filter(e=>e.source==='c').map(e=>({edge:e.id,target:e.target,source_port:e.source_port,target_port:e.target_port})));
  assert.equal(p.size,ir.nodes.length);const q=new Map(p);q.context=p.context;q.set('c',{...p.get('c'),x:p.get('n7').x});assert.equal(L.inputDockGeometry(dock,q),false);
 });
-test('guarded endpoints and ancestors, nonordinary dependencies, SCCs and incoming bindings cannot authorize docking',()=>{
+test('guarded sources and ancestors, effectful endpoints, SCCs and incoming bindings cannot authorize docking',()=>{
  const guards=[{kind:'opaque'},{kind:'state'},{mutable:true},{condition:{branch:'guard'}},{identity_display:{}},{observed_calls:{}},{evidence_status:'runtime-only'},{semantic_type:'iteration-region'},{semantic_type:'conditional-collection'}];
- for(const id of ['c','region','n7'])for(const guard of guards){const ir=fixture();Object.assign(ir.nodes.find(n=>n.id===id),guard);assert.equal(layout(ir).context.inputDocks.length,0,id+JSON.stringify(guard));}
- for(const alter of [ir=>ir.edges.at(-1).condition={branch:'g'},ir=>ir.edges.at(-1).kind='state',ir=>ir.edges.at(-1).iteration={},ir=>ir.edges.at(-1).design_route={kind:'bypass'},ir=>ir.edges.at(-1).layout_after='n0',
+ for(const id of ['c','region','n7'])for(const guard of guards){
+  if(id==='n7'&&(guard.kind==='opaque'||guard.condition||guard.semantic_type==='conditional-collection'))continue;
+  const ir=fixture();Object.assign(ir.nodes.find(n=>n.id===id),guard);assert.equal(layout(ir).context.inputDocks.length,0,id+JSON.stringify(guard));}
+ for(const alter of [ir=>ir.edges.at(-1).kind='state',ir=>ir.edges.at(-1).iteration={},ir=>ir.edges.at(-1).design_route={kind:'bypass'},ir=>ir.edges.at(-1).layout_after='n0',
   ir=>ir.edges.push({id:'incoming',source:'x',target:'c',kind:'alias'}),ir=>ir.edges.push({id:'cycle',source:'n7',target:'c',kind:'data'}),ir=>ir.edges.pop()]){const ir=fixture();alter(ir);assert.equal(layout(ir).context.inputDocks.length,0);}
+});
+test('conditional uses and visible unknown endpoints can face a region without traversing protected interiors',()=>{
+ for(const guard of [{kind:'opaque'},{condition:{branch:'g',outcome:true}},{kind:'composite',semantic_type:'conditional-collection'}]){
+  const ir=fixture(),before=JSON.stringify(ir);Object.assign(ir.nodes.find(n=>n.id==='n7'),guard);
+  ir.edges.at(-1).condition={branch:'g',outcome:false};const frozen=JSON.stringify(ir),p=layout(ir),d=p.context.inputDocks[0];
+  assert.ok(d&&L.inputDockGeometry(d,p));assert.equal(p.size,ir.nodes.length);assert.equal(JSON.stringify(ir),frozen);
+  assert.deepEqual(d.conditional_uses,[{edge:ir.edges.at(-1).id,condition:ir.edges.at(-1).condition}]);
+  assert.ok(p.get('c').x+p.get('c').w<=p.get('region').x||p.get('c').x>=p.get('region').x+p.get('region').w);
+  assert.ok(p.has('n7'));assert.notEqual(frozen,before);
+  ir.nodes.push({id:'inside',parent:'n7',kind:'compute'});ir.edges.at(-1).target='inside';assert.equal(layout(ir).context.inputDocks.length,0);
+ }
 });
 test('explicit opt-out, user offsets and print views do not select a new input layout',()=>{
  const ir=load('BraidedInputs');for(const s of [{...state,paperInputDocks:false},{...state,offsets:{[ir.nodes[0].id]:{x:8,y:0}}},{paperGranularity:'roles'}]){const r=R.render(ir,s);assert.equal(r.prepared.routing.input_dock_refinement,undefined);assert.equal(r.document.layout.input_docks,undefined);}

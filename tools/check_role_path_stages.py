@@ -22,7 +22,7 @@ PROTECTED = ['mutable', 'condition', 'identity_display', 'observed_calls', 'runt
              'semantic_contracts', 'contract_roles', 'repeat_contract', 'iteration', 'contract_stage', 'role_operation_stage']
 
 
-def check(row, *, compare_expression=True, require_quality=True):
+def check(row, *, compare_expression=True, require_quality=True, allow_label_notes=False):
     doc = read(OUT / row['document'])
     assert sha(OUT / row['document']) == row['document_sha256'] and sha(OUT / row['svg']) == row['svg_sha256']
     assert doc['ir'] == read(ROOT / row['input']) and sha(ROOT / row['input']) == row['input_sha256']
@@ -188,7 +188,16 @@ def check(row, *, compare_expression=True, require_quality=True):
                     v, w, h, k = (a, b, c, d) if a[0] == b[0] else (c, d, a, b)
                     crossings += min(h[0], k[0]) < v[0] < max(h[0], k[0]) and min(v[1], w[1]) < h[1] < max(v[1], w[1])
     q = doc['diagnostics']['publication']
-    assert q == row['quality'] and not q['route_failures'] and not q['unplaced_port_labels']
+    assert q == row['quality'] and not q['route_failures']
+    if q['unplaced_port_labels']:
+        # Rejected or historical figures may have explicit footer notes.
+        # Audit them as unresolved labels, never as clean figure quality.
+        assert allow_label_notes and not require_quality and 'port-label-requires-note' in q['issues']
+        footer = re.sub(r'\s', '', ''.join(''.join(e.itertext()) for e in tree.getroot() if e.tag.endswith('text')))
+        for label in q['unplaced_port_labels']:
+            edge = next(e for e in doc['layout']['edges'] if e['id'] == label['edge'])
+            text = planned[edge['source']]['label'] + ' → ' + planned[edge['target']]['label'] + ': ' + label['text']
+            assert re.sub(r'\s', '', text) in footer
     if require_quality:
         assert not q['issues']
         assert not q['line_geometry']['unrelated_contacts']

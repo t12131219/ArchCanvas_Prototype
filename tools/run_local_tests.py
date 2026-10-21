@@ -53,6 +53,7 @@ COMMANDS = {
     'input-docks': ['node', 'tests/input-docks.test.cjs'],
     'return-regions': ['node', 'tests/return-regions.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
+    'context-sources': ['node', 'tests/context-sources.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],
     'frame-ownership': ['node', 'tests/frame-ownership.test.cjs'],

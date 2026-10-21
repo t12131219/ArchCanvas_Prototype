@@ -725,8 +725,37 @@
       deferred_panels:chosen.graph.nodes.filter(n=>n.kind==='composite'&&!chosen.graph.positions.get(n.id).expanded&&(chosen.graph.idx.children.get(n.id)||[]).length).map(n=>n.id)};
     return chosen;
   }
+  function prepareContextSources(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperContextSourceFacing!==undefined||
+      Object.keys(state.offsets||{}).length||g.edges.length>128||!g.positions.context.contextLanes.some(c=>c.selected!==false))return baseline;
+    // Copy only drawing state. Canonical facts and the selected frontier stay
+    // identical, and a rejected route search cannot poison baseline caches.
+    const positions=new Map([...g.positions].map(([id,p])=>[id,{...p}]));
+    positions.context={...g.positions.context,contextSourceFacing:true,routeCache:new Map(),reserved:[]};
+    const graph={...g,positions,constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
+    const changes=g.edges.map(e=>({edge:e.id,side:L.contextSourceSide(e,positions)})).filter(c=>c.side);
+    if(!changes.some(c=>baseline.prepared.routes.find(e=>e.id===c.edge)?.route.source_side!==c.side))return baseline;
+    const trial={graph,prepared:prepare(graph)},q=trial.prepared.quality;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const before=realizedRelations(baseline),after=realizedRelations(trial);
+    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    const accepted=(q.line_geometry.crossings<b.line_geometry.crossings||q.wire_length<b.wire_length-1)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      areaMetric(q)<=areaMetric(b)&&q.wire_length<=b.wire_length&&conflicts(trial).every(id=>conflicts(baseline).includes(id))&&
+      Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const chosen=accepted?trial:baseline;
+    if(accepted)chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing};
+    chosen.prepared.routing.context_source_refinement={accepted,changes,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      realized_before:before,realized_candidate:after,
+      scope:'One source-facing routing candidate at identical node geometry and semantic frontier. Exact operands, distinct uses and existing realized relations are retained.'};
+    return chosen;
+  }
   function prepareFigure(ir,state={}){
-    return attachExpressionEvidence(ir,selectFigure(ir,state));
+    return attachExpressionEvidence(ir,prepareContextSources(ir,state,selectFigure(ir,state)));
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));

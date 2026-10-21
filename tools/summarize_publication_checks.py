@@ -313,7 +313,9 @@ if __name__ == '__main__':
     # than stamping older measurements with the current implementation hashes.
     if (PUB / 'active-stage.json').exists():
         stage = read('verification/publication/active-stage.json')['stage']
-        if stage == 'invocation-inputs':
+        if stage == 'context-sources':
+            from summarize_context_sources import main as summarize_stage
+        elif stage == 'invocation-inputs':
             from summarize_invocation_inputs import main as summarize_stage
         elif stage == 'adaptive-role-paths':
             from summarize_adaptive_role_paths import main as summarize_stage

@@ -30,6 +30,18 @@
   // Parallel labelled wires need clearance where their visible branches meet,
   // not in every helper in the figure. Use the drawing hierarchy after frame
   // ownership; source nesting may no longer be the visible containment tree.
+  // Only an existing, unguarded side entry may face its receiving region.
+  // Ancestor boundaries and semantic state/bypass terminals keep their policy.
+  function contextSourceSide(edge,positions){
+    const ctx=positions.context,from=positions.get(edge.source),owner=positions.get(edge.context_lane?.owner);
+    if(!ctx?.contextSourceFacing||!owner?.context_gutter||!from||edge.design_route||
+      !(edge.bundle_members||[edge]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition))return null;
+    const ancestors=id=>{const seen=new Set();while(id!=null){seen.add(id);id=ctx.idx.nodes.get(id)?.parent;}return seen;};
+    if(ancestors(edge.target).has(edge.source)||ancestors(edge.source).has(edge.target))return null;
+    if(from.x+from.w<=owner.x)return 'right';
+    if(from.x>=owner.x+owner.w)return 'left';
+    return null;
+  }
   function labelClearances(idx,edges){
     const pairs=new Map(),regions=new Map();
     for(const e of edges){const key=JSON.stringify([e.source,e.target]);if(!pairs.has(key))pairs.set(key,[]);pairs.get(key).push(e);}
@@ -400,7 +412,7 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
+    positions.context={contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
       entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){
@@ -459,7 +471,7 @@
     const semanticBypass=['bypass','state-interface','iteration-feedback'].includes(e.design_route?.kind)&&laneOwner?.design_gutter;
     if(semanticBypass)ss=ts='left';
     const contextOwner=positions.get(e.context_lane?.owner),contextLane=!!contextOwner?.context_gutter;
-    if(contextLane)ts=e.context_lane.side;
+    if(contextLane){ts=e.context_lane.side;ss=contextSourceSide(e,positions)||ss;}
     function sideFor(edge,isSource){
       const from=positions.get(edge.source),to=positions.get(edge.target);if(!from||!to)return null;
       const down=to.y>=from.y+from.h,up=from.y>=to.y+to.h;
@@ -471,7 +483,9 @@
       if(edge.source!==edge.target&&to.expanded&&ancestors(edge.source).has(edge.target))targetSide=header?'top':'bottom';
       if(header&&edge.source!==edge.target&&(from.expanded&&ancestors(edge.target).has(edge.source)||to.expanded&&ancestors(edge.source).has(edge.target)))sourceSide=targetSide='top';
       if(['bypass','state-interface','iteration-feedback'].includes(edge.design_route?.kind)&&positions.get(edge.design_route.owner)?.design_gutter)sourceSide=targetSide='left';
-      if(edge.context_lane&&positions.get(edge.context_lane.owner)?.context_gutter)targetSide=edge.context_lane.side;
+      if(edge.context_lane&&positions.get(edge.context_lane.owner)?.context_gutter){
+        targetSide=edge.context_lane.side;sourceSide=contextSourceSide(edge,positions)||sourceSide;
+      }
       return isSource?sourceSide:targetSide;
     }
     function port(id,other,isSource,which){
@@ -632,5 +646,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

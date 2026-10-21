@@ -18,7 +18,9 @@ test('overlapping windows are merged and narrow fragments are retained as space'
  assert.deepEqual(L.emptyBands(new Map(),[],[{top:20,bottom:80},{top:40,bottom:100},{top:200,bottom:215}]),[{top:20,bottom:100}]);
 });
 test('late ownership applies to unfamiliar conditional composition and preserves all canonical facts',()=>{
- const ir=read('ConditionalNeighborRuns'),before=JSON.stringify(ir),a=R.render(ir,{...state,paperFinalSampleFrames:false}),b=R.render(ir,state),rec=b.prepared.routing.final_sample_frame_refinement;
+ // Isolate this stage's monotone map; final header reflow has its own map.
+ const localState={...state,paperHeaderReflow:false};
+ const ir=read('ConditionalNeighborRuns'),before=JSON.stringify(ir),a=R.render(ir,{...localState,paperFinalSampleFrames:false}),b=R.render(ir,localState),rec=b.prepared.routing.final_sample_frame_refinement;
  assert.ok(rec?.accepted);assert.equal(rec.frames.length,2);assert.equal(a.graph.nodes.length-b.graph.nodes.length,2);
  assert.equal(b.prepared.quality.line_geometry.crossings,a.prepared.quality.line_geometry.crossings);
  assert.ok(b.prepared.quality.native_height_px<a.prepared.quality.native_height_px);

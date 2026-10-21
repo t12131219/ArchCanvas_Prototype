@@ -1244,6 +1244,62 @@
       scope:'One common monotone vertical map of globally empty bands, without rerouting or changing the semantic frontier. Concrete nodes, titles, horizontal wires, labels, terminals, frame borders and explicit clearances are protected; no execution or operation-equivalence claim.'}};
     return chosen;
   }
+  function prepareHeaderReflow(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality,ctx=g.positions.context;
+    if(state.paperHeaderReflow===false||b.medium!=='canvas'||state.paperProtectFrameTitles===true||
+      state.paperLabelSpacing!==undefined||state.paperLabelGapY!==undefined||Object.keys(state.offsets||{}).length||
+      g.nodes.length>512||g.edges.length>2048||b.route_failures.length||b.unplaced_port_labels.length)return baseline;
+    const nodes=new Map([...g.idx.nodes].map(([id,n])=>[id,{...n}])),positions=new Map([...g.positions].map(([id,p])=>[id,{...p}]));
+    const normalized=s=>String(s||'').replace(/\s/g,''),records=[];
+    const ancestors=id=>{const found=new Set();while(id&&!found.has(id)){found.add(id);id=g.idx.nodes.get(id)?.parent;}return found;};
+    const active=new Map(baseline.prepared.routes.map(e=>[e.id,new Set([...ancestors(e.source),...ancestors(e.target)])]));
+    const intersects=(points,box)=>points.slice(1).some((q,i)=>{const p=points[i],eps=1e-7;
+      return p.x===q.x?p.x>box.x+eps&&p.x<box.x+box.w-eps&&Math.max(p.y,q.y)>box.y+eps&&Math.min(p.y,q.y)<box.y+box.h-eps:
+        p.y>box.y+eps&&p.y<box.y+box.h-eps&&Math.max(p.x,q.x)>box.x+eps&&Math.min(p.x,q.x)<box.x+box.w-eps;});
+    for(const [id,p]of positions){const n=nodes.get(id),a=n.paper;
+      // Appended operand rows and inventory reservations have independent
+      // layout contracts. A raw caption alone cannot reconstruct those facts.
+      if(!p.expanded||p.protected_header_width||(ctx.fixedInputs||[]).some(r=>r.parent===id)||a.layout_caption_rows!=null||
+        baseline.prepared.routes.some(e=>e.source===id||e.target===id)||
+        normalized(a.lines.join(''))!==normalized(a.title)||normalized(a.captions.join(''))!==normalized(a.caption))continue;
+      const width=p.w-28,lines=P.wrap(a.title,width,a.font),captions=a.caption?P.wrap(a.caption,width,13):[];
+      if(lines.length>a.lines.length||captions.length>a.captions.length)continue;
+      const saved=(a.lines.length-lines.length)*20+(a.captions.length-captions.length)*16;if(saved<16)continue;
+      let header=Math.max(p.header-saved,(state.paperCompact?56:66)+(state.paperCompact?12:20));
+      // Shrinking a pass-through title must not turn an existing legal wire
+      // into an intrusion through an unrelated frame body. Keep that rail.
+      const released={x:p.x,y:p.y+header-10,w:p.w,h:p.header-header};
+      const blocked=header<p.header?baseline.prepared.routes.filter(e=>!active.get(e.id).has(id)&&intersects(e.route.points,released)).map(e=>e.id):[];
+      if(blocked.length)header=p.header;
+      const saving=p.header-header;
+      n.paper={...a,lines,captions,h:a.h-saving};
+      Object.assign(p,{lines,captions,header,protected_header_height:p.protected_header_height-saving});
+      records.push({node:id,width,lines_before:a.lines,lines_after:lines,captions_before:a.captions,captions_after:captions,
+        header_before:header+saving,header_after:header,shrink_blocked_by:blocked});
+    }
+    if(!records.length)return baseline;
+    const idx={...g.idx,nodes};positions.context={...ctx,idx,routeCache:new Map(),reserved:[]};
+    const graph={...g,idx,nodes:g.nodes.map(n=>nodes.get(n.id)),positions,constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
+    let trial={graph,prepared:evaluateRoutes(graph,baseline.prepared.routes,b.route_strategy,baseline.prepared.labeling)};
+    // Reuse the same guarded monotone map, never reroute after reflow. Only
+    // globally empty bands can be removed; concrete nodes keep their size.
+    trial=prepareEmptyBandCompaction(ir,state,trial);
+    E.auditConstraintRoutes(trial.graph,trial.prepared.routes);
+    const q=trial.prepared.quality,before=realizedRelations(baseline),after=realizedRelations(trial),applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+    const goals=Goals.build(ir,g.architecture),done=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const covered=new Set(Goals.evaluate(goals,trial.graph,trial.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const facts=clearanceIdentity(g)===clearanceIdentity(trial.graph),accepted=facts&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&
+      q.wire_length<=b.wire_length&&fontMetric(q)>=fontMetric(b)&&q.line_geometry.crossings===b.line_geometry.crossings&&
+      q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(issue=>b.issues.includes(issue))&&
+      trial.graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...done].every(id=>covered.has(id));
+    const chosen=accepted?trial:baseline,compaction=trial.prepared.routing?.empty_band_compaction;
+    chosen.prepared.routing={...baseline.prepared.routing,header_reflow:{accepted,records,facts_preserved:facts,
+      before:clearanceMetrics(b),candidate:clearanceMetrics(q),direct_goals_before:done.size,direct_goals_candidate:covered.size,
+      ...(compaction?{compaction}:{}),
+      scope:'Complete existing title and caption rewrapped to the actual expanded width. Fixed argument rails, extra evidence rows and frame terminals retain their layout. Existing unrelated title passages keep their header clearance; only a guarded common empty-band map moves geometry. No semantic frontier or canonical evidence change.'}};
+    return chosen;
+  }
   function prepareLocalBypasses(ir,state,baseline){
     const b=baseline.prepared.quality,g=baseline.graph;
     if(state.paperLocalBypasses===false||b.medium!=='canvas'||g.edges.length>128||Object.keys(state.offsets||{}).length)return baseline;
@@ -1326,6 +1382,7 @@
     chosen=prepareLocalBypasses(ir,state,chosen);
     chosen=prepareEmptyBandCompaction(ir,state,chosen);
     chosen=prepareCoupledRoutes(ir,state,chosen);
+    chosen=prepareHeaderReflow(ir,state,chosen);
     chosen=attachExpressionEvidence(ir,chosen);
     const normal=chosen.graph.publication.normal_returns?.rows.filter(r=>r.attached_edges.length);
     if(!normal?.length||state.paperNormalReturns===false)return chosen;
@@ -1402,5 +1459,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

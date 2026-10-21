@@ -1,0 +1,404 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "TrueValue",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+    "class": "TrueValue",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+      "cell": null,
+      "sha256": "6ef9d18c183a7d3cfff4b2f7d68baf3564127dce3db67da2db75835c0f161409",
+      "unit_sha256": "6ef9d18c183a7d3cfff4b2f7d68baf3564127dce3db67da2db75835c0f161409"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/26:4:composite:1",
+      "kind": "composite",
+      "label": "TrueValue",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 26,
+          "end_line": 27,
+          "column": 4,
+          "end_column": 45,
+          "symbol": "TrueValue.forward",
+          "expression": "def forward(self, x, resource):\n    return x + torch.relu(x).to(resource)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "TrueValue"
+    },
+    {
+      "id": "model/26:4:composite:1/26:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/26:4:composite:1",
+      "source_parent": "model/26:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "TrueValue.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/26:4:composite:1/26:25:interface:1",
+      "kind": "interface",
+      "label": "resource",
+      "parent": "model/26:4:composite:1",
+      "source_parent": "model/26:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 25,
+          "end_column": 33,
+          "symbol": "TrueValue.forward",
+          "expression": "resource"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "resource"
+    },
+    {
+      "id": "model/26:4:composite:1/27:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/26:4:composite:1",
+      "source_parent": "model/26:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 15,
+          "end_column": 45,
+          "symbol": "TrueValue.forward",
+          "expression": "x + torch.relu(x).to(resource)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/26:4:composite:1/27:19:compute:1",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/26:4:composite:1",
+      "source_parent": "model/26:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 19,
+          "end_column": 32,
+          "symbol": "TrueValue.forward",
+          "expression": "torch.relu(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu"
+    },
+    {
+      "id": "model/26:4:composite:1/27:19:compute:2",
+      "kind": "compute",
+      "label": "to",
+      "parent": "model/26:4:composite:1",
+      "source_parent": "model/26:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 19,
+          "end_column": 45,
+          "symbol": "TrueValue.forward",
+          "expression": "torch.relu(x).to(resource)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "device-cast",
+      "function_target": "torch.relu(x).to",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "resource"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu(x).to"
+    },
+    {
+      "id": "model/26:4:composite:1/27:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/26:4:composite:1",
+      "source_parent": "model/26:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 8,
+          "end_column": 45,
+          "symbol": "TrueValue.forward",
+          "expression": "return x + torch.relu(x).to(resource)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/26:4:composite:1/26:22:interface:1",
+      "target": "model/26:4:composite:1/27:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/26:4:composite:1/26:22:interface:1",
+      "target": "model/26:4:composite:1/27:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/26:4:composite:1/27:19:compute:1",
+      "target": "model/26:4:composite:1/27:19:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/26:4:composite:1/26:25:interface:1",
+      "target": "model/26:4:composite:1/27:19:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/26:4:composite:1/27:19:compute:2",
+      "target": "model/26:4:composite:1/27:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/26:4:composite:1/27:15:compute:1",
+      "target": "model/26:4:composite:1/27:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "semantic_contracts": [
+    {
+      "id": "contract:residual-plain:fabfa4d7140c",
+      "rule": "residual-plain",
+      "rule_version": "source-contracts/1",
+      "node": "model/26:4:composite:1/27:15:compute:1",
+      "members": [
+        "model/26:4:composite:1/27:19:compute:1",
+        "model/26:4:composite:1/27:19:compute:2",
+        "model/26:4:composite:1/27:15:compute:1"
+      ],
+      "roles": {
+        "skip": "model/26:4:composite:1/26:22:interface:1",
+        "skip_slot": "out",
+        "branch": "model/26:4:composite:1/27:19:compute:2",
+        "branch_slot": "out",
+        "add": "model/26:4:composite:1/27:15:compute:1",
+        "output": "model/26:4:composite:1/27:15:compute:1",
+        "order": "plain",
+        "normalization": null,
+        "normalization_type": null,
+        "branch_path": [
+          "model/26:4:composite:1/27:19:compute:1",
+          "model/26:4:composite:1/27:19:compute:2"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 15,
+          "end_column": 45,
+          "symbol": "TrueValue.forward",
+          "expression": "x + torch.relu(x).to(resource)"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00000",
+        "e00001",
+        "e00002",
+        "e00003",
+        "e00004",
+        "e00005"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence"
+      ]
+    }
+  ],
+  "semantic_contract_basis": "ad95223230e59a0f111d200cc2e99e94006548229e7487d777a8d341d9154bf9",
+  "ir_digest": "1bfc818eb6023bc2d9ffdc01e836298e3b444cc19d35711a873994e3f60f06dd"
+}

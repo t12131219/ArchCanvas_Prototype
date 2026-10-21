@@ -4,7 +4,7 @@
 (function(root){
   'use strict';
   const Relations=root.SemanticLocalRelations||(typeof require==='function'?require('./local-relations.js'):null);
-  const VERSION='architecture-rules/4';
+  const VERSION='architecture-rules/5';
   const copy=x=>JSON.parse(JSON.stringify(x));
   const flow=e=>['data','alias','interface-binding'].includes(e.kind);
   const transparent=n=>n&&(n.kind==='interface'||n.kind==='value-alias')&&n.slot==null&&!n.operator;
@@ -19,6 +19,27 @@
     return ({mul:'mult',add:'add',sigmoid:'sigmoid',tanh:'tanh',relu:'activation',gelu:'activation',
       linear:'linear',convolution:'convolution',conv2d:'convolution',layer_norm:'normalization',
       native_layer_norm:'normalization',softmax:'softmax',_softmax:'softmax',dropout:'dropout'})[name]||op;
+  }
+  // Dependency edges also describe dtype/device/axis/allocation arguments.
+  // They remain canonical facts, but cannot establish a residual value path.
+  function valueOperands(n,edges){
+    const name=n.operator?.startsWith('aten.')?n.operator.split('.')[1]:null;
+    const op=({size:'shape',sym_size:'shape',zeros:'create',ones:'create',zeros_like:'create',ones_like:'create',
+      rand:'random',randn:'random',rand_like:'random',randn_like:'random',_to_copy:'device-cast',to:'device-cast',
+      view:'reshape',reshape:'reshape',_unsafe_view:'reshape',flatten:'reshape',squeeze:'reshape',unsqueeze:'reshape',
+      transpose:'transpose',permute:'transpose',t:'transpose',clone:'copy',detach:'detach',expand:'expand',
+      sum:'reduce',mean:'reduce',split:'split',split_with_sizes:'split',unbind:'split'})[name]||operator(n);
+    if(['shape','attribute','scalar-cast','create','random','range','enumerate'].includes(op))return [];
+    if(!['device-cast','dtype-cast','reshape','transpose','copy','detach','expand','softmax',
+      'dropout','activation','pooling','interpolate','reduce','split','nan-guard'].includes(op))return edges;
+    if(edges.some(e=>e.target_port==='receiver'))return edges.filter(e=>e.target_port==='receiver');
+    const input=edges.filter(e=>['arg:0','kw:input'].includes(e.target_port));
+    if(input.length)return input;
+    // Runtime captures number flattened tensor inputs. For these unary value
+    // operations the first tensor is the value, even when other tensors configure it.
+    if(n.operator?.startsWith('aten.'))return edges.filter(e=>String(e.target_port)==='0');
+    // Legacy single-input framework contracts have the generic port "in".
+    return edges.length===1&&edges[0].target_port==='in'?edges:[];
   }
   function build(ir){
     const original=new Map(ir.nodes.map(n=>[n.id,n])),incoming=new Map(),outgoing=new Map();
@@ -39,14 +60,15 @@
     function compatible(a,b){return a.evidence===b.evidence||new Set([a.evidence,b.evidence]).size===2&&[a.evidence,b.evidence].every(e=>['source-dependency','framework-contract'].includes(e));}
     // Find a dependency path with a bounded search. A successful path says only
     // that one value feeds a substructure; it is not an all-input equivalence proof.
-    function path(from,to,evidence){
+    function path(from,to,evidence,valueOnly=true){
       const queue=[[to,[]]],seen=new Set();
       for(let i=0;i<queue.length&&i<2048;i++){
         const [at,tail]=queue[i],{id,port}=at;if(id===from.id&&port===from.port)return tail;
         const key=JSON.stringify([id,port]);if(seen.has(key)||tail.length>=48)continue;seen.add(key);
         const n=original.get(id);
         if(!n||!['compute','interface','value-alias'].includes(n.kind)||n.mutable||n.condition||n.operator==='phi')continue;
-        for(const e of incoming.get(id)||[])if(flow(e)&&!e.condition&&compatible(e,{evidence}))queue.push([value(e.source,e.source_port),[id,...tail]]);
+        const edges=(incoming.get(id)||[]).filter(flow);
+        for(const e of valueOnly?valueOperands(n,edges):edges)if(!e.condition&&compatible(e,{evidence}))queue.push([value(e.source,e.source_port),[id,...tail]]);
       }
       return null;
     }
@@ -154,6 +176,30 @@
         finding(rule,norm?'Residual · Post-Norm':prenorm?'Residual · Pre-Norm':'Residual',
           [...support(ins[1-side],ins[side]),n.id,...(norm?[norm]:[])],{skip,branch,add:n.id,...(norm?{normalization:norm}:prenorm?{normalization:prenorm}:{})},
           ['skip value is an actual producer of both the branch path and addition',norm?'normalization consumes the addition output':prenorm?'normalization directly consumes the skip value':'normalization order not asserted'],[skip]);
+        break;
+      }
+    }
+    // A dependency through configuration still forms a real local expression.
+    // Preserve a compact, reversible structural form without calling it a
+    // residual or generating a bypass constraint. This applies to ordinary
+    // binary algebra, independently of source module or model names.
+    const expressionLabels={add:'Add expression',sub:'Subtract expression',mult:'Multiply expression',div:'Divide expression',matmul:'Matmul expression'};
+    for(const n of ir.nodes){
+      const op=operator(n),ins=inputs(n.id);
+      if(n.kind!=='compute'||!Object.hasOwn(expressionLabels,op)||ins.length!==2||n.mutable||n.condition||
+        !compatible(ins[0].edge,ins[1].edge)||findings.some(f=>f.rule.startsWith('residual')&&f.roles.add===n.id))continue;
+      for(let side=0;side<2;side++){
+        const input=ins[side],branch=ins[1-side];
+        if(input.id===branch.id||path(input,branch,input.edge.evidence)?.length||
+          !path(input,branch,input.edge.evidence,false)?.length)continue;
+        const members=[...support(branch,input),n.id];
+        if(members.some(id=>{const m=original.get(id);return !m||m.mutable||m.condition||m.operator==='phi'||
+          ['opaque','control'].includes(m.kind)||m.identity_display||m.observed_calls||m.iteration||m.repeat_contract||
+          m.evidence_status==='runtime-only'||m.runtime_evidence?.length;}))continue;
+        finding('operand-expression',expressionLabels[op],members,
+          {operator:op,output:n.id,operands:ins.map(p=>({node:p.id,slot:p.port,edge:p.edge.id,target_port:p.edge.target_port}))},
+          ['exact binary operands have a source dependency without a proved tensor-value branch path',
+            'structural expression only; no residual, value equivalence, purity or model-family claim'],[input.id]);
         break;
       }
     }

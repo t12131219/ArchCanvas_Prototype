@@ -8,6 +8,28 @@ from .schema import digest, source_graph_digest
 FLOW = {'data', 'alias', 'interface-binding'}
 
 
+def value_operands(node, edges):
+    """Operands that can prove value lineage, not all source dependencies.
+
+    Shape, exemplar, dtype, device and axis edges stay in the IR and in summary
+    cuts. This policy only restricts the evidence for a residual branch.
+    Index/mask operands and ordinary algebra are deliberately not filtered.
+    """
+    op = node.get('operator')
+    if op in {'shape', 'attribute', 'scalar-cast', 'create', 'random', 'range', 'enumerate'}:
+        return []
+    if op not in {'device-cast', 'dtype-cast', 'reshape', 'transpose', 'copy', 'detach',
+                  'expand', 'softmax', 'dropout', 'activation', 'pooling', 'interpolate',
+                  'reduce', 'split', 'nan-guard'}:
+        return edges
+    if any(e['target_port'] == 'receiver' for e in edges):
+        return [e for e in edges if e['target_port'] == 'receiver']
+    inputs = [e for e in edges if e['target_port'] in {'arg:0', 'kw:input'}]
+    if inputs:
+        return inputs
+    return edges if len(edges) == 1 and edges[0]['target_port'] == 'in' else []
+
+
 class Contracts:
     def __init__(self, ir):
         self.ir = ir
@@ -97,7 +119,7 @@ class Contracts:
                 continue
             if not n or n['kind'] != 'compute' or n.get('mutable') or n.get('operator') in {'shape', 'attribute', 'scalar-cast', 'phi'}:
                 continue
-            for edge in self.incoming(value[0]):
+            for edge in value_operands(n, self.incoming(value[0])):
                 if not edge.get('condition'):
                     todo.append((self.resolve(edge['source'], edge.get('source_port', 'out')), [value[0], *path]))
         return None

@@ -1,0 +1,452 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ConfigurationOnly",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+    "class": "ConfigurationOnly",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+      "cell": null,
+      "sha256": "6ef9d18c183a7d3cfff4b2f7d68baf3564127dce3db67da2db75835c0f161409",
+      "unit_sha256": "6ef9d18c183a7d3cfff4b2f7d68baf3564127dce3db67da2db75835c0f161409"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/6:4:composite:1",
+      "kind": "composite",
+      "label": "ConfigurationOnly",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 6,
+          "end_line": 7,
+          "column": 4,
+          "end_column": 60,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "def forward(self, x, resource):\n    return x + resource[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ConfigurationOnly"
+    },
+    {
+      "id": "model/6:4:composite:1/6:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 6,
+          "end_line": 6,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/6:4:composite:1/6:25:interface:1",
+      "kind": "interface",
+      "label": "resource",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 6,
+          "end_line": 6,
+          "column": 25,
+          "end_column": 33,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "resource"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "resource"
+    },
+    {
+      "id": "model/6:4:composite:1/7:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 15,
+          "end_column": 60,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "x + resource[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/6:4:composite:1/7:19:compute:1",
+      "kind": "compute",
+      "label": "getitem \u00b7 (:, :x.size(1))",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 19,
+          "end_column": 42,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "resource[:, :x.size(1)]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "(:, :x.size(1))",
+      "syntax": {
+        "type": "Subscript",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "slice": {
+            "operand": ".slice"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/6:4:composite:1/7:32:compute:1",
+      "kind": "compute",
+      "label": "size",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 32,
+          "end_column": 41,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "x.size(1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "shape",
+      "function_target": "x.size",
+      "arguments": {
+        "args": [
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/6:4:composite:1/7:52:compute:1",
+      "kind": "compute",
+      "label": "x.dtype",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 52,
+          "end_column": 59,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "x.dtype"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "dtype",
+      "value": {
+        "unresolved": "x.dtype"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "dtype"
+        }
+      }
+    },
+    {
+      "id": "model/6:4:composite:1/7:19:compute:2",
+      "kind": "compute",
+      "label": "to",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 19,
+          "end_column": 60,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "resource[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "device-cast",
+      "function_target": "resource[:, :x.size(1)].to",
+      "arguments": {
+        "args": [],
+        "kwargs": {
+          "dtype": {
+            "unresolved": "x.dtype"
+          }
+        }
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": [
+            {
+              "type": "keyword",
+              "fields": {
+                "arg": "dtype",
+                "value": {
+                  "operand": ".keywords:0.value"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/6:4:composite:1/7:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/6:4:composite:1",
+      "source_parent": "model/6:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/value_lineage.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 8,
+          "end_column": 60,
+          "symbol": "ConfigurationOnly.forward",
+          "expression": "return x + resource[:, :x.size(1)].to(dtype=x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/6:4:composite:1/6:22:interface:1",
+      "target": "model/6:4:composite:1/7:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/6:4:composite:1/6:25:interface:1",
+      "target": "model/6:4:composite:1/7:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/6:4:composite:1/6:22:interface:1",
+      "target": "model/6:4:composite:1/7:32:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/6:4:composite:1/7:32:compute:1",
+      "target": "model/6:4:composite:1/7:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "index:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/6:4:composite:1/6:22:interface:1",
+      "target": "model/6:4:composite:1/7:52:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/6:4:composite:1/7:19:compute:1",
+      "target": "model/6:4:composite:1/7:19:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/6:4:composite:1/7:52:compute:1",
+      "target": "model/6:4:composite:1/7:19:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "kw:dtype",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/6:4:composite:1/7:19:compute:2",
+      "target": "model/6:4:composite:1/7:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/6:4:composite:1/7:15:compute:1",
+      "target": "model/6:4:composite:1/7:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "ff5ac77c0754c92abc6624541a6786cfe6cbe61951b2ddea5db9966be0e85fc3"
+}

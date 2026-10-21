@@ -58,6 +58,7 @@ COMMANDS = {
     'coincident-ports': ['node', 'tests/coincident-ports.test.cjs'],
     'local-bypasses': ['node', 'tests/local-bypasses.test.cjs'],
     'contained-bypasses': ['node', 'tests/contained-bypasses.test.cjs'],
+    'value-lineage': ['node', 'tests/value-lineage.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'coherent-frontiers': ['node', 'tests/coherent-frontiers.test.cjs'],

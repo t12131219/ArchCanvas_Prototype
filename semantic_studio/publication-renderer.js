@@ -785,6 +785,65 @@
       scope:'One measured horizontal alignment of existing downstream nodes with a single expanded source region. Identical semantic frontier, ranks, containment and exact operand identities.'};
     return chosen;
   }
+  // Revisit the already selected paths, not a fresh greedy routing run. A
+  // dense figure may have spent its ordinary repair budget before the last
+  // ambiguous rail became visible. Nodes and physical terminals stay fixed.
+  function polishRoutes(baseline){
+    const g=baseline.graph,b=baseline.prepared.quality,ctx=g.positions.context;
+    if(b.medium!=='canvas'||g.edges.length>128||!b.line_geometry.crossings&&!b.line_geometry.unrelated_contacts.length)return baseline;
+    let chosen=baseline;
+    const savedContext={...ctx},savedReceipts=JSON.parse(JSON.stringify(g.constraint_receipts));
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
+    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),relations=realizedRelations(baseline);
+    const score=q=>q.crossings+2*q.unrelated_contacts.length+4*q.overlapping_paths.filter(p=>!p.same_value).length;
+    const record={attempts:0,accepted:[],before:clearanceMetrics(b),max_attempts:32,max_extra_crossings:1,max_wire_ratio:1.02};
+    ctx.portOrder=b.route_strategy.startsWith('neighbors')?'neighbors':'canonical';
+    ctx.ancestorPorts=b.route_strategy.includes('-header-')?'header':'boundary';
+    ctx.crossingCost=180;ctx.contactCost=360;ctx.stubLength=16;
+    const samePoint=(a,b)=>a.x===b.x&&a.y===b.y;
+    for(let pass=0;pass<2;pass++){
+      let improved=false;
+      const scored=chosen.prepared.routes.map(e=>({id:e.id,score:chosen.prepared.routes.reduce((sum,o)=>sum+(o.id===e.id?0:score(lineGeometry([e,o]))),0)}))
+        .filter(e=>e.score).sort((a,b)=>b.score-a.score||a.id.localeCompare(b.id)).slice(0,8);
+      for(const item of scored){
+        const current=chosen.prepared.routes.find(e=>e.id===item.id),before=chosen.prepared.quality;
+        ctx.reserved=chosen.prepared.routes.filter(e=>e.id!==item.id).flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
+        for(const repair of [false,true]){
+          ctx.routeCache=new Map();ctx.repairRoute=repair?current.route:null;
+          let route;try{route=E.route(current,g.positions);}finally{ctx.repairRoute=null;}
+          record.attempts++;
+          if(!route.ok||route.points.length<2||!samePoint(route.points[0],current.route.points[0])||
+            !samePoint(route.points.at(-1),current.route.points.at(-1))||route.source_side!==current.route.source_side||route.target_side!==current.route.target_side)continue;
+          const prepared=evaluateRoutes(g,chosen.prepared.routes.map(e=>e.id===item.id?{...e,route}:e),b.route_strategy),q=prepared.quality;
+          const contacts=new Set(before.line_geometry.unrelated_contacts.map(c=>JSON.stringify(c.edges)));
+          if(score(q.line_geometry)>=score(before.line_geometry)||q.line_geometry.crossings>b.line_geometry.crossings+1||
+            q.line_geometry.unrelated_contacts.length>before.line_geometry.unrelated_contacts.length||
+            q.line_geometry.unrelated_contacts.some(c=>!contacts.has(JSON.stringify(c.edges)))||
+            q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length>before.line_geometry.overlapping_paths.filter(p=>!p.same_value).length||
+            q.issues.some(issue=>!before.issues.includes(issue))||q.route_failures.length>before.route_failures.length||
+            q.unplaced_port_labels.length>before.unplaced_port_labels.length||fontMetric(q)<fontMetric(b)||
+            q.native_width_px>b.native_width_px||q.native_height_px>b.native_height_px||q.wire_length>b.wire_length*1.02)continue;
+          const trial={graph:g,prepared};E.auditConstraintRoutes(g,prepared.routes);
+          const after=realizedRelations(trial);
+          if(g.constraint_receipts.some(r=>applied.has(r.id)&&r.status!=='applied')||
+            Object.keys(relations).some(k=>relations[k].some(id=>!after[k].includes(id)))){
+            E.auditConstraintRoutes(g,chosen.prepared.routes);continue;
+          }
+          record.accepted.push({pass,edge:item.id,method:repair?'parallel-rail':'reserved-route',before:clearanceMetrics(before),after:clearanceMetrics(q)});
+          chosen=trial;improved=true;break;
+        }
+      }
+      if(!improved)break;
+    }
+    Object.assign(ctx,savedContext);ctx.repairRoute=null;
+    ctx.routeCache=new Map(chosen.prepared.routes.map(e=>[e.id,e.route]));
+    ctx.reserved=chosen.prepared.routes.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
+    if(chosen===baseline)g.constraint_receipts=savedReceipts;else E.auditConstraintRoutes(g,chosen.prepared.routes);
+    record.after=clearanceMetrics(chosen.prepared.quality);
+    record.scope='Bounded refinement of selected routes; identical nodes, canonical bindings and physical terminals. Previously realized relations retained; no area or font regression.';
+    chosen.prepared.routing={...baseline.prepared.routing,selected_route_refinement:record};
+    return chosen;
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     const g=chosen.graph,b=chosen.prepared.quality;
@@ -807,6 +866,7 @@
       chosen.prepared.routing.parallel_rail_repair={accepted,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
         realized_before:before,realized_candidate:after,scope:'Fixed nodes and exact terminals; only a remaining final ambiguous overlap authorizes local parallel-rail trials. At most one additional crossing and 2% wire increase, no area or font regression.'};
     }
+    if(state.paperSelectedRoutes!==false&&!Object.keys(state.offsets||{}).length&&chosen.graph.edges.length>64)chosen=polishRoutes(chosen);
     return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
@@ -849,5 +909,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

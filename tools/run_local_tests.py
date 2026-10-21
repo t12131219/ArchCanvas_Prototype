@@ -46,6 +46,7 @@ COMMANDS = {
     'branch-tail-stages': ['node', 'tests/branch-tail-stages.test.cjs'],
     'diagram-set': ['node', 'tests/diagram-set.test.cjs'],
     'exact-expression': ['node', 'tests/exact-expression.test.cjs'],
+    'selected-routes': ['node', 'tests/selected-routes.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'coherent-frontiers': ['node', 'tests/coherent-frontiers.test.cjs'],
     'invocation-inputs': ['node', 'tests/invocation-inputs.test.cjs'],

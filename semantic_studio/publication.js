@@ -243,6 +243,7 @@
       title=p.dependency_dag?'Result '+p.dependency_dag.result:p.dependency_tree?expression(p.dependency_tree):pathTitle;
       caption=p.dependency_dag?'Dependency DAG':p.dependency_tree?'Dependency tree':'Dependency path';
     }
+    if(n.invocation_binding){title=n.invocation_binding.label;caption='Fixed call argument';}
     const dagSummary=n.local_pipeline?.dependency_dag&&!n.local_pipeline_expanded;
     const maxWidth=dagSummary?292:n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
     const lines=wrap(title,n.kind==='composite'?maxWidth-20:maxWidth,font),captions=caption?wrap(caption,maxWidth,13):[];
@@ -256,6 +257,10 @@
     }
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
       w:symbol?48:dagSummary?320:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
+    if(n.invocation_binding){
+      const compact=wrap(title,176,13);n.paper={...n.paper,lines:compact,captions:[],font:13,
+        w:Math.max(110,Math.ceil(Math.max(...compact.map(s=>width(s,13)))+28)),h:Math.max(40,16+compact.length*20),fill:'#fff8e9',stroke:'#a18b5e'};
+    }
     if(n.content_inventory&&!n.identity_display&&!n.role_annotations?.length&&!dagSummary){
       const summary=inventoryCaption(n.content_inventory,opaque,captions.length,maxWidth);
       if(summary){n.paper.caption=summary.text;n.paper.captions=summary.lines;n.paper.caption_scope='unit-inventory';n.paper.layout_caption_rows=captions.length;
@@ -635,6 +640,9 @@
       structural_group:structuralGroup,
       scope:'one concrete instance; other instances remain in the canonical IR; output equality not asserted'}:null;
     const granularity=['overview','modules','semantic','roles','detailed'].includes(state.paperGranularity)?state.paperGranularity:'overview';
+    const invocationEngine=canvas&&granularity==='roles'&&state.paperInvocationInputs!==false?
+      root.SemanticInvocationInputs||(typeof require==='function'?require('./invocation-inputs.js'):null):null;
+    const invocationInputs=invocationEngine?.compile(ir);
     const dimensionPaths=canvas&&granularity==='roles'&&state.paperDimensionPaths!==false;
     const focused=focusPlan(ir,base,focus,dimensionPaths);
     if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);
@@ -649,6 +657,7 @@
     const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol});
     if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id)}:n);
     let idx=index(focused.plan);
+    if(invocationInputs){focused.plan.nodes=focused.plan.nodes.map(n=>invocationInputs.has(n.id)?{...n,invocation_binding:copy(invocationInputs.get(n.id))}:n);idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     const budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
     if(structuralGroup)decorate(idx.nodes.get(focus),idx);
     // Input/output interfaces of a focused panel are real, named boundaries.
@@ -669,6 +678,7 @@
       if(!a.symbol&&['compute','opaque'].includes(n.kind))size.w=Math.max(180,Math.ceil(Math.max(...a.lines.map(s=>width(s,a.font)),...a.captions.map(s=>width(s,13)))+28));
       return size;
     };
+    if(invocationInputs&&state.paperInvocationInputDocks===true&&!Object.keys(state.offsets||{}).length)options.layout.fixedInputIds=new Set(invocationInputs.keys());
     if(base.publication?.boundary_plans?.some(p=>p.parent===focus))options.layout.inputPlacement='consumer';
     if(canvas&&state.paperFrameView!=='source'){
       const engine=root.SemanticFrameOwnership||(typeof require==='function'?require('./frame-ownership.js'):null);
@@ -856,6 +866,9 @@
       paper_width_mm:Math.max(80,Math.min(400,Number(state.paperWidthMm)||180)),fit_page:state.paperFitPage!==false,min_font_pt:8,unknowns:projected.nodes.filter(n=>!projected.positions.get(n.id).expanded).reduce((s,n)=>s+n.paper.unknown_count,0)};
     if(reservations)projected.publication.frontier_reservations=reservations;
     if(coherentChoices.length)projected.publication.coherent_frontier={rule_version:'coherent-frontier/1',phase:'logical-frontier-before-summary-and-stage-lowering',choices:coherentChoices};
+    if(invocationInputs)projected.publication.invocation_inputs={rule_version:'invocation-inputs/1',rows:[...invocationInputs.values()].map(r=>({...copy(r),
+      status:projected.positions.get(r.node)?.arrangement==='fixed-call-argument'?'docked':projected.positions.has(r.node)?'visible':projected.representatives[r.node]?'folded':'outside',
+      visible_node:projected.representatives[r.node]||null})),docks:projected.positions.context.fixedInputs||[]};
     if(canvas){
       const input=state.paperCanvasLimits||{},limit=(key,fallback,min,max)=>Number.isFinite(input[key])?Math.max(min,Math.min(max,input[key])):fallback;
       projected.publication.medium='canvas';

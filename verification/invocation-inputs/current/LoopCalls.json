@@ -1,0 +1,867 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "LoopCalls",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+    "class": "LoopCalls",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+      "cell": null,
+      "sha256": "f75eb44675ad3a049dba844a18462ac3a822950c02a4f1a81ca067005634332d",
+      "unit_sha256": "f75eb44675ad3a049dba844a18462ac3a822950c02a4f1a81ca067005634332d"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/45:4:composite:1",
+      "kind": "composite",
+      "label": "LoopCalls",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 45,
+          "end_line": 48,
+          "column": 4,
+          "end_column": 16,
+          "symbol": "LoopCalls.forward",
+          "expression": "def forward(self, x, repetitions):\n    for i in range(repetitions):\n        x = self.bend(x)\n    return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "LoopCalls"
+    },
+    {
+      "id": "model/45:4:composite:1/45:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/45:4:composite:1",
+      "source_parent": "model/45:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "LoopCalls.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/45:4:composite:1/45:25:interface:1",
+      "kind": "interface",
+      "label": "repetitions",
+      "parent": "model/45:4:composite:1",
+      "source_parent": "model/45:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 45,
+          "end_line": 45,
+          "column": 25,
+          "end_column": 36,
+          "symbol": "LoopCalls.forward",
+          "expression": "repetitions"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "repetitions"
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1",
+      "kind": "composite",
+      "label": "Iteration",
+      "parent": "model/45:4:composite:1",
+      "source_parent": "model/45:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "LoopCalls.forward",
+          "expression": "for i in range(repetitions):\n    x = self.bend(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "iteration-region"
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+      "kind": "control",
+      "label": "for i in range(repetitions)",
+      "parent": "model/45:4:composite:1/46:8:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "LoopCalls.forward",
+          "expression": "for i in range(repetitions):\n    x = self.bend(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "loop",
+      "loop_semantics": "source-iteration-bindings; time-axis-and-count-unproved",
+      "iteration_contract": {
+        "rule_version": "iteration-bindings/1",
+        "region": "model/45:4:composite:1/46:8:composite:1",
+        "body": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+        "guard_edge": "e00003",
+        "guard_nodes": [
+          "model/45:4:composite:1/46:17:compute:1"
+        ],
+        "loop_kind": "for",
+        "scope": "source-name-bindings; normal-completion; zero-or-more-iterations",
+        "bindings": [
+          {
+            "name": "x",
+            "initial": "model/45:4:composite:1/45:22:interface:1",
+            "entry": "model/45:4:composite:1/46:8:composite:1/46:8:state:1",
+            "body_value": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/47:12:value-alias:1",
+            "exit": "model/45:4:composite:1/46:8:state:1",
+            "initial_edge": "e00001",
+            "backedge": "e00012",
+            "exit_edge": "e00013",
+            "completion_edge": "e00014",
+            "read_edges": [
+              "e00006"
+            ]
+          }
+        ],
+        "not_asserted": [
+          "time axis",
+          "fixed count",
+          "termination",
+          "tensor shape",
+          "storage identity",
+          "purity"
+        ]
+      }
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "kind": "composite",
+      "label": "loop body (source template)",
+      "parent": "model/45:4:composite:1/46:8:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "LoopCalls.forward",
+          "expression": "for i in range(repetitions):\n    x = self.bend(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "loop-template"
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:state:1",
+      "kind": "state",
+      "label": "x · iteration entry",
+      "parent": "model/45:4:composite:1/46:8:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "LoopCalls.forward",
+          "expression": "for i in range(repetitions):\n    x = self.bend(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-phi",
+      "role": "iteration-entry",
+      "iteration": {
+        "loop": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+        "name": "x"
+      }
+    },
+    {
+      "id": "model/45:4:composite:1/46:17:compute:1",
+      "kind": "compute",
+      "label": "range",
+      "parent": "model/45:4:composite:1",
+      "source_parent": "model/45:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 17,
+          "end_column": 35,
+          "symbol": "LoopCalls.forward",
+          "expression": "range(repetitions)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "range",
+      "function_target": "range",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "repetitions"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/46:12:interface:1",
+      "kind": "interface",
+      "label": "iteration item",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "LoopCalls.forward",
+          "expression": "i"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "iteration-item",
+      "iteration": {
+        "loop": "model/45:4:composite:1/46:8:composite:1/46:8:control:1"
+      }
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/46:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "i",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "LoopCalls.forward",
+          "expression": "i"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "kind": "composite",
+      "label": "self.bend",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 42,
+          "end_line": 43,
+          "column": 4,
+          "end_column": 36,
+          "symbol": "bend",
+          "expression": "def bend(self, x, *, factor=0.5):\n    return torch.sin(x) * factor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/42:19:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 19,
+          "end_column": 20,
+          "symbol": "bend",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/42:25:interface:1",
+      "kind": "interface",
+      "label": "factor",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 25,
+          "end_column": 31,
+          "symbol": "bend",
+          "expression": "factor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "factor",
+      "source_constant_input": {
+        "value": 0.5,
+        "scope": "literal argument or default of this source invocation; other paths retained"
+      }
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:15:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 43,
+          "end_line": 43,
+          "column": 15,
+          "end_column": 36,
+          "symbol": "bend",
+          "expression": "torch.sin(x) * factor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:15:compute:2",
+      "kind": "compute",
+      "label": "sin",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 43,
+          "end_line": 43,
+          "column": 15,
+          "end_column": 27,
+          "symbol": "bend",
+          "expression": "torch.sin(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sin",
+      "function_target": "torch.sin",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sin"
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 43,
+          "end_line": 43,
+          "column": 8,
+          "end_column": 36,
+          "symbol": "bend",
+          "expression": "return torch.sin(x) * factor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/47:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source_parent": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 47,
+          "end_line": 47,
+          "column": 12,
+          "end_column": 13,
+          "symbol": "LoopCalls.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:state:1",
+      "kind": "state",
+      "label": "x · iteration result",
+      "parent": "model/45:4:composite:1",
+      "source_parent": "model/45:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "LoopCalls.forward",
+          "expression": "for i in range(repetitions):\n    x = self.bend(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "iteration-result",
+      "role": "iteration-exit",
+      "iteration": {
+        "loop": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+        "name": "x"
+      }
+    },
+    {
+      "id": "model/45:4:composite:1/46:8:opaque:1",
+      "kind": "opaque",
+      "label": "i · loop-carried value",
+      "parent": "model/45:4:composite:1",
+      "source_parent": "model/45:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "LoopCalls.forward",
+          "expression": "for i in range(repetitions):\n    x = self.bend(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/45:4:composite:1/48:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/45:4:composite:1",
+      "source_parent": "model/45:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+          "line": 48,
+          "end_line": 48,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "LoopCalls.forward",
+          "expression": "return x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/45:4:composite:1/45:22:interface:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:state:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "initial",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+        "phase": "initial"
+      },
+      "id": "e00001"
+    },
+    {
+      "source": "model/45:4:composite:1/45:25:interface:1",
+      "target": "model/45:4:composite:1/46:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/45:4:composite:1/46:17:compute:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/46:12:interface:1",
+      "kind": "interface-binding",
+      "source_port": "item",
+      "target_port": "item",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/46:12:interface:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/46:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:state:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/42:19:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/42:19:interface:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:15:compute:2",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/42:25:interface:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:15:compute:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/42:4:composite:1/43:8:interface:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/47:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/47:12:value-alias:1",
+      "target": "model/45:4:composite:1/46:8:composite:1/46:8:state:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "backedge",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+        "phase": "normal-completion"
+      },
+      "id": "e00012"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:state:1",
+      "target": "model/45:4:composite:1/46:8:state:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+        "phase": "exit"
+      },
+      "id": "e00013"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+      "target": "model/45:4:composite:1/46:8:state:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "completion",
+      "evidence": "source-dependency",
+      "iteration": {
+        "loop": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+        "phase": "completion"
+      },
+      "id": "e00014"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:composite:1/46:8:composite:1/46:12:value-alias:1",
+      "target": "model/45:4:composite:1/46:8:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/45:4:composite:1/46:8:state:1",
+      "target": "model/45:4:composite:1/48:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/45:4:composite:1/46:8:composite:1/46:8:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/invocation_inputs.py",
+      "line": 46,
+      "kind": "loop",
+      "outcomes": [
+        "zero",
+        "nonzero"
+      ],
+      "path_coverage": "unresolved"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "2ac1d258f5f8f75c04316337b5cb2ba6f0653ddbd06362ad002da9822ceeb9f8"
+}

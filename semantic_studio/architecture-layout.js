@@ -44,7 +44,7 @@
     return [...regions.values()];
   }
   function layout(idx,roots,visible,edges,offsets={},options={}){
-    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[],inputDocks=[];
+    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[],inputDocks=[],fixedInputs=[];
     const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
     const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
     const laneKinds=['bypass','state-interface','iteration-feedback'];
@@ -368,13 +368,39 @@
       return finish(vertical);
     }
     function place(id){const n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(c=>visible.has(c)),p={id,x:0,y:0,...size(n),expanded:!!kids.length};positions.set(id,p);
-      if(kids.length){kids.forEach(place);const box=arrange(kids,id),pad=options.framePadding??32,title=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74,header=title+(options.headerClearance??20),gutter=laneOwners.has(id)?28+Math.min(3,laneOwners.get(id))*20:0;p.header=header;p.protected_header_height=title-10;p.design_gutter=gutter;p.w=Math.max(options.nodeSize?212:300,box.w+pad*2+gutter+(contextOwners.has(id)?32+contextOwners.get(id)*16:0));if(contextOwners.has(id))p.context_gutter=32+contextOwners.get(id)*16;p.h=box.h+header+pad;for(const child of kids){positions.get(child).x+=pad+gutter+(options.contextLanes==='left'?(p.context_gutter||0):0);positions.get(child).y+=header;}}
+      if(kids.length){
+        kids.forEach(place);
+        const fixed=kids.filter(c=>options.fixedInputIds?.has(c)&&!edges.some(e=>e.target===c)),body=kids.filter(c=>!fixed.includes(c));
+        const box=body.length?arrange(body,id):{w:0,h:0},pad=options.framePadding??32;
+        let title=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74;
+        const titleWidth=Math.max(212,p.w),railGap=28,railRows=[];let row=[],used=0;
+        // These are the original canonical terminals, moved beside the source
+        // title. Their data/control/effect edges remain real routed edges.
+        for(const child of fixed){const at=positions.get(child);if(row.length&&used+railGap+at.w>480){railRows.push(row);row=[];used=0;}row.push(child);used+=(row.length>1?railGap:0)+at.w;}
+        if(row.length)railRows.push(row);
+        const railHeight=railRows.reduce((h,row)=>h+Math.max(...row.map(c=>positions.get(c).h)),0)+Math.max(0,railRows.length-1)*28;
+        // Leave room for the normal 16px terminal stub and 8px obstacle pad,
+        // including between rows and above the first body node.
+        if(fixed.length)title=Math.max(title,railHeight+32);
+        const header=title+(options.headerClearance??20),gutter=laneOwners.has(id)?28+Math.min(3,laneOwners.get(id))*20:0;
+        p.header=header;p.protected_header_height=title-10;p.design_gutter=gutter;
+        const railWidth=Math.max(0,...railRows.map(row=>row.reduce((w,c)=>w+positions.get(c).w,0)+(row.length-1)*railGap));
+        p.w=Math.max(options.nodeSize?212:300,box.w+pad*2+gutter+(contextOwners.has(id)?32+contextOwners.get(id)*16:0),fixed.length?titleWidth+pad+railWidth+pad:0);
+        if(contextOwners.has(id))p.context_gutter=32+contextOwners.get(id)*16;
+        p.h=box.h+header+pad;
+        for(const child of body){positions.get(child).x+=pad+gutter+(options.contextLanes==='left'?(p.context_gutter||0):0);positions.get(child).y+=header;}
+        if(fixed.length){
+          p.protected_header_width=titleWidth;
+          let top=10;for(const row of railRows){let left=titleWidth+pad;for(const child of row){const at=positions.get(child);Object.assign(at,{x:left,y:top,arrangement:'fixed-call-argument'});left+=at.w+railGap;}top+=Math.max(...row.map(c=>positions.get(c).h))+28;}
+          fixedInputs.push({parent:id,nodes:fixed,title_width:titleWidth,scope:'Existing invocation-bound literal terminals; identity, containment and all dependencies retained. Geometry only.'});
+        }
+      }
     }
     roots.filter(id=>visible.has(id)).forEach(place);
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,
+    positions.context={idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
       entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){
@@ -481,7 +507,7 @@
     const boxes=[];
     // Ancestor frames may be crossed at their body boundary, but their titles
     // remain obstacles for every wire, including ordinary data dependencies.
-    for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.w,h:p.protected_header_height??p.header-10});
+    for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.protected_header_width??p.w,h:p.protected_header_height??p.header-10});
     for(const [id,p]of positions){
       if(sourceAnc.has(id)||targetAnc.has(id))continue;
       // The outermost unrelated frame is enough; its children add no obstacles.

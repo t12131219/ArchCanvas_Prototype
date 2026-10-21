@@ -47,6 +47,7 @@ COMMANDS = {
     'diagram-set': ['node', 'tests/diagram-set.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'coherent-frontiers': ['node', 'tests/coherent-frontiers.test.cjs'],
+    'invocation-inputs': ['node', 'tests/invocation-inputs.test.cjs'],
     'entry-bands': ['node', 'tests/entry-bands.test.cjs'],
     'sample-frames': ['node', 'tests/sample-frames.test.cjs'],
     'input-docks': ['node', 'tests/input-docks.test.cjs'],

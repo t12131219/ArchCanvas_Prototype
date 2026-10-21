@@ -283,6 +283,7 @@ class Analyzer:
         args = [a for a in fn.args.args if a.arg != 'self'] + fn.args.kwonlyargs
         positional = [a.arg for a in fn.args.args if a.arg != 'self']
         defaults = dict(zip(positional[-len(fn.args.defaults):], fn.args.defaults)) if fn.args.defaults else {}
+        defaults.update({arg.arg: value for arg, value in zip(fn.args.kwonlyargs, fn.args.kw_defaults) if value is not None})
         invocation_values = dict(forward_constants or {})
         for index, arg in enumerate(args):
             node = self.add('interface', arg.arg, composite, u, arg, symbol, role='input', slot=arg.arg)

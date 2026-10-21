@@ -20,7 +20,8 @@
     const contents=n.content_inventory;
     const pipeline=n.local_pipeline,labels=new Map(pipeline?.operations.map(o=>[o.node,o.label])||[]);
     const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
-    return [n.label,...(n.contract_stage?['Certified role subregion: '+n.contract_stage.certificate,n.contract_stage.scope,'Original operations remain individually expandable.']:[]),...(pipeline?[
+    return [n.label,...(n.invocation_binding?['Fixed call argument: '+n.invocation_binding.label,n.invocation_binding.proof_scope,n.invocation_binding.claim,
+      ...n.invocation_binding.uses.map(e=>`${e.id}: ${e.source} [${e.source_port}] → ${e.target} [${e.target_port}] · ${e.kind}`)]:[]),...(n.contract_stage?['Certified role subregion: '+n.contract_stage.certificate,n.contract_stage.scope,'Original operations remain individually expandable.']:[]),...(pipeline?[
       pipeline.dependency_dag?'Local dependency DAG: '+JSON.stringify(pipeline.dependency_dag):pipeline.dependency_tree?'Local dependency tree: '+expression(pipeline.dependency_tree):'Local dependency path: '+pipeline.operations.map(o=>o.label).join(' → '),pipeline.scope,
       ...(pipeline.path_display?[pipeline.path_display.scope,'Individual calls: '+JSON.stringify(pipeline.operations)]:[]),
       ...(pipeline.dependency_tree||pipeline.dependency_dag?pipeline.bindings.map(b=>`${b.edge}: ${b.producer} [${b.source_port}] → ${b.target} [${b.target_port}]`):[]),
@@ -594,8 +595,43 @@
       scope:'Expanded ordinary helpers become source-ownership annotations inside the existing certified role scope. Exact source cuts, operations, bindings and selected frontier remain; one measured trial, no helper equivalence or execution claim.'};
     return chosen;
   }
+  function prepareInvocationDocks(ir,state={}){
+    const baseline=prepareRoleSourceFrames(ir,state),g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperInvocationInputDocks!==undefined||
+      Object.keys(state.offsets||{}).length||g.edges.length>128||!g.nodes.some(n=>n.invocation_binding))return baseline;
+    const rank=baseline.prepared.routing.rank_clearance_refinement,before=realizedRelations(baseline);
+    const candidateState={...state,...rank?.attempts.filter(a=>a.accepted).at(-1)?.configuration,paperInvocationInputDocks:true,
+      paperInputDocks:g.positions.context.inputDocks.length>0,
+      paperEntryBand:g.positions.context.compoundAlignments.some(c=>L.entryBandGeometry(c,g.positions)),
+      paperFlowAlignment:g.positions.context.compoundAlignments.some(c=>c.accepted&&c.mode==='entries')?'entries':state.paperFlowAlignment,
+      paperSampleFrame:(g.frame_ownership||[]).some(r=>r.kind==='sequence-sample'),
+      paperRoleSourceFrames:(g.frame_ownership||[]).some(r=>r.kind==='role-source'),
+      paperRankStrategy:state.paperRankStrategy||baseline.prepared.routing.topology_refinement?.selected||'earliest',
+      paperContextEdges:state.paperContextEdges||before.contexts,paperBranchColumns:!!g.positions.context.branchColumns.length,
+      paperContextLanes:g.positions.context.contextLanes.find(c=>c.selected!==false)?.side||false,
+      ...(g.publication.label_clearance?{paperLabelSpacing:g.publication.label_clearance.mode}:{})};
+    const probe=E.project(ir,{...candidateState,view:'publication'});
+    if(!probe.positions.context.fixedInputs.length)return baseline;
+    const trial=prepareLabels(ir,candidateState),q=trial.prepared.quality,after=realizedRelations(trial);
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const conflicts=r=>r.graph.constraint_receipts.filter(c=>c.status==='conflict').map(c=>c.id);
+    const facts=clearanceIdentity(g)===clearanceIdentity(trial.graph);
+    const accepted=facts&&(areaMetric(q)<areaMetric(b)*.98||areaMetric(q)<=areaMetric(b)&&q.wire_length<=b.wire_length*.9)&&
+      q.native_width_px<=b.native_width_px*1.1&&q.native_height_px<=b.native_height_px*1.1&&q.wire_length<=b.wire_length&&
+      q.issues.every(issue=>b.issues.includes(issue))&&q.route_failures.length<=b.route_failures.length&&
+      q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      conflicts(trial).every(id=>conflicts(baseline).includes(id))&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const chosen=accepted?trial:baseline;
+    if(accepted)for(const [key,value]of Object.entries(baseline.prepared.routing))if(key.endsWith('_refinement'))chosen.prepared.routing[key]=value;
+    chosen.prepared.routing.invocation_input_refinement={accepted,facts_preserved:facts,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      docks:trial.graph.positions.context.fixedInputs,realized_before:before,realized_candidate:after,configuration:candidateState,
+      scope:'One measured header arrangement of existing invocation-bound literal terminals. Same frontier, original operands and realized relations; reduced area or wire required, with no added crossings, contacts, routing failures or constraint conflicts. Fixed values stay explicit if the arrangement is rejected.'};
+    return chosen;
+  }
   function prepareAdaptive(ir,state={}){
-    let chosen=prepareRoleSourceFrames(ir,state);
+    let chosen=prepareInvocationDocks(ir,state);
     if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
     const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     attachExpressionEvidence(ir,chosen);
@@ -635,7 +671,7 @@
       const trials=[];
       for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
         seen.add(item.candidate.id);
-        const trial=attachExpressionEvidence(ir,prepareRoleSourceFrames(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+        const trial=attachExpressionEvidence(ir,prepareInvocationDocks(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
         const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperRolePaths:item.next.paperRolePaths||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
           ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
         trials.push({item,trial,assessment,receipt});

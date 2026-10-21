@@ -2,6 +2,8 @@
 
 2026-10-21，之前待审核的 Transformer 完整默认自适应计算已终态成功。当前测量单独保存在 `verification/adaptive-comparison/current/`，没有把旧阶段的 UI、测试或 SVG 重新标成当前结果。
 
+后续生产实现及单独完成的默认自适应测量见[固定调用参数阶段](invocation-inputs.md)。本页保留 `a258de7` 阶段的原有结果，不将它们重标为后续实现。
+
 ## 实际结果
 
 两边使用同一个 3371 节点、3663 边的源码事实输入，以及 `canvas / roles / adaptive / structure` 请求。旧生产实现来自已核对 Git 字节的冻结版本，当前实现的全部生产文件哈希与启动记录一致。

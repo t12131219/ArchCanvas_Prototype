@@ -438,19 +438,18 @@
     const g=chosen.graph;
     E.auditConstraintRoutes(g,chosen.prepared.routes);
     if(g.publication.role_frontier?.path_requests?.length){
-      const physical=new Map();for(const edge of chosen.prepared.routes)for(const m of edge.bundle_members||[edge])for(const id of new Set([m.id,...m.originals||[]])){
-        if(!physical.has(id))physical.set(id,[]);physical.get(id).push(edge);
-      }
+      const proof=Goals.canonicalPaths(ir,chosen.prepared.routes),physical=proof.paths;
       for(const r of g.publication.role_frontier.path_requests){
         const incoming=ir.edges.filter(e=>e.target===r.target&&['data','alias','interface-binding'].includes(e.kind));
-        const missing=incoming.filter(e=>!physical.has(e.id)).map(e=>e.id),failed=incoming.filter(e=>physical.get(e.id)?.some(p=>!p.route.ok)).map(e=>e.id);
-        r.operand_check={status:r.status==='exposed'&&incoming.length&&!missing.length&&!failed.length?'fulfilled':'deferred',
-          edges:incoming.map(e=>e.id),missing_edges:missing,route_failures:failed,
+        const missing=incoming.filter(e=>!physical.has(e.id)).map(e=>e.id),failed=incoming.filter(e=>physical.get(e.id)?.some(p=>!p.path.route.ok)).map(e=>e.id),
+          missingBindings=incoming.filter(e=>!proof.exact(e.id)).map(e=>e.id);
+        r.operand_check={status:r.status==='exposed'&&incoming.length&&!missing.length&&!failed.length&&!missingBindings.length?'fulfilled':'deferred',
+          edges:incoming.map(e=>e.id),missing_edges:missing,missing_exact_bindings:missingBindings,route_failures:failed,
           scope:'Selected role endpoint and its canonical incoming flow bindings only; not the entire certificate computation or execution coverage.'};
       }
     }
     g.expression_goals=Goals.build(ir,g.architecture);
-    g.expression_coverage=Goals.evaluate(g.expression_goals,g,chosen.prepared);
+    g.expression_coverage=Goals.evaluate(g.expression_goals,g,chosen.prepared,ir);
     g.summary_goals=SummaryGoals.build(ir,g.architecture);
     g.summary_coverage=SummaryGoals.evaluate(g.summary_goals,ir,g,chosen.prepared);
     if(g.publication.local_expressions){

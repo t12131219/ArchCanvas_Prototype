@@ -42,9 +42,9 @@ test('shared-source expression goals require the producer, every consumer and bo
  assert.equal(r.graph.expression_coverage.find(c=>c.goal===goal.id).status,'fulfilled');
  assert.equal(r.graph.publication.local_expressions.requests.find(q=>q.relation===relation.id).status,'fulfilled');
  const graph={...r.graph,positions:new Map(r.graph.positions)};graph.positions.delete(relation.bindings[0].target);
- assert.equal(G.evaluate({goals:[goal]},graph,r.prepared)[0].status,'unfulfilled');
+ assert.equal(G.evaluate({goals:[goal]},graph,r.prepared,ir)[0].status,'unfulfilled');
  const prepared={...r.prepared,routes:r.prepared.routes.filter(e=>!relation.bindings.some(b=>e.id===b.edge))};
- assert.equal(G.evaluate({goals:[goal]},r.graph,prepared)[0].status,'unfulfilled');
+ assert.equal(G.evaluate({goals:[goal]},r.graph,prepared,ir)[0].status,'unfulfilled');
  assert.ok(relation.not_asserted.includes('parallel execution'));
 });
 

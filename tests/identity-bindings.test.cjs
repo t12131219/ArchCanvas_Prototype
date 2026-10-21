@@ -36,14 +36,23 @@ test('cross-branch identity details retain mutually exclusive conditions and do 
   const out=R.render(ir,{paperRelation:r.id,paperGranularity:'detailed'});accounting(ir,out.graph);
   for(const id of r.members){const node=out.graph.nodes.find(n=>n.id===id),parent=out.graph.nodes.find(n=>n.id===node.parent);assert.ok(parent.condition?.branch);}
   assert.ok(r.not_asserted.includes('fixed runtime call count'));
-  assert.equal(out.graph.expression_coverage.find(c=>c.goal==='goal:'+r.id).status,'fulfilled');
+  const expression=out.graph.expression_coverage.find(c=>c.goal==='goal:'+r.id);
+  // Identity captions are present, but the two result aliases are projected
+  // through conditional joins. They do not directly expose those alias cuts.
+  assert.deepEqual(expression.missing_identity,[]);
+  assert.equal(expression.status,'unfulfilled');
+  assert.equal(expression.missing_exact_bindings.length,2);
+  for(const id of expression.missing_exact_bindings){
+    assert.equal(ir.edges.find(e=>e.id===id).kind,'alias');
+    assert.ok(out.prepared.routes.some(e=>(e.originals||[]).includes(id)&&e.condition));
+  }
 });
 
 test('hidden calls or missing printed identity cannot satisfy the identity expression goal',()=>{
   const ir=load('AliasCalls'),r=relations(ir).find(r=>r.type==='same-object-calls'),folded=R.render(ir,{paperAuto:false,open:[]});
   assert.equal(folded.graph.expression_coverage.find(c=>c.goal==='goal:'+r.id).status,'unfulfilled');
   const out=R.render(ir,{paperRelation:r.id}),node=out.graph.nodes.find(n=>n.id===r.node);node.paper.captions=[];
-  assert.equal(G.evaluate(out.graph.expression_goals,out.graph,out.prepared).find(c=>c.goal==='goal:'+r.id).status,'unfulfilled');
+  assert.equal(G.evaluate(out.graph.expression_goals,out.graph,out.prepared,ir).find(c=>c.goal==='goal:'+r.id).status,'unfulfilled');
 });
 
 test('real CPU parameter aliases have a run-local receipt and a visible enumeration detail',()=>{

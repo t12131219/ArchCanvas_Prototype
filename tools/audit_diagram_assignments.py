@@ -16,7 +16,7 @@ sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
 FLOW = {'data', 'alias', 'interface-binding'}
 
 
-def assignments(ir, goals, panel, svg):
+def assignments(ir, goals, panel, svg, *, require_quality=True):
     by = {n['id']: n for n in ir['nodes']}
     edges = {e['id']: e for e in ir['edges']}
     ins, outs = {}, {}
@@ -94,7 +94,10 @@ def assignments(ir, goals, panel, svg):
         required = set(goal['edges'])
         if goal['kind'] == 'computation':
             required.update(e['id'] for e in ins.get(goal['focus_node'], []) if e['kind'] in FLOW)
-        fulfilled = qualified and set(goal['core']) <= visible.keys() and all(exact(e) for e in required)
+        # Local expression truth and suitability as an assigned figure are
+        # distinct. Raw evaluator audits may inspect the former explicitly;
+        # diagram-set assignments always retain the default quality gate.
+        fulfilled = (qualified or not require_quality) and set(goal['core']) <= visible.keys() and all(exact(e) for e in required)
         # The JS evaluator rejects a goal if any of its reported paths failed.
         fulfilled &= all(all(path['route']['ok'] for path, _ in paths.get(e, [])) for e in goal['edges'])
         fulfilled &= not any(c['status'] == 'conflict' and c['evidence'].get('relation') == goal.get('relation')

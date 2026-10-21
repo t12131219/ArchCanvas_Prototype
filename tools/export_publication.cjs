@@ -26,7 +26,7 @@ function exportAtlas(ir,output,options={}){
     const p=pages[i];
     const base=String(i).padStart(3,'0')+'-'+(i===0?'overview':p.label.replace(/[^a-zA-Z0-9_-]+/g,'-').slice(0,60)||'module');
     const out=R.render(ir,{...state,paperFocus:p.id,paperRelation:p.relation||null,paperRepresentative:p.group!=null,paperRepresentativeGroup:p.group??null,paperGranularity:p.relation||p.group!=null?'detailed':state.paperGranularity}),g=out.graph;
-    const boundaryCoverage=Goals.evaluate({goals:representatives.boundaries},g,out.prepared);
+    const boundaryCoverage=Goals.evaluate({goals:representatives.boundaries},g,out.prepared,ir);
     const receipts=new Map([...g.expression_coverage.filter(c=>goalSet.goals.some(g=>g.id===c.goal)).map(c=>({...c,method:'direct'})),...boundaryCoverage.map(c=>({...c,method:'direct'}))].map(c=>[c.goal,c]));
     for(const c of Representatives.coverage(representatives,out))if(receipts.get(c.goal)?.status!=='fulfilled')receipts.set(c.goal,c);
     const coverage=[...receipts.values()];

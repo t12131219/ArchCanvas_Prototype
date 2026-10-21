@@ -2,7 +2,54 @@
  * Goals are evaluated against the selected, routed panel, not export intent. */
 (function(root){
   'use strict';
-  const VERSION='expression-goals/2';
+  const VERSION='expression-goals/3';
+  // A routed ID is only a lookup key. Validate the represented canonical
+  // producer, result slot, receiving operand, condition and evidence too.
+  // Only unconditional interface/alias chains may explain a projected path.
+  function canonicalPaths(ir,routes){
+    const by=new Map(ir.nodes.map(n=>[n.id,n])),edges=new Map(ir.edges.map(e=>[e.id,e])),incoming=new Map(),outgoing=new Map(),paths=new Map();
+    const flow=e=>['data','alias','interface-binding'].includes(e.kind),transparent=n=>n&&['interface','value-alias'].includes(n.kind)&&!n.operator;
+    for(const e of ir.edges){
+      if(!incoming.has(e.target))incoming.set(e.target,[]);incoming.get(e.target).push(e);
+      if(!outgoing.has(e.source))outgoing.set(e.source,[]);outgoing.get(e.source).push(e);
+    }
+    for(const path of routes)for(const member of path.bundle_members||[path])for(const id of new Set([member.id,...member.originals||[]])){
+      if(!paths.has(id))paths.set(id,[]);paths.get(id).push({path,member});
+    }
+    const resolved=new Map(),reachable=new Map(),checked=new Map();
+    const resolve=(first,slot='out')=>{
+      const key=JSON.stringify([first,slot]);if(resolved.has(key))return resolved.get(key);
+      let id=first,port=slot;const seen=new Set();while(!seen.has(id)){
+        seen.add(id);const n=by.get(id),es=incoming.get(id)||[];if(!transparent(n)||es.length!==1||!flow(es[0])||es[0].condition)break;
+        const e=es[0],outer=n.kind==='value-alias'?n.slot??e.source_port??'out':e.source_port??'out';
+        port=outer==='out'?port:port==='out'?outer:outer+'.'+port;id=e.source;
+      }
+      const value=JSON.stringify([id,port]);resolved.set(key,value);return value;
+    };
+    const reaches=(first,last)=>{
+      const key=JSON.stringify([first,last]);if(reachable.has(key))return reachable.get(key);
+      const todo=[first],seen=new Set();for(let i=0;i<todo.length;i++){
+        const at=todo[i];if(at===last){reachable.set(key,true);return true;}
+        if(seen.has(at)||!transparent(by.get(at)))continue;seen.add(at);
+        for(const e of outgoing.get(at)||[])if(flow(e)&&!e.condition)todo.push(e.target);
+      }
+      reachable.set(key,false);return false;
+    };
+    const exact=id=>{
+      if(checked.has(id))return checked.get(id);
+      const e=edges.get(id),valid=!!e&&(paths.get(id)||[]).some(({path,member})=>{
+        const terminal=edges.get(member.id),source=member.resolved_source??member.canonical_source;
+        return terminal&&path.route.ok&&member.canonical_source===terminal.source&&member.canonical_target===terminal.target&&
+          member.target_port===terminal.target_port&&member.kind===terminal.kind&&member.evidence===terminal.evidence&&
+          JSON.stringify(member.condition)===JSON.stringify(terminal.condition)&&
+          resolve(terminal.source,terminal.source_port)===resolve(source,member.source_port)&&
+          resolve(e.source,e.source_port)===resolve(source,member.source_port)&&reaches(e.target,member.canonical_target??member.target)&&
+          (member.id!==e.id||member.target_port===e.target_port&&member.kind===e.kind&&JSON.stringify(member.condition)===JSON.stringify(e.condition));
+      });
+      checked.set(id,valid);return valid;
+    };
+    return {exact,paths,incoming};
+  }
   function build(ir,plan){
     const by=new Map(ir.nodes.map(n=>[n.id,n])),goals=[],covered=new Set();
     for(const r of plan.relation_graph?.relations||[]){
@@ -30,7 +77,8 @@
     }
     return {schema:VERSION,goals};
   }
-  function evaluate(goalSet,graph,prepared){
+  function evaluate(goalSet,graph,prepared,ir){
+    const proof=canonicalPaths(ir,prepared.routes);
     const routed=new Map(prepared.routes.map(e=>[e.id,e])),edges=new Map();
     for(const e of prepared.routes)for(const m of e.bundle_members||[e])for(const id of new Set([m.id,...m.originals||[]])){
       if(!edges.has(id))edges.set(id,[]);edges.get(id).push(e);
@@ -39,6 +87,9 @@
       const missingNodes=goal.core.filter(id=>!graph.positions.has(id));
       const missingEdges=goal.edges.filter(id=>!edges.has(id));
       const failures=goal.edges.filter(id=>(edges.get(id)||[]).some(e=>!routed.get(e.id)?.route.ok));
+      const required=[...new Set([...goal.edges,...(goal.kind==='computation'?(proof.incoming.get(goal.focus_node)||[])
+        .filter(e=>['data','alias','interface-binding'].includes(e.kind)).map(e=>e.id):[])])];
+      const missingBindings=required.filter(id=>!proof.exact(id));
       const receipts=graph.constraint_receipts?.filter(c=>c.evidence.relation===goal.relation)||[];
       const conflicts=receipts.filter(c=>c.status==='conflict').map(c=>c.id);
       const printed=n=>(n?.paper?.captions||[]).join('').replace(/\s/g,'');
@@ -49,9 +100,9 @@
       }):[];
       // Every relation edge has to reach a physical path; hidden internal edges
       // and merely attached evidence cannot count as an expressed relationship.
-      const fulfilled=!missingNodes.length&&!missingEdges.length&&!failures.length&&!conflicts.length&&!missingIdentity.length;
+      const fulfilled=!missingNodes.length&&!missingEdges.length&&!failures.length&&!conflicts.length&&!missingIdentity.length&&!missingBindings.length;
       return {goal:goal.id,kind:goal.kind,expression:goal.expression,status:fulfilled?'fulfilled':'unfulfilled',
-        missing_nodes:missingNodes,missing_edges:missingEdges,missing_identity:missingIdentity,route_failures:failures,constraint_conflicts:conflicts,
+        missing_nodes:missingNodes,missing_edges:missingEdges,missing_exact_bindings:missingBindings,missing_identity:missingIdentity,route_failures:failures,constraint_conflicts:conflicts,
         visible_edges:[...new Set(goal.edges.flatMap(id=>(edges.get(id)||[]).map(e=>e.id)))]};
     });
   }
@@ -68,5 +119,5 @@
     }
     return [...grouped.values()].sort((a,b)=>b.priority-a.priority||a.id.localeCompare(b.id)).map(r=>({...r,required_open:[...r.required_open]}));
   }
-  const api={VERSION,build,evaluate,panelRequests};root.SemanticExpressionGoals=api;if(typeof module!=='undefined')module.exports=api;
+  const api={VERSION,build,canonicalPaths,evaluate,panelRequests};root.SemanticExpressionGoals=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

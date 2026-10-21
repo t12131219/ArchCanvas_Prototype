@@ -5,6 +5,7 @@
   const VERSION='adaptive-frontier/5';
   const Roles=root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null);
   const Expressions=root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null);
+  const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
   function candidates(graph,state={}){
     const plan=graph.architecture,by=new Map(plan.nodes.map(n=>[n.id,n])),owners=new Set(graph.publication.role_frontier?.modules.map(m=>m.node)||[]);
@@ -63,26 +64,17 @@
       unplaced_labels:q.unplaced_port_labels.length,font:q.min_canvas_font_px,issues:q.issues};
   }
   function evidence(ir,result){
-    const g=result.graph,coverage=new Map(g.expression_coverage.map(r=>[r.goal,r])),physical=new Set();
-    for(const edge of result.prepared.routes)if(edge.route.ok)for(const member of edge.bundle_members||[edge])for(const id of [member.id,...member.originals||[]])physical.add(id);
-    const goals=new Map(),by=new Map(ir.nodes.map(n=>[n.id,n]));
-    for(const goal of g.expression_goals.goals){
-      if(coverage.get(goal.id)?.status!=='fulfilled')continue;
-      if(goal.kind==='computation'){
-        // Visibility alone earns nothing. Plain computations must retain all
-        // incoming canonical flow bindings on successfully routed paths.
-        const incoming=ir.edges.filter(e=>e.target===goal.focus_node&&['data','alias','interface-binding'].includes(e.kind));
-        if(!incoming.length||incoming.some(e=>!physical.has(e.id)))continue;
-      }
+    const g=result.graph,coverage=new Map(Goals.evaluate(g.expression_goals,g,result.prepared,ir).map(r=>[r.goal,r])),
+      proof=Goals.canonicalPaths(ir,result.prepared.routes),goals=new Map(),by=new Map(ir.nodes.map(n=>[n.id,n]));
+    for(const goal of g.expression_goals.goals)if(coverage.get(goal.id)?.status==='fulfilled')
       goals.set(goal.id,{id:goal.id,kind:goal.kind,priority:goal.priority,node:goal.focus_node});
-    }
     const roles=new Set((g.publication.role_frontier?.roles||[]).filter(r=>r.status==='exposed').map(r=>JSON.stringify([r.certificate,r.role_keys,r.node])));
     const boundaries=new Set(g.nodes.filter(n=>by.has(n.id)&&(n.kind==='opaque'||n.kind==='control'||n.condition||n.mutable||n.identity_display||n.evidence_status==='runtime-only')).map(n=>n.id));
     const conflicts=new Set((g.constraint_receipts||[]).filter(r=>r.status==='conflict').map(r=>r.id));
     const summaries=new Set((g.summary_coverage||[]).filter(r=>r.status==='fulfilled').map(r=>r.goal));
     const paths=new Map((g.publication.role_frontier?.path_requests||[]).filter(r=>r.selection==='selected').map(r=>{
       const incoming=ir.edges.filter(e=>e.target===r.target&&['data','alias','interface-binding'].includes(e.kind));
-      return [JSON.stringify([r.node,r.certificate,r.role]),r.status==='exposed'&&g.positions.has(r.target)&&incoming.length>0&&incoming.every(e=>physical.has(e.id))];
+      return [JSON.stringify([r.node,r.certificate,r.role]),r.status==='exposed'&&g.positions.has(r.target)&&incoming.length>0&&incoming.every(e=>proof.exact(e.id))];
     }));
     return {goals,roles,boundaries,conflicts,summaries,paths};
   }

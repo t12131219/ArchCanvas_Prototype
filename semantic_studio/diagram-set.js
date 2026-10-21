@@ -109,35 +109,8 @@
       !q.line_geometry.overlapping_paths.some(p=>!p.same_value)&&q.min_canvas_font_px>=12;
   }
   function coverage(ir,plan,panels){
-    const by=new Map(ir.nodes.map(n=>[n.id,n])),edges=new Map(ir.edges.map(e=>[e.id,e])),incoming=new Map(),outgoing=new Map();
-    const flow=e=>['data','alias','interface-binding'].includes(e.kind),transparent=n=>n&&['interface','value-alias'].includes(n.kind)&&!n.operator;
-    for(const e of ir.edges){if(!incoming.has(e.target))incoming.set(e.target,[]);incoming.get(e.target).push(e);
-      if(!outgoing.has(e.source))outgoing.set(e.source,[]);outgoing.get(e.source).push(e);}
-    const resolve=(id,port='out')=>{const seen=new Set();while(!seen.has(id)){
-      seen.add(id);const n=by.get(id),es=incoming.get(id)||[];if(!transparent(n)||es.length!==1||!flow(es[0])||es[0].condition)break;
-      const e=es[0],outer=n.kind==='value-alias'?n.slot??e.source_port??'out':e.source_port??'out';
-      port=outer==='out'?port:port==='out'?outer:outer+'.'+port;id=e.source;
-    }return [id,port];};
-    const reaches=(first,last)=>{const todo=[first],seen=new Set();for(let i=0;i<todo.length;i++){
-      const at=todo[i];if(at===last)return true;if(seen.has(at)||!transparent(by.get(at)))continue;seen.add(at);
-      for(const e of outgoing.get(at)||[])if(flow(e)&&!e.condition)todo.push(e.target);
-    }return false;};
     const checks=panels.map(panel=>{
-      const paths=new Map();for(const path of panel.result.prepared.routes)for(const member of path.bundle_members||[path])for(const id of [member.id,...member.originals||[]]){
-        if(!paths.has(id))paths.set(id,[]);paths.get(id).push({path,member});}
-      const exact=id=>{const e=edges.get(id);return e&&(paths.get(id)||[]).some(({path,member})=>{
-        const terminal=edges.get(member.id);
-        return terminal&&path.route.ok&&
-        member.canonical_source===terminal.source&&member.canonical_target===terminal.target&&member.target_port===terminal.target_port&&member.kind===terminal.kind&&
-        member.evidence===terminal.evidence&&JSON.stringify(member.condition)===JSON.stringify(terminal.condition)&&
-        JSON.stringify(resolve(terminal.source,terminal.source_port))===JSON.stringify(resolve(member.resolved_source??member.canonical_source,member.source_port))&&
-        JSON.stringify(resolve(e.source,e.source_port))===JSON.stringify(resolve(member.resolved_source??member.canonical_source,member.source_port))&&
-        reaches(e.target,member.canonical_target??member.target)&&
-        (member.id!==e.id||member.target_port===e.target_port&&member.kind===e.kind&&JSON.stringify(member.condition)===JSON.stringify(e.condition));
-      });};
-      const rows=Goals.evaluate({goals:plan.goals},panel.result.graph,panel.result.prepared).map(row=>{
-        const goal=plan.goals.find(goal=>goal.id===row.goal),required=[...goal.edges,...(goal.kind==='computation'?(incoming.get(goal.focus_node)||[]).filter(flow).map(e=>e.id):[])];
-        const missing=required.filter(id=>!exact(id));return {...row,...(missing.length?{status:'unfulfilled'}:{}),missing_exact_bindings:missing};});
+      const rows=Goals.evaluate({goals:plan.goals},panel.result.graph,panel.result.prepared,ir);
       return {panel:panel.id,qualified:acceptable(panel.result),rows:new Map(rows.map(row=>[row.goal,row]))};
     });
     return plan.goals.map(goal=>{const expressed=checks.filter(check=>check.qualified&&check.rows.get(goal.id)?.status==='fulfilled');

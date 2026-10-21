@@ -42,7 +42,7 @@
     function expression(depth){if(!atom(depth))return false;while(['+','-','*','/','//','%','**'].includes(tokens[at])){at++;operations++;if(!atom(depth))return false;}return true;}
     return expression(0)&&at===tokens.length&&operations>0;
   }
-  function policy(ir,focus=null,inside=null,dimensionPaths=false){
+  function policy(ir,focus=null,inside=null,dimensionPaths=false,directOperands=new Set()){
     const {ins,uses}=relations(ir),by=new Map(ir.nodes.map(n=>[n.id,n])),bindings=new Map(),metadata=new Set();
     function configUse(e){
       const n=by.get(e.target),name=(n?.function_target||'').split('.').at(-1),port=e.target_port;
@@ -92,7 +92,13 @@
       const existing=new Set(configurationArithmetic.map(row=>row.node));
       configurationArithmetic.push(...derived.rows.filter(row=>!existing.has(row.node)));
     }
-    return {bindings,metadata,ins,uses,configurationArithmetic,configurationUses:new Set(ir.edges.filter(configUse).map(e=>e.id))};
+    // An explicitly selected atomic operation must expose its real incoming
+    // cuts, including shape/configuration values normally attached as notes.
+    // External producers stay outside the detail; no behavior is inferred.
+    const directValues=new Set(directOperands);
+    for(const e of ir.edges)if(directOperands.has(e.target)&&flow(e))directValues.add(e.source);
+    for(const id of directValues)metadata.delete(id);
+    return {bindings,metadata,ins,uses,configurationArithmetic:configurationArithmetic.filter(r=>!directValues.has(r.node)),configurationUses:new Set(ir.edges.filter(configUse).map(e=>e.id))};
   }
   function value(id,port='out',bindings){const seen=new Set();while(bindings.has(id)&&!seen.has(id)){seen.add(id);const e=bindings.get(id);id=e.source;const outer=e.source_port??'out';port=outer==='out'?port:port==='out'?outer:outer+'.'+port;}return {id,port};}
   function descendants(id,children){const all=[],todo=[...(children.get(id)||[])];for(let i=0;i<todo.length;i++){all.push(todo[i]);todo.push(...children.get(todo[i])||[]);}return all;}
@@ -526,9 +532,9 @@
     }
     const emitted=new Set();return edges.flatMap(edge=>{const ribbon=ribbons.get(edge.id);if(!ribbon)return [edge];if(emitted.has(ribbon.id))return [];emitted.add(ribbon.id);return [ribbon];});
   }
-  function focusPlan(ir,base,focus,dimensionPaths=false){
+  function focusPlan(ir,base,focus,dimensionPaths=false,directOperands=new Set()){
     const p={...base,nodes:base.nodes.slice(),findings:base.findings.slice()},idx=index(p),used=new Set(idx.nodes.keys()),inside=new Set([focus,...descendants(focus,idx.children)]),boundaryReps=new Map(),boundary=[],inputValues=new Map(),outputValues=new Map(),rels=relations(ir);
-    const {metadata,bindings}=policy(ir,focus,inside,dimensionPaths);
+    const {metadata,bindings}=policy(ir,focus,inside,dimensionPaths,directOperands);
     for(const e of ir.edges){const input=!inside.has(e.source)&&inside.has(e.target),output=inside.has(e.source)&&!inside.has(e.target);if(!input&&!output)continue;
       // An interface inside a closed child is not a panel-level terminal.
       // Reusing it leaves an edge pointing at a node with no visible geometry.
@@ -538,7 +544,7 @@
       }
       // Match the compact projection's resource policy. These cuts are
       // attached to the consumer, never orphan synthetic data inputs.
-      if(input&&external?.kind==='parameter'&&!(rels.ins.get(external.id)||[]).length&&(rels.uses.get(external.id)||[]).every(edge=>['data','parameter-read'].includes(edge.kind))){
+      if(input&&!directOperands.has(e.target)&&external?.kind==='parameter'&&!(rels.ins.get(external.id)||[]).length&&(rels.uses.get(external.id)||[]).every(edge=>['data','parameter-read'].includes(edge.kind))){
         boundary.push({...copy(e),direction:'input',port_node:local.id,presentation:'attached-resource'});continue;
       }
       // Interface binding and data use can read the exact same value. The
@@ -646,7 +652,8 @@
       root.SemanticInvocationInputs||(typeof require==='function'?require('./invocation-inputs.js'):null):null;
     const invocationInputs=invocationEngine?.compile(ir);
     const dimensionPaths=canvas&&granularity==='roles'&&state.paperDimensionPaths!==false;
-    const focused=focusPlan(ir,base,focus,dimensionPaths);
+    const directOperands=new Set(local&&state.paperRelation?.startsWith('node:')?[state.paperRelation.slice(5)]:[]);
+    const focused=focusPlan(ir,base,focus,dimensionPaths,directOperands);
     if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);
     const stageEngine=canvas&&granularity==='roles'&&state.paperContractStages!==false?(root.SemanticContractStages||(typeof require==='function'?require('./contract-stages.js'):null)):null;
     const roleEngine=canvas&&granularity==='roles'&&!local?(root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null)):null;
@@ -655,7 +662,7 @@
     const expressionEngine=roleFrontier?(root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null)):null;
     const expressions=expressionEngine?.compile({plan:focused.plan,focus,details:state.paperExpressionDetails});
     const frontierScopes=new Set(roleFrontier?.owners||[]);
-    const pol=policy(ir,focus,focused.inside,dimensionPaths),pipelineEngine=canvas&&granularity==='roles'&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
+    const pol=policy(ir,focus,focused.inside,dimensionPaths,directOperands),pipelineEngine=canvas&&granularity==='roles'&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
     const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol});
     if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id)}:n);
     let idx=index(focused.plan);
@@ -672,6 +679,7 @@
         pol.bindings.set(target.id,{...copy(cut),source:cut.port_node,source_port:target.slot??cut.source_port});
     }
     const exposedResources=new Set(local?originalPlan.relation_graph.relations.find(r=>r.id===state.paperRelation)?.properties.required_nodes?.filter(id=>idx.nodes.get(id)?.kind==='parameter')||[]:[]);
+    for(const e of ir.edges)if(directOperands.has(e.target)&&flow(e)&&idx.nodes.get(e.source)?.kind==='parameter')exposedResources.add(e.source);
     const eligible=id=>{const n=idx.nodes.get(id);return allowed(id)&&!pol.bindings.has(id)&&!pol.metadata.has(id)&&(n.kind!=='parameter'||exposedResources.has(id));};
     const options={roots:focus?[focus]:[],bindings:pol.bindings,metadata:pol.metadata,boundaryReps:focused.boundaryReps,presentEdges,exposedResources,
       layout:{contextSourceFacing:state.paperContextSourceFacing===true,semanticLanes:true,inputDocks:canvas&&granularity==='roles'&&state.paperInputDocks===true&&!Object.keys(state.offsets||{}).length,compoundStarts:canvas&&state.paperFlowAlignment==='entries',compoundInputBand:canvas&&state.paperEntryBand===true,branchColumns:canvas&&granularity==='roles'&&state.paperBranchColumns===true,contextLanes:canvas&&granularity==='roles'&&['left','right'].includes(state.paperContextLanes)&&state.paperContextLanes,contextEdges:state.paperContextEdges,alignForks:true,compoundPorts:inline,rankStrategy:state.paperRankStrategy==='consumer'?'consumer':'earliest',foldSerial:state.paperCompact?false:state.foldSerial!==false,nodeSize:n=>({...n.paper,w:n.paper.w,h:n.paper.h}),rankColumns:3,rankColumnsFor:n=>['branch-region','branch-panel','dependency-band','dependency-panel'].includes(n?.semantic_type)?3:null,gapX:28,gapY:state.paperCompact?28:60,foldGapX:36,framePadding:state.paperCompact?16:24,headerClearance:state.paperCompact?12:20,frameHeader:n=>Math.max(state.paperCompact?56:66,24+n.paper.lines.length*20+(n.paper.layout_caption_rows??n.paper.captions.length)*16),maxWidth:700}};

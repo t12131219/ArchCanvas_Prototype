@@ -33,7 +33,7 @@ try{
    console.log('START '+item.name+' '+v+' '+graph.nodes.length+' nodes '+graph.edges.length+' edges');
    const started=process.hrtime.bigint(),prepared=R.prepare(graph),elapsed=Number(process.hrtime.bigint()-started)/1e6;
    E.auditConstraintRoutes(graph,prepared.routes);
-   graph.expression_goals=Goals.build(ir,graph.architecture);graph.expression_coverage=Goals.evaluate(graph.expression_goals,graph,prepared);
+   graph.expression_goals=Goals.build(ir,graph.architecture);graph.expression_coverage=Goals.evaluate(graph.expression_goals,graph,prepared,ir);
    graph.summary_goals=SummaryGoals.build(ir,graph.architecture);graph.summary_coverage=SummaryGoals.evaluate(graph.summary_goals,ir,graph,prepared);
    const result=R.renderPrepared(ir,item.state,{graph,prepared});
    assert.equal(JSON.stringify(ir),original);

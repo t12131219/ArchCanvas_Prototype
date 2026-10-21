@@ -688,7 +688,38 @@
   // A source owner is evidence provenance, not necessarily the smallest
   // drawing boundary around a certified branch. This proposal keeps the
   // original owner and derives a separate, reversible geometric scope.
-  function localBypassScope(g,e){
+  function containedBranchBoundary(idx,positions,edges,representatives,id){
+    const p=positions.get(id),owner=idx.nodes.get(id);
+    if(!p||p.expanded||owner?.kind!=='composite'||owner.presentation_only)return null;
+    const members=Object.keys(representatives).filter(key=>representatives[key]===id),inside=new Set(members);
+    if(members.length<2||members.length>256)return null;
+    const protectedNode=n=>!n||n.kind==='opaque'||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||
+      n.evidence_status==='runtime-only'||n.iteration||n.repeat_contract||n.kind==='buffer';
+    if(protectedNode(owner)||members.some(key=>protectedNode(idx.nodes.get(key))))return null;
+    const incident=edges.filter(e=>inside.has(e.source)||inside.has(e.target));
+    if(incident.some(e=>e.iteration||!['data','alias','interface-binding','parameter-read','control'].includes(e.kind)))return null;
+    const cuts=incident.filter(e=>inside.has(e.source)!==inside.has(e.target));
+    // Control must remain wholly inside the closed boundary. This is a
+    // containment proof, not permission to select or erase either branch.
+    if(cuts.some(e=>e.kind==='control'||e.condition))return null;
+    const conditions=members.filter(key=>idx.nodes.get(key).condition).map(key=>({node:key,condition:idx.nodes.get(key).condition}));
+    if(conditions.some(r=>!inside.has(r.condition.branch)||idx.nodes.get(r.condition.branch)?.kind!=='control')||
+      incident.some(e=>e.condition&&(!inside.has(e.condition.branch)||idx.nodes.get(e.condition.branch)?.kind!=='control')))return null;
+    const phis=members.filter(key=>idx.nodes.get(key).operator==='phi').map(key=>({node:key,inputs:incident.filter(e=>e.target===key)}));
+    if(!phis.length||phis.some(r=>!r.inputs.length||r.inputs.length>2||r.inputs.some(e=>e.kind!=='data'||!e.condition||!inside.has(e.source)||
+      !inside.has(e.condition.branch)||idx.nodes.get(e.condition.branch)?.operator!=='if'||e.target_port!==e.condition.outcome)||
+      r.inputs.some(e=>e.condition.branch!==r.inputs[0].condition.branch)||
+      new Set(r.inputs.map(e=>e.condition.outcome)).size!==r.inputs.length||r.inputs.some(e=>!['true','false'].includes(e.condition.outcome))))return null;
+    for(const control of new Set(phis.map(r=>r.inputs[0].condition.branch))){
+      const branches=incident.filter(e=>e.source===control&&e.kind==='control');
+      if(branches.length!==2||new Set(branches.map(e=>e.target_port)).size!==2||branches.some(e=>
+        !inside.has(e.target)||!['true','false'].includes(e.target_port)||idx.nodes.get(e.target)?.condition?.branch!==control||
+        idx.nodes.get(e.target)?.condition?.outcome!==e.target_port))return null;
+    }
+    return {boundary:id,members,conditions,phis,control_edges:incident.filter(e=>e.kind==='control'),cuts,
+      scope:'Closed drawing boundary retains all conditional alternatives and exact cuts; no branch selection, value substitution or execution claim.'};
+  }
+  function localBypassScope(g,e,{contained=true}={}){
     if(e.design_route?.kind!=='bypass'||e.bundle_members||e.condition||e.iteration||e.context_lane||e.kind!=='data')return null;
     const c=g.architecture?.semantic_contracts?.find(c=>c.id===e.design_route.certificate),r=c?.roles;
     if(!r?.branch_path?.length||r.branch_path.length>64||e.resolved_source!==r.skip||e.source_port!==r.skip_slot||e.canonical_target!==r.add)return null;
@@ -696,10 +727,15 @@
     if(!(e.source===r.skip||source?.contract_stage?.roles.normalization===r.skip&&e.source_port==='out')||
       !(e.target===r.add||target?.contract_stage?.roles.add===r.add&&target.contract_stage.certificate===c.id))return null;
     const chain=id=>{const result=[];while(id&&!result.includes(id)){result.push(id);id=g.idx.nodes.get(id)?.parent;}return result;};
-    const ends=new Set([...chain(e.source),...chain(e.target)]),mapping=[];
+    const ends=new Set([...chain(e.source),...chain(e.target)]),mapping=[],boundaries=new Map();
     for(const id of r.branch_path){
       const n=g.idx.nodes.get(id),rep=g.representatives[id];
-      if(!n||['opaque','control','state','buffer'].includes(n.kind)||n.mutable||n.condition||n.operator==='phi'||!g.positions.has(rep))return null;
+      if(!n||['opaque','state','buffer'].includes(n.kind)||n.mutable||!g.positions.has(rep))return null;
+      if(n.kind==='control'||n.condition||n.operator==='phi'){
+        if(!contained)return null;
+        if(!boundaries.has(rep))boundaries.set(rep,containedBranchBoundary(g.idx,g.positions,g.architecture.edges||[],g.representatives,rep));
+        if(!boundaries.get(rep)||n.operator==='phi'&&boundaries.get(rep).phis.find(r=>r.node===id)?.inputs.length!==2)return null;
+      }
       if(rep===e.source)return null;
       mapping.push({canonical:id,visible:rep});
     }
@@ -714,7 +750,7 @@
     const ps=frontier.map(id=>g.positions.get(id)),a=g.positions.get(e.source),b=g.positions.get(e.target);
     if(!a||!b||ps.some(p=>p.y<a.y+a.h||p.y+p.h>b.y))return null;
     return {edge:e.id,certificate:c.id,source:e.source,target:e.target,skip:r.skip,skip_slot:r.skip_slot,add:r.add,
-      owner:e.design_route.owner,mapping,frontier,side:'left'};
+      owner:e.design_route.owner,mapping,frontier,side:'left',...(boundaries.size?{contained_boundaries:[...boundaries.values()]}:{})};
   }
   function localBypassGeometry(scope,e,positions){
     const ps=scope?.frontier?.map(id=>positions.get(id)),p=e?.route?.points;
@@ -722,6 +758,14 @@
       e.design_route?.kind!=='bypass'||e.design_route.certificate!==scope.certificate||e.design_route.owner!==scope.owner||
       e.resolved_source!==scope.skip||e.source_port!==scope.skip_slot||e.canonical_target!==scope.add||
       e.route.source_side!=='left'||e.route.target_side!=='left'||p.length!==4)return false;
+    const needsContainment=scope.mapping?.filter(m=>{const n=positions.context?.idx?.nodes.get(m.canonical);return n&&(n.kind==='control'||n.condition||n.operator==='phi');})||[];
+    if(needsContainment.length||scope.contained_boundaries?.length){
+      const facts=positions.context?.localBypassFacts,idx=positions.context?.idx;
+      if(!facts||!idx||!scope.contained_boundaries?.length||scope.mapping.some(m=>facts.representatives[m.canonical]!==m.visible)||
+        needsContainment.some(m=>!scope.contained_boundaries.some(r=>r.boundary===m.visible&&
+          (idx.nodes.get(m.canonical).operator!=='phi'||r.phis.some(p=>p.node===m.canonical&&p.inputs.length===2))))||
+        scope.contained_boundaries.some(r=>JSON.stringify(r)!==JSON.stringify(containedBranchBoundary(idx,positions,facts.edges,facts.representatives,r.boundary))))return false;
+    }
     const left=Math.min(...ps.map(p=>p.x)),top=Math.min(...ps.map(p=>p.y)),bottom=Math.max(...ps.map(p=>p.y+p.h));
     return p[0].y===p[1].y&&p[1].x===p[2].x&&p[2].y===p[3].y&&p[0].x>p[1].x&&p[3].x>p[2].x&&
       p[1].x>=left-52&&p[1].x<=left-16&&p[1].y<=top&&p[2].y>=bottom;

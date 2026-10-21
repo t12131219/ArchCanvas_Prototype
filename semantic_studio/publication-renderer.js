@@ -1186,7 +1186,7 @@
     E.auditConstraintRoutes(g,baseline.prepared.routes);
     // A pre-existing conflict is not permission to silently substitute a new
     // channel. This refinement preserves already realized bypass relations.
-    const candidates=baseline.prepared.routes.map(e=>({edge:e,scope:L.localBypassScope(g,e)})).filter(c=>c.scope&&
+    const candidates=baseline.prepared.routes.map(e=>({edge:e,scope:L.localBypassScope(g,e,{contained:state.paperContainedBypasses!==false})})).filter(c=>c.scope&&
       g.constraint_receipts.some(r=>r.type==='bypass'&&r.properties.certificate===c.scope.certificate&&r.status==='applied')).slice(0,6);
     if(!candidates.length)return baseline;
     let chosen=baseline;const record={attempts:[],selected:[],max_edges:6,max_rails_per_edge:4,before:clearanceMetrics(b)};
@@ -1198,6 +1198,7 @@
         const old=chosen.prepared.quality,current=chosen.prepared.routes.find(e=>e.id===edge.id),ctx=chosen.graph.positions.context;
         const positions=new Map(chosen.graph.positions);
         positions.context={...ctx,localBypassScopes:[...(ctx.localBypassScopes||[]).filter(s=>s.edge!==edge.id),scope],
+          localBypassFacts:{edges:g.architecture.edges,representatives:g.representatives},
           localBypassTrial:{edge:edge.id,scope,x:left-gap},routeCache:new Map(),reserved:[]};
         positions.context.portOrder=old.route_strategy.startsWith('neighbors')?'neighbors':'canonical';
         positions.context.ancestorPorts=old.route_strategy.includes('-header-')?'header':'boundary';

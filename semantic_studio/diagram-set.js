@@ -2,7 +2,7 @@
  * explicit expression obligations. Planning intent never counts as coverage. */
 (function(root){
   'use strict';
-  const VERSION='diagram-set/2',clone=x=>JSON.parse(JSON.stringify(x));
+  const VERSION='diagram-set/3',clone=x=>JSON.parse(JSON.stringify(x));
   const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const protectedScope=n=>!n||['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||
     n.evidence_status==='runtime-only'||n.runtime_evidence?.length||n.repeat_contract||n.iteration||
@@ -144,7 +144,79 @@
       return {goal:goal.id,kind:goal.kind,status:expressed.length?'fulfilled':'deferred',panels:expressed.map(check=>check.panel),
         method:expressed.length?'direct-canonical-paths':null};});
   }
-  function render(ir,state,renderer,{maxPanels=6,maxTrials=8,main:provided}={}){
+  function joint(ir,state,renderer,{maxPanels=3,maxTrials=6,main:provided}={}){
+    const A=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
+    const main=provided||renderer.render(ir,state),planned=plan(ir,main,state),definitions=new Map(planned.goals.map(g=>[g.id,g]));
+    const critical=new Set(['unknown-boundary','state-interface','selection','conditional-join','conditional-region','iteration-binding','iteration-template','same-object-calls','observed-parameter-aliases']);
+    const limit=Number.isFinite(maxPanels)?Math.max(1,Math.floor(maxPanels)):3,trialLimit=Number.isFinite(maxTrials)?Math.max(0,Math.floor(maxTrials)):6;
+    let panels=[{id:'main',anchor:null,state:clone(state),result:main}],assignments=coverage(ir,planned,panels);
+    const initial=clone(assignments),attempts=[],seen=new Set(),cache=new Map();let renders=0;
+    const fulfilled=rows=>new Set(rows.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const area=p=>p.result.prepared.quality.native_width_px*p.result.prepared.quality.native_height_px;
+    const weight=ids=>ids.reduce((v,id)=>{const g=definitions.get(id);if(g)v[critical.has(g.kind)?0:g.kind==='computation'?2:1]+=g.priority;return v;},[0,0,0]);
+    const compare=(a,b)=>{for(let i=0;i<3;i++)if(Math.abs(a.score[i]-b.score[i])>1e-9)return b.score[i]-a.score[i];return a.cost-b.cost;};
+    while(renders<trialLimit){
+      const current=panels[0],done=fulfilled(assignments),pending=planned.goals.filter(g=>!done.has(g.id)),requests=[];
+      const by=new Map(current.result.graph.architecture.nodes.map(n=>[n.id,n]));
+      const within=(id,parent)=>{const visited=new Set();while(id&&!visited.has(id)){if(id===parent)return true;visited.add(id);id=by.get(id)?.parent;}return false;};
+      // Compare local inline expansion with an independently focused figure.
+      // Candidate claims only rank work; physically routed coverage decides it.
+      const automatic=current.result.graph.publication.adaptive_frontier;
+      const effective=automatic?{...current.state,paperRoleDetails:automatic.selected_role_details,paperRolePaths:automatic.selected_role_paths,
+        paperExpressionDetails:automatic.selected_expression_details,paperAdaptive:false}:current.state;
+      if(state.paperAuto!==false&&!state.paperRelation&&!Object.keys(state.offsets||{}).length)
+        for(const c of A.candidates(current.result.graph,{...effective,paperAdaptivePolicy:'structure'})){
+          const goals=pending.filter(g=>g.core.every(id=>within(id,c.node)||c.targets.includes(id))).map(g=>g.id);
+          if(!goals.length)continue;
+          requests.push({id:'inline:'+c.id,form:'inline',anchor:c.node||current.result.graph.representatives[c.targets[0]],label:by.get(c.node)?.label||c.type,
+            state:{...A.apply(effective,c),paperAdaptive:false},goals,opportunity:c});
+        }
+      if(panels.length<limit)for(const c of plan(ir,current.result,current.state).candidates){
+        const goals=c.goals.filter(id=>definitions.has(id)&&!done.has(id));if(!goals.length)continue;
+        requests.push({...c,form:'detail',goals});
+      }
+      for(const r of requests){r.key=JSON.stringify([r.form,r.state]);r.priority_vector=weight(r.goals);}
+      const available=requests.filter(r=>!seen.has(r.key)).sort((a,b)=>compare({score:a.priority_vector,cost:1},{score:b.priority_vector,cost:1})||a.goals.length-b.goals.length||a.id.localeCompare(b.id));
+      if(!available.length)break;
+      const batch=[available[0]],alternative=available.find(r=>r.form!==batch[0].form&&r.goals.some(id=>batch[0].goals.includes(id)));
+      if(alternative)batch.push(alternative);else if(available[1])batch.push(available[1]);
+      const trials=[];
+      for(const request of batch.slice(0,trialLimit-renders)){
+        seen.add(request.key);
+        let result=cache.get(request.key);
+        if(!result){result=renderer.render(ir,request.state);cache.set(request.key,result);renders++;}
+        const candidate={id:request.form==='inline'?'main':request.id,anchor:request.form==='inline'?null:request.anchor,state:clone(request.state),result,label:request.label};
+        const next=request.form==='inline'?[candidate,...panels.slice(1)]:[...panels,candidate],rows=coverage(ir,planned,next),expressed=fulfilled(rows);
+        const gained=[...expressed].filter(id=>!done.has(id)),lost=[...done].filter(id=>!expressed.has(id));
+        const assessment=request.form==='inline'?A.assess(ir,current.result,result):null,reasons=[];
+        if(!acceptable(result))reasons.push('figure-quality');
+        if(assessment&&!assessment.accepted)reasons.push(...assessment.reasons);
+        if(!gained.length)reasons.push('no-new-direct-goals');
+        if(lost.length)reasons.push('previous-direct-goals-lost');
+        const beforeArea=panels.reduce((s,p)=>s+area(p),0),afterArea=next.reduce((s,p)=>s+area(p),0);
+        const cost=Math.max(1,afterArea/Math.max(1,beforeArea))*(next.length/panels.length);
+        const benefit={score:weight(gained).map(n=>n/cost),cost};
+        const receipt={request:request.id,form:request.form,anchor:request.anchor,label:request.label,state:clone(request.state),
+          before_panels:panels.map(p=>p.id),comparison_round:attempts.length,eligible:!reasons.length,accepted:false,reasons,
+          gained_goals:gained,lost_goals:lost,quality:clone(result.prepared.quality),metrics:A.metrics(result),
+          selection_benefit:{...benefit,before_area:beforeArea,after_area:afterArea,before_panels:panels.length,after_panels:next.length},
+          ...(assessment?{inline_assessment:assessment}:{})};
+        trials.push({request,next,rows,receipt});
+      }
+      const best=trials.filter(t=>t.receipt.eligible).sort((a,b)=>compare(a.receipt.selection_benefit,b.receipt.selection_benefit)||a.request.id.localeCompare(b.request.id))[0];
+      for(const t of trials){if(t===best)t.receipt.accepted=true;else if(t.receipt.eligible){t.receipt.reasons.push('lower-measured-benefit');seen.delete(t.request.key);}attempts.push(t.receipt);}
+      if(best){panels=best.next;assignments=best.rows;}
+      // Reused alternatives need no new render, but each decision must either
+      // add a goal or exhaust a candidate; empty batches cannot spin forever.
+    }
+    const deferred=assignments.filter(r=>r.status!=='fulfilled').map(r=>r.goal);
+    return {schema:VERSION,policy:'joint',plan:planned,panels,attempts,coverage:assignments,deferred_goals:deferred,
+      complete:!deferred.length,main_unchanged:panels[0].result.svg===main.svg,rendered_trials:renders,
+      baseline_coverage:initial,limits:{max_panels:limit,max_trials:trialLimit},
+      scope:'Bounded joint choice of inline detail versus independent detail figures. Original main dependencies, roles and summaries are protected; direct goals count only on actual qualified canonical paths. Total area and figure count are measured. This is a local search, not a global optimum.'};
+  }
+  function render(ir,state,renderer,{maxPanels=6,maxTrials=8,main:provided,policy=state.paperDiagramPolicy}={}){
+    if(policy==='joint')return joint(ir,state,renderer,{maxPanels,maxTrials,main:provided});
     const main=provided||renderer.render(ir,state),planned=plan(ir,main,state),panels=[{id:'main',anchor:null,state:clone(state),result:main}],attempts=[];
     const limit=Number.isFinite(maxPanels)?Math.max(1,Math.floor(maxPanels)):6,trialLimit=Number.isFinite(maxTrials)?Math.max(0,Math.floor(maxTrials)):8;
     let assignments=coverage(ir,planned,panels);
@@ -163,5 +235,5 @@
     return {schema:VERSION,plan:planned,panels,attempts,coverage:assignments,deferred_goals:deferred,
       complete:!deferred.length,main_unchanged:true,scope:planned.scope};
   }
-  const api={VERSION,plan,acceptable,coverage,render};root.SemanticDiagramSet=api;if(typeof module!=='undefined')module.exports=api;
+  const api={VERSION,plan,acceptable,coverage,joint,render};root.SemanticDiagramSet=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

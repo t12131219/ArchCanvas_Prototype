@@ -55,6 +55,7 @@ COMMANDS = {
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'region-followers': ['node', 'tests/region-followers.test.cjs'],
     'measured-frontiers': ['node', 'tests/measured-frontiers.test.cjs'],
+    'joint-expressions': ['node', 'tests/joint-expressions.test.cjs'],
     'context-sources': ['node', 'tests/context-sources.test.cjs'],
     'context-lanes': ['node', 'tests/context-lanes.test.cjs'],
     'local-expressions': ['node', 'tests/local-expressions.test.cjs'],

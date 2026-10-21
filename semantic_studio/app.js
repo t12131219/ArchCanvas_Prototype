@@ -4,7 +4,7 @@
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const el=(tag,attrs={},text)=>{const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;};
   let catalog=[],ir=null,state=null,projection=null,selected=null,history=[],future=[],camera={x:0,y:0,w:1000,h:700},drag=null,loadRevision=0;
-  let renderedNodes=new Map(),renderedEdges=new Map(),pendingFrame=0,dragPoint=null,inspectedBundle=null,canvasQuality=null;
+  let renderedNodes=new Map(),renderedEdges=new Map(),pendingFrame=0,dragPoint=null,inspectedBundle=null,canvasQuality=null,displayedFigure=null;
   const storeKey=()=> 'summary-semantic:architecture-v1:'+ir.ir_digest;
   const message=x=>$('status').textContent=x;
   function snapshot(){history.push(E.clone(state));if(history.length>40)history.shift();future=[];}
@@ -137,7 +137,7 @@
     if(!ir||!state)return;
     $('paperAuto').checked=state.paperAuto!==false;$('paperWidth').value=state.paperWidthMm||180;$('paperGranularity').value=state.paperGranularity||'overview';$('paperGranularity').disabled=state.paperAuto===false;
     const canvas=state.paperMedium==='canvas';$('paperMedium').value=canvas?'canvas':'print';$('paperPrintWidth').hidden=canvas;$('nativeScale').hidden=!canvas;$('paperSequenceTools').hidden=!canvas;$('paperSequenceView').value=state.paperSequenceView==='summary'?'summary':'representatives';$('paperFrameTools').hidden=!canvas;$('paperFrameView').value=state.paperFrameView==='source'?'source':'compact';
-    $('paperAdaptiveTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptive').checked=state.paperAdaptive===true;$('paperAdaptive').disabled=state.paperAuto===false;
+    $('planDiagramSet').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptiveTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptive').checked=state.paperAdaptive===true;$('paperAdaptive').disabled=state.paperAuto===false;
     $('paperAdaptivePolicyTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptivePolicy').value=state.paperAdaptivePolicy||'detail';$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;
     const plan=P.plan(ir),idx=E.index(plan),select=$('paperFocus');select.replaceChildren(new Option('模型总览',''));
     const source=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return false;id=idx.nodes.get(id)?.parent;}return true;};
@@ -153,6 +153,15 @@
   $('paperMedium').onchange=()=>{snapshot();state.paperMedium=$('paperMedium').value;state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperSequenceView').onchange=()=>{snapshot();state.paperSequenceView=$('paperSequenceView').value;state.paperAuto=true;state.open=[];state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperFrameView').onchange=()=>{snapshot();state.paperFrameView=$('paperFrameView').value;state.offsets={};render();fit();persist();};
+  $('planDiagramSet').onclick=()=>{
+    snapshot();const requested=E.clone(state);delete requested.paperDiagramPlan;
+    const main=R.renderPrepared(ir,requested,displayedFigure),set=window.SemanticDiagramSet.joint(ir,requested,R,{main,maxPanels:3,maxTrials:4});
+    const mainState=E.clone(set.panels[0].state);
+    state={...mainState,paperDiagramPlan:{schema:'joint-diagram-plan/1',main_state:E.clone(mainState),requested_state:requested,
+      details:set.panels.slice(1).map(p=>({id:p.id,anchor:p.anchor,label:p.label,state:p.state})),
+      coverage:set.coverage,attempts:set.attempts,limits:set.limits,complete:set.complete}};
+    selected=null;syncPaperControls();render();fit();persist();
+  };
   $('nativeScale').onclick=()=>{const b=projection.bounds;camera={x:b.x-20,y:b.y-20,w:svg.clientWidth,h:svg.clientHeight};setCamera();};
   function showPaperQuality(q){
     const issues={'font-below-8pt':'打印字号偏小','figure-taller-than-245mm':'打印图过高','canvas-font-below-12px':'原始字号偏小',
@@ -165,7 +174,7 @@
     $('paperQuality').className=q.issues.length?'needs-adjustment':'quality-ok';
   }
   function renderPaper(){
-    const figure=R.prepareFigure(ir,state);projection=figure.graph;const prepared=figure.prepared;projection.bounds=prepared.bounds;
+    const figure=R.prepareFigure(ir,state);displayedFigure=figure;projection=figure.graph;const prepared=figure.prepared;projection.bounds=prepared.bounds;
     renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
     let style=document.getElementById('paperStyle');if(!style){style=el('style',{id:'paperStyle'},R.css);svg.prepend(style);svg.querySelector('defs').insertAdjacentHTML('beforeend',R.defs);}
     document.getElementById('paperLabels')?.remove();const labels=el('g',{id:'paperLabels'});
@@ -193,10 +202,16 @@
     message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接${projection.publication.wire_bundles.length?'（'+projection.edge_accounting.visible.length+' 条依赖）':''} · ${projection.publication.unknowns} 个未知操作${prepared.quality.route_failures.length?' · 存在待调整路径':''}${limited&&(limited.selected!==limited.requested||limited.selected_budget<limited.requested_budget)?' · 受图宽限制，部分细节请打开模块详图':''}`);
     if(state.paperMedium==='canvas'&&state.paperGranularity==='roles'){
       const planned=window.SemanticDiagramSet.plan(ir,figure,state),box=$('diagramSuggestions');box.replaceChildren();
+      const currentState=E.clone(state);delete currentState.paperDiagramPlan;
+      const selectedPlan=state.paperDiagramPlan&&JSON.stringify(currentState)===JSON.stringify(state.paperDiagramPlan.main_state)?state.paperDiagramPlan:null;
+      if(selectedPlan){
+        const selectedIds=new Set(selectedPlan.details.map(r=>r.id));
+        planned.candidates=[...selectedPlan.details.map(r=>({...r,planned:true})),...planned.candidates.filter(r=>!selectedIds.has(r.id))];
+      }
       if(planned.candidates.length){
-        box.hidden=false;const label=document.createElement('span');label.textContent='可在独立详图中查看：';box.append(label);
+        box.hidden=false;const label=document.createElement('span');label.textContent=selectedPlan?'已规划 '+(selectedPlan.details.length+1)+' 张图；可继续查看细节：':'可在独立详图中查看：';box.append(label);
         const appendRequest=request=>{
-          const button=document.createElement('button');button.textContent=request.label;button.title='查看局部角色和依赖，保留主图展开状态';
+          const button=document.createElement('button');button.textContent=request.label+(request.planned?' · 已规划':'');button.title='查看局部角色和依赖，保留主图展开状态';
           button.onclick=()=>{snapshot();const previous=E.clone(state.paperDiagramReturn||state);delete previous.paperDiagramReturn;state={...E.clone(request.state),paperDiagramReturn:previous};selected=null;syncPaperControls();render();fit();persist();};box.append(button);
         };
         let shown=0;const more=document.createElement('button');more.id='diagramMore';

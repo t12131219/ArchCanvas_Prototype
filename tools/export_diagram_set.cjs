@@ -5,13 +5,13 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const R=require('../semantic_studio/publication-renderer.js'),D=require('../semantic_studio/diagram-set.js');
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
-function exportSet(ir,output,{state={paperMedium:'canvas',paperGranularity:'roles'},maxPanels=6,maxTrials=8,main}={}){
-  fs.mkdirSync(output,{recursive:true});const before=JSON.stringify(ir),set=D.render(ir,state,R,{maxPanels,maxTrials,main});
+function exportSet(ir,output,{state={paperMedium:'canvas',paperGranularity:'roles'},maxPanels=6,maxTrials=8,main,policy}={}){
+  fs.mkdirSync(output,{recursive:true});const before=JSON.stringify(ir),set=D.render(ir,state,R,{maxPanels,maxTrials,main,policy});
   if(JSON.stringify(ir)!==before)throw Error('Diagram planning changed canonical IR');
   const panels=set.panels.map((p,i)=>{
     const base=String(i).padStart(3,'0')+(i?'-detail':'-main'),svg=base+'.svg',document=base+'.layout.json';
     fs.writeFileSync(path.join(output,svg),p.result.svg);fs.writeFileSync(path.join(output,document),JSON.stringify(p.result.document,null,2)+'\n');
-    return {id:p.id,anchor:p.anchor,label:i?set.plan.candidates.find(r=>r.id===p.id).label:ir.title,svg,document,
+    return {id:p.id,anchor:p.anchor,label:i?(p.label||set.plan.candidates.find(r=>r.id===p.id)?.label||p.id):ir.title,svg,document,
       svg_sha256:sha(p.result.svg),document_sha256:sha(fs.readFileSync(path.join(output,document))),state:p.state,
       nodes:p.result.graph.nodes.length,edges:p.result.graph.edges.length,quality:p.result.prepared.quality,
       boundary:p.result.graph.publication.boundary};
@@ -20,7 +20,9 @@ function exportSet(ir,output,{state={paperMedium:'canvas',paperGranularity:'role
     'tools/export_diagram_set.cjs'];
   const manifest={schema:D.VERSION,canonical_sha256:sha(before),state,limits:{max_panels:maxPanels,max_trials:maxTrials},
     scope:set.scope,plan:set.plan,panels,attempts:set.attempts,coverage:set.coverage,deferred_goals:set.deferred_goals,
-    complete:set.complete,main_unchanged:true,quality_pass:panels.every(p=>!p.quality.issues.length),
+    complete:set.complete,main_unchanged:set.main_unchanged,policy:set.policy||'sequential',
+    ...(set.policy==='joint'?{baseline_coverage:set.baseline_coverage,rendered_trials:set.rendered_trials,selection_scope:set.scope}:{}),
+    quality_pass:panels.every(p=>!p.quality.issues.length),
     implementation_sha256:Object.fromEntries(files.map(f=>[f,sha(fs.readFileSync(path.resolve(__dirname,'..',f)))]))};
   fs.writeFileSync(path.join(output,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
   const links=panels.map((p,i)=>`<a href="#panel-${i}">${esc(p.label)}</a>`).join(' · ');
@@ -39,7 +41,7 @@ ${i?'<p><a href="#panel-0">返回主图</a> · 主图对应区域：<code>'+esc(
 if(require.main===module){
   const [input,output,...args]=process.argv.slice(2);if(!input||!output)throw Error('Usage: node tools/export_diagram_set.cjs INPUT OUTPUT [--max-panels N] [--max-trials N]');
   const option=(key,fallback)=>args.includes(key)?Number(args[args.indexOf(key)+1]):fallback,value=JSON.parse(fs.readFileSync(input));
-  const {manifest:m}=exportSet(value.ir||value,output,{state:value.state||{paperMedium:'canvas',paperGranularity:'roles'},maxPanels:option('--max-panels',6),maxTrials:option('--max-trials',8)});
+  const {manifest:m}=exportSet(value.ir||value,output,{state:value.state||{paperMedium:'canvas',paperGranularity:'roles'},maxPanels:option('--max-panels',6),maxTrials:option('--max-trials',8),policy:args.includes('--joint')?'joint':undefined});
   console.log(JSON.stringify({panels:m.panels.length,fulfilled:m.coverage.filter(c=>c.status==='fulfilled').length,goals:m.coverage.length,deferred:m.deferred_goals.length,complete:m.complete}));
 }
 module.exports={exportSet};

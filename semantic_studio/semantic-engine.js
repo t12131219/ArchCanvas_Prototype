@@ -60,6 +60,14 @@
     const projected=[],internal=[],excluded=[],contracted=[],attached=[],annotations=new Map();
     for(const raw of ir.edges){
       if(!eligible(raw.source)||!eligible(raw.target)){excluded.push(raw.id);continue;}
+      // A closed summary may attach one exact source-alternative cut without
+      // turning its producer (and that producer's other uses) into metadata.
+      const attachment=options.edgeAttachments?.get(raw.id);
+      if(attachment&&!open.has(attachment.owner)&&visible.has(attachment.owner)&&rep(raw.target)===attachment.owner&&rep(raw.source)!==attachment.owner&&
+        JSON.stringify(raw)===JSON.stringify(attachment.edge)){
+        attached.push(raw.id);if(!annotations.has(attachment.owner))annotations.set(attachment.owner,[]);
+        annotations.get(attachment.owner).push({...clone(attachment),edge:clone(raw)});continue;
+      }
       if(metadata.has(raw.source)||metadata.has(raw.target)){
         attached.push(raw.id);const id=rep(metadata.has(raw.source)?raw.target:raw.source);
         if(id){if(!annotations.has(id))annotations.set(id,[]);const resource=metadata.has(raw.source)?raw.source:raw.target;annotations.get(id).push({edge:clone(raw),resource:idx.nodes.get(resource),annotation_kind:options.metadataKinds?.get(resource)||'configuration-dependency'});}

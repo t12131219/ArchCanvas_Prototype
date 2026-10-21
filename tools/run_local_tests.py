@@ -65,6 +65,7 @@ COMMANDS = {
     'sample-frames': ['node', 'tests/sample-frames.test.cjs'],
     'input-docks': ['node', 'tests/input-docks.test.cjs'],
     'return-regions': ['node', 'tests/return-regions.test.cjs'],
+    'normal-returns': ['node', 'tests/normal-returns.test.cjs'],
     'flow-entries': ['node', 'tests/flow-entries.test.cjs'],
     'region-followers': ['node', 'tests/region-followers.test.cjs'],
     'measured-frontiers': ['node', 'tests/measured-frontiers.test.cjs'],

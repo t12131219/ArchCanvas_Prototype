@@ -21,7 +21,9 @@
     const contents=n.content_inventory;
     const pipeline=n.local_pipeline,labels=new Map(pipeline?.operations.map(o=>[o.node,o.label])||[]);
     const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
-    return [n.label,...(n.module_arguments||[]).flatMap(r=>[r.label,r.scope,'Reference: '+r.module_identity,JSON.stringify(r.edge),'Construction evidence: '+JSON.stringify(r.proof.construction_evidence)]),...(n.invocation_binding?['Fixed call argument: '+n.invocation_binding.label,n.invocation_binding.proof_scope,n.invocation_binding.claim,
+    return [n.label,...(n.normal_return?[n.normal_return.scope,'Selected source return: '+n.normal_return.selected_return.node,
+      'Fixed predicate: '+n.normal_return.predicate.slot+' = '+n.normal_return.predicate.value,
+      'Retained source-alternative inputs: '+JSON.stringify(n.normal_return.alternative_inputs)]:[]),...(n.module_arguments||[]).flatMap(r=>[r.label,r.scope,'Reference: '+r.module_identity,JSON.stringify(r.edge),'Construction evidence: '+JSON.stringify(r.proof.construction_evidence)]),...(n.invocation_binding?['Fixed call argument: '+n.invocation_binding.label,n.invocation_binding.proof_scope,n.invocation_binding.claim,
       ...n.invocation_binding.uses.map(e=>`${e.id}: ${e.source} [${e.source_port}] → ${e.target} [${e.target_port}] · ${e.kind}`)]:[]),...(n.contract_stage?['Certified role subregion: '+n.contract_stage.certificate,n.contract_stage.scope,'Original operations remain individually expandable.']:[]),...(pipeline?[
       pipeline.dependency_dag?'Local dependency DAG: '+JSON.stringify(pipeline.dependency_dag):pipeline.dependency_tree?'Local dependency tree: '+expression(pipeline.dependency_tree):'Local dependency path: '+pipeline.operations.map(o=>o.label).join(' → '),pipeline.scope,
       ...(pipeline.path_display?[pipeline.path_display.scope,'Individual calls: '+JSON.stringify(pipeline.operations)]:[]),
@@ -1258,7 +1260,35 @@
     chosen=prepareCoincidentPorts(ir,state,chosen);
     chosen=prepareLocalBypasses(ir,state,chosen);
     chosen=prepareEmptyBandCompaction(ir,state,chosen);
-    return attachExpressionEvidence(ir,chosen);
+    chosen=attachExpressionEvidence(ir,chosen);
+    const normal=chosen.graph.publication.normal_returns?.rows.filter(r=>r.attached_edges.length);
+    if(!normal?.length||state.paperNormalReturns===false)return chosen;
+    // Source evidence licenses a summary, not its layout. Compare one complete
+    // measured presentation against the ordinary source-return representation.
+    // Do not let a shorter cut silently buy a different logical frontier.
+    const baseline=prepareFigure(ir,{...state,paperNormalReturns:false}),bq=baseline.prepared.quality,cq=chosen.prepared.quality;
+    const old=baseline.graph,newGraph=chosen.graph,unpack=g=>g.edges.flatMap(e=>e.bundle_members||[e]);
+    const alternatives=new Set(normal.flatMap(r=>r.attached_edges)),previous=new Map(unpack(old).map(e=>[e.id,e])),current=new Map(unpack(newGraph).map(e=>[e.id,e]));
+    const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+    const facts=same(old.publication.open,newGraph.publication.open)&&same(old.expression_goals,newGraph.expression_goals)&&
+      previous.size-current.size===alternatives.size&&[...previous.keys()].every(id=>current.has(id)||alternatives.has(id))&&
+      [...current].every(([id,e])=>previous.has(id)&&['canonical_source','canonical_target','resolved_source','source_port','target_port','kind','condition','originals'].every(k=>same(previous.get(id)[k],e[k])));
+    const covered=new Set(newGraph.expression_coverage.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const direct=old.expression_coverage.filter(r=>r.status==='fulfilled').every(r=>covered.has(r.goal));
+    E.auditConstraintRoutes(old,baseline.prepared.routes);E.auditConstraintRoutes(newGraph,chosen.prepared.routes);
+    const applied=new Set(old.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),relations=realizedRelations(baseline),after=realizedRelations(chosen);
+    const constraints=newGraph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)));
+    const geometry=cq.native_width_px<=bq.native_width_px&&cq.native_height_px<=bq.native_height_px&&fontMetric(cq)>=fontMetric(bq)&&
+      cq.wire_length<=bq.wire_length&&cq.line_geometry.crossings<=bq.line_geometry.crossings&&
+      cq.line_geometry.unrelated_contacts.length<=bq.line_geometry.unrelated_contacts.length&&cq.line_geometry.overlapping_paths.length<=bq.line_geometry.overlapping_paths.length&&
+      cq.route_failures.length<=bq.route_failures.length&&cq.unplaced_port_labels.length<=bq.unplaced_port_labels.length&&cq.issues.every(issue=>bq.issues.includes(issue));
+    const benefit=cq.wire_length<bq.wire_length||areaMetric(cq)<areaMetric(bq)||cq.line_geometry.crossings<bq.line_geometry.crossings;
+    const accepted=facts&&direct&&constraints&&geometry&&benefit,selected=accepted?chosen:baseline;
+    selected.prepared.routing={...selected.prepared.routing,normal_return_refinement:{accepted,groups:normal.map(r=>r.group),max_trials:1,
+      facts_preserved:facts,direct_goals_preserved:direct,applied_relations_preserved:constraints,geometry_preserved:geometry,
+      before:clearanceMetrics(bq),candidate:clearanceMetrics(cq),
+      scope:'One measured source-invocation return presentation. Source alternatives stay attached only if frontier, exact surviving uses, prior direct goals and applied relations survive with no geometry regression. Otherwise keep the ordinary return representation.'}};
+    return selected;
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));

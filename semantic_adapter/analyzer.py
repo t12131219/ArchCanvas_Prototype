@@ -838,6 +838,12 @@ class Analyzer:
         # other source paths. Never specialize entry inputs or rebound guards.
         written_names = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
         safe_values = {k: v for k, v in invocation_values.items() if k not in written_names}
+        def local_syntax(node):
+            yield node
+            for child in ast.iter_child_nodes(node):
+                if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+                    continue
+                yield from local_syntax(child)
         def selected_return(body):
             for statement in body:
                 if isinstance(statement, ast.Return): return statement.lineno
@@ -847,8 +853,13 @@ class Analyzer:
                         if found is not None: return found
                     elif any(isinstance(n, ast.Return) for n in ast.walk(statement)):
                         return -1
+                elif not isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and any(isinstance(n, ast.Return) for n in local_syntax(statement)):
+                    # An unhandled try/with/match/loop may return before the
+                    # following statements. Opaque control is not fallthrough.
+                    return -1
             return None
-        line = selected_return(fn.body)
+        generator = any(isinstance(n, (ast.Yield, ast.YieldFrom)) for n in local_syntax(fn))
+        line = None if generator or isinstance(fn, ast.AsyncFunctionDef) else selected_return(fn.body)
         selected = [r for r in returned if self.node_by[r]['source'][0]['line'] == line]
         if len(selected) == 1:
             self.node_by[output]['return_selection'] = {'selected': selected[0], 'call_constants': safe_values,

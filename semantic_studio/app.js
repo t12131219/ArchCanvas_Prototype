@@ -68,6 +68,7 @@
     if(n.role_path_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>角色与相邻路径</summary><p>双击先展开角色与相邻路径；继续双击路径可查看具体运算。</p><pre>'+esc(JSON.stringify(n.role_path_stage,null,2))+'</pre></details>');
     if(n.contract_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>认证角色阶段与原始绑定</summary><p>摘要保留相加、后置归一化及说明中列出的独占分支末端。双击可展开原始操作。</p><pre>'+esc(JSON.stringify(n.contract_stage,null,2))+'</pre></details>');
     if(n.return_region)$('details').insertAdjacentHTML('beforeend','<details open><summary>条件返回与输出接口</summary><p>这些源码返回点汇入同一个输出接口。双击可查看分支、返回值及槽位；摘要不表示已执行或已选中某个分支。</p><pre>'+esc(JSON.stringify(n.return_region,null,2))+'</pre></details>');
+    if(n.normal_return)$('details').insertAdjacentHTML('beforeend','<details open><summary>固定源码调用的正常返回</summary><p>固定布尔实参确定了这次源码调用的正常返回点。当前连线突出其输入依赖，其他源码路径的输入作为下列证据保留；双击展开后恢复全部路径。这不是运行覆盖或实际执行证明。</p><pre>'+esc(JSON.stringify(n.normal_return,null,2))+'</pre></details>');
     const dock=projection.positions?.context?.inputDocks.find(r=>r.node===id);
     if(dock)$('details').insertAdjacentHTML('beforeend','<details open><summary>就近放置的外部输入</summary><p>这是原有的唯一输入接口，放在使用位置附近以减少长连线。位置不表示输入在此处生成或较晚提供；全部使用和参数槽位仍独立保留。</p><pre>'+esc(JSON.stringify(dock,null,2))+'</pre></details>');
     if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');

@@ -243,6 +243,7 @@
     if(n.role_operation_stage){const r=n.role_operation_stage;const role=r.roles[0].role_keys||r.roles[0].role.split('.');title=role.at(-1).replaceAll('_',' ');caption=r.operations.map(o=>o.label).join(' → ');}
     if(n.role_path_stage){title=n.role_path_stage.role_title;caption=n.role_path_stage.operations.map(o=>o.label).join(' → ');}
     if(n.return_region){title='Return alternatives';caption='If '+n.return_region.predicate+' · '+n.return_region.return_sites.length+' source returns';}
+    if(n.normal_return){title='Normal return';caption='Other source path retained';}
     if(n.contract_stage){title='Add & Norm';caption=(n.contract_stage.branch_tail?n.contract_stage.branch_tail.label+' → ':'')+n.contract_stage.normalization_type.split('.').at(-1)+' · Post-Norm';}
     if(n.local_pipeline&&!n.local_pipeline_expanded){
       const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
@@ -842,6 +843,9 @@
     // A return-region's source return sites are inspectable interfaces, not
     // transparent aliases. Their parent branches still control visibility.
     for(const r of returnStages?.rows||[])for(const site of r.return_sites)pol.bindings.delete(site.node);
+    const normalReturns=returnStages&&state.paperNormalReturns!==false&&!local&&!state.paperFocus?
+      Regions.normalReturns({ir,plan:focused.plan,open:new Set(open),inputs:invocationInputs,requested:[...explicitRoles,...(state.paperExpressionDetails||[])]}):null;
+    if(normalReturns){focused.plan=normalReturns.plan;idx=index(focused.plan);options.edgeAttachments=normalReturns.attachments;for(const row of normalReturns.rows)decorate(idx.nodes.get(row.group),idx);}
     if(pipelines)for(const id of pipelines.keys()){const n=idx.nodes.get(id);n.local_pipeline_expanded=open.includes(id);decorate(n,idx);}
     // Lower module-reference arguments only after selecting the logical
     // frontier. Released space must not implicitly open unrelated regions.
@@ -924,6 +928,9 @@
         status:projected.positions.has(r.group)?projected.positions.get(r.group).expanded?'expanded':'summary':'folded'}))};
       if(returnStages)projected.publication.return_regions={rule_version:'return-regions/1',rows:returnStages.rows.map(r=>({...r,
         status:projected.positions.has(r.group)?projected.positions.get(r.group).expanded?'expanded':'summary':'folded'}))};
+      if(normalReturns?.rows.length)projected.publication.normal_returns={rule_version:'normal-returns/1',rows:normalReturns.rows.map(r=>({...copy(r),
+        status:projected.positions.has(r.group)&&!projected.positions.get(r.group).expanded?'summary':'folded',
+        attached_edges:r.alternative_inputs.filter(e=>projected.edge_accounting.attached.includes(e.id)).map(e=>e.id)}))};
       if(pipelines)projected.publication.local_pipelines=pipelineEngine.receipt(pipelines,projected);
       if(expressions)projected.publication.local_expressions=expressionEngine.receipt(expressions,projected);
       projected.publication.canvas_limits={width_px:limit('width_px',8192,512,16384),height_px:limit('height_px',16384,512,32768),

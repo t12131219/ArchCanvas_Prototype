@@ -178,5 +178,72 @@
       proof:[...f.proof,'The concrete return sites share this local output interface; original branches, return slots and cuts remain expandable.']}:f);
     return {plan:{...plan,nodes,publication,findings},rows};
   }
-  const api={VERSION,candidates,predicates,returns};root.SemanticPresentationRegions=api;if(typeof module!=='undefined')module.exports=api;
+  function normalReturns({ir,plan,open=new Set(),inputs=new Map(),requested=[]}){
+    const nodes=plan.nodes.map(n=>({...n})),by=new Map(nodes.map(n=>[n.id,n])),raw=new Map(ir.nodes.map(n=>[n.id,n]));
+    const ins=new Map(),uses=new Map(),rows=[],attachments=new Map();
+    for(const e of ir.edges){if(!ins.has(e.target))ins.set(e.target,[]);ins.get(e.target).push(e);if(!uses.has(e.source))uses.set(e.source,[]);uses.get(e.source).push(e);}
+    const flow=e=>['data','alias','interface-binding'].includes(e.kind);
+    const guard=n=>!n||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||
+      ['opaque','state','buffer','parameter'].includes(n.kind)||n.repeat_contract||n.iteration;
+    for(const group of nodes){
+      const region=group.return_region;if(!region||open.has(group.id)||region.return_sites.length!==2)continue;
+      const members=new Set(region.canonical_members),control=raw.get(region.control),aggregate=raw.get(region.aggregate),selection=aggregate?.return_selection;
+      if(!selection||!selection.scope||region.canonical_members.some(id=>guard(raw.get(id))||guard(by.get(id)))||
+        ir.nodes.some(n=>n.parent===control?.parent&&n.kind==='opaque'&&['unsupported-statement','unsupported-expression'].includes(n.reason))||
+        requested.some(id=>id===group.id||members.has(id)||id===control?.parent))continue;
+      const predicateEdges=ins.get(control?.id)||[],predicate=predicateEdges.length===1?predicateEdges[0]:null,input=raw.get(predicate?.source),fixed=inputs.get(input?.id);
+      if(!input||!fixed||typeof fixed.value!=='boolean'||input.role!=='input'||input.kind!=='interface'||guard(input)||guard(by.get(input.id))||
+        input.parent!==control.parent||aggregate.parent!==control.parent||input.condition||predicate.kind!=='control'||predicate.condition||predicate.iteration||
+        (ins.get(input.id)||[]).length||typeof input.slot!=='string'||selection.call_constants?.[input.slot]!==fixed.value||
+        input.source_constant_input?.value!==fixed.value||!control.source?.some(s=>s.expression===input.slot))continue;
+      const selected=region.return_sites.find(s=>s.node===selection.selected);if(!selected)continue;
+      const branches=(uses.get(control.id)||[]);
+      if(branches.length!==2||branches.some(e=>e.kind!=='control'||e.condition||e.iteration||!members.has(e.target)||
+        raw.get(e.target)?.condition?.branch!==control.id||raw.get(e.target)?.condition?.outcome!==e.target_port)||
+        new Set(branches.map(e=>e.target_port)).size!==2||!branches.every(e=>['true','false'].includes(e.target_port)))continue;
+      const ancestry=id=>{const out=[];let at=raw.get(id)?.parent;while(at&&at!==control.parent){const n=raw.get(at);if(!n)return null;if(n.condition)out.push(copy(n.condition));at=n.parent;}return at===control.parent?out:null;};
+      if(region.return_sites.some(s=>JSON.stringify(ancestry(s.node))!==JSON.stringify(s.source_conditions)))continue;
+      const outcome=fixed.value?'true':'false',other=region.return_sites.find(s=>s!==selected);
+      if(selected.source_conditions.length){
+        if(selected.source_conditions.length!==1||selected.source_conditions[0].branch!==control.id||selected.source_conditions[0].outcome!==outcome)continue;
+      }else{
+        // A fallthrough is not a canonical false branch. Only this invocation's
+        // recorded normal-return selection can choose it, with an empty false
+        // body and a terminating true source return as independent witnesses.
+        const empty=branches.find(e=>e.target_port==='false');
+        if(fixed.value||other.source_conditions.length!==1||other.source_conditions[0].branch!==control.id||other.source_conditions[0].outcome!=='true'||
+          ir.nodes.some(n=>n.parent===empty.target))continue;
+      }
+      const needed=new Set(),witness=new Set(),visiting=new Set(),visited=new Set();let valid=true;
+      const walk=id=>{
+        if(visiting.has(id)){valid=false;return;}if(visited.has(id))return;visiting.add(id);
+        const incoming=ins.get(id)||[];
+        if(!incoming.length||incoming.some(e=>!flow(e)||e.condition||e.iteration)){valid=false;visiting.delete(id);return;}
+        for(const e of incoming){
+          witness.add(e.id);
+          if(members.has(e.source)){if(e.source===aggregate.id||e.source===control.id)valid=false;else walk(e.source);}
+          else if(guard(raw.get(e.source))||guard(by.get(e.source)))valid=false;else needed.add(e.id);
+        }
+        visiting.delete(id);visited.add(id);
+      };
+      walk(selected.node);if(!valid||!needed.size)continue;
+      const cuts=ir.edges.filter(e=>members.has(e.source)!==members.has(e.target));
+      if(JSON.stringify(cuts)!==JSON.stringify(region.cuts))continue;
+      const incoming=cuts.filter(e=>members.has(e.target));
+      if(incoming.some(e=>e.id!==predicate.id&&(!flow(e)||e.condition||e.iteration)))continue;
+      const alternatives=incoming.filter(e=>e.id!==predicate.id&&!needed.has(e.id));if(!alternatives.length)continue;
+      const binding=ir.edges.find(e=>e.id===selected.edge);
+      if(!binding||binding.source!==selected.node||binding.target!==aggregate.id||binding.kind!=='interface-binding'||binding.condition||binding.iteration||
+        (binding.source_port??'out')!==selected.source_port||(binding.target_port??'in')!==selected.aggregate_slot)continue;
+      const row={rule_version:'normal-returns/1',group:group.id,aggregate:aggregate.id,selected_return:copy(selected),
+        predicate:{node:input.id,slot:input.slot,value:fixed.value,edge:copy(predicate)},selection:copy(selection),
+        branch_witnesses:branches.map(copy),dependency_witnesses:ir.edges.filter(e=>witness.has(e.id)).map(copy),binding:copy(binding),
+        selected_inputs:incoming.filter(e=>needed.has(e.id)).map(copy),alternative_inputs:alternatives.map(copy),
+        scope:'Normal return of this statically bound source invocation only; all other source paths and exact bindings remain expandable. No runtime execution, coverage or value equivalence assertion.'};
+      group.normal_return=row;rows.push(row);
+      for(const edge of alternatives)attachments.set(edge.id,{owner:group.id,edge:copy(edge),annotation_kind:'source-return-alternative',proof:row.rule_version});
+    }
+    return {plan:{...plan,nodes},rows,attachments};
+  }
+  const api={VERSION,candidates,predicates,returns,normalReturns};root.SemanticPresentationRegions=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

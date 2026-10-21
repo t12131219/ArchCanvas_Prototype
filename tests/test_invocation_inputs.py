@@ -1,6 +1,7 @@
 """Invocation constants are local evidence, including keyword-only defaults."""
 from pathlib import Path
 import tempfile
+import textwrap
 import unittest
 
 from semantic_adapter.analyzer import analyze
@@ -70,6 +71,48 @@ class InvocationInputsTests(unittest.TestCase):
         self.assertEqual(fixed(a)['source_constant_input'], fixed(b)['source_constant_input'])
         slots = lambda ir: [(e['source_port'], e['target_port'], e['kind']) for e in ir['edges'] if e['source'] == fixed(ir)['id']]
         self.assertEqual(slots(a), slots(b))
+
+    def test_unhandled_control_cannot_be_skipped_when_selecting_a_normal_return(self):
+        template = '''from torch import nn
+class Model(nn.Module):
+    def choose(self, x, flag=False):
+PRELUDE
+        if flag:
+            return x, x
+        return x
+    def forward(self, x):
+        return self.choose(x, flag=False)
+'''
+        for prelude in ['try:\n    return x.sin()\nfinally:\n    pass',
+                        'with context():\n    return x.sin()',
+                        'match x:\n    case None:\n        return x',
+                        'for item in x:\n    return item',
+                        'while x:\n    return x.sin()']:
+            with self.subTest(prelude=prelude):
+                ir = self.extract('Model', template.replace('PRELUDE', textwrap.indent(prelude, '        ')))
+                self.assertTrue(any(n.get('source_constant_input', {}).get('value') is False for n in ir['nodes']))
+                self.assertFalse(any(n.get('return_selection') for n in ir['nodes']))
+
+    def test_generator_returns_are_not_normal_tensor_returns_even_with_dead_yield(self):
+        template = '''from torch import nn
+class Model(nn.Module):
+    def choose(self, x, flag=False):
+        if flag:
+            return x, x
+        return x
+        yield x
+    def forward(self, x):
+        return self.choose(x, flag=False)
+'''
+        ir = self.extract('Model', template)
+        self.assertFalse(any(n.get('return_selection') for n in ir['nodes']))
+        # A nested generator does not turn the containing function into one.
+        ordinary = template.replace('        yield x', '        def nested():\n            yield x')
+        ir = self.extract('Model', ordinary)
+        self.assertTrue(any(n.get('return_selection') for n in ir['nodes']))
+        ordinary = template.replace('        yield x', '').replace('        if flag:', '        def nested():\n            return x\n        if flag:')
+        ir = self.extract('Model', ordinary)
+        self.assertTrue(any(n.get('return_selection') for n in ir['nodes']))
 
 
 if __name__ == '__main__':

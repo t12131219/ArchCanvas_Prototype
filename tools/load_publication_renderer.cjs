@@ -12,7 +12,7 @@ module.exports=function loadRenderer(directory,{engine=false,diagramSet=false}={
   }
   // Older frozen renderers have no module-argument policy. Current
   // publication resolves this optional registry only when projecting.
-  const modules=path.join(directory,'module-arguments.js');if(fs.existsSync(modules))vm.runInContext(fs.readFileSync(modules,'utf8'),context,{filename:modules});
+  for(const extra of ['module-arguments.js','transform-configurations.js']){const modules=path.join(directory,extra);if(fs.existsSync(modules))vm.runInContext(fs.readFileSync(modules,'utf8'),context,{filename:modules});}
   if(diagramSet){
     if(fs.existsSync(path.join(directory,'compact-diagrams.js')))vm.runInContext(fs.readFileSync(path.join(directory,'compact-diagrams.js'),'utf8'),context,{filename:path.join(directory,'compact-diagrams.js')});
     vm.runInContext(fs.readFileSync(path.join(directory,'diagram-set.js'),'utf8'),context,{filename:path.join(directory,'diagram-set.js')});

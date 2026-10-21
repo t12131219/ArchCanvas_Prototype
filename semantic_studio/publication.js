@@ -281,6 +281,13 @@
       if(n.paper.layout_caption_rows!=null)n.paper.layout_caption_rows+=extra.length;
       n.paper.h=Math.max(n.paper.h,22+n.paper.lines.length*20+n.paper.captions.length*16);
     }
+    if(n.transform_configurations?.length){
+      const extra=n.transform_configurations.flatMap(r=>wrap(r.display_text,maxWidth,13));
+      n.paper.captions.push(...extra);
+      n.paper.caption+=(n.paper.caption?' · ':'')+n.transform_configurations.map(r=>r.display_text).join(' · ');
+      if(n.paper.layout_caption_rows!=null)n.paper.layout_caption_rows+=extra.length;
+      n.paper.h=Math.max(n.paper.h,22+n.paper.lines.length*20+n.paper.captions.length*16);
+    }
     return n.paper;
   }
   function build(ir){
@@ -861,6 +868,22 @@
       for(const row of moduleArguments.rows.filter(r=>r.status==='source-detail'))pol.bindings.delete(row.input);
       for(const n of focused.plan.nodes.filter(n=>n.module_arguments?.length))decorate(n,idx);
     }
+    // Keep source call configurations separate from dependency summaries:
+    // neither label alone proves tensor rank, valid shapes or axis meanings.
+    const transformEngine=canvas&&granularity==='roles'&&state.paperTransformConfigurations!==false?
+      (root.SemanticTransformConfigurations||(typeof require==='function'?require('./transform-configurations.js'):null)):null;
+    const transformConfigurations=transformEngine?.compile(ir);
+    if(transformConfigurations){
+      focused.plan.nodes=focused.plan.nodes.map(n=>{
+        const operations=n.role_path_stage?.operations||(!n.local_pipeline_expanded?n.local_pipeline?.operations:null)||[{node:n.id}];
+        const rows=operations.flatMap((o,i)=>transformConfigurations.has(o.node)?[{...copy(transformConfigurations.get(o.node)),
+          display_text:(operations.length>1?'#'+(i+1)+' ':'')+transformConfigurations.get(o.node).text}]:[]);
+        const updated={...n};delete updated.transform_configurations;
+        if(rows.length)updated.transform_configurations=rows;
+        return updated;
+      });
+      idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);
+    }
     let projected=E.project(ir,{...state,view:'architecture',details:false,open},focused.plan,options);
     const edgePairs=new Map(),labeledPairs=new Set();
     for(const e of projected.edges){const key=JSON.stringify([e.source,e.target]);edgePairs.set(key,(edgePairs.get(key)||0)+1);if(e.condition||e.bundle_members)labeledPairs.add(key);}
@@ -907,6 +930,8 @@
       configuration_arithmetic:pol.configurationArithmetic.filter(row=>allowed(row.node)),
       paper_width_mm:Math.max(80,Math.min(400,Number(state.paperWidthMm)||180)),fit_page:state.paperFitPage!==false,min_font_pt:8,unknowns:projected.nodes.filter(n=>!projected.positions.get(n.id).expanded).reduce((s,n)=>s+n.paper.unknown_count,0)};
     if(reservations)projected.publication.frontier_reservations=reservations;
+    if(transformConfigurations)projected.publication.transform_configurations={rule_version:transformEngine.VERSION,
+      rows:projected.nodes.filter(n=>n.transform_configurations?.length).map(n=>({node:n.id,operations:copy(n.transform_configurations)}))};
     if(coherentChoices.length)projected.publication.coherent_frontier={rule_version:'coherent-frontier/1',phase:'logical-frontier-before-summary-and-stage-lowering',choices:coherentChoices};
     if(moduleArguments?.rows.length)projected.publication.module_arguments=copy(moduleArguments);
     if(invocationInputs)projected.publication.invocation_inputs={rule_version:'invocation-inputs/1',rows:[...invocationInputs.values()].map(r=>({...copy(r),

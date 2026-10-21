@@ -62,6 +62,7 @@ COMMANDS = {
     'coupled-routes': ['node', 'tests/coupled-routes.test.cjs'],
     'header-reflow': ['node', 'tests/header-reflow.test.cjs'],
     'shared-fanouts': ['node', 'tests/shared-fanouts.test.cjs'],
+    'transform-configurations': ['node', 'tests/transform-configurations.test.cjs'],
     'residual-bands': ['node', 'tests/residual-bands.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],

@@ -67,6 +67,8 @@ test('selected semantic state saves, reopens, refolds and allows finer source ex
 test('explicit title avoidance recovers frozen role frontiers on mixed, broken and unknown graphs',()=>{
  const old=require('../tools/load_publication_renderer.cjs')(require('node:path').resolve('verification/local-relations/iteration-22-before-role-details/implementation/semantic_studio'));
  for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry']){
-  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(R.render(ir,{...state,paperProtectFrameTitles:true}).svg,old.render(ir,state).svg);
+  // Freeze the historical content policy too; title avoidance alone must not
+  // disable new, independently source-backed configuration annotations.
+  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(R.render(ir,{...state,paperProtectFrameTitles:true,paperTransformConfigurations:false}).svg,old.render(ir,state).svg);
  }
 });

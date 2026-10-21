@@ -46,7 +46,7 @@ const facts=r=>({ir:r.document.ir,architecture:r.document.architecture,publicati
 test('source-derived mixed conditional and unknown computations retain facts while late fixed inputs become shorter',()=>{
  const ir=read('MixedChoices'),original=JSON.stringify(ir),s=state(ir),a=R.render(ir,{...s,paperConsumerArguments:false}),b=R.render(ir,s),rec=b.prepared.routing.consumer_argument_refinement;
  assert.ok(rec.selected.length===2&&rec.attempts.length<=2);assert.deepEqual(facts(b),facts(a));assert.equal(JSON.stringify(ir),original);
- assert.ok(b.prepared.quality.wire_length<a.prepared.quality.wire_length*.8);assert.equal(b.prepared.quality.line_geometry.crossings,a.prepared.quality.line_geometry.crossings);
+ assert.ok(b.prepared.quality.wire_length<a.prepared.quality.wire_length*.8);assert.ok(b.prepared.quality.line_geometry.crossings<=a.prepared.quality.line_geometry.crossings);
  const moved=new Set(rec.selected.map(r=>r.node));for(const [id,p]of a.graph.positions)if(!moved.has(id))assert.deepEqual(b.graph.positions.get(id),p);
  assert.ok(rec.selected.some(r=>b.graph.idx.nodes.get(r.target).kind==='opaque'));assert.ok(rec.selected.some(r=>b.graph.idx.nodes.get(r.target).semantic_type==='conditional-collection'));
  assert.equal(R.render(b.document.ir,b.document.state).svg,b.svg);

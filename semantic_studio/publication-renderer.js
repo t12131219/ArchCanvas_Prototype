@@ -1080,6 +1080,54 @@
       scope:'One final ownership candidate, no rerouting. A common monotone map removes globally empty title bands, preserving concrete nodes, horizontal wires, labels, terminals and exact bindings; no call equivalence or execution claim.'}};
     return chosen;
   }
+  function prepareCoincidentPorts(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||state.paperCoincidentPorts===false||Object.keys(state.offsets||{}).length||g.edges.length>128||
+      !b.line_geometry.crossings)return baseline;
+    const score=r=>baseline.prepared.routes.filter(e=>r.before.some(i=>i.edge===e.id)).reduce((sum,e)=>sum+
+      baseline.prepared.routes.reduce((n,o)=>n+(o.id===e.id?0:lineGeometry([e,o]).crossings),0),0);
+    const plans=L.coincidentPorts(g.positions,baseline.prepared.routes).map(plan=>({plan,score:score(plan)})).filter(r=>r.score)
+      .sort((a,b)=>b.score-a.score||a.plan.node.localeCompare(b.plan.node)||a.plan.side.localeCompare(b.plan.side)).slice(0,3);
+    if(!plans.length)return baseline;
+    let chosen=baseline,relations=realizedRelations(baseline);
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
+    let applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));
+    const goals=Goals.build(ir,g.architecture);
+    let covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const record={max_trials:3,before:clearanceMetrics(b),attempts:[]},point=(a,b)=>a.x===b.x&&a.y===b.y;
+    for(const {plan}of plans){
+      const base=chosen,positions=new Map([...base.graph.positions].map(([id,p])=>[id,{...p}]));
+      const selection={node:plan.node,side:plan.side,order:plan.after.map(({edge,source,other})=>({edge,source,other}))};
+      positions.context={...base.graph.positions.context,coincidentPorts:[...base.graph.positions.context.coincidentPorts||[],selection],routeCache:new Map(),reserved:[]};
+      const graph={...base.graph,positions,constraint_receipts:JSON.parse(JSON.stringify(base.graph.constraint_receipts))},ctx=positions.context;
+      ctx.portOrder=b.route_strategy.startsWith('neighbors')?'neighbors':'canonical';ctx.ancestorPorts=b.route_strategy.includes('-header-')?'header':'boundary';ctx.crossingCost=180;ctx.contactCost=360;ctx.stubLength=16;
+      const touched=new Set(graph.edges.filter(e=>e.source===plan.node||e.target===plan.node).map(e=>e.id)),refreshed=new Map();
+      ctx.reserved=base.prepared.routes.filter(e=>!touched.has(e.id)).flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
+      for(const e of graph.edges.filter(e=>touched.has(e.id))){const route=L.route(e,positions);refreshed.set(e.id,{...e,route});
+        ctx.reserved.push(...route.points.slice(1).map((p,i)=>[route.points[i],p]));}
+      let trial={graph,prepared:evaluateRoutes(graph,base.prepared.routes.map(e=>refreshed.get(e.id)||e),b.route_strategy)};
+      if(state.paperSelectedRoutes!==false)trial=polishRoutes(trial);
+      E.auditConstraintRoutes(graph,trial.prepared.routes);
+      const q=trial.prepared.quality,old=base.prepared.quality,after=realizedRelations(trial),original=new Map(base.prepared.routes.map(e=>[e.id,e])),terminals=new Set();let distinct=true;
+      const physical=trial.prepared.routes.every(e=>{const prev=original.get(e.id);return e.route.source_side===prev.route.source_side&&e.route.target_side===prev.route.target_side&&
+        [[true,e.source,e.route.points[0],prev.route.points[0]],[false,e.target,e.route.points.at(-1),prev.route.points.at(-1)]].every(([source,node,p,was])=>{
+          const key=JSON.stringify([node,p]);if(terminals.has(key))distinct=false;terminals.add(key);
+          return node===plan.node&&(source?e.route.source_side:e.route.target_side)===plan.side||point(p,was);
+        });});
+      const coverage=new Set(Goals.evaluate(goals,graph,trial.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal)),facts=clearanceIdentity(g)===clearanceIdentity(graph);
+      const accepted=facts&&physical&&distinct&&q.line_geometry.crossings<old.line_geometry.crossings&&q.wire_length<=old.wire_length&&
+        q.native_width_px<=old.native_width_px&&q.native_height_px<=old.native_height_px&&fontMetric(q)>=fontMetric(old)&&
+        q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(issue=>old.issues.includes(issue))&&
+        graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
+      record.attempts.push({plan,refreshed_edges:[...touched],accepted,facts_preserved:facts,physical_terminals_preserved:physical,distinct_terminals:distinct,
+        before:clearanceMetrics(old),candidate:clearanceMetrics(q),realized_before:relations,realized_candidate:after,direct_goals_before:covered.size,direct_goals_candidate:coverage.size});
+      if(accepted){chosen=trial;relations=after;covered=coverage;applied=new Set(graph.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));}
+    }
+    record.after=clearanceMetrics(chosen.prepared.quality);record.selected=chosen.graph.positions.context.coincidentPorts||[];
+    record.scope='At most three measured physical port tie orders on fixed geometry. Only coincident neighbor centers are reordered by distance; every value, condition and operand slot stays distinct. No source-role, scheduling or value-equivalence inference.';
+    chosen.prepared.routing={...baseline.prepared.routing,coincident_port_refinement:record};return chosen;
+  }
   function prepareEmptyBandCompaction(ir,state,baseline){
     const g=baseline.graph,b=baseline.prepared.quality,ctx=g.positions.context;
     if(b.medium!=='canvas'||state.paperEmptyBandCompaction===false||state.paperProtectFrameTitles===true||
@@ -1159,6 +1207,7 @@
     chosen=prepareFinalSampleFrames(ir,state,chosen);
     chosen=prepareOperandRows(ir,state,chosen,{declared:true});
     chosen=prepareCrossScopePorts(ir,state,chosen,{final:true});
+    chosen=prepareCoincidentPorts(ir,state,chosen);
     chosen=prepareEmptyBandCompaction(ir,state,chosen);
     return attachExpressionEvidence(ir,chosen);
   }
@@ -1184,6 +1233,7 @@
         ...(g.positions.context.operandRows?.length?{operand_rows:g.positions.context.operandRows}:{}),
         ...(g.positions.context.declaredOperandRows?.length?{declared_operand_rows:g.positions.context.declaredOperandRows}:{}),
         ...(g.positions.context.crossScopePorts?.length?{cross_scope_ports:g.positions.context.crossScopePorts}:{}),
+        ...(g.positions.context.coincidentPorts?.length?{coincident_ports:g.positions.context.coincidentPorts}:{}),
         ...(g.positions.context.inputDocks.length?{input_docks:g.positions.context.inputDocks.map(record=>({...record,geometry_verified:L.inputDockGeometry(record,g.positions),
           routes_verified:record.edges.every(e=>routes.find(r=>r.id===e.edge)?.route.ok)}))}:{}),
         ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments.map(record=>{
@@ -1206,5 +1256,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

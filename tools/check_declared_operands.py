@@ -62,8 +62,9 @@ def declared_rows(doc):
     if final:
         assert final['before'] == previous, 'later routing must start from the declared-row result'
     else:
-        if compact:
-            assert (compact['before']['crossings'], compact['before']['wire_length']) == (previous['crossings'], previous['wire_length'])
+        later = doc['diagnostics']['routing'].get('coincident_port_refinement') or compact
+        if later:
+            assert (later['before']['crossings'], later['before']['wire_length']) == (previous['crossings'], previous['wire_length'])
         else:
             q = doc['diagnostics']['publication']
             assert (q['line_geometry']['crossings'], q['wire_length']) == (previous['crossings'], previous['wire_length'])

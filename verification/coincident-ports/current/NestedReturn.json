@@ -1,0 +1,856 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "NestedReturn",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+    "class": "NestedReturn",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+      "cell": null,
+      "sha256": "136dd46c2b3d710933cd1e6f31eba464f75e2c0f9ce130176f4983d630e4a6b7",
+      "unit_sha256": "136dd46c2b3d710933cd1e6f31eba464f75e2c0f9ce130176f4983d630e4a6b7"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/29:4:composite:1",
+      "kind": "composite",
+      "label": "NestedReturn",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 29,
+          "end_line": 36,
+          "column": 4,
+          "end_column": 22,
+          "symbol": "NestedReturn.forward",
+          "expression": "def forward(self, x, extra=False):\n    earlier = self.first(x)\n    later = self.second(earlier)\n    if x.sum() > 0:\n        if extra:\n            return (later, earlier)\n        return later\n    return earlier"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "NestedReturn"
+    },
+    {
+      "id": "model/29:4:composite:1/29:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 29,
+          "end_line": 29,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "NestedReturn.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/29:4:composite:1/29:25:interface:1",
+      "kind": "interface",
+      "label": "extra",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 29,
+          "end_line": 29,
+          "column": 25,
+          "end_column": 30,
+          "symbol": "NestedReturn.forward",
+          "expression": "extra"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "extra"
+    },
+    {
+      "id": "model/29:4:composite:1/30:18:opaque:1",
+      "kind": "opaque",
+      "label": "first",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 30,
+          "end_line": 30,
+          "column": 18,
+          "end_column": 31,
+          "symbol": "NestedReturn.forward",
+          "expression": "self.first(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self.first",
+      "function_target": "self.first",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/29:4:composite:1/30:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "earlier",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 30,
+          "end_line": 30,
+          "column": 8,
+          "end_column": 15,
+          "symbol": "NestedReturn.forward",
+          "expression": "earlier"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/29:4:composite:1/31:16:opaque:1",
+      "kind": "opaque",
+      "label": "second",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 31,
+          "end_line": 31,
+          "column": 16,
+          "end_column": 36,
+          "symbol": "NestedReturn.forward",
+          "expression": "self.second(earlier)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self.second",
+      "function_target": "self.second",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "earlier"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/29:4:composite:1/31:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "later",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 31,
+          "end_line": 31,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "NestedReturn.forward",
+          "expression": "later"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/29:4:composite:1/32:11:control:1",
+      "kind": "control",
+      "label": "x.sum() > 0",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 32,
+          "end_line": 32,
+          "column": 11,
+          "end_column": 22,
+          "symbol": "NestedReturn.forward",
+          "expression": "x.sum() > 0"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/29:4:composite:1/32:11:compute:1",
+      "kind": "compute",
+      "label": "compare",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 32,
+          "end_line": 32,
+          "column": 11,
+          "end_column": 22,
+          "symbol": "NestedReturn.forward",
+          "expression": "x.sum() > 0"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "compare",
+      "syntax": {
+        "type": "Compare",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "ops": [
+            {
+              "type": "Gt",
+              "fields": {}
+            }
+          ],
+          "comparators": [
+            {
+              "literal_type": "int",
+              "literal": "0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/32:11:compute:2",
+      "kind": "compute",
+      "label": "sum",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 32,
+          "end_line": 32,
+          "column": 11,
+          "end_column": 18,
+          "symbol": "NestedReturn.forward",
+          "expression": "x.sum()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reduce",
+      "function_target": "x.sum",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 32,
+          "end_line": 35,
+          "column": 8,
+          "end_column": 24,
+          "symbol": "NestedReturn.forward",
+          "expression": "if x.sum() > 0:\n    if extra:\n        return (later, earlier)\n    return later"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/29:4:composite:1/32:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1/33:15:control:1",
+      "kind": "control",
+      "label": "extra",
+      "parent": "model/29:4:composite:1/32:8:composite:1",
+      "source_parent": "model/29:4:composite:1/32:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 33,
+          "end_line": 33,
+          "column": 15,
+          "end_column": 20,
+          "symbol": "NestedReturn.forward",
+          "expression": "extra"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/29:4:composite:1/32:8:composite:1",
+      "source_parent": "model/29:4:composite:1/32:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 33,
+          "end_line": 34,
+          "column": 12,
+          "end_column": 37,
+          "symbol": "NestedReturn.forward",
+          "expression": "if extra:\n    return (later, earlier)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/29:4:composite:1/32:8:composite:1/33:15:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1/34:23:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1",
+      "source_parent": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 34,
+          "end_line": 34,
+          "column": 23,
+          "end_column": 37,
+          "symbol": "NestedReturn.forward",
+          "expression": "(later, earlier)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1/34:16:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1",
+      "source_parent": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 34,
+          "end_line": 34,
+          "column": 16,
+          "end_column": 37,
+          "symbol": "NestedReturn.forward",
+          "expression": "return (later, earlier)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1/33:12:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/29:4:composite:1/32:8:composite:1",
+      "source_parent": "model/29:4:composite:1/32:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 33,
+          "end_line": 34,
+          "column": 12,
+          "end_column": 37,
+          "symbol": "NestedReturn.forward",
+          "expression": "if extra:\n    return (later, earlier)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/29:4:composite:1/32:8:composite:1/33:15:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1/35:12:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/29:4:composite:1/32:8:composite:1",
+      "source_parent": "model/29:4:composite:1/32:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 35,
+          "end_line": 35,
+          "column": 12,
+          "end_column": 24,
+          "symbol": "NestedReturn.forward",
+          "expression": "return later"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 32,
+          "end_line": 35,
+          "column": 8,
+          "end_column": 24,
+          "symbol": "NestedReturn.forward",
+          "expression": "if x.sum() > 0:\n    if extra:\n        return (later, earlier)\n    return later"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/29:4:composite:1/32:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/36:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 36,
+          "end_line": 36,
+          "column": 8,
+          "end_column": 22,
+          "symbol": "NestedReturn.forward",
+          "expression": "return earlier"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/29:4:composite:1/29:4:interface:1",
+      "kind": "interface",
+      "label": "outputs / conditional returns",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+          "line": 29,
+          "end_line": 36,
+          "column": 4,
+          "end_column": 22,
+          "symbol": "NestedReturn.forward",
+          "expression": "def forward(self, x, extra=False):\n    earlier = self.first(x)\n    later = self.second(earlier)\n    if x.sum() > 0:\n        if extra:\n            return (later, earlier)\n        return later\n    return earlier"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/29:4:composite:1/29:22:interface:1",
+      "target": "model/29:4:composite:1/30:18:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/29:4:composite:1/30:18:opaque:1",
+      "target": "model/29:4:composite:1/30:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/29:4:composite:1/30:8:value-alias:1",
+      "target": "model/29:4:composite:1/31:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/29:4:composite:1/31:16:opaque:1",
+      "target": "model/29:4:composite:1/31:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/29:4:composite:1/29:22:interface:1",
+      "target": "model/29:4:composite:1/32:11:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/29:4:composite:1/32:11:compute:2",
+      "target": "model/29:4:composite:1/32:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/29:4:composite:1/32:11:compute:1",
+      "target": "model/29:4:composite:1/32:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/29:4:composite:1/32:11:control:1",
+      "target": "model/29:4:composite:1/32:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/29:4:composite:1/29:25:interface:1",
+      "target": "model/29:4:composite:1/32:8:composite:1/33:15:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/29:4:composite:1/32:8:composite:1/33:15:control:1",
+      "target": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/29:4:composite:1/31:8:value-alias:1",
+      "target": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1/34:23:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/29:4:composite:1/30:8:value-alias:1",
+      "target": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1/34:23:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1/34:23:compute:1",
+      "target": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1/34:16:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/29:4:composite:1/32:8:composite:1/33:15:control:1",
+      "target": "model/29:4:composite:1/32:8:composite:1/33:12:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/29:4:composite:1/31:8:value-alias:1",
+      "target": "model/29:4:composite:1/32:8:composite:1/35:12:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/29:4:composite:1/32:11:control:1",
+      "target": "model/29:4:composite:1/32:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/29:4:composite:1/30:8:value-alias:1",
+      "target": "model/29:4:composite:1/36:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/29:4:composite:1/32:8:composite:1/33:12:composite:1/34:16:interface:1",
+      "target": "model/29:4:composite:1/29:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/29:4:composite:1/32:8:composite:1/35:12:interface:1",
+      "target": "model/29:4:composite:1/29:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/29:4:composite:1/36:8:interface:1",
+      "target": "model/29:4:composite:1/29:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/29:4:composite:1/32:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+      "line": 32,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    },
+    {
+      "id": "model/29:4:composite:1/32:8:composite:1/33:15:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/coincident_ports.py",
+      "line": 33,
+      "column": 12,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "12192f3c579b9b3eee32683de622d7a84203c2202a16029fb20d9665237c321c"
+}

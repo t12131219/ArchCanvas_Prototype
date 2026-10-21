@@ -225,6 +225,43 @@
     }
     return merged;
   }
+  // Equal projected neighbor centers leave physical terminal order ambiguous.
+  // Keep nearer neighbors together before using edge IDs to break the tie;
+  // this orders drawing terminals, never canonical operands or executions.
+  function neighborOrder(items,positions,node,side,near=false){
+    const p=positions.get(node),horizontal=side==='top'||side==='bottom';
+    const other=item=>item.source?item.edge.target:item.edge.source;
+    const coordinate=item=>{const o=positions.get(other(item));return horizontal?o.x+o.w/2:o.y+o.h/2;};
+    const distance=item=>{const o=positions.get(other(item));return horizontal?Math.abs(o.y+o.h/2-p.y-p.h/2):Math.abs(o.x+o.w/2-p.x-p.w/2);};
+    return items.slice().sort((a,b)=>coordinate(a)-coordinate(b)||
+      (near?distance(a)-distance(b)||String(other(a)).localeCompare(String(other(b))):0)||
+      a.edge.id.localeCompare(b.edge.id)||Number(a.source)-Number(b.source));
+  }
+  function coincidentPorts(positions,routes){
+    const sides=new Map(),records=[];
+    for(const edge of routes)for(const source of [true,false]){
+      const node=source?edge.source:edge.target,side=source?edge.route.source_side:edge.route.target_side,key=JSON.stringify([node,side]);
+      if(!sides.has(key))sides.set(key,[]);sides.get(key).push({edge,source});
+    }
+    const key=i=>JSON.stringify([i.edge.id,i.source]);
+    for(const [at,items]of sides){
+      const [node,side]=JSON.parse(at),p=positions.get(node);
+      if(!p||p.expanded||p.cyclic||items.length<2||items.some(i=>!i.edge.route.ok||i.edge.design_route||i.edge.context_lane||i.edge.iteration||i.edge.layout_after||positions.context.feedback?.has(i.edge.id)||
+        !(i.edge.bundle_members||[i.edge]).every(e=>['data','alias','interface-binding'].includes(e.kind)&&!e.design_route&&!e.context_lane&&!e.iteration&&!e.layout_after)))continue;
+      const before=neighborOrder(items,positions,node,side),after=neighborOrder(items,positions,node,side,true);
+      if(before.every((i,n)=>key(i)===key(after[n])))continue;
+      // Earlier accepted policies can own physical terminals. Only refine an
+      // actual neighbor-order tie, never silently replace a different order.
+      const coordinate=i=>{const pt=i.source?i.edge.route.points[0]:i.edge.route.points.at(-1);return side==='top'||side==='bottom'?pt.x:pt.y;};
+      const actual=items.slice().sort((a,b)=>coordinate(a)-coordinate(b));
+      if(!before.every((i,n)=>key(i)===key(actual[n])))continue;
+      const describe=i=>{const other=i.source?i.edge.target:i.edge.source,o=positions.get(other),horizontal=side==='top'||side==='bottom';
+        return {edge:i.edge.id,source:i.source,other,coordinate:horizontal?o.x+o.w/2:o.y+o.h/2,distance:horizontal?Math.abs(o.y+o.h/2-p.y-p.h/2):Math.abs(o.x+o.w/2-p.x-p.w/2)};};
+      records.push({node,side,before:before.map(describe),after:after.map(describe),
+        scope:'Coincident neighbor coordinates only; nearer endpoints stay together. Distinct uses, conditions, canonical values and operand slots retained; no scheduling or value-equivalence claim.'});
+    }
+    return records;
+  }
   // Parallel labelled wires need clearance where their visible branches meet,
   // not in every helper in the figure. Use the drawing hierarchy after frame
   // ownership; source nesting may no longer be the visible containment tree.
@@ -694,13 +731,12 @@
       // incident terminals together so the outgoing stub cannot retrace an
       // incoming arrow at the very same physical point.
       for(const edge of context?.edges||[e])for(const source of [true,false])if((source?edge.source:edge.target)===id&&sideFor(edge,source)===which)siblings.push({edge,source});
-      if(context?.portOrder==='neighbors'){
+      const near=context?.coincidentPorts?.some(c=>c.node===id&&c.side===which);
+      if(context?.portOrder==='neighbors'||near){
         // Physical order follows the opposite endpoint on this side. It does
         // not change a canonical operand slot or merge repeated uses. Match
         // parallel-edge ties at both ends to avoid an artificial braid.
-        const horizontal=which==='top'||which==='bottom';
-        const coordinate=item=>{const other=positions.get(item.source?item.edge.target:item.edge.source);return horizontal?other.x+other.w/2:other.y+other.h/2;};
-        siblings.sort((a,b)=>coordinate(a)-coordinate(b)||a.edge.id.localeCompare(b.edge.id)||Number(a.source)-Number(b.source));
+        siblings.splice(0,siblings.length,...neighborOrder(siblings,positions,id,which,near));
       }
       // Every canonical boundary edge receives a distinct physical terminal.
       const i=siblings.findIndex(x=>x.edge.id===e.id&&x.source===isSource),fraction=(Math.max(0,i)+1)/(siblings.length+1);
@@ -886,5 +922,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -45,4 +45,4 @@ node tools/audit_source_expandability.cjs verification/helper-contracts/current/
 
 “从最细节点逐步折叠，在某个状态接近专用详细图”符合信息关系上的目标。实际生成时可直接选择这个中间状态，无须先渲染几千节点；该状态也应允许按区域继续展开或进一步折叠。专用图的完全展开状态不是通用图的粒度上限。
 
-最新已完成的[源码展开投影检查](../verification/empty-bands/current/source-expandability.json)仍记录 3371 个节点、3663 条边全部可见，原始 IR 未改变。这证明底层事实保留，不证明任意语义预设的一次“展开全部”就能呈现全部事实，也不证明数千节点完整 SVG 的路由与交互性能。上述限制仍需按实际界面和输出单独验收。
+最新已完成的[源码展开投影检查](../verification/coincident-ports/current/source-expandability.json)仍记录 3371 个节点、3663 条边全部可见，原始 IR 未改变。这证明底层事实保留，不证明任意语义预设的一次“展开全部”就能呈现全部事实，也不证明数千节点完整 SVG 的路由与交互性能。上述限制仍需按实际界面和输出单独验收。当前[端口排序审核](coincident-ports.md)只改善同一语义状态的几何，模块标题仍可直接穿行。

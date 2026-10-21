@@ -1,0 +1,91 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "Unfamiliar alternatives",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "composite",
+      "parent": null,
+      "label": "Outer",
+      "source": []
+    },
+    {
+      "id": "a",
+      "parent": "root",
+      "kind": "compute",
+      "label": "a",
+      "source": []
+    },
+    {
+      "id": "b",
+      "parent": "root",
+      "kind": "compute",
+      "label": "b",
+      "source": [],
+      "identity_display": {
+        "kind": "same-object-calls",
+        "label": "shared",
+        "invocation": 1,
+        "count": 2
+      }
+    },
+    {
+      "id": "sink",
+      "parent": "root",
+      "kind": "compute",
+      "label": "sink",
+      "source": []
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "source": "a",
+      "target": "b",
+      "source_port": "0",
+      "target_port": "value",
+      "kind": "data",
+      "evidence": "source-dependency"
+    },
+    {
+      "id": "e1",
+      "source": "b",
+      "target": "sink",
+      "source_port": "out",
+      "target_port": "0",
+      "kind": "data",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "choice",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "e2",
+      "source": "a",
+      "target": "sink",
+      "source_port": "1",
+      "target_port": "1",
+      "kind": "data",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "choice",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "e3",
+      "source": "b",
+      "target": "sink",
+      "source_port": "out",
+      "target_port": "in",
+      "kind": "data",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "choice",
+        "outcome": "false"
+      }
+    }
+  ],
+  "motifs": []
+}

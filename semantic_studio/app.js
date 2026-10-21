@@ -5,12 +5,43 @@
   const el=(tag,attrs={},text)=>{const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;};
   let catalog=[],ir=null,state=null,projection=null,selected=null,history=[],future=[],camera={x:0,y:0,w:1000,h:700},drag=null,loadRevision=0;
   let renderedNodes=new Map(),renderedEdges=new Map(),pendingFrame=0,dragPoint=null,inspectedBundle=null,canvasQuality=null,displayedFigure=null;
+  let navigationIndex=[];
   const storeKey=()=> 'summary-semantic:architecture-v1:'+ir.ir_digest;
   const message=x=>$('status').textContent=x;
   function snapshot(){history.push(E.clone(state));if(history.length>40)history.shift();future=[];}
   function persist(){try{localStorage.setItem(storeKey(),JSON.stringify(state));}catch(_){message('浏览器存储已满；可保存图文档到文件。');}}
   function setCamera(){svg.setAttribute('viewBox',`${camera.x} ${camera.y} ${camera.w} ${camera.h}`);if(canvasQuality&&state?.view==='publication'&&state.paperMedium==='canvas')showPaperQuality(canvasQuality);}
   function fit(){const b=projection.bounds,r=$('stage').clientWidth/$('stage').clientHeight,w=b.w+40,h=b.h+40;camera=w/h>r?{x:b.x-20,y:b.y-(w/r-h)/2-20,w,h:w/r}:{x:b.x-(h*r-w)/2-20,y:b.y-20,w:h*r,h};setCamera();}
+  function locate(id){
+    const p=projection?.positions.get(id);if(!p)return;
+    const w=svg.clientWidth,h=svg.clientHeight;if(!w||!h)return;
+    // Locate the title of an expanded frame rather than fitting its entire
+    // subtree. Closed nodes are centered at native scale. No graph mutation.
+    const width=p.expanded?Math.min(p.w,Math.max(1,w-48)):p.w;
+    const height=p.expanded?Math.min(p.header||64,Math.max(1,h-48)):p.h;
+    camera={x:p.x+width/2-w/2,y:p.y+height/2-h/2,w,h};setCamera();inspect(id);
+  }
+  function refreshNavigation(){
+    navigationIndex=projection.nodes.map(n=>{
+      const parents=[],seen=new Set([n.id]);let parent=n.parent;
+      while(parent&&!seen.has(parent)){seen.add(parent);const p=projection.idx.nodes.get(parent);if(!p)break;parents.unshift(p.module_path||p.label||p.id);parent=p.parent;}
+      const locations=[...new Set((n.source||[]).map(s=>[s.file?s.file.split('/').slice(-2).join('/'):'',s.line,s.symbol].filter(v=>v!=null).join(':')))];
+      const source=locations.slice(0,2).join(' · ')+(locations.length>2?` · 另 ${locations.length-2} 处来源`:'');
+      const title=n.paper?.title||n.label||n.id,scope=parents.join(' › ');
+      return {id:n.id,title,scope,source,text:[n.id,n.label,title,n.operator,n.semantic_type,scope,...locations].filter(Boolean).join(' ').toLocaleLowerCase()};
+    });
+    findNodes();
+  }
+  function findNodes(){
+    const terms=$('nodeFind').value.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean),box=$('nodeFindResults');box.replaceChildren();box.hidden=!terms.length;
+    if(!terms.length)return;
+    const matches=navigationIndex.filter(n=>terms.every(t=>n.text.includes(t))),note=document.createElement('p');
+    note.textContent=matches.length?`${matches.length} 个当前图元${matches.length>40?'，显示前 40 个；可增加范围或源码位置缩小查找':''}`:'当前图中没有匹配项；可展开相关区域或切换源码层级后再查找。';box.append(note);
+    for(const n of matches.slice(0,40)){const button=document.createElement('button');button.type='button';button.dataset.nodeTarget=n.id;
+      const title=document.createElement('strong'),detail=document.createElement('small');title.textContent=n.title;detail.textContent=[n.scope,n.source].filter(Boolean).join(' · ');
+      button.append(title,detail);button.onclick=()=>locate(n.id);box.append(button);
+    }
+  }
   function library(){const q=$('search').value.toLowerCase();$('catalog').replaceChildren();for(const m of catalog.filter(m=>m.title.toLowerCase().includes(q))){const b=document.createElement('button');b.className='case'+(ir?.ir_digest===m.digest?' active':'');b.innerHTML=`<strong>${esc(m.title)}</strong><small>${m.nodes} 节点 · ${esc(m.runtime==='passed'?'CPU 已观测':'静态源码')}</small>`;b.onclick=()=>loadModel(m);$('catalog').append(b);}}
   async function loadModel(m){const ticket=++loadRevision;try{const response=await fetch('../data/semantic/'+m.ir,{cache:'no-store'});if(!response.ok)throw Error('IR 文件读取失败');const value=await response.json();if(ticket!==loadRevision)return;open(value);$('irLink').href='../data/semantic/'+m.ir;$('irLink').hidden=false;}catch(error){message(error.message);}}
   function open(value,saved){E.validate(value);ir=value;history=[];future=[];selected=null;inspectedBundle=null;
@@ -21,7 +52,7 @@
     $('title').textContent=ir.title;$('summary').textContent=`${ir.nodes.length} 个语义单位 · ${ir.edges.length} 个关系 · ${(ir.motifs||[]).length} 个组合模式`;
     const c=ir.coverage||{status:'not-verified'},r=ir.runtime||{status:'not-requested'},branches=c.branches||[];
     $('coverage').innerHTML=`<strong>验证范围</strong> <span class="badge">${esc(c.status)}</span><p>目标契约（当前验证结果见状态与限制）：${esc(ir.coverage_contract)}</p><div>当前输入：${esc(c.scope||'静态分析')}；CPU：${esc(r.status)}；源码分支：${branches.filter(b=>b.kind!=='loop'&&!b.missing.length).length}/${(ir.branches||[]).filter(b=>b.kind!=='loop').length} 个 if / 条件表达式已覆盖两个结果；循环与短路路径另列为限制。</div><div>${esc(c.reason||'')}</div>${r.reason?'<pre>'+esc(r.reason)+'</pre>':''}<details><summary>分支、限制和模式证据</summary><pre>${esc(JSON.stringify({coverage:c,motifs:ir.motifs,limitations:ir.limitations},null,2))}</pre></details>`;
-    render();fit();library();message($('status').textContent+'；双击模块展开，单击查看证据');
+    $('nodeFind').value='';render();fit();library();message($('status').textContent+'；双击模块展开，单击查看证据');
   }
   function inspect(id){selected=id;inspectedBundle=null;for(const[key,g]of renderedNodes)g.classList.toggle('selected',key===id);const n=projection.idx.nodes.get(id);if(!n)return;
     $('nodeTitle').textContent=n.label;
@@ -138,7 +169,7 @@
       path.append(el('title',{},`${e.id} · ${e.kind} · ${e.evidence} · ${e.source_port} → ${e.target_port}${route.ok?'':' · '+route.reason}`));edgeFragment.append(path);renderedEdges.set(e.id,path);
     }
     $('frames').append(frameFragment);$('edges').append(edgeFragment);$('nodes').append(nodeFragment);
-    refreshBundleInspector();$('undo').disabled=!history.length;$('redo').disabled=!future.length;message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接${projection.architecture?' · '+projection.nodes.filter(n=>n.presentation_only).length+' 个架构摘要':''}${failedRoutes?' · '+failedRoutes+' 条路径待调整':''}`);
+    refreshNavigation();refreshBundleInspector();$('undo').disabled=!history.length;$('redo').disabled=!future.length;message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接${projection.architecture?' · '+projection.nodes.filter(n=>n.presentation_only).length+' 个架构摘要':''}${failedRoutes?' · '+failedRoutes+' 条路径待调整':''}`);
   }
   function syncPaperControls(){
     if(!ir||!state)return;
@@ -205,7 +236,7 @@
       }
       $('edges').append(g);renderedEdges.set(edge.id,g);
     }
-    labels.innerHTML=prepared.labeling.placed.map(R.labelBody).join('');svg.append(labels);refreshBundleInspector();
+    labels.innerHTML=prepared.labeling.placed.map(R.labelBody).join('');svg.append(labels);refreshNavigation();refreshBundleInspector();
     const q=prepared.quality;canvasQuality=q.medium==='canvas'?q:null;showPaperQuality(q);
     $('paperAuto').checked=state.paperAuto!==false;$('paperGranularity').disabled=state.paperAuto===false;$('paperAdaptive').disabled=state.paperAuto===false;$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
     const limited=prepared.routing.granularity_refinement;
@@ -250,6 +281,9 @@
   $('view').onchange=()=>{snapshot();state.view=$('view').value;if(state.view==='publication')state.details=false;optionalFold();render();fit();persist();};
   $('relayout').onclick=()=>{snapshot();state.offsets={};render();fit();persist();};
   $('fit').onclick=fit;$('search').oninput=library;
+  $('nodeFind').oninput=findNodes;
+  $('nodeFind').onkeydown=e=>{if(e.key==='Escape'){$('nodeFind').value='';findNodes();}
+    else if(e.key==='Enter'){const first=$('nodeFindResults').querySelector('button');if(first){e.preventDefault();locate(first.dataset.nodeTarget);}}};
   $('mode').onchange=()=>{snapshot();state.mode=$('mode').value;state.paperFocus=null;syncPaperControls();if(state.mode==='runtime'&&!state.open.includes('runtime-observations'))state.open.push('runtime-observations');render();fit();persist();};
   $('undo').onclick=()=>{if(!history.length)return;future.push(E.clone(state));state=history.pop();$('mode').value=state.mode;$('view').value=state.view||'architecture';$('detailsToggle').checked=!!state.details;$('foldToggle').checked=state.foldSerial!==false;optionalFold();render();fit();persist();};
   $('redo').onclick=()=>{if(!future.length)return;history.push(E.clone(state));state=future.pop();$('mode').value=state.mode;$('view').value=state.view||'architecture';$('detailsToggle').checked=!!state.details;$('foldToggle').checked=state.foldSerial!==false;optionalFold();render();fit();persist();};

@@ -69,13 +69,22 @@ def check(row, *, compare_expression=True, require_quality=True, allow_label_not
     for r in receipt['rows']:
         anchor, helper = r['anchor'], r['helper']
         helper_ids = closure(helper, ns)
-        members = {anchor} | helper_ids
+        prefix = r.get('direction') == 'helper-before-role'
+        bridge = r.get('bridge_aliases', [])
+        assert prefix or not bridge
+        assert len(bridge) == len(set(bridge)) and not (set(bridge) & ({anchor} | helper_ids))
+        members = {anchor} | helper_ids | set(bridge)
         assert len(r['canonical_members']) == len(members) and set(r['canonical_members']) == members
         assert closure(r['node'], planned) & ns.keys() == members
         assert planned[anchor]['parent'] == planned[helper]['parent'] == r['node']
         assert planned[r['node']]['parent'] == ns[anchor]['parent'] == ns[helper]['parent']
         assert planned[r['node']]['presentation_only'] and planned[r['node']]['semantic_type'] == 'role-path-stage'
-        assert r['display_members'] == [anchor, helper]
+        assert r['display_members'] == ([helper, anchor] if prefix else [anchor, helper])
+        for id in bridge:
+            assert planned[id]['parent'] == r['node'] and ns[id]['parent'] == ns[anchor]['parent']
+            for n in [ns[id], planned[id]]:
+                assert n['kind'] == 'value-alias' and not n.get('operator') and n.get('slot') is None
+            assert len(ins[id]) == len(outs[id]) == 1
         for role in r['roles']:
             cert = certs[role['certificate']]
             assert cert in doc['architecture']['semantic_contracts'] and members <= set(cert['members'])
@@ -104,10 +113,26 @@ def check(row, *, compare_expression=True, require_quality=True, allow_label_not
                    (e['kind'] in FLOW or e['kind'] == 'parameter-read' and ns[e['source']]['kind'] == 'parameter') for e in incident)
         helper_cuts = [e for e in edges if (e['source'] in helper_ids) != (e['target'] in helper_ids)]
         incoming = [e for e in helper_cuts if e['target'] in helper_ids]
-        assert len(outs[anchor]) == len(incoming) == 1 and outs[anchor] == incoming
-        assert incoming[0].get('source_port', 'out') == 'out' and ns[incoming[0]['target']]['kind'] == 'interface'
-        assert all(e['target'] == anchor for e in cuts if e['target'] in members)
-        assert all(e['source'] in helper_ids for e in cuts if e['source'] in members)
+        if prefix:
+            assert not any(planned[e['source']].get('role_annotations') for e in incoming)
+            outgoing = [e for e in helper_cuts if e['source'] in helper_ids]
+            assert len(outgoing) == 1 and incoming
+            e = outgoing[0]
+            assert ns[e['source']]['kind'] == 'interface' and ns[e['source']]['role'] == 'output'
+            for id in [*bridge, anchor]:
+                assert e['target'] == id and e.get('source_port', 'out') == 'out'
+                ordinary = [edge for edge in ins[id] if edge['kind'] != 'parameter-read']
+                assert ordinary == [e]
+                if id != anchor:
+                    e = outs[id][0]
+            assert all(edge['target'] in helper_ids or edge['target'] == anchor and edge['kind'] == 'parameter-read'
+                       for edge in cuts if edge['target'] in members)
+            assert all(edge['source'] == anchor and edge.get('source_port', 'out') == 'out' for edge in cuts if edge['source'] in members)
+        else:
+            assert len(outs[anchor]) == len(incoming) == 1 and outs[anchor] == incoming
+            assert incoming[0].get('source_port', 'out') == 'out' and ns[incoming[0]['target']]['kind'] == 'interface'
+            assert all(e['target'] == anchor for e in cuts if e['target'] in members)
+            assert all(e['source'] in helper_ids for e in cuts if e['source'] in members)
         p = r['helper_path']
         assert p == planned[helper]['local_pipeline'] and p['form'] == 'dependency-path-summary'
         assert set(p['canonical_members']) == helper_ids and len(p['canonical_members']) == len(helper_ids)
@@ -131,7 +156,7 @@ def check(row, *, compare_expression=True, require_quality=True, allow_label_not
             assert boundary['source'] == ns[boundary['node']].get('source', [])
             assert boundary['cuts'] == [e for e in edges if (e['source'] in ids) != (e['target'] in ids)]
         ops = []
-        for id in [anchor, *ordered]:
+        for id in ([*ordered, anchor] if prefix else [anchor, *ordered]):
             n = ns[id]
             label = (n.get('framework_type') or '').split('.')[-1] or ((n.get('function_target') or '').split('.')[-1] if n.get('source_framework_function') == n.get('function_target') else '') or n['operator']
             ops.append(dict(node=id, label=label, operator=n['operator'], framework_type=n.get('framework_type'), configuration=n.get('constructor')))
@@ -153,22 +178,42 @@ def check(row, *, compare_expression=True, require_quality=True, allow_label_not
                 assert ns[e['source']]['kind'] == 'parameter'
                 assert e['id'] in doc['layout']['edge_accounting']['attached']
                 continue
-            carriers = [v for v in doc['layout']['edges'] if e['id'] in v.get('originals', [v['id']])]
-            assert len(carriers) == 1
-            v = carriers[0]
-            final = next(edge for edge in edges if edge['id'] == v['id'])
-            assert [v.get(k) for k in ['canonical_source', 'canonical_target', 'source_port', 'target_port']] == [final.get(k) for k in ['source', 'target', 'source_port', 'target_port']]
-            assert resolve(e['source'], e.get('source_port', 'out')) == resolve(v['canonical_source'], v.get('source_port', 'out'))
-            todo, seen = [e['target']], set()
+            carriers = [(physical, v) for physical in doc['layout']['edges'] for v in physical.get('bundle_members', [physical])
+                        if e['id'] in v.get('originals', [v['id']])]
+            # A cut into an ordinary contracted alias can have several later
+            # consumers. Reconstruct every terminal use, rather than requiring
+            # one wire or accepting any one of several surviving consumers.
+            todo, expected, seen_edges = [e], set(), set()
+            contracted = set(doc['layout']['node_accounting']['contracted'])
             while todo:
                 at = todo.pop()
-                if at in seen:
+                if at['id'] in seen_edges:
                     continue
-                seen.add(at)
-                if ns[at]['kind'] in ['interface', 'value-alias'] and not ns[at].get('operator'):
-                    todo.extend(edge['target'] for edge in outs[at] if edge['kind'] in FLOW and not edge.get('condition'))
-            assert v['canonical_target'] in seen
-            assert v['route']['ok']
+                seen_edges.add(at['id'])
+                n = ns[at['target']]
+                if n['id'] in contracted and n['kind'] in ['interface', 'value-alias'] and not n.get('operator'):
+                    todo.extend(outs[n['id']])
+                else:
+                    expected.add(at['id'])
+            assert carriers and len(carriers) == len(expected) and {v['id'] for _, v in carriers} == expected
+            for physical, v in carriers:
+                final = next(edge for edge in edges if edge['id'] == v['id'])
+                assert [v.get(k) for k in ['canonical_source', 'canonical_target', 'target_port', 'kind', 'condition', 'evidence']] == [final.get(k) for k in ['source', 'target', 'target_port', 'kind', 'condition', 'evidence']]
+                # A contracted alias can select a result slot. The physical
+                # source port belongs to resolved_source, not the raw alias.
+                value = resolve(v.get('resolved_source', v['canonical_source']), v.get('source_port', 'out'))
+                assert resolve(final['source'], final.get('source_port', 'out')) == value
+                assert resolve(e['source'], e.get('source_port', 'out')) == value
+                todo, seen = [e['target']], set()
+                while todo:
+                    at = todo.pop()
+                    if at in seen:
+                        continue
+                    seen.add(at)
+                    if ns[at]['kind'] in ['interface', 'value-alias'] and not ns[at].get('operator'):
+                        todo.extend(edge['target'] for edge in outs[at] if edge['kind'] in FLOW and not edge.get('condition'))
+                assert v['canonical_target'] in seen
+                assert physical['route']['ok']
     segments, length = [], 0
     for e in doc['layout']['edges']:
         pts = [(float(x), float(y)) for x, y in re.findall(r'[ML](-?[\d.eE+]+),(-?[\d.eE+]+)', paths[e['id']].get('d'))]

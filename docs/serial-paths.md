@@ -1,5 +1,7 @@
 # Long source paths with reversible detail
 
+This stage retains its historical producer hashes. Current main/detail planning and fresh combined validation are documented in [detail alternatives](detail-alternatives.md).
+
 This stage makes a long, proved source dependency path usable as a compact architecture element. The previous compiler accepted at most six operations, and rejected a source helper once publication had partitioned it into synthetic Stage frames. It now inspects through exact `structural-region` display partitions. Each partition must retain its complete canonical membership and its actual original cut edges. Other synthetic semantic regions do not authorize composition.
 
 Serial paths no longer have the six-operation limit. Converging trees and reused-result DAGs keep their existing bounded formula policy. Unknown operations, runtime-only regions, observations, conditions, mutable effects, state writes, shared identity, certificates and iteration boundaries continue to prevent composition across that boundary. Escaping intermediate results reject a single-result path. A later external value prevents automatic summary lowering, preserving its precise consumer. An independently proved neighboring helper may still be summarized next to an unknown call or state write.

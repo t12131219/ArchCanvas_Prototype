@@ -194,11 +194,14 @@
       const planned=window.SemanticDiagramSet.plan(ir,figure,state),box=$('diagramSuggestions');box.replaceChildren();
       if(planned.candidates.length){
         box.hidden=false;const label=document.createElement('span');label.textContent='可在独立详图中查看：';box.append(label);
-        for(const request of planned.candidates.slice(0,6)){
+        const appendRequest=request=>{
           const button=document.createElement('button');button.textContent=request.label;button.title='查看局部角色和依赖，保留主图展开状态';
           button.onclick=()=>{snapshot();const previous=E.clone(state.paperDiagramReturn||state);delete previous.paperDiagramReturn;state={...E.clone(request.state),paperDiagramReturn:previous};selected=null;syncPaperControls();render();fit();persist();};box.append(button);
-        }
-        if(planned.candidates.length>6){const label=document.createElement('span');label.textContent=' 另有 '+(planned.candidates.length-6)+' 个区域，可从模块详图选择。';box.append(label);}
+        };
+        let shown=0;const more=document.createElement('button');more.id='diagramMore';
+        const appendPage=()=>{more.remove();for(const request of planned.candidates.slice(shown,shown+6))appendRequest(request);shown=Math.min(planned.candidates.length,shown+6);
+          if(shown<planned.candidates.length){more.textContent='更多详图（'+(planned.candidates.length-shown)+'）';box.append(more);}};
+        more.onclick=appendPage;appendPage();
       }
     }
   }

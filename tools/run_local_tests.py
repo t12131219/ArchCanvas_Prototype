@@ -45,6 +45,7 @@ COMMANDS = {
     'condition-predicates': ['node', 'tests/condition-predicates.test.cjs'],
     'branch-tail-stages': ['node', 'tests/branch-tail-stages.test.cjs'],
     'diagram-set': ['node', 'tests/diagram-set.test.cjs'],
+    'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'entry-bands': ['node', 'tests/entry-bands.test.cjs'],
     'sample-frames': ['node', 'tests/sample-frames.test.cjs'],
     'input-docks': ['node', 'tests/input-docks.test.cjs'],

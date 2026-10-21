@@ -845,9 +845,9 @@
     chosen.prepared.routing={...baseline.prepared.routing,selected_route_refinement:record};
     return chosen;
   }
-  function prepareCrossScopePorts(ir,state,baseline){
+  function prepareCrossScopePorts(ir,state,baseline,{final=false}={}){
     const g=baseline.graph,b=baseline.prepared.quality;
-    if(b.medium!=='canvas'||state.paperCrossScopePorts===false||Object.keys(state.offsets||{}).length||g.edges.length>128||
+    if(b.medium!=='canvas'||state.paperCrossScopePorts===false||(final&&state.paperFinalScopeEntries===false)||Object.keys(state.offsets||{}).length||g.edges.length>128||
       !b.line_geometry.crossings&&!b.line_geometry.unrelated_contacts.length)return baseline;
     const proposals=L.crossScopeEntries(g.positions).filter(c=>{
       const route=baseline.prepared.routes.find(e=>e.id===c.edge)?.route;
@@ -864,31 +864,54 @@
     let applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id)),before=realizedRelations(baseline);
     const goals=Goals.build(ir,g.architecture);
     let covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal));
-    const record={max_trials:3,attempts:[],before:clearanceMetrics(b),scope:'Measured side-facing entries from horizontally separate scopes; fixed nodes and canonical operand bindings. No input-role or scheduling assertion.'};
-    let chosen=baseline,selected=[];
+    const record={max_trials:final?6:3,attempts:[],before:clearanceMetrics(b),scope:final?
+      'Final side-facing entry review after local arrangements; at most three source/frame groups and six route measurements. Fixed nodes, canonical slots and existing realized relations retained; distant selected paths may survive. No input-role or scheduling assertion.':
+      'Measured side-facing entries from horizontally separate scopes; fixed nodes and canonical operand bindings. No input-role or scheduling assertion.'};
+    let chosen=baseline,selected=final?[...g.positions.context.crossScopePorts||[]]:[];
+    if(final)record.initial_entries=selected.slice();
     for(const {group}of candidates){
-      const plan=[...selected,...group],positions=new Map([...g.positions].map(([id,p])=>[id,{...p}]));
-      positions.context={...g.positions.context,crossScopePorts:plan,routeCache:new Map(),reserved:[]};
-      const graph={...g,positions,constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
-      let trial={graph,prepared:prepare(graph)};
+      const base=final?chosen:baseline;
+      const plan=[...new Map([...selected,...group].map(c=>[c.edge,c])).values()],positions=new Map([...base.graph.positions].map(([id,p])=>[id,{...p}]));
+      positions.context={...base.graph.positions.context,crossScopePorts:plan,routeCache:new Map(),reserved:[]};
+      const graph={...base.graph,positions,constraint_receipts:JSON.parse(JSON.stringify(base.graph.constraint_receipts))},full=prepare(graph);
+      const variants=[['full',full]],touched=new Set();
+      if(final){
+        // Changing a physical side also redistributes the other terminals on
+        // either endpoint. Refresh all their incident uses, keeping distant
+        // selected routes only as a measured candidate, never as a shortcut
+        // around geometry, exact-slot or realized-relation validation.
+        const peers=new Set(group.flatMap(c=>{const e=by.get(c.edge);return [e.source,e.target];}));
+        for(const e of g.edges)if(peers.has(e.source)||peers.has(e.target))touched.add(e.id);
+        const refreshed=new Map(full.routes.map(e=>[e.id,e]));
+        variants.push(['retained',evaluateRoutes(graph,base.prepared.routes.map(e=>touched.has(e.id)?refreshed.get(e.id):e),full.quality.route_strategy)]);
+      }
+      for(const [routeMode,prepared]of variants){
+      const measured=final?{...graph,positions:new Map([...positions].map(([id,p])=>[id,{...p}])),constraint_receipts:JSON.parse(JSON.stringify(graph.constraint_receipts))}:graph;
+      if(final)measured.positions.context={...positions.context,routeCache:new Map(),reserved:[]};
+      let trial={graph:measured,prepared};
       if(state.paperSelectedRoutes!==false)trial=polishRoutes(trial);
       const q=trial.prepared.quality,old=chosen.prepared.quality;
-      E.auditConstraintRoutes(graph,trial.prepared.routes);
-      const after=realizedRelations(trial),coverage=new Set(Goals.evaluate(goals,graph,trial.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal));
-      const facts=clearanceIdentity(g)===clearanceIdentity(graph);
-      const accepted=facts&&q.line_geometry.crossings<old.line_geometry.crossings&&
+      E.auditConstraintRoutes(measured,trial.prepared.routes);
+      const after=realizedRelations(trial),coverage=new Set(Goals.evaluate(goals,measured,trial.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal));
+      const facts=clearanceIdentity(g)===clearanceIdentity(measured);
+      const terminals=new Set();let distinct=true;
+      if(final)for(const e of trial.prepared.routes)for(const [node,source,p]of [[e.source,true,e.route.points[0]],[e.target,false,e.route.points.at(-1)]]){
+        const key=JSON.stringify([node,source,p]);if(terminals.has(key))distinct=false;terminals.add(key);
+      }
+      const accepted=facts&&distinct&&q.line_geometry.crossings<old.line_geometry.crossings&&
         q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&
         q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
         q.issues.every(issue=>old.issues.includes(issue))&&q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&
-        fontMetric(q)>=fontMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&q.wire_length<=b.wire_length*1.02&&
-        graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&
+        fontMetric(q)>=fontMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&q.wire_length<=(final?old.wire_length:b.wire_length*1.02)&&
+        measured.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&
         Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
-      record.attempts.push({entries:group,accepted,facts_preserved:facts,before:clearanceMetrics(old),candidate:clearanceMetrics(q),
+      record.attempts.push({entries:group,...(final?{route_mode:routeMode,refreshed_edges:[...touched],distinct_terminals:distinct}:{}),accepted,facts_preserved:facts,before:clearanceMetrics(old),candidate:clearanceMetrics(q),
         realized_before:before,realized_candidate:after,direct_goals_before:covered.size,direct_goals_candidate:coverage.size});
-      if(accepted){chosen=trial;selected=plan;before=after;covered=coverage;applied=new Set(graph.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));}
+      if(accepted){chosen=trial;selected=plan;before=after;covered=coverage;applied=new Set(measured.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));}
+      }
     }
     record.after=clearanceMetrics(chosen.prepared.quality);record.selected=selected;
-    chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,cross_scope_refinement:record};
+    chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,[final?'final_scope_entry_refinement':'cross_scope_refinement']:record};
     return chosen;
   }
   function prepareConsumerArguments(ir,state,baseline){
@@ -1085,6 +1108,7 @@
     chosen=prepareOperandRows(ir,state,chosen);
     chosen=prepareFinalSampleFrames(ir,state,chosen);
     chosen=prepareOperandRows(ir,state,chosen,{declared:true});
+    chosen=prepareCrossScopePorts(ir,state,chosen,{final:true});
     return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){

@@ -50,8 +50,12 @@ def declared_rows(doc):
         assert trial['direct_goals_before'] <= trial['direct_goals_candidate']
         chosen.update({r['sink']: r for r in trial['records']});previous = b
     assert rec['after'] == previous and rec['selected'] == selected == list(chosen.values())
-    q = doc['diagnostics']['publication']
-    assert (q['line_geometry']['crossings'], q['wire_length']) == (previous['crossings'], previous['wire_length'])
+    final = doc['diagnostics']['routing'].get('final_scope_entry_refinement')
+    if final:
+        assert final['before'] == previous, 'later routing must start from the declared-row result'
+    else:
+        q = doc['diagnostics']['publication']
+        assert (q['line_geometry']['crossings'], q['wire_length']) == (previous['crossings'], previous['wire_length'])
     trees = {};checked = []
     for row in selected:
         proof = row['declaration'];assert proof['rule_version'] == 'declared-operand-order/1' and proof['owner'] == row['sink']

@@ -68,3 +68,28 @@
 按用户补充要求，[展开模块标题通行](title-passages.md)现在成为通用默认规则：连线可直接穿过标题区，实际计算节点及无关模块内部仍避让。截图案例交叉 2 → 0、线长约减少 41%，但 Transformer 主图交叉 27 → 35，第一张详图 4 → 19，第二张详图 18 → 16；不能将本轮描述为所有图的布局均改善。图组 74 项直接表达目标保留，3371 个源码节点和 3663 条边仍可恢复。22 张 SVG 独立审核及浏览器文字边界检查通过，完整测试 703 项通过。规则不依赖 Transformer 名称或案例身份；后续仍需改进通用路径候选与上下文约束的兼容。
 
 后续[已选择通道的拥挤搜索](selected-contexts.md)修复了通道保留仅依赖入口带布局的缺口，让输入布局候选能在原有关系继续成立时被接受。第一张详图保持 43 个节点、47 条边和同一画布，交叉 19 → 3，线长约减少 34.2%；相对标题通行前的 4 个交叉也有改善。主图和第二张详图本轮不变，七个其他源码案例保持原结果。图组仍为 74 项直接覆盖，源码投影仍恢复 3371 个节点、3663 条边。709 项测试、22 张 SVG 独立审核和浏览器原生文字检查通过；主图尚存的交叉退化及整体专用参考收敛继续作为未完成工作。
+
+### Cross-scope entry selection (2026-10-21)
+
+The next generic drawing refinement proposes facing ports when a value enters
+an expanded frame from a horizontally separate scope. It measures source/frame
+groups rather than moving all eligible edges together. Every accepted step must
+preserve prior realized relations, canonical operand bindings and expression
+coverage; module titles remain pass-through. The rule is geometric and does not
+recognize Transformer, case IDs or architecture family names. See
+[cross-scope-ports.md](cross-scope-ports.md) for gates and reproduction.
+
+The selected semantic frontier still supports further source expansion. The raw
+projection check restores all 3,371 nodes / 3,663 edges; it does not establish
+routing performance for the fully expanded SVG. The complete general semantic
+and visual convergence goal remains open.
+
+Actual cross-scope audit: main crossings 35 → 29, dimensions unchanged at
+1968 × 3594, wire length +0.87%; selected details remain at 3 and 16 crossings.
+Graph-set direct coverage stays 74 / 74. Synthetic unfamiliar reconvergence
+improves 5 → 4 crossings and reduces wire length by 7.94%; over-budget, unknown
+and conditional variants remain unchanged. All 30 SVGs pass independent checks
+and browser text bounds, and 61 groups / 720 tests pass. The historical
+27-crossing main baseline is still not recovered. Browser comparison with the
+dedicated reference still shows differences in reading direction, grouping and
+source-detail density; the broad convergence goal is not complete.

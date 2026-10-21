@@ -72,6 +72,25 @@
     if(from.x>=owner.x+owner.w)return 'left';
     return null;
   }
+  // A value from a horizontally separate scope can face its receiving frame.
+  // This is a geometric entry proposal, independent of operator/family names.
+  // Ancestor interfaces and established semantic/context channels keep their
+  // own policies; conditional and state dependencies are not reclassified.
+  function crossScopeEntries(positions){
+    const context=positions.context,idx=context?.idx,result=[];
+    if(!idx)return result;
+    const ancestry=id=>{const seen=new Set();while(id!=null&&!seen.has(id)){seen.add(id);id=idx.nodes.get(id)?.parent;}return seen;};
+    for(const e of context.edges||[]){
+      if(e.design_route||e.context_lane||e.layout_after||e.condition||e.iteration||context.feedback?.has(e.id)||
+        !(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration&&!m.design_route&&!m.context_lane&&!m.layout_after))continue;
+      const a=positions.get(e.source),b=positions.get(e.target),owner=idx.nodes.get(e.target)?.parent,p=positions.get(owner);
+      if(!a||!b||!p?.expanded||ancestry(e.source).has(owner)||ancestry(e.source).has(e.target)||ancestry(e.target).has(e.source))continue;
+      const side=a.x+a.w<=p.x?'left':a.x>=p.x+p.w?'right':null;
+      if(side)result.push({edge:e.id,owner,source_side:side==='left'?'right':'left',target_side:side,
+        scope:'Visible cross-scope geometry only; source identity and exact operand slots retained, no input-role or scheduling assertion.'});
+    }
+    return result;
+  }
   // Parallel labelled wires need clearance where their visible branches meet,
   // not in every helper in the figure. Use the drawing hierarchy after frame
   // ownership; source nesting may no longer be the visible containment tree.
@@ -515,6 +534,8 @@
     if(semanticBypass)ss=ts='left';
     const contextOwner=positions.get(e.context_lane?.owner),contextLane=!!contextOwner?.context_gutter;
     if(contextLane){ts=e.context_lane.side;ss=contextSourceSide(e,positions)||ss;}
+    const crossScope=context?.crossScopePorts?.find(c=>c.edge===e.id);
+    if(crossScope){ss=crossScope.source_side;ts=crossScope.target_side;}
     function sideFor(edge,isSource){
       const from=positions.get(edge.source),to=positions.get(edge.target);if(!from||!to)return null;
       const down=to.y>=from.y+from.h,up=from.y>=to.y+to.h;
@@ -529,6 +550,8 @@
       if(edge.context_lane&&positions.get(edge.context_lane.owner)?.context_gutter){
         targetSide=edge.context_lane.side;sourceSide=contextSourceSide(edge,positions)||sourceSide;
       }
+      const crossScope=context?.crossScopePorts?.find(c=>c.edge===edge.id);
+      if(crossScope){sourceSide=crossScope.source_side;targetSide=crossScope.target_side;}
       return isSource?sourceSide:targetSide;
     }
     function port(id,other,isSource,which){
@@ -729,5 +752,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

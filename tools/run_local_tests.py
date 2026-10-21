@@ -48,6 +48,7 @@ COMMANDS = {
     'exact-expression': ['node', 'tests/exact-expression.test.cjs'],
     'selected-routes': ['node', 'tests/selected-routes.test.cjs'],
     'title-passages': ['node', 'tests/title-passages.test.cjs'],
+    'cross-scope-ports': ['node', 'tests/cross-scope-ports.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'coherent-frontiers': ['node', 'tests/coherent-frontiers.test.cjs'],

@@ -844,6 +844,52 @@
     chosen.prepared.routing={...baseline.prepared.routing,selected_route_refinement:record};
     return chosen;
   }
+  function prepareCrossScopePorts(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||state.paperCrossScopePorts===false||Object.keys(state.offsets||{}).length||g.edges.length>128||
+      !b.line_geometry.crossings&&!b.line_geometry.unrelated_contacts.length)return baseline;
+    const proposals=L.crossScopeEntries(g.positions).filter(c=>{
+      const route=baseline.prepared.routes.find(e=>e.id===c.edge)?.route;
+      return route&&(route.source_side!==c.source_side||route.target_side!==c.target_side);
+    });
+    const groups=new Map(),by=new Map(g.edges.map(e=>[e.id,e]));
+    for(const c of proposals){const key=JSON.stringify([by.get(c.edge).source,c.owner]);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(c);}
+    const score=group=>group.reduce((sum,c)=>{const e=baseline.prepared.routes.find(e=>e.id===c.edge);
+      return sum+baseline.prepared.routes.reduce((n,other)=>n+(other.id===e.id?0:lineGeometry([e,other]).crossings),0);},0);
+    const candidates=[...groups.values()].map(group=>({group,score:score(group)})).filter(c=>c.score)
+      .sort((a,b)=>b.score-a.score||a.group[0].edge.localeCompare(b.group[0].edge)).slice(0,3);
+    if(!candidates.length)return baseline;
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
+    let applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id)),before=realizedRelations(baseline);
+    const goals=Goals.build(ir,g.architecture);
+    let covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal));
+    const record={max_trials:3,attempts:[],before:clearanceMetrics(b),scope:'Measured side-facing entries from horizontally separate scopes; fixed nodes and canonical operand bindings. No input-role or scheduling assertion.'};
+    let chosen=baseline,selected=[];
+    for(const {group}of candidates){
+      const plan=[...selected,...group],positions=new Map([...g.positions].map(([id,p])=>[id,{...p}]));
+      positions.context={...g.positions.context,crossScopePorts:plan,routeCache:new Map(),reserved:[]};
+      const graph={...g,positions,constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
+      let trial={graph,prepared:prepare(graph)};
+      if(state.paperSelectedRoutes!==false)trial=polishRoutes(trial);
+      const q=trial.prepared.quality,old=chosen.prepared.quality;
+      E.auditConstraintRoutes(graph,trial.prepared.routes);
+      const after=realizedRelations(trial),coverage=new Set(Goals.evaluate(goals,graph,trial.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal));
+      const facts=clearanceIdentity(g)===clearanceIdentity(graph);
+      const accepted=facts&&q.line_geometry.crossings<old.line_geometry.crossings&&
+        q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&
+        q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.issues.every(issue=>old.issues.includes(issue))&&q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&
+        fontMetric(q)>=fontMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&q.wire_length<=b.wire_length*1.02&&
+        graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&
+        Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
+      record.attempts.push({entries:group,accepted,facts_preserved:facts,before:clearanceMetrics(old),candidate:clearanceMetrics(q),
+        realized_before:before,realized_candidate:after,direct_goals_before:covered.size,direct_goals_candidate:coverage.size});
+      if(accepted){chosen=trial;selected=plan;before=after;covered=coverage;applied=new Set(graph.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));}
+    }
+    record.after=clearanceMetrics(chosen.prepared.quality);record.selected=selected;
+    chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,cross_scope_refinement:record};
+    return chosen;
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     const g=chosen.graph,b=chosen.prepared.quality;
@@ -867,6 +913,7 @@
         realized_before:before,realized_candidate:after,scope:'Fixed nodes and exact terminals; only a remaining final ambiguous overlap authorizes local parallel-rail trials. At most one additional crossing and 2% wire increase, no area or font regression.'};
     }
     if(state.paperSelectedRoutes!==false&&!Object.keys(state.offsets||{}).length&&chosen.graph.edges.length>64)chosen=polishRoutes(chosen);
+    chosen=prepareCrossScopePorts(ir,state,chosen);
     return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
@@ -887,6 +934,7 @@
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       summary_goals:g.summary_goals,summary_coverage:g.summary_coverage,
       layout:{frame_title_routing:g.positions.context.protectFrameTitles?'avoid':'pass-through',bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
+        ...(g.positions.context.crossScopePorts?.length?{cross_scope_ports:g.positions.context.crossScopePorts}:{}),
         ...(g.positions.context.inputDocks.length?{input_docks:g.positions.context.inputDocks.map(record=>({...record,geometry_verified:L.inputDockGeometry(record,g.positions),
           routes_verified:record.edges.every(e=>routes.find(r=>r.id===e.edge)?.route.ok)}))}:{}),
         ...(g.positions.context.compoundAlignments.length?{compound_alignments:g.positions.context.compoundAlignments.map(record=>{
@@ -909,5 +957,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

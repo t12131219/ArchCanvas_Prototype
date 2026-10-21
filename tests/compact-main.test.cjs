@@ -29,9 +29,10 @@ test('owner selection folds one exact scope and does not silently fold its simil
 test('shared and unknown helper paths never become automatic certified stage candidates',()=>{
  for(const name of ['SharedPath','UnknownPath']){const {set}=draw(name);assert.ok(!set.attempts.some(t=>t.form==='summary-set'));}
 });
-test('actual geometry rejects a fold that saves a node but neither space nor routing cost',()=>{
+test('actual geometry rejects longer wire even when a node fold slightly reduces final area',()=>{
  const {main,set}=draw('MixedPaths'),t=set.attempts.find(t=>t.form==='summary-set');assert.ok(t);assert.equal(t.accepted,false);
- assert.ok(t.reasons.includes('no-main-compaction'));assert.ok(t.reasons.includes('main-routing-cost'));
+ assert.ok(t.metrics.area<t.before.area);assert.ok(t.metrics.wire_length>t.before.wire_length);
+ assert.ok(t.reasons.includes('main-routing-cost'));
  assert.equal(set.panels[0].result.svg,main.svg);
 });
 test('conditional unknown and recurrent state boundaries stay visible in mixed compositions',()=>{

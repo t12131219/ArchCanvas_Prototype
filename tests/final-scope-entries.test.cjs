@@ -2,8 +2,8 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const R=require('../semantic_studio/publication-renderer.js');
 const {fixture,state:request}=require('./cross-scope-fixtures.cjs');
-// Isolate the scope-port policy from the later coupled-route pass.
-const state={...request,paperCoupledRoutes:false};
+// Isolate scope-port coordinates from later route and narrow-band passes.
+const state={...request,paperCoupledRoutes:false,paperResidualBands:false};
 const input=extra=>fixture({left:4,right:4,branches:4,...extra});
 const facts=r=>({ir:r.document.ir,architecture:r.document.architecture,publication:r.document.publication,nodes:r.document.layout.nodes,edges:r.graph.edges,
  node_accounting:r.graph.node_accounting,edge_accounting:r.graph.edge_accounting,representatives:r.graph.representatives,coverage:r.document.expression_coverage});

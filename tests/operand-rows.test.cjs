@@ -57,7 +57,9 @@ const read=name=>JSON.parse(fs.readFileSync('verification/operand-rows/current/'
 const state={paperMedium:'canvas',paperGranularity:'roles',paperPipelineSummaries:false};
 const facts=r=>({ir:r.document.ir,architecture:r.document.architecture,publication:r.document.publication,edges:r.graph.edges,node_accounting:r.graph.node_accounting,edge_accounting:r.graph.edge_accounting,coverage:r.document.expression_coverage});
 test('real unfamiliar source gains an aligned operand row without losing any exact fact',()=>{
- const ir=read('StaggeredOperands'),original=JSON.stringify(ir),a=R.render(ir,{...state,paperOperandRows:false}),b=R.render(ir,state),rec=b.prepared.routing.operand_row_refinement;
+ // Check this row move before the separate final vertical map.
+ const localState={...state,paperResidualBands:false};
+ const ir=read('StaggeredOperands'),original=JSON.stringify(ir),a=R.render(ir,{...localState,paperOperandRows:false}),b=R.render(ir,localState),rec=b.prepared.routing.operand_row_refinement;
  assert.ok(rec.selected.length);assert.deepEqual(facts(a),facts(b));assert.equal(JSON.stringify(ir),original);
  assert.equal(b.prepared.quality.wire_length,a.prepared.quality.wire_length);assert.equal(b.prepared.quality.line_geometry.crossings,a.prepared.quality.line_geometry.crossings);
  const selected=new Set(rec.selected.flatMap(r=>r.nodes.map(n=>n.node)));

@@ -44,7 +44,12 @@ test('selected partial owners retain their other local paths without duplicating
 });
 test('an adjacent unknown computation preserves its boundary while known local paths improve',()=>{
  const ir=load('MixedBoundary'),b=R.render(ir,{...state,paperAdaptive:false}),r=draw('MixedBoundary'),before=A.evidence(ir,b),after=A.evidence(ir,r);
- assert.ok(ir.nodes.some(n=>n.kind==='opaque'));assert.ok(r.graph.publication.adaptive_frontier.selected_role_paths.length);
+ assert.ok(ir.nodes.some(n=>n.kind==='opaque'));
+ // Final compaction may make the stronger whole-scope expression affordable.
+ // Require actual local evidence gain, rather than a particular request form.
+ assert.ok(after.goals.size>before.goals.size);
+ assert.ok(r.graph.publication.adaptive_frontier.attempts.some(t=>t.accepted&&t.gain>0));
+ assert.deepEqual(r.graph.publication.adaptive_frontier.selected,A.metrics(r));
  for(const id of before.boundaries)assert.ok(after.boundaries.has(id));for(const id of before.goals.keys())assert.ok(after.goals.has(id));
  assert.ok(r.graph.nodes.some(n=>n.kind==='opaque'));accounts(ir,r.graph);
 });

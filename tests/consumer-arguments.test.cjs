@@ -44,7 +44,8 @@ const read=name=>JSON.parse(fs.readFileSync('verification/consumer-arguments/cur
 const state=ir=>({paperMedium:'canvas',paperGranularity:'roles',paperPipelineSummaries:false,paperAuto:false,open:ir.nodes.filter(n=>n.kind==='composite').map(n=>n.id)});
 const facts=r=>({ir:r.document.ir,architecture:r.document.architecture,publication:r.document.publication,edges:r.graph.edges,node_accounting:r.graph.node_accounting,edge_accounting:r.graph.edge_accounting,coverage:r.document.expression_coverage});
 test('source-derived mixed conditional and unknown computations retain facts while late fixed inputs become shorter',()=>{
- const ir=read('MixedChoices'),original=JSON.stringify(ir),s=state(ir),a=R.render(ir,{...s,paperConsumerArguments:false}),b=R.render(ir,s),rec=b.prepared.routing.consumer_argument_refinement;
+ // Isolate the consumer move from final narrow-band compaction.
+ const ir=read('MixedChoices'),original=JSON.stringify(ir),s={...state(ir),paperResidualBands:false},a=R.render(ir,{...s,paperConsumerArguments:false}),b=R.render(ir,s),rec=b.prepared.routing.consumer_argument_refinement;
  assert.ok(rec.selected.length===2&&rec.attempts.length<=2);assert.deepEqual(facts(b),facts(a));assert.equal(JSON.stringify(ir),original);
  assert.ok(b.prepared.quality.wire_length<a.prepared.quality.wire_length*.8);assert.ok(b.prepared.quality.line_geometry.crossings<=a.prepared.quality.line_geometry.crossings);
  const moved=new Set(rec.selected.map(r=>r.node));for(const [id,p]of a.graph.positions)if(!moved.has(id))assert.deepEqual(b.graph.positions.get(id),p);

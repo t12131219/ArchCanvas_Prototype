@@ -203,7 +203,7 @@
   // Delete only globally empty horizontal bands. Protect every body/title,
   // label, terminal and horizontal wire; a common monotone map then shortens
   // vertical wires without changing their order or physical correspondence.
-  function emptyBands(positions,routes,windows,labels=[]){
+  function emptyBands(positions,routes,windows,labels=[],minimum=16){
     const forbidden=[...positions.values()].map(p=>[p.y-8,p.y+(p.expanded?p.header:p.h)+8]);
     for(const p of labels)forbidden.push([p.y-8,p.y+p.h+8]);
     for(const e of routes){
@@ -216,7 +216,7 @@
       let free=[[top,bottom]];
       for(const [a,b]of forbidden)free=free.flatMap(([l,h])=>b<=l||a>=h?[[l,h]]:
         [[l,Math.min(a,h)],[Math.max(l,b),h]].filter(([x,y])=>y>x));
-      bands.push(...free.filter(([a,b])=>b-a>=16));
+      bands.push(...free.filter(([a,b])=>b-a>=Math.max(1,minimum)));
     }
     const merged=[];
     for(const [top,bottom]of bands.sort((a,b)=>a[0]-b[0])){

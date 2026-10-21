@@ -637,7 +637,8 @@
     // Measure the same presentation that will be serialized. Post-selection
     // alignment would otherwise make semantic decisions on different paths
     // and leave their quality/evidence receipts stale in the final SVG.
-    return prepareRegionFollowers(ir,state,prepareContextSources(ir,state,prepareInvocationDocks(ir,state)));
+    const chosen=prepareRegionFollowers(ir,state,prepareContextSources(ir,state,prepareInvocationDocks(ir,state)));
+    return chosen.prepared.quality.medium==='canvas'?prepareFinalGeometry(ir,state,chosen):chosen;
   }
   function prepareAdaptive(ir,state={}){
     let chosen=preparePresented(ir,state);
@@ -698,7 +699,7 @@
     const receipt={rule_version:engine.VERSION,requested:true,policy:planning?'structure':'detail',baseline:initial,selected:engine.metrics(chosen),attempts,preflights,
       selected_role_details:selectedState.paperRoleDetails||[],selected_role_paths:selectedState.paperRolePaths||[],selected_expression_details:selectedState.paperExpressionDetails||[],
       unmeasured_opportunities:remaining.length,measurement_limit:3,preflight_limit:36,
-      geometry_scope:'Every baseline and candidate includes final context-source routing and region-follower alignment before evidence, quality and benefit are compared. Selected metrics describe the serialized figure.',
+      geometry_scope:'Every canvas baseline and candidate includes the complete final geometry pipeline, including port/operand refinement, frame attachment, routing, header reflow and residual empty-band compaction, before evidence, quality and benefit are compared. Selected metrics describe the serialized figure.',
       scope:'Bounded measured comparison of local role/relation expressions; critical boundaries, newly expressed structure and detailed paths remain distinct. Existing summaries preserve structure without fulfilling atomic detail. Canonical IR and saved requests remain unchanged; this is not global summary/detail or graph-set planning.'};
     chosen.graph.publication.adaptive_frontier=receipt;chosen.prepared.routing.semantic_refinement=receipt;
     return chosen;
@@ -1194,7 +1195,7 @@
     record.scope='At most three measured physical port tie orders on fixed geometry. Only coincident neighbor centers are reordered by distance; every value, condition and operand slot stays distinct. No source-role, scheduling or value-equivalence inference.';
     chosen.prepared.routing={...baseline.prepared.routing,coincident_port_refinement:record};return chosen;
   }
-  function prepareEmptyBandCompaction(ir,state,baseline){
+  function prepareEmptyBandCompaction(ir,state,baseline,{minimum=16,diagnostic='empty_band_compaction'}={}){
     const g=baseline.graph,b=baseline.prepared.quality,ctx=g.positions.context;
     if(b.medium!=='canvas'||state.paperEmptyBandCompaction===false||state.paperProtectFrameTitles===true||
       state.paperLabelSpacing!==undefined||state.paperLabelGapY!==undefined||Object.keys(state.offsets||{}).length||
@@ -1212,7 +1213,7 @@
       const kids=row.nodes.map(id=>g.positions.get(id)).filter(Boolean);
       if(kids.length&&row.gap_after)protectedGaps.push({y:Math.max(...kids.map(p=>p.y+p.h)),h:row.gap_after});
     }
-    const windows=[{top:g.bounds.y+24,bottom:g.bounds.y+g.bounds.h-24}],bands=L.emptyBands(g.positions,baseline.prepared.routes,windows,[...baseline.prepared.labeling.placed,...protectedGaps]);
+    const windows=[{top:g.bounds.y+24,bottom:g.bounds.y+g.bounds.h-24}],bands=L.emptyBands(g.positions,baseline.prepared.routes,windows,[...baseline.prepared.labeling.placed,...protectedGaps],minimum);
     if(!bands.length)return baseline;
     const map=y=>y-bands.reduce((sum,r)=>sum+Math.max(0,Math.min(y,r.bottom)-r.top),0);
     const positions=new Map([...g.positions].map(([id,p])=>[id,{...p,y:map(p.y),h:map(p.y+p.h)-map(p.y)}]));
@@ -1238,11 +1239,19 @@
       q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(issue=>b.issues.includes(issue))&&
       graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...done].every(id=>covered.has(id));
     const chosen=accepted?trial:baseline;
-    chosen.prepared.routing={...baseline.prepared.routing,empty_band_compaction:{accepted,windows,bands,protected_gaps:protectedGaps,
+    chosen.prepared.routing={...baseline.prepared.routing,[diagnostic]:{accepted,minimum_removed_px:minimum,windows,bands,protected_gaps:protectedGaps,
       before:clearanceMetrics(b),candidate:clearanceMetrics(q),realized_before:before,realized_candidate:after,
       direct_goals_before:done.size,direct_goals_candidate:covered.size,bands_preserved:bandsPreserved,
       scope:'One common monotone vertical map of globally empty bands, without rerouting or changing the semantic frontier. Concrete nodes, titles, horizontal wires, labels, terminals, frame borders and explicit clearances are protected; no execution or operation-equivalence claim.'}};
     return chosen;
+  }
+  function prepareResidualBands(ir,state,baseline){
+    if(state.paperResidualBands===false)return baseline;
+    // After route and header refinements, even a narrow free band can be
+    // removed without choosing a new frontier or rerouting. The minimum is
+    // removable whitespace, not node clearance: all existing 8px guards and
+    // explicit rank/entry gaps remain protected by the shared compactor.
+    return prepareEmptyBandCompaction(ir,state,baseline,{minimum:1,diagnostic:'residual_band_compaction'});
   }
   function prepareHeaderReflow(ir,state,baseline){
     const g=baseline.graph,b=baseline.prepared.quality,ctx=g.positions.context;
@@ -1349,8 +1358,7 @@
     record.scope='Certified branch paths and their visible outer enclosures define a local side lane. Exact terminals, source owner, operands, conditions and expansion remain; unproved or obstructed proposals keep their original reserved lane.';
     chosen.prepared.routing={...baseline.prepared.routing,local_bypass_refinement:record};return chosen;
   }
-  function prepareFigure(ir,state={}){
-    let chosen=selectFigure(ir,state);
+  function prepareFinalGeometry(ir,state,chosen){
     const g=chosen.graph,b=chosen.prepared.quality;
     // Repair only an actual unresolved final overlap. Feeding extra route
     // choices into every speculative layout can change a previously valid
@@ -1383,6 +1391,12 @@
     chosen=prepareEmptyBandCompaction(ir,state,chosen);
     chosen=prepareCoupledRoutes(ir,state,chosen);
     chosen=prepareHeaderReflow(ir,state,chosen);
+    chosen=prepareResidualBands(ir,state,chosen);
+    return chosen;
+  }
+  function prepareFigure(ir,state={}){
+    let chosen=selectFigure(ir,state);
+    if(chosen.prepared.quality.medium!=='canvas')chosen=prepareFinalGeometry(ir,state,chosen);
     chosen=attachExpressionEvidence(ir,chosen);
     const normal=chosen.graph.publication.normal_returns?.rows.filter(r=>r.attached_edges.length);
     if(!normal?.length||state.paperNormalReturns===false)return chosen;
@@ -1459,5 +1473,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

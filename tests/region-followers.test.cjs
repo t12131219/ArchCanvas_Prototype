@@ -1,7 +1,9 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const R=require('../semantic_studio/publication-renderer.js'),L=require('../semantic_studio/architecture-layout.js'),E=require('../semantic_studio/semantic-engine.js');
-const {fixture,state}=require('./context-source-fixtures.cjs');
+const {fixture,state:request}=require('./context-source-fixtures.cjs');
+// Isolate this stage's geometry; final narrow-band mapping is tested separately.
+const state={...request,paperResidualBands:false};
 const facts=r=>({ir:r.document.ir,nodes:r.graph.nodes.map(n=>n.id),edges:r.graph.edges.map(e=>[e.id,e.source,e.target,e.source_port,e.target_port,e.kind,e.condition,e.originals,e.bundle_members]),
  open:r.graph.publication.open,roles:r.graph.publication.role_frontier,node_accounting:r.graph.node_accounting,edge_accounting:r.graph.edge_accounting,boundary:r.graph.publication.boundary});
 test('a downstream terminal follows the actual region exit without changing frontier or ranks',()=>{

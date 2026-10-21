@@ -1,7 +1,9 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const E=require('../semantic_studio/semantic-engine.js'),L=require('../semantic_studio/architecture-layout.js'),R=require('../semantic_studio/publication-renderer.js');
-const {fixture,state}=require('./label-clearance-fixtures.cjs');
+const {fixture,state:request}=require('./label-clearance-fixtures.cjs');
+// Isolate this stage's geometry; final narrow-band mapping is tested separately.
+const state={...request,paperResidualBands:false};
 const snapshot=require('node:path').resolve('verification/local-relations/iteration-23-before-label-clearance/implementation/semantic_studio');
 const old=require('../tools/load_publication_renderer.cjs')(snapshot);
 const identity=g=>JSON.parse(JSON.stringify({nodes:g.nodes.map(n=>n.id),edges:g.edges.map(e=>({id:e.id,source:e.source,target:e.target,

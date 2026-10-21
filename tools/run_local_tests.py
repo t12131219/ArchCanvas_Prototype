@@ -61,6 +61,7 @@ COMMANDS = {
     'value-lineage': ['node', 'tests/value-lineage.test.cjs'],
     'coupled-routes': ['node', 'tests/coupled-routes.test.cjs'],
     'header-reflow': ['node', 'tests/header-reflow.test.cjs'],
+    'residual-bands': ['node', 'tests/residual-bands.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'coherent-frontiers': ['node', 'tests/coherent-frontiers.test.cjs'],

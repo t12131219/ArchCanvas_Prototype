@@ -1,7 +1,9 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const R=require('../semantic_studio/publication-renderer.js');
-const {fixture,state}=require('./cross-scope-fixtures.cjs');
+const {fixture,state:request}=require('./cross-scope-fixtures.cjs');
+// Keep this stage's fixed-terminal checks independent of later port swaps.
+const state={...request,paperSourcePortOrder:false};
 const facts=r=>({ir:r.document.ir,architecture:r.document.architecture,publication:r.document.publication,nodes:r.document.layout.nodes,
  edges:r.graph.edges,coverage:r.document.expression_coverage,node_accounting:r.graph.node_accounting,edge_accounting:r.graph.edge_accounting});
 test('an unfamiliar reconvergence leaves a single-wire local minimum without changing its frontier or terminals',()=>{

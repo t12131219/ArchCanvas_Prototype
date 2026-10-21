@@ -330,6 +330,47 @@
         scope:'Repeated uses of one resolved output, with distinct original terminals and operand slots. Shared drawing paths do not merge computations, parameters or invocations.'});
     }return records;
   }
+  // Swap two existing source terminals when their outward leads cross. Only
+  // the first normal segment and following tangent segment change; all later
+  // bends and every consumer terminal remain fixed. No values are merged.
+  function sourcePortSwaps(positions,routes){
+    const ctx=positions.context,result=[];
+    const ordinary=e=>!e.condition&&!e.iteration&&!e.design_route&&!e.context_lane&&!e.layout_after&&
+      ['data','alias','interface-binding'].includes(e.kind);
+    const eligible=e=>e.route.ok&&!ctx.feedback?.has(e.id)&&
+      (e.bundle_members?e.bundle_members.length>0&&ordinary({...e,kind:'data'})&&e.bundle_members.every(ordinary):ordinary(e));
+    const leads=[];
+    for(const e of routes){
+      const p=positions.get(e.source),ps=e.route?.points,side=e.route?.source_side;
+      if(!eligible(e)||!p||p.expanded||p.cyclic||p.symbol||!['top','bottom','left','right'].includes(side)||ps.length<4)continue;
+      const axis=['top','bottom'].includes(side)?'y':'x',tangent=axis==='y'?'x':'y',sign=['bottom','right'].includes(side)?1:-1;
+      if(ps[0][tangent]!==ps[1][tangent]||ps[1][axis]!==ps[2][axis]||
+        (ps[1][axis]-ps[0][axis])*sign<4||ps[1][tangent]===ps[2][tangent])continue;
+      leads.push({e,axis,tangent,side});
+    }
+    for(let i=0;i<leads.length;i++)for(let j=i+1;j<leads.length;j++){
+      const a=leads[i],b=leads[j],pa=a.e.route.points,pb=b.e.route.points;
+      if(a.e.source!==b.e.source||a.side!==b.side||pa[0][a.axis]!==pb[0][a.axis]||pa[0][a.tangent]===pb[0][a.tangent])continue;
+      // Only a strict crossing between one normal lead and the other's
+      // first tangent is eligible, not a distant crossing or touching bend.
+      const crosses=(normal,tan)=>Math.min(tan[1][a.tangent],tan[2][a.tangent])<normal[0][a.tangent]&&
+        normal[0][a.tangent]<Math.max(tan[1][a.tangent],tan[2][a.tangent])&&
+        Math.min(normal[0][a.axis],normal[1][a.axis])<tan[1][a.axis]&&
+        tan[1][a.axis]<Math.max(normal[0][a.axis],normal[1][a.axis]);
+      if(!crosses(pa,pb)&&!crosses(pb,pa))continue;
+      const fresh=[a,b].map((r,k)=>{
+        const ps=r.e.route.points.map(p=>({...p})),other=k?pa:pb;
+        ps[0][a.tangent]=other[0][a.tangent];ps[1][a.tangent]=other[0][a.tangent];
+        return {...r.e,route:{...r.e.route,points:ps}};
+      });
+      if(fresh.some(e=>{const ps=e.route.points,boxes=routeObstacles(e,positions);return ps[1][a.tangent]===ps[2][a.tangent]||
+        ps.slice(0,3).some((p,i,lead)=>i&&blocked(lead[i-1],p,boxes));}))continue;
+      result.push({source:a.e.source,side:a.side,edges:[a.e.id,b.e.id],routes:fresh,
+        before:[pa[0],pb[0]],after:fresh.map(e=>e.route.points[0]),
+        scope:'Permutation of existing geometric source terminals; canonical source/target slots, bundled uses and all bends after the first tangent remain. No value equivalence, source role or execution assertion.'});
+    }
+    return result;
+  }
   // Parallel labelled wires need clearance where their visible branches meet,
   // not in every helper in the figure. Use the drawing hierarchy after frame
   // ownership; source nesting may no longer be the visible containment tree.
@@ -1082,5 +1123,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,routeObstacles,sharedFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

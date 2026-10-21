@@ -81,6 +81,6 @@ test('bounded selection preserves local budget deferral and previous independent
 });
 test('explicit title avoidance recovers frozen SVG states and disabled-summary source detail',()=>{
  const old=require('../tools/load_publication_renderer.cjs')(path.resolve('verification/local-relations/iteration-25-before-adaptive-frontier/implementation/semantic_studio'));
- for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry'])assert.equal(render(name,{paperProtectFrameTitles:true,paperTransformConfigurations:false}).svg,old.render(load(name),state).svg);
- const disabled={...state,paperPipelineSummaries:false,paperProtectFrameTitles:true,paperTransformConfigurations:false};assert.equal(render('SameSource',disabled).svg,old.render(load('SameSource'),disabled).svg);
+ for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry'])assert.equal(render(name,{paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false}).svg,old.render(load(name),state).svg);
+ const disabled={...state,paperPipelineSummaries:false,paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false};assert.equal(render('SameSource',disabled).svg,old.render(load('SameSource'),disabled).svg);
 });

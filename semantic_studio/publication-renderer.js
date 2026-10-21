@@ -1359,6 +1359,42 @@
     record.scope='Certified branch paths and their visible outer enclosures define a local side lane. Exact terminals, source owner, operands, conditions and expansion remain; unproved or obstructed proposals keep their original reserved lane.';
     chosen.prepared.routing={...baseline.prepared.routing,local_bypass_refinement:record};return chosen;
   }
+  function prepareSourcePortOrder(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(state.paperSourcePortOrder===false||b.medium!=='canvas'||Object.keys(state.offsets||{}).length||
+      g.edges.length>128||b.route_failures.length||b.unplaced_port_labels.length||baseline.prepared.routing?.shared_fanout_refinement?.selected.length)return baseline;
+    const proposals=L.sourcePortSwaps(g.positions,baseline.prepared.routes).slice(0,8);
+    if(!proposals.length)return baseline;
+    const goals=Goals.build(ir,g.architecture),covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),relations=realizedRelations(baseline),identity=clearanceIdentity(g);
+    const record={max_pairs:8,attempts:[],selected:[]};let chosen=baseline;
+    for(const proposal of proposals){
+      if(record.selected.some(r=>r.edges.some(id=>proposal.edges.includes(id))))continue;
+      const {routes:fresh,...row}=proposal,updated=new Map(fresh.map(e=>[e.id,e])),old=chosen.prepared.quality;
+      const routes=chosen.prepared.routes.map(e=>updated.get(e.id)||e),positions=new Map(chosen.graph.positions);
+      positions.context={...chosen.graph.positions.context,routeCache:new Map()};
+      const graph={...chosen.graph,positions,constraint_receipts:JSON.parse(JSON.stringify(chosen.graph.constraint_receipts))};
+      const prepared=evaluateRoutes(graph,routes,b.route_strategy,chosen.prepared.labeling),q=prepared.quality;
+      const labelsClear=fresh.every(e=>e.route.points.slice(0,3).every((p,i,ps)=>!i||!L.blocked(ps[i-1],p,prepared.labeling.placed.map(l=>({x:l.x-4,y:l.y-4,w:l.w+8,h:l.h+8})))));
+      const contacts=new Set(old.line_geometry.unrelated_contacts.map(c=>JSON.stringify(c.edges)));
+      const geometry=labelsClear&&q.line_geometry.crossings<old.line_geometry.crossings&&q.wire_length<=old.wire_length&&
+        q.native_width_px<=old.native_width_px&&q.native_height_px<=old.native_height_px&&fontMetric(q)>=fontMetric(old)&&
+        q.line_geometry.unrelated_contacts.every(c=>contacts.has(JSON.stringify(c.edges)))&&
+        q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(issue=>old.issues.includes(issue));
+      let accepted=false;
+      if(geometry){
+        E.auditConstraintRoutes(graph,routes);const after=realizedRelations({graph,prepared});
+        const now=new Set(Goals.evaluate(goals,graph,prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+        accepted=clearanceIdentity(graph)===identity&&graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
+          Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>now.has(id));
+      }
+      record.attempts.push({...row,accepted,existing_labels_clear:labelsClear,before:clearanceMetrics(old),candidate:clearanceMetrics(q)});
+      if(accepted){chosen={graph,prepared};record.selected.push(row);}
+    }
+    record.scope='At most eight actual source-lead crossing pairs. Only two existing source terminal positions are permuted; no node moves, distant rerouting, value merging or canonical binding changes. Crossings strictly decrease and wire length cannot increase.';
+    chosen.prepared.routing={...baseline.prepared.routing,source_port_order:record};return chosen;
+  }
   function prepareSharedFanouts(ir,state,baseline){
     const g=baseline.graph,b=baseline.prepared.quality;
     if(baseline.prepared.routing?.shared_fanout_refinement?.selected.length)return baseline;
@@ -1451,6 +1487,7 @@
     chosen=prepareCoupledRoutes(ir,state,chosen);
     chosen=prepareHeaderReflow(ir,state,chosen);
     chosen=prepareResidualBands(ir,state,chosen);
+    chosen=prepareSourcePortOrder(ir,state,chosen);
     chosen=prepareSharedFanouts(ir,state,chosen);
     return chosen;
   }
@@ -1535,5 +1572,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -69,6 +69,6 @@ test('explicit title avoidance recovers frozen role frontiers on mixed, broken a
  for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry']){
   // Freeze the historical content policy too; title avoidance alone must not
   // disable new, independently source-backed configuration annotations.
-  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(R.render(ir,{...state,paperProtectFrameTitles:true,paperTransformConfigurations:false}).svg,old.render(ir,state).svg);
+  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(R.render(ir,{...state,paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false}).svg,old.render(ir,state).svg);
  }
 });

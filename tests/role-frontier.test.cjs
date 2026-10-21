@@ -47,7 +47,7 @@ test('role granularity exposes the three proved projection bindings and preserve
 test('a semantic view with explicit title avoidance reproduces the frozen pre-role renderer',()=>{
  const frozen=require('../tools/load_publication_renderer.cjs')(path.resolve(__dirname,'../verification/local-relations/iteration-12-before-role-frontier/implementation/semantic_studio'));
  const ir=read('SameSource');for(const medium of ['canvas','print'])for(const preset of ['overview','modules','semantic','detailed']){
-  const s={paperMedium:medium,paperGranularity:preset,paperProtectFrameTitles:true,paperCoupledRoutes:false};assert.equal(R.render(ir,s).svg,frozen.render(ir,s).svg);
+  const s={paperMedium:medium,paperGranularity:preset,paperProtectFrameTitles:true,paperCoupledRoutes:false,paperSourcePortOrder:false};assert.equal(R.render(ir,s).svg,frozen.render(ir,s).svg);
  }
 });
 test('role view saves, reopens, expands a nested boundary and returns to the same SVG',()=>{

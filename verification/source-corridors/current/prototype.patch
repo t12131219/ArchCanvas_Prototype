@@ -1,0 +1,111 @@
+diff --git a/semantic_studio/architecture-layout.js b/semantic_studio/architecture-layout.js
+index 7af3e7d..01b723f 100644
+--- a/semantic_studio/architecture-layout.js
++++ b/semantic_studio/architecture-layout.js
+@@ -863,6 +863,19 @@
+     // during one route. Reuse scores without changing comparison or tie order.
+     const lengths=new WeakMap();
+     const length=ps=>{if(!lengths.has(ps))lengths.set(ps,ps.reduce((s,p,i)=>s+(i?Math.abs(p.x-ps[i-1].x)+Math.abs(p.y-ps[i-1].y)+congestion(ps[i-1],p):0),0)+ps.length*12);return lengths.get(ps);};
++    // Final source-corridor trials reuse only a parallel coordinate suggested
++    // by another selected route. Keep distinct terminals and wires; this is
++    // neither value merging nor an unbounded visibility search.
++    if(context?.sourceRails){
++      const shifts=(which,axis,outward)=>{const sign=which===(axis==='x'?'bottom':'right')?1:which===(axis==='x'?'top':'left')?-1:0;
++        return sign?[0,12*sign,24*sign]:[0,-12,12];};
++      const trials=context.sourceRails.flatMap(r=>shifts(ss,r.axis).flatMap(leave=>shifts(ts,r.axis).map(enter=>r.axis==='x'?
++        [s,start,point(start.x,start.y+leave),point(r.coordinate,start.y+leave),point(r.coordinate,end.y+enter),point(end.x,end.y+enter),end,t]:
++        [s,start,point(start.x+leave,start.y),point(start.x+leave,r.coordinate),point(end.x+enter,r.coordinate),point(end.x+enter,end.y),end,t])))
++        .map(simplify).filter(clear).sort((a,b)=>length(a)-length(b));
++      return {points:trials[0]||[],ok:!!trials.length,reason:trials.length?null:'no-clear-source-corridor',
++        feedback:false,source_side:ss,target_side:ts};
++    }
+     // During an explicitly requested repair, compare the shifted rails with
+     // the ordinary lane candidates. The normal router keeps its historical
+     // lane preference; a repair must be allowed to choose a slightly longer
+diff --git a/semantic_studio/publication-renderer.js b/semantic_studio/publication-renderer.js
+index 586e2ae..2a9d230 100644
+--- a/semantic_studio/publication-renderer.js
++++ b/semantic_studio/publication-renderer.js
+@@ -1178,6 +1178,67 @@
+       scope:'One common monotone vertical map of globally empty bands, without rerouting or changing the semantic frontier. Concrete nodes, titles, horizontal wires, labels, terminals, frame borders and explicit clearances are protected; no execution or operation-equivalence claim.'}};
+     return chosen;
+   }
++  function prepareSourceCorridors(ir,state,baseline){
++    const g=baseline.graph,b=baseline.prepared.quality,ctx=g.positions.context;
++    if(state.paperSourceCorridors===false||b.medium!=='canvas'||Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
++    const key=e=>{
++      const members=e.bundle_members||[e],producer=g.idx.nodes.get(e.source);
++      if(!producer||producer.mutable||producer.condition||producer.kind==='opaque'||producer.identity_display||producer.observed_calls||
++        e.design_route||e.context_lane||e.layout_after||e.iteration||e.condition||ctx.feedback?.has(e.id)||
++        members.some(m=>!['data','alias','interface-binding'].includes(m.kind)||m.source!==e.source||m.resolved_source!==e.source||
++          m.condition||m.iteration||m.design_route||m.context_lane||m.layout_after||typeof m.source_port!=='string'))return null;
++      const slots=new Set(members.map(m=>m.source_port));
++      return slots.size===1?JSON.stringify([e.source,[...slots][0]]):null;
++    };
++    const groups=new Map(),wire=e=>e.route.points.slice(1).reduce((s,p,i)=>s+Math.abs(p.x-e.route.points[i].x)+Math.abs(p.y-e.route.points[i].y),0);
++    for(const e of baseline.prepared.routes){const value=key(e);if(value&&e.route.ok){if(!groups.has(value))groups.set(value,[]);groups.get(value).push(e.id);}}
++    const selected=[...groups].filter(([,ids])=>ids.length>1).sort((a,c)=>
++      c[1].reduce((s,id)=>s+wire(baseline.prepared.routes.find(e=>e.id===id)),0)-a[1].reduce((s,id)=>s+wire(baseline.prepared.routes.find(e=>e.id===id)),0)).slice(0,3);
++    if(!selected.length)return baseline;
++    let chosen=baseline;const savedContext={...ctx},savedReceipts=JSON.parse(JSON.stringify(g.constraint_receipts));
++    E.auditConstraintRoutes(g,baseline.prepared.routes);
++    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),relations=realizedRelations(baseline);
++    const record={attempts:[],accepted:[],max_groups:3,max_edges_per_group:3,before:clearanceMetrics(b)};
++    ctx.portOrder=b.route_strategy.startsWith('neighbors')?'neighbors':'canonical';ctx.ancestorPorts=b.route_strategy.includes('-header-')?'header':'boundary';
++    ctx.crossingCost=180;ctx.contactCost=360;ctx.stubLength=16;
++    for(const [value,ids]of selected)for(const id of ids.slice().sort((a,c)=>wire(chosen.prepared.routes.find(e=>e.id===c))-wire(chosen.prepared.routes.find(e=>e.id===a))).slice(0,3)){
++      const current=chosen.prepared.routes.find(e=>e.id===id),rails=[];
++      for(const other of chosen.prepared.routes.filter(e=>ids.includes(e.id)))for(let i=1;i<other.route.points.length;i++){
++        const a=other.route.points[i-1],p=other.route.points[i],axis=a.x===p.x?'x':'y',span=Math.abs(a.x-p.x)+Math.abs(a.y-p.y);
++        if(span<128)continue;
++        for(const delta of [-12,12,-24,24])rails.push({axis,coordinate:a[axis]+delta,host:other.id,segment:i-1});
++      }
++      ctx.sourceRails=[...new Map(rails.map(r=>[JSON.stringify([r.axis,r.coordinate]),r])).values()].slice(0,32);
++      if(!ctx.sourceRails.length)continue;
++      ctx.reserved=chosen.prepared.routes.filter(e=>e.id!==id).flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
++      ctx.routeCache=new Map();
++      let route;try{route=E.route(current,g.positions);}finally{delete ctx.sourceRails;}
++      const attempt={value,edge:id,rails:rails.length,accepted:false};record.attempts.push(attempt);
++      const same=(a,c)=>a.x===c.x&&a.y===c.y;
++      if(!route.ok||!same(route.points[0],current.route.points[0])||!same(route.points.at(-1),current.route.points.at(-1))||
++        route.source_side!==current.route.source_side||route.target_side!==current.route.target_side)continue;
++      const prepared=evaluateRoutes(g,chosen.prepared.routes.map(e=>e.id===id?{...e,route}:e),b.route_strategy),q=prepared.quality,old=chosen.prepared.quality;
++      attempt.before=clearanceMetrics(old);attempt.candidate=clearanceMetrics(q);
++      if(q.line_geometry.crossings>old.line_geometry.crossings||q.wire_length>old.wire_length||
++        q.line_geometry.crossings===old.line_geometry.crossings&&q.wire_length>=old.wire_length||
++        q.native_width_px>old.native_width_px||q.native_height_px>old.native_height_px||fontMetric(q)<fontMetric(old)||
++        q.line_geometry.unrelated_contacts.length>old.line_geometry.unrelated_contacts.length||
++        q.line_geometry.overlapping_paths.length>old.line_geometry.overlapping_paths.length||
++        q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length>old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length||
++        q.route_failures.length>old.route_failures.length||q.unplaced_port_labels.length>old.unplaced_port_labels.length||q.issues.some(issue=>!old.issues.includes(issue)))continue;
++      const trial={graph:g,prepared};E.auditConstraintRoutes(g,prepared.routes);const after=realizedRelations(trial);
++      if(g.constraint_receipts.some(r=>applied.has(r.id)&&r.status!=='applied')||Object.keys(relations).some(k=>relations[k].some(id=>!after[k].includes(id)))){
++        E.auditConstraintRoutes(g,chosen.prepared.routes);continue;
++      }
++      attempt.accepted=true;record.accepted.push({value,edge:id});chosen=trial;
++    }
++    Object.assign(ctx,savedContext);delete ctx.sourceRails;ctx.routeCache=new Map(chosen.prepared.routes.map(e=>[e.id,e.route]));
++    ctx.reserved=chosen.prepared.routes.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
++    if(chosen===baseline)g.constraint_receipts=savedReceipts;else E.auditConstraintRoutes(g,chosen.prepared.routes);
++    record.after=clearanceMetrics(chosen.prepared.quality);
++    record.scope='Parallel rails suggested by selected routes of the exact same visible producer and result slot. Distinct physical terminals, edges and canonical bindings remain; no shared wire or operation equivalence.';
++    chosen.prepared.routing={...baseline.prepared.routing,source_corridor_refinement:record};return chosen;
++  }
+   function prepareFigure(ir,state={}){
+     let chosen=selectFigure(ir,state);
+     const g=chosen.graph,b=chosen.prepared.quality;
+@@ -1208,6 +1269,7 @@
+     chosen=prepareOperandRows(ir,state,chosen,{declared:true});
+     chosen=prepareCrossScopePorts(ir,state,chosen,{final:true});
+     chosen=prepareCoincidentPorts(ir,state,chosen);
++    chosen=prepareSourceCorridors(ir,state,chosen);
+     chosen=prepareEmptyBandCompaction(ir,state,chosen);
+     return attachExpressionEvidence(ir,chosen);
+   }
+@@ -1256,5 +1318,5 @@
+         })}:{})},
+       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
+   }
+-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
++  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareSourceCorridors,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+ })(typeof window!=='undefined'?window:globalThis);

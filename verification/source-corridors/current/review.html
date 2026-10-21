@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>来源通道试验：未采用</title><style>body{font:16px/1.6 system-ui;margin:24px;background:#f5f7fb;color:#293746}
+main{max-width:1500px;margin:auto}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+section{background:white;padding:16px;border:1px solid #cbd5e1;margin:20px 0;min-width:0}img{width:100%;height:auto}a{color:#175fc2}
+@media(max-width:850px){.grid{display:block}}</style><main><h1>来源通道试验：未采用</h1>
+<p>原型依据精确生产者和结果槽提出平行通道，保留独立消费绑定和物理端口。标题仍可穿行。
+仅在临时目录执行；生产语义和布局脚本与 8476c9b 完全一致。</p><section><h2>正式管线和独立 SVG 审核</h2><p>65 个图元 / 76 条连接，交叉均为 12；线长 38405.7 → 38362.7（减少 0.112%），
+画布 1968 × 3342.5 → 1968 × 3342。两图均无节点侵入、无关接触或路径重叠。</p>
+<p><strong>没有达到有意义的视觉收敛：不采用。</strong>阅读方向、模块组织和细节密度没有改变。
+本轮保留试验和拒绝证据，下一步检查局部计算边界与旁路通道的关系。</p></section><div class="grid"><section><h2>当前生产实现</h2><a href="main-before.svg"><img src="main-before.svg" alt="当前生产实现"></a></section><section><h2>实验原型（未采用）</h2><a href="main-candidate.svg"><img src="main-candidate.svg" alt="实验原型（未采用）"></a></section></div><section><h2>证据与后续方向</h2><p>原始 IR、语义计划、逐节点／逐边去向和直接表达保留；三种破坏反例被拒绝，四项原型测试通过。
+仅正式比较当前主图，未新增广泛模型或图组覆盖结论，也未测量浏览器性能。</p>
+<p>主图五条旁路相对忽略障碍的 Manhattan 下界多出 3140 线长。后续需依据实际分支路径检验局部旁路通道，
+保留 skip 捕获点、汇合端和源码归属；此处仅为有证据的下一步方向，尚未实施。</p>
+<ul><li><a href="experiment-report.json">正式试验报告</a> · <a href="independent-report.json">独立 SVG 审核</a></li>
+<li><a href="prototype.patch">原型补丁</a> · <a href="prototype-tests.log">四项原型测试输出</a></li>
+<li><a href="/docs/source-corridor-experiment.md">设计、取舍与复现</a> · <a href="/verification/coincident-ports/current/transformer-review.html">主图与专用参考</a></li></ul>
+<p>整体目标仍未完成。专用展开图对应的是通用图的中间语义状态；其下仍保留更细源码事实。</p></section></main></html>

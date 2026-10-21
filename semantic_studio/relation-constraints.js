@@ -96,10 +96,17 @@
   }
   function auditRoutes(receipts,positions,routes){
     const by=new Map(routes.map(r=>[r.id,r]));
-    for(const receipt of receipts)if(receipt.status==='applied'&&['reserved-state-lanes','reserved-lane','reserved-iteration-lane'].includes(receipt.consumption)){
+    for(const receipt of receipts)if(receipt.status==='applied'&&['reserved-state-lanes','reserved-lane','reserved-iteration-lane','local-bypass-lane'].includes(receipt.consumption)){
       const relevant=receipt.type==='bypass'?routes.filter(e=>e.design_route?.certificate===receipt.properties.certificate):receipt.mapping.filter(b=>['initial-state','final-state','final-state-pair','iteration-feedback'].includes(b.role)).flatMap(b=>b.visible_edges.map(id=>by.get(id)));
-      const okay=relevant.length&&relevant.every(e=>{const p=positions.get(e?.design_route?.owner);return p&&e.route?.ok&&e.route.points.some(v=>v.x>p.x&&v.x<p.x+p.design_gutter);});
+      const scopes=receipt.type==='bypass'?(positions.context.localBypassScopes||[]).filter(s=>s.certificate===receipt.properties.certificate):[];
+      const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
+      const okay=scopes.length?relevant.length===scopes.length&&relevant.every(e=>{
+        const s=scopes.find(s=>s.edge===e.id),c=receipt.properties;
+        return s&&s.skip===c.skip&&s.skip_slot===c.skip_slot&&s.add===c.add&&
+          JSON.stringify(s.mapping.map(m=>m.canonical))===JSON.stringify(c.branch_path)&&L.localBypassGeometry(s,e,positions);
+      }):receipt.consumption!=='local-bypass-lane'&&relevant.length&&relevant.every(e=>{const p=positions.get(e?.design_route?.owner);return p&&e.route?.ok&&e.route.points.some(v=>v.x>p.x&&v.x<p.x+p.design_gutter);});
       receipt.route_verified=!!okay;
+      if(okay&&scopes.length){receipt.consumption='local-bypass-lane';receipt.reason='exact skip operand bypasses the certified visible branch frontier; original source owner retained';}
       if(!okay){receipt.status='conflict';receipt.reason='reserved channel was not realized by the final obstacle-aware routes';}
     }
     for(const receipt of receipts)if(receipt.status==='applied'&&receipt.consumption==='branch-columns'){

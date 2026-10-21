@@ -1178,6 +1178,54 @@
       scope:'One common monotone vertical map of globally empty bands, without rerouting or changing the semantic frontier. Concrete nodes, titles, horizontal wires, labels, terminals, frame borders and explicit clearances are protected; no execution or operation-equivalence claim.'}};
     return chosen;
   }
+  function prepareLocalBypasses(ir,state,baseline){
+    const b=baseline.prepared.quality,g=baseline.graph;
+    if(state.paperLocalBypasses===false||b.medium!=='canvas'||g.edges.length>128||Object.keys(state.offsets||{}).length)return baseline;
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
+    // A pre-existing conflict is not permission to silently substitute a new
+    // channel. This refinement preserves already realized bypass relations.
+    const candidates=baseline.prepared.routes.map(e=>({edge:e,scope:L.localBypassScope(g,e)})).filter(c=>c.scope&&
+      g.constraint_receipts.some(r=>r.type==='bypass'&&r.properties.certificate===c.scope.certificate&&r.status==='applied')).slice(0,6);
+    if(!candidates.length)return baseline;
+    let chosen=baseline;const record={attempts:[],selected:[],max_edges:6,max_rails_per_edge:4,before:clearanceMetrics(b)};
+    const goals=Goals.build(ir,g.architecture),covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),relations=realizedRelations(baseline);
+    for(const {edge,scope}of candidates){
+      const left=Math.min(...scope.frontier.map(id=>g.positions.get(id).x));
+      for(const gap of [16,28,40,52]){
+        const old=chosen.prepared.quality,current=chosen.prepared.routes.find(e=>e.id===edge.id),ctx=chosen.graph.positions.context;
+        const positions=new Map(chosen.graph.positions);
+        positions.context={...ctx,localBypassScopes:[...(ctx.localBypassScopes||[]).filter(s=>s.edge!==edge.id),scope],
+          localBypassTrial:{edge:edge.id,scope,x:left-gap},routeCache:new Map(),reserved:[]};
+        positions.context.portOrder=old.route_strategy.startsWith('neighbors')?'neighbors':'canonical';
+        positions.context.ancestorPorts=old.route_strategy.includes('-header-')?'header':'boundary';
+        const route=E.route(current,positions);delete positions.context.localBypassTrial;
+        const attempt={edge:edge.id,gap,accepted:false};record.attempts.push(attempt);
+        const same=(p,q)=>p.x===q.x&&p.y===q.y;
+        if(!route.ok||!same(route.points[0],current.route.points[0])||!same(route.points.at(-1),current.route.points.at(-1))||
+          route.source_side!==current.route.source_side||route.target_side!==current.route.target_side){attempt.reason='obstacle, scope or physical terminal mismatch';continue;}
+        const graph={...chosen.graph,positions,constraint_receipts:JSON.parse(JSON.stringify(chosen.graph.constraint_receipts))};
+        const routes=chosen.prepared.routes.map(e=>e.id===edge.id?{...e,route}:e),prepared=evaluateRoutes(graph,routes,old.route_strategy),q=prepared.quality,trial={graph,prepared};
+        attempt.candidate=clearanceMetrics(q);
+        if(q.wire_length>=old.wire_length||q.native_width_px>old.native_width_px||q.native_height_px>old.native_height_px||fontMetric(q)<fontMetric(old)||
+          q.line_geometry.crossings>old.line_geometry.crossings||q.line_geometry.unrelated_contacts.length>old.line_geometry.unrelated_contacts.length||
+          q.line_geometry.overlapping_paths.length>old.line_geometry.overlapping_paths.length||q.route_failures.length>old.route_failures.length||
+          q.unplaced_port_labels.length>old.unplaced_port_labels.length||q.issues.some(issue=>!old.issues.includes(issue))){attempt.reason='no safe geometric benefit';continue;}
+        E.auditConstraintRoutes(graph,routes);const after=realizedRelations(trial);
+        const now=new Set(Goals.evaluate(goals,graph,prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+        if(clearanceIdentity(g)!==clearanceIdentity(graph)||graph.constraint_receipts.some(r=>applied.has(r.id)&&r.status!=='applied')||
+          Object.keys(relations).some(k=>relations[k].some(id=>!after[k].includes(id)))||[...covered].some(id=>!now.has(id))){attempt.reason='lost facts, expression or applied relation';continue;}
+        attempt.accepted=true;record.selected.push(scope);chosen=trial;break;
+      }
+    }
+    if(chosen!==baseline){
+      const ctx=chosen.graph.positions.context;ctx.routeCache=new Map(chosen.prepared.routes.map(e=>[e.id,e.route]));
+      ctx.reserved=chosen.prepared.routes.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
+    }
+    record.after=clearanceMetrics(chosen.prepared.quality);
+    record.scope='Certified branch paths and their visible outer enclosures define a local side lane. Exact terminals, source owner, operands, conditions and expansion remain; unproved or obstructed proposals keep their original reserved lane.';
+    chosen.prepared.routing={...baseline.prepared.routing,local_bypass_refinement:record};return chosen;
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     const g=chosen.graph,b=chosen.prepared.quality;
@@ -1208,6 +1256,7 @@
     chosen=prepareOperandRows(ir,state,chosen,{declared:true});
     chosen=prepareCrossScopePorts(ir,state,chosen,{final:true});
     chosen=prepareCoincidentPorts(ir,state,chosen);
+    chosen=prepareLocalBypasses(ir,state,chosen);
     chosen=prepareEmptyBandCompaction(ir,state,chosen);
     return attachExpressionEvidence(ir,chosen);
   }
@@ -1229,6 +1278,7 @@
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       summary_goals:g.summary_goals,summary_coverage:g.summary_coverage,
       layout:{frame_title_routing:g.positions.context.protectFrameTitles?'avoid':'pass-through',bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
+        ...(g.positions.context.localBypassScopes?.length?{local_bypasses:g.positions.context.localBypassScopes.map(s=>({...s,geometry_verified:L.localBypassGeometry(s,routes.find(e=>e.id===s.edge),g.positions)}))}:{}),
         ...(g.positions.context.consumerArguments?.length?{consumer_arguments:g.positions.context.consumerArguments}:{}),
         ...(g.positions.context.operandRows?.length?{operand_rows:g.positions.context.operandRows}:{}),
         ...(g.positions.context.declaredOperandRows?.length?{declared_operand_rows:g.positions.context.declaredOperandRows}:{}),
@@ -1256,5 +1306,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

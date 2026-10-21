@@ -685,6 +685,47 @@
     if(r.circle){const radius=r.w/2,cx=r.x+radius,cy=r.y+radius,d=a.x===b.x?Math.abs(a.x-cx):Math.abs(a.y-cy);if(d>=radius-1e-8)return false;const half=Math.sqrt(radius*radius-d*d);return a.x===b.x?Math.max(a.y,b.y)>cy-half+1e-8&&Math.min(a.y,b.y)<cy+half-1e-8:Math.max(a.x,b.x)>cx-half+1e-8&&Math.min(a.x,b.x)<cx+half-1e-8;}
     return a.x===b.x?a.x>r.x&&a.x<r.x+r.w&&Math.max(a.y,b.y)>r.y&&Math.min(a.y,b.y)<r.y+r.h:a.y>r.y&&a.y<r.y+r.h&&Math.max(a.x,b.x)>r.x&&Math.min(a.x,b.x)<r.x+r.w;
   });}
+  // A source owner is evidence provenance, not necessarily the smallest
+  // drawing boundary around a certified branch. This proposal keeps the
+  // original owner and derives a separate, reversible geometric scope.
+  function localBypassScope(g,e){
+    if(e.design_route?.kind!=='bypass'||e.bundle_members||e.condition||e.iteration||e.context_lane||e.kind!=='data')return null;
+    const c=g.architecture?.semantic_contracts?.find(c=>c.id===e.design_route.certificate),r=c?.roles;
+    if(!r?.branch_path?.length||r.branch_path.length>64||e.resolved_source!==r.skip||e.source_port!==r.skip_slot||e.canonical_target!==r.add)return null;
+    const source=g.idx.nodes.get(e.source),target=g.idx.nodes.get(e.target);
+    if(!(e.source===r.skip||source?.contract_stage?.roles.normalization===r.skip&&e.source_port==='out')||
+      !(e.target===r.add||target?.contract_stage?.roles.add===r.add&&target.contract_stage.certificate===c.id))return null;
+    const chain=id=>{const result=[];while(id&&!result.includes(id)){result.push(id);id=g.idx.nodes.get(id)?.parent;}return result;};
+    const ends=new Set([...chain(e.source),...chain(e.target)]),mapping=[];
+    for(const id of r.branch_path){
+      const n=g.idx.nodes.get(id),rep=g.representatives[id];
+      if(!n||['opaque','control','state','buffer'].includes(n.kind)||n.mutable||n.condition||n.operator==='phi'||!g.positions.has(rep))return null;
+      if(rep===e.source)return null;
+      mapping.push({canonical:id,visible:rep});
+    }
+    // The final branch operation can be inside the exact Add/Norm stage.
+    // Other computations must remain outside both endpoints' ancestry.
+    const frontier=[...new Set(mapping.filter(m=>m.visible!==e.target).map(m=>{
+      let outer=m.visible;
+      for(const id of chain(m.visible)){if(ends.has(id))break;if(g.positions.has(id))outer=id;}
+      return outer;
+    }))];
+    if(!frontier.length||frontier.some(id=>ends.has(id)))return null;
+    const ps=frontier.map(id=>g.positions.get(id)),a=g.positions.get(e.source),b=g.positions.get(e.target);
+    if(!a||!b||ps.some(p=>p.y<a.y+a.h||p.y+p.h>b.y))return null;
+    return {edge:e.id,certificate:c.id,source:e.source,target:e.target,skip:r.skip,skip_slot:r.skip_slot,add:r.add,
+      owner:e.design_route.owner,mapping,frontier,side:'left'};
+  }
+  function localBypassGeometry(scope,e,positions){
+    const ps=scope?.frontier?.map(id=>positions.get(id)),p=e?.route?.points;
+    if(!ps?.length||ps.some(v=>!v)||!e.route.ok||e.id!==scope.edge||e.source!==scope.source||e.target!==scope.target||
+      e.design_route?.kind!=='bypass'||e.design_route.certificate!==scope.certificate||e.design_route.owner!==scope.owner||
+      e.resolved_source!==scope.skip||e.source_port!==scope.skip_slot||e.canonical_target!==scope.add||
+      e.route.source_side!=='left'||e.route.target_side!=='left'||p.length!==4)return false;
+    const left=Math.min(...ps.map(p=>p.x)),top=Math.min(...ps.map(p=>p.y)),bottom=Math.max(...ps.map(p=>p.y+p.h));
+    return p[0].y===p[1].y&&p[1].x===p[2].x&&p[2].y===p[3].y&&p[0].x>p[1].x&&p[3].x>p[2].x&&
+      p[1].x>=left-52&&p[1].x<=left-16&&p[1].y<=top&&p[2].y>=bottom;
+  }
   function route(e,positions){
     const a=positions.get(e.source),b=positions.get(e.target);if(!a||!b)return {points:[],ok:false,reason:'missing-endpoint'};
     const context=positions.context,idx=context?.idx;
@@ -863,6 +904,13 @@
     // during one route. Reuse scores without changing comparison or tie order.
     const lengths=new WeakMap();
     const length=ps=>{if(!lengths.has(ps))lengths.set(ps,ps.reduce((s,p,i)=>s+(i?Math.abs(p.x-ps[i-1].x)+Math.abs(p.y-ps[i-1].y)+congestion(ps[i-1],p):0),0)+ps.length*12);return lengths.get(ps);};
+    if(context?.localBypassTrial?.edge===e.id){
+      const trial=context.localBypassTrial,points=simplify([s,start,point(trial.x,start.y),point(trial.x,end.y),end,t]);
+      const result={points,ok:clear(points),reason:null,feedback:false,source_side:ss,target_side:ts};
+      result.ok=result.ok&&localBypassGeometry(trial.scope,{...e,route:result},positions);
+      if(!result.ok)result.reason='local-bypass-not-clear-or-not-realized';
+      return result;
+    }
     // During an explicitly requested repair, compare the shifted rails with
     // the ordinary lane candidates. The normal router keeps its historical
     // lane preference; a repair must be allowed to choose a slightly longer
@@ -922,5 +970,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

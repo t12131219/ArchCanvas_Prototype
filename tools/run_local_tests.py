@@ -56,6 +56,7 @@ COMMANDS = {
     'final-scope-entries': ['node', 'tests/final-scope-entries.test.cjs'],
     'empty-bands': ['node', 'tests/empty-bands.test.cjs'],
     'coincident-ports': ['node', 'tests/coincident-ports.test.cjs'],
+    'local-bypasses': ['node', 'tests/local-bypasses.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'coherent-frontiers': ['node', 'tests/coherent-frontiers.test.cjs'],

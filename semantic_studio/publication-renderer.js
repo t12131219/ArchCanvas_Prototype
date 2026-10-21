@@ -925,6 +925,66 @@
     record.scope='At most two measured placements of existing fixed call inputs beside their single closed consumer; no semantic frontier change, branch pruning or scheduling assertion.';
     chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,consumer_argument_refinement:record};return chosen;
   }
+  function prepareOperandRows(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperOperandRows===false||Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
+    let chosen=baseline,before=realizedRelations(baseline);
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
+    let applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));
+    const goals=Goals.build(ir,g.architecture);
+    let covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal));
+    const record={max_trials:4,max_arrangements:2,attempts:[],before:clearanceMetrics(b)},seen=new Set();
+    const aligned=(rows,positions)=>rows.filter(r=>r.nodes.every(n=>positions.get(n.node)?.y===positions.get(r.nodes[0].node)?.y)).length;
+    const ordered=(rows,positions)=>rows.filter(r=>{
+      const ids=g.edges.filter(e=>e.target===r.sink&&r.nodes.some(n=>n.node===e.source)).map(e=>e.source);
+      return ids.every((id,i)=>!i||positions.get(ids[i-1]).x+positions.get(ids[i-1]).w/2<positions.get(id).x+positions.get(id).w/2);
+    }).length;
+    for(const order of ['existing','operands']){
+      const proposal=L.operandRows(g.positions,order,ir.edges),key=JSON.stringify(proposal.records.flatMap(r=>r.nodes.map(n=>[n.node,n.after.x,n.after.y])).sort((a,b)=>a[0].localeCompare(b[0])));
+      if(!proposal.records.length||seen.has(key))continue;seen.add(key);
+      const graph={...g,positions:proposal.positions,constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
+      const full=prepare(graph),moved=new Set(proposal.records.flatMap(r=>r.nodes.filter(n=>n.before.x!==n.after.x||n.before.y!==n.after.y).map(n=>n.node))),peers=new Set(moved);
+      for(const e of g.edges)if(moved.has(e.source)||moved.has(e.target)){peers.add(e.source);peers.add(e.target);}
+      // Keep good distant paths as a second candidate. All incident terminal
+      // peers and any old path hit by a relocated body are refreshed from the
+      // fully routed candidate. Final geometry and exact coverage still gate it.
+      const touched=new Set(g.edges.filter(e=>peers.has(e.source)||peers.has(e.target)).map(e=>e.id));
+      for(const e of baseline.prepared.routes)if([...moved].some(id=>{
+        const p=graph.positions.get(id),box={x:p.x-8,y:p.y-8,w:p.w+16,h:p.h+16};
+        return e.source!==id&&e.target!==id&&e.route.points.some((v,i,ps)=>i&&L.blocked(ps[i-1],v,[box]));
+      }))touched.add(e.id);
+      const refreshed=new Map(full.routes.map(e=>[e.id,e]));
+      const retained=evaluateRoutes(graph,baseline.prepared.routes.map(e=>touched.has(e.id)?refreshed.get(e.id):e),full.quality.route_strategy);
+      for(const [routeMode,initial]of [['full',full],['retained',retained]]){
+      const trialGraph={...graph,positions:new Map([...graph.positions].map(([id,p])=>[id,{...p}])),constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
+      trialGraph.positions.context={...graph.positions.context,routeCache:new Map(),reserved:[]};
+      let trial={graph:trialGraph,prepared:initial};if(state.paperSelectedRoutes!==false)trial=polishRoutes(trial);
+      const measured=trial.graph;
+      E.auditConstraintRoutes(measured,trial.prepared.routes);
+      const q=trial.prepared.quality,old=chosen.prepared.quality,after=realizedRelations(trial),rowsBefore=aligned(proposal.records,chosen.graph.positions),rowsAfter=aligned(proposal.records,graph.positions);
+      const orderBefore=ordered(proposal.records,chosen.graph.positions),orderAfter=ordered(proposal.records,measured.positions);
+      const terminals=new Set();let distinct=true;
+      for(const e of trial.prepared.routes)for(const [node,source,p]of [[e.source,true,e.route.points[0]],[e.target,false,e.route.points.at(-1)]]){
+        const key=JSON.stringify([node,source,p]);if(terminals.has(key))distinct=false;terminals.add(key);
+      }
+      const coverage=new Set(Goals.evaluate(goals,measured,trial.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal)),facts=clearanceIdentity(g)===clearanceIdentity(measured);
+      const previousRows=chosen.graph.positions.context.operandRows||[];
+      const accepted=facts&&distinct&&rowsAfter===proposal.records.length&&(rowsAfter>rowsBefore||orderAfter>orderBefore||q.line_geometry.crossings<old.line_geometry.crossings||q.wire_length<old.wire_length*.98)&&
+        aligned(previousRows,measured.positions)===previousRows.length&&previousRows.every(r=>!ordered([r],chosen.graph.positions)||ordered([r],measured.positions)===1)&&
+        q.line_geometry.crossings<=old.line_geometry.crossings&&q.wire_length<=old.wire_length&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&fontMetric(q)>=fontMetric(b)&&
+        q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(issue=>old.issues.includes(issue))&&
+        measured.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
+      record.attempts.push({order,route_mode:routeMode,refreshed_edges:[...touched],records:proposal.records,accepted,facts_preserved:facts,distinct_terminals:distinct,before:clearanceMetrics(old),candidate:clearanceMetrics(q),aligned_before:rowsBefore,aligned_candidate:rowsAfter,ordered_before:orderBefore,ordered_candidate:orderAfter,
+        realized_before:before,realized_candidate:after,direct_goals_before:covered.size,direct_goals_candidate:coverage.size});
+      if(accepted){chosen=trial;before=after;covered=coverage;applied=new Set(measured.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));chosen.graph.positions.context.operandRows=proposal.records;}
+      }
+    }
+    if(!record.attempts.length)return baseline;
+    record.after=clearanceMetrics(chosen.prepared.quality);record.selected=chosen.graph.positions.context.operandRows||[];
+    record.scope='At most two row arrangements and four route measurements of independent closed visible operands; exact bindings and all boundaries retained, no semantic frontier or scheduling change.';
+    chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,operand_row_refinement:record};return chosen;
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     const g=chosen.graph,b=chosen.prepared.quality;
@@ -950,6 +1010,7 @@
     if(state.paperSelectedRoutes!==false&&!Object.keys(state.offsets||{}).length&&chosen.graph.edges.length>64)chosen=polishRoutes(chosen);
     chosen=prepareCrossScopePorts(ir,state,chosen);
     chosen=prepareConsumerArguments(ir,state,chosen);
+    chosen=prepareOperandRows(ir,state,chosen);
     return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
@@ -971,6 +1032,7 @@
       summary_goals:g.summary_goals,summary_coverage:g.summary_coverage,
       layout:{frame_title_routing:g.positions.context.protectFrameTitles?'avoid':'pass-through',bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
         ...(g.positions.context.consumerArguments?.length?{consumer_arguments:g.positions.context.consumerArguments}:{}),
+        ...(g.positions.context.operandRows?.length?{operand_rows:g.positions.context.operandRows}:{}),
         ...(g.positions.context.crossScopePorts?.length?{cross_scope_ports:g.positions.context.crossScopePorts}:{}),
         ...(g.positions.context.inputDocks.length?{input_docks:g.positions.context.inputDocks.map(record=>({...record,geometry_verified:L.inputDockGeometry(record,g.positions),
           routes_verified:record.edges.every(e=>routes.find(r=>r.id===e.edge)?.route.ok)}))}:{}),
@@ -994,5 +1056,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -101,6 +101,7 @@
     result.context={...ctx,routeCache:new Map(),reserved:[]};
     if(!idx)return {positions:result,records};
     const ancestors=id=>{const seen=new Set();while(id!=null&&!seen.has(id)){seen.add(id);id=idx.nodes.get(id)?.parent;}return seen;};
+
     const overlap=(a,b)=>a.x<b.x+b.w+12&&a.x+a.w+12>b.x&&a.y<b.y+b.h+12&&a.y+a.h+12>b.y;
     const ordinary=e=>!e.design_route&&!e.context_lane&&!e.layout_after&&!e.iteration&&!e.condition&&!ctx.feedback?.has(e.id)&&
       (e.bundle_members||[e]).every(m=>['data','alias','interface-binding','control'].includes(m.kind)&&!m.design_route&&!m.context_lane&&!m.layout_after&&!m.iteration&&!m.condition);
@@ -123,6 +124,54 @@
         edges:uses.map(e=>({edge:e.id,source_port:e.source_port,target_port:e.target_port,kind:e.kind})),
         scope:'Existing invocation-bound literal beside one closed consumer. Canonical value, source ownership, conditions and operand slots retained; no branch pruning, scheduling, purity or input-role inference.'});
       Object.assign(p,{x:candidate.x,y:candidate.y});
+    }
+    return {positions:result,records};
+  }
+  // Independent visible operands may share a row even when their producers
+  // enter at different heights. This is correspondence, not equal operations
+  // or concurrent execution. Keep every existing consumer slot and boundary.
+  function operandRows(positions,order='existing',canonicalEdges=[]){
+    const ctx=positions.context,idx=ctx?.idx,records=[],result=new Map([...positions].map(([id,p])=>[id,{...p}]));
+    result.context={...ctx,routeCache:new Map(),reserved:[]};
+    if(!idx)return {positions:result,records};
+    const guarded=n=>!n||!['compute','composite'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||n.repeat_contract||n.iteration||
+      ['conditional-region','conditional-collection','loop-template','iteration-region','serial-repeat','repeat-instance','serial-remainder','observed-variant'].includes(n.semantic_type);
+    const ordinary=e=>!e.condition&&!e.iteration&&!e.design_route&&!e.layout_after&&!ctx.feedback?.has(e.id)&&
+      (e.bundle_members||[e]).every(m=>['data','alias','interface-binding','parameter-read'].includes(m.kind)&&!m.condition&&!m.iteration&&!m.design_route&&!m.layout_after);
+    const ancestors=id=>{const seen=new Set();while(id!=null&&!seen.has(id)){seen.add(id);id=idx.nodes.get(id)?.parent;}return seen;};
+    const protectedAncestor=id=>[...ancestors(idx.nodes.get(id)?.parent)].some(at=>{const n=idx.nodes.get(at);return !n||['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||n.iteration||
+      ['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant'].includes(n.semantic_type);});
+    const protectedContents=id=>{const todo=[id],seen=new Set();for(let i=0;i<todo.length;i++){
+      const at=todo[i];if(seen.has(at))return true;seen.add(at);const n=idx.nodes.get(at);
+      if(!n||['opaque','control'].includes(n.kind)||n.condition||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||n.repeat_contract||n.iteration||
+        ['conditional-region','conditional-collection','loop-template','iteration-region','serial-repeat','repeat-instance','serial-remainder','observed-variant'].includes(n.semantic_type))return true;
+      todo.push(...idx.children.get(at)||[]);
+    }return canonicalEdges.some(e=>(seen.has(e.source)||seen.has(e.target))&&(e.condition||e.iteration||e.design_route||e.layout_after||
+      !['data','alias','interface-binding','parameter-read','buffer-read','state-read'].includes(e.kind)));};
+    const claimed=new Set(),overlap=(a,b)=>a.x<b.x+b.w+12&&a.x+a.w+12>b.x&&a.y<b.y+b.h+12&&a.y+a.h+12>b.y;
+    for(const [sink,s]of result){
+      const target=idx.nodes.get(sink),parent=result.get(target?.parent);
+      if(guarded(target)||protectedAncestor(sink)||s.expanded||s.cyclic||!parent?.expanded)continue;
+      const incoming=(ctx.edges||[]).filter(e=>e.target===sink),ids=[...new Set(incoming.map(e=>e.source))].filter(id=>{
+        const n=idx.nodes.get(id),p=result.get(id),uses=(ctx.edges||[]).filter(e=>e.source===id),incident=(ctx.edges||[]).filter(e=>e.source===id||e.target===id);
+        return p&&!p.expanded&&!p.cyclic&&!claimed.has(id)&&n?.parent===target.parent&&!guarded(n)&&!protectedContents(id)&&
+          uses.length===1&&uses[0].target===sink&&incident.every(ordinary)&&!uses[0].bundle_members;
+      });
+      if(ids.length<2||ids.length>6)continue;
+      const uses=ids.map(id=>incoming.find(e=>e.source===id));
+      if(uses.some(e=>!e.target_port)||new Set(uses.map(e=>e.target_port)).size!==uses.length)continue;
+      const byX=ids.slice().sort((a,b)=>result.get(a).x-result.get(b).x),centers=byX.map(id=>{const p=result.get(id);return p.x+p.w/2;});
+      const ordered=order==='operands'?ids:byX,y=Math.max(...ids.map(id=>result.get(id).y));
+      const candidates=ordered.map((id,i)=>({...result.get(id),x:centers[i]-result.get(id).w/2,y}));
+      if(candidates.every(p=>p.x===result.get(p.id).x&&p.y===result.get(p.id).y))continue;
+      const lanes=(ctx.contextLanes||[]).filter(c=>c.owner===target.parent&&c.selected!==false),left=parent.x+16+(parent.design_gutter||0)+(lanes.some(c=>c.side==='left')?(parent.context_gutter||0):0),
+        right=parent.x+parent.w-16-(lanes.some(c=>c.side==='right')?(parent.context_gutter||0):0);
+      if(candidates.some((p,i)=>p.x<left||p.x+p.w>right||p.y<parent.y+(parent.header||0)+8||p.y+p.h+20>s.y||
+        candidates.some((q,j)=>i!==j&&overlap(p,q))||[...result].some(([other,box])=>!ids.includes(other)&&!ancestors(p.id).has(other)&&overlap(p,box))))continue;
+      records.push({parent:target.parent,sink,order,nodes:ordered.map((id,i)=>({node:id,before:{x:result.get(id).x,y:result.get(id).y},after:{x:candidates[i].x,y},
+        edge:uses.find(e=>e.source===id).id,target_port:uses.find(e=>e.source===id).target_port})),
+        scope:'Independent closed visible operands share a measured row; canonical slots and source ownership retained. No operation equivalence, purity or concurrent execution asserted.'});
+      candidates.forEach(p=>{Object.assign(result.get(p.id),{x:p.x,y:p.y});claimed.add(p.id);});
     }
     return {positions:result,records};
   }
@@ -787,5 +836,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

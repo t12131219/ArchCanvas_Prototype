@@ -14,6 +14,7 @@ from semantic_adapter.analyzer import analyze
 from audit_diagram_assignments import assignments
 import check_role_path_stages as stages
 import audit_summary_coverage as summaries
+import audit_adaptive_frontier as geometry
 
 read = lambda p: json.loads(p.read_text())
 sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
@@ -39,6 +40,7 @@ def main():
         assert sha(OUT / f) == h
     rows += ui['rows']
     stages.OUT = OUT
+    geometry.OUT = OUT
     summaries.physical.OUT = OUT
     docs, trees, metrics, coarse, roles, discrepancies = {}, {}, {}, {}, {}, []
     geometry_issue_panels = []
@@ -47,20 +49,9 @@ def main():
         # The historical raw expression evaluator only checks visible edge
         # identities. Diagram-set coverage additionally checks exact operands.
         # Verify the stronger contract below; retain every disagreement.
-        try:
-            metrics[name] = stages.check(row, compare_expression=False, require_quality=False)
-        except AssertionError:
-            # Rejected candidates may intentionally retain a measurable routing
-            # defect. Keep them auditable and available for cost comparison;
-            # only selected panels are required to be issue-free below.
-            if not row.get('quality', {}).get('issues'):
-                raise
-            q = row['quality']
-            metrics[name] = dict(nodes=row['nodes'], edges=row['edges'],
-                                 width=q['native_width_px'], height=q['native_height_px'],
-                                 crossings=q['line_geometry']['crossings'],
-                                 wire_length=q['wire_length'], stages=0,
-                                 direct_goals=0, expression_goals=0)
+        metrics[name] = stages.check(row, compare_expression=False, require_quality=False)
+        geometry.inspect(row)  # Recompute contacts and overlaps even for rejected trials.
+        if row['quality']['issues']:
             geometry_issue_panels.append(name)
         doc = docs[name] = read(OUT / row['document'])
         trees[name] = ET.parse(OUT / row['svg']).getroot()
@@ -143,9 +134,10 @@ def main():
             assert set(t['main_lost_goals']) == initial - direct(main_name)
             actual = union(names, direct)
             assert set(t['lost_goals']) == initial - actual and set(t['gained_goals']) == actual - initial
-            if t['accepted']:
-                assert set(t['recovery']['roles']) == roles[baseline] - union(names, lambda n: roles[n])
-                assert set(t['recovery']['summaries']) == coarse[baseline] - union(names, lambda n: coarse[n])
+            qualified = [n for n in names if not docs[n]['diagnostics']['publication']['issues']
+                         and not docs[n]['diagnostics']['publication']['line_geometry']['unrelated_contacts']]
+            assert set(t['recovery']['roles']) == roles[baseline] - union(qualified, lambda n: roles[n])
+            assert set(t['recovery']['summaries']) == coarse[baseline] - union(qualified, lambda n: coarse[n])
             b, a = metrics[baseline], metrics[main_name]
             total_area = sum(metrics[n]['width'] * metrics[n]['height'] for n in names)
             total_wire = sum(metrics[n]['wire_length'] for n in names)
@@ -158,8 +150,12 @@ def main():
                 assert t['gained_goals'] or total_area < b['width'] * b['height'] and total_wire < b['wire_length']
         names = [p['capture'] for p in current['panels']]
         assert roles[baseline] <= union(names, lambda n: roles[n]) and coarse[baseline] <= union(names, lambda n: coarse[n])
+        old_direct = union([p['capture'] for p in old['panels']], direct)
+        current_direct = union(names, direct)
         comparisons.append(dict(name=c['name'], before=metrics[baseline], current=metrics[names[0]],
-                                old_direct=len(union([p['capture'] for p in old['panels']], direct)), current_direct=len(union(names, direct)),
+                                old_direct=len(old_direct), current_direct=len(current_direct),
+                                previous_direct_missing=sorted(old_direct - current_direct),
+                                previous_direct_added=sorted(current_direct - old_direct),
                                 total_area=sum(metrics[n]['width'] * metrics[n]['height'] for n in names),
                                 panels=len(names), main_changed=not current['main_unchanged']))
     result = dict(schema='cohort-folds-independent/1', passed=True, goal_complete=False, auditor_sha256=sha(Path(__file__)),

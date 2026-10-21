@@ -86,9 +86,10 @@
     const initial=D.coverage(ir,planned,baseline),done=fulfilled(initial),attempts=[],deferred=[];
     const limit=Number.isFinite(maxPanels)?Math.max(1,Math.floor(maxPanels)):3;
     const budget=Number.isFinite(maxTrials)?Math.max(0,Math.floor(maxTrials)):8;
-    // Leave a render for ordinary joint choices, but allow one multi-scope
-    // transaction to use three renders in the four-render editor budget.
-    const foldBudget=budget>2?budget-1:Math.floor(budget/2),raw=new Map(ir.nodes.map(n=>[n.id,n]));
+    // Speculative folds must not consume nearly every trial when their
+    // recovery fails. Reserve half for ordinary exact detail planning; a
+    // six-render budget still admits a main plus two recovery scopes.
+    const foldBudget=Math.floor(budget/2),raw=new Map(ir.nodes.map(n=>[n.id,n]));
     const automatic=main.graph.publication.adaptive_frontier;
     const effective=automatic?{...state,paperRoleDetails:automatic.selected_role_details,paperRolePaths:automatic.selected_role_paths,
       paperExpressionDetails:automatic.selected_expression_details,paperAdaptive:false}:{...state,paperAdaptive:false};

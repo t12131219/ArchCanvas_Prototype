@@ -191,7 +191,8 @@ def check(row, *, compare_expression=True, require_quality=True):
     assert q == row['quality'] and not q['route_failures'] and not q['unplaced_port_labels']
     if require_quality:
         assert not q['issues']
-    assert not q['line_geometry']['unrelated_contacts'] and round(length, 1) == q['wire_length'] and crossings == q['line_geometry']['crossings']
+        assert not q['line_geometry']['unrelated_contacts']
+    assert round(length, 1) == q['wire_length'] and crossings == q['line_geometry']['crossings']
     assert list(map(float, tree.getroot().get('viewBox').split()))[2:] == [q['native_width_px'], q['native_height_px']]
     docks(doc, tree)
     returns(doc, tree)

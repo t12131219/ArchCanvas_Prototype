@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..'),out=root+'/verification/cohort-folds/cur
 const sha=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex'),read=f=>JSON.parse(fs.readFileSync(out+'/'+f)),rows=[];
 const reports=['small','large'].flatMap(s=>read(s+'-render-report.json').comparisons);
 const requested=[['SplitEnvelopes-main','SplitEnvelopes'],['SplitEnvelopes-first','SplitEnvelopes'],['SplitEnvelopes-second','SplitEnvelopes'],['SplitEnvelopes-deep','SplitEnvelopes'],['GuardedEnvelope-main','GuardedEnvelope']];
-const optionalTransformer=[['Transformer-main','Transformer'],['Transformer-recovery','Transformer']];
+const optionalTransformer=[['Transformer-main','Transformer'],['Transformer-encoder','Transformer'],['Transformer-decoder','Transformer']];
 const missingTransformer=optionalTransformer.filter(([name])=>!fs.existsSync(out+'/ui-'+name+'.json'));
 const cases=requested.concat(missingTransformer.length?[]:optionalTransformer);
 for(const [name,model]of cases){
@@ -18,6 +18,8 @@ for(const [name,model]of cases){
   const c=reports.find(c=>c.name===model),p=c&&c.current.panels[0];
   rows.at(-1).formal_match=Boolean(p&&r.svg===fs.readFileSync(out+'/'+p.capture+'.svg','utf8'));
   rows.at(-1).coverage_match=Boolean(c&&JSON.stringify(planned.coverage)===JSON.stringify(c.current.coverage));
+  assert.ok(rows.at(-1).formal_match,'UI main differs from measured selected main: '+name);
+  assert.ok(rows.at(-1).coverage_match,'UI coverage differs from measured selected set: '+name);
  }
 }
 assert.equal(fs.readFileSync(out+'/ui-SplitEnvelopes-main.svg','utf8'),fs.readFileSync(out+'/ui-SplitEnvelopes-reopened.svg','utf8'));

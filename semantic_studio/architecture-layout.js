@@ -578,7 +578,10 @@
     // segments still face the same obstacle and congestion checks below.
     const repair=context?.repairRoute?.points,repairCandidates=[];
     if(repair?.length>3&&repair[0].x===s.x&&repair[0].y===s.y&&repair.at(-1).x===t.x&&repair.at(-1).y===t.y){
-      for(let i=1;i<repair.length-2;i++)for(const delta of [-12,12,-24,24]){
+      // A broad shift can cross several nearby wires even when a narrow
+      // parallel corridor is clear. Try sub-grid spacing too; these remain
+      // subject to full obstacle, terminal and final figure quality checks.
+      for(let i=1;i<repair.length-2;i++)for(const delta of [-12,12,-24,24,-8,8,-4,4]){
         const a=repair[i],b=repair[i+1],vertical=a.x===b.x,horizontal=a.y===b.y;
         if(!vertical&&!horizontal)continue;
         const trial=repair.map(p=>({...p}));

@@ -17,22 +17,35 @@ test('two siblings compact together and recover both exact instances in one orig
 });
 test('unfamiliar residual wrappers open the display ancestors of the selected source paths',()=>{
  const {ir,main,set}=draw('FramedEnvelope'),t=set.attempts.find(t=>t.form==='summary-set'&&t.accepted),by=new Map(main.graph.architecture.nodes.map(n=>[n.id,n]));
- assert.ok(t.owners.length>=1);assert.equal(t.recoveries.length,1);
+ assert.equal(t.owners.length,2);assert.equal(t.recoveries.length,1);
  const r=t.recoveries[0];let intermediates=0;
  for(const owner of r.owners){let at=owner;while(at!==r.scope){assert.ok(r.state.open.includes(at));if(by.get(at).presentation_only)intermediates++;at=by.get(at).parent;}}
  assert.ok(r.state.open.includes(r.scope));
- assert.ok(intermediates>=0);assert.ok(done(set.coverage).size>=done(set.baseline_coverage).size);assert.deepEqual(C.preserve(ir,[{result:main}],set.panels,D),{roles:[],summaries:[],paths:[]});
+ assert.ok(intermediates>0);assert.ok(done(set.coverage).size>done(set.baseline_coverage).size);assert.deepEqual(C.preserve(ir,[{result:main}],set.panels,D),{roles:[],summaries:[],paths:[]});
 });
 test('four owners in two distinct source scopes use two exact recovery panels within the render budget',()=>{
  const {main,set}=draw('SplitEnvelopes'),t=set.attempts.find(t=>t.form==='summary-set'&&t.accepted);
- assert.ok(t.owners.length>=2);assert.ok(t.recoveries.length>=1);assert.ok(t.recoveries.every(r=>r.owners.length>=1));
- assert.ok(t.recoveries.every(r=>r.scope));
+ assert.equal(t.owners.length,4);assert.equal(t.recoveries.length,2);assert.ok(t.recoveries.every(r=>r.owners.length===2));
+ assert.notEqual(t.recoveries[0].scope,t.recoveries[1].scope);
  const maximal=set.attempts.find(a=>a.form==='summary-set'&&a.owners.length===4);
  assert.ok(maximal);assert.equal(maximal.recoveries.length,2);assert.ok(maximal.recoveries.every(r=>r.owners.length===2));
  assert.notEqual(maximal.recoveries[0].scope,maximal.recoveries[1].scope);
  assert.ok(maximal.reasons.includes('lower-measured-benefit')||maximal.accepted);
  assert.ok(set.rendered_trials<=6);assert.ok(set.panels.length>=2);assert.ok(set.panels[0].result.graph.nodes.length<main.graph.nodes.length);
  assert.ok(done(set.coverage).size>=done(set.baseline_coverage).size);
+});
+test('failed fold speculation reserves at least half the budget for ordinary exact details',()=>{
+ const {ir,main}=draw('SplitEnvelopes');
+ let renders=0;
+ const renderer={render:(ir,s)=>{renders++;const r=R.render(ir,s);if(!s.paperParallelRailRepair)return r;
+  return {...r,prepared:{...r.prepared,quality:{...r.prepared.quality,issues:['fixture-rejected-recovery']}}};}};
+ const set=D.render(ir,state,renderer,{policy:'compact',main,maxTrials:6,maxPanels:3});
+ assert.ok(set.attempts.some(t=>t.form==='summary-set'&&t.reasons.includes('figure-quality')));
+ assert.ok(!set.attempts.some(t=>t.form==='summary-set'&&t.accepted));
+ assert.equal(set.summary_trial_limit,3);assert.ok(set.rendered_trials<=6);assert.equal(renders,set.rendered_trials);
+ assert.ok(set.attempts.some(t=>t.form!=='summary-set'&&t.rendered));
+ assert.ok([...done(set.baseline_coverage)].every(id=>done(set.coverage).has(id)));
+ assert.ok(done(set.coverage).size>done(set.baseline_coverage).size);
 });
 test('packing cannot jump a repeated, observed, conditional, stateful or certified parent',()=>{
  const {ir,main}=draw('ParallelPaths'),g=groups(ir,main),focus=main.graph.publication.focus;
@@ -79,4 +92,15 @@ test('parallel rail repair removes false junctions with fixed terminals and at m
   assert.ok(route.points.every((p,i)=>!i||p.x===route.points[i-1].x||p.y===route.points[i-1].y));routes=routes.map(e=>e.id===id?{...e,route}:e);
  }
  const after=R.lineGeometry(routes);assert.deepEqual(after.unrelated_contacts,[]);assert.ok(after.overlapping_paths.every(p=>p.same_value));assert.ok(after.crossings<=before.crossings+1);
+});
+test('a narrow obstacle corridor separates unrelated rails without additional crossings',()=>{
+ const fixture=JSON.parse(fs.readFileSync('tests/fixtures/narrow-rail-contact.json')),positions=new Map(fixture.positions.map(n=>[n.id,n]));
+ positions.context={idx:{nodes:new Map(fixture.nodes.map(n=>[n.id,n]))},edges:fixture.routes,feedback:new Set(),portOrder:'neighbors',ancestorPorts:'boundary',crossingCost:180,contactCost:360,stubLength:16};
+ const e=fixture.routes.find(e=>e.id===fixture.repair),before=R.lineGeometry(fixture.routes),original=JSON.stringify(fixture);
+ assert.equal(before.overlapping_paths.filter(p=>!p.same_value).length,1);assert.equal(before.unrelated_contacts.length,2);
+ positions.context.reserved=fixture.routes.filter(r=>r!==e).flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));positions.context.repairRoute=e.route;
+ const route=L.route(e,positions),after=R.lineGeometry(fixture.routes.map(r=>r===e?{...r,route}:r));
+ assert.ok(route.ok);assert.deepEqual(route.points[0],e.route.points[0]);assert.deepEqual(route.points.at(-1),e.route.points.at(-1));
+ assert.deepEqual(after.unrelated_contacts,[]);assert.ok(after.overlapping_paths.every(p=>p.same_value));assert.equal(after.crossings,before.crossings);
+ assert.equal(JSON.stringify(fixture),original);
 });

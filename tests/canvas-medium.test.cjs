@@ -14,9 +14,9 @@ test('canvas retains a requested mixed semantic frontier that single-page print 
  assert.deepEqual(b.prepared.quality.issues,[]);assert.equal(b.prepared.routing.granularity_refinement,undefined);
  const ir=read('MixedCircuit');accounted(ir,b.graph);assert.ok(b.graph.nodes.some(n=>n.kind==='opaque'));assert.ok(b.graph.nodes.some(n=>n.framework_type==='torch.nn.RNN'));
 });
-test('default and explicit print keep the frozen print vector output',()=>{
+test('explicit title avoidance keeps the frozen default and explicit print vector output',()=>{
  for(const name of ['BrokenCell','MixedCircuit']){
-  const ir=read(name),state={paperGranularity:'detailed'},before=frozen.render(ir,state);
+  const ir=read(name),state={paperGranularity:'detailed',paperProtectFrameTitles:true},before=frozen.render(ir,state);
   assert.equal(render(name,state).svg,before.svg);assert.equal(render(name,{...state,paperMedium:'print'}).svg,before.svg);
  }
 });

@@ -59,7 +59,7 @@ test('renaming source and class labels never selects a frame reduction',()=>{
 test('restoring source frames reproduces frozen SVG and compact documents save and unfold deterministically',()=>{
  const ir=read('EquivalentSteps'),state={paperMedium:'canvas',paperGranularity:'semantic'},before=JSON.stringify(ir);
  const frozen=require('../tools/load_publication_renderer.cjs')(path.resolve(__dirname,'../verification/local-relations/iteration-11-before-frame-ownership/implementation/semantic_studio'));
- assert.equal(R.render(ir,{...state,paperFrameView:'source'}).svg,frozen.render(ir,state).svg);
+ assert.equal(R.render(ir,{...state,paperFrameView:'source',paperProtectFrameTitles:true}).svg,frozen.render(ir,state).svg);
  const a=R.render(ir,state);assert.ok(a.graph.frame_ownership.length);assert.deepEqual(a.document.layout.frame_ownership,a.graph.frame_ownership);
  const saved=JSON.parse(JSON.stringify(a.document));assert.equal(R.render(saved.ir,saved.state).svg,a.svg);
  const suffix=a.graph.publication.inline_sequences.sequences[0].remainders[0];

@@ -64,9 +64,9 @@ test('selected semantic state saves, reopens, refolds and allows finer source ex
  const all=R.render(ir,{...detail.document.state,paperAuto:false,open:[...detail.graph.idx.children.keys()].filter(Boolean)});
  assert.ok(all.graph.nodes.length>detail.graph.nodes.length);account(ir,all.graph);
 });
-test('default rendering stays byte-identical to the frozen implementation on mixed, broken and unknown graphs',()=>{
+test('explicit title avoidance recovers frozen role frontiers on mixed, broken and unknown graphs',()=>{
  const old=require('../tools/load_publication_renderer.cjs')(require('node:path').resolve('verification/local-relations/iteration-22-before-role-details/implementation/semantic_studio'));
  for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry']){
-  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(R.render(ir,state).svg,old.render(ir,state).svg);
+  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(R.render(ir,{...state,paperProtectFrameTitles:true}).svg,old.render(ir,state).svg);
  }
 });

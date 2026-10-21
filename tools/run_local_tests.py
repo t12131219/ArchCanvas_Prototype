@@ -47,6 +47,7 @@ COMMANDS = {
     'diagram-set': ['node', 'tests/diagram-set.test.cjs'],
     'exact-expression': ['node', 'tests/exact-expression.test.cjs'],
     'selected-routes': ['node', 'tests/selected-routes.test.cjs'],
+    'title-passages': ['node', 'tests/title-passages.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],
     'coherent-frontiers': ['node', 'tests/coherent-frontiers.test.cjs'],
     'invocation-inputs': ['node', 'tests/invocation-inputs.test.cjs'],

@@ -455,7 +455,7 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
+    positions.context={protectFrameTitles:options.protectFrameTitles===true,contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
       entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){
@@ -562,20 +562,30 @@
     const start=point(s.x+sn[0]*stub*(startInward?-1:1),s.y+sn[1]*stub*(startInward?-1:1));
     const end=point(t.x+tn[0]*stub*(endInward?-1:1),t.y+tn[1]*stub*(endInward?-1:1));
     const boxes=[];
-    // Ancestor frames may be crossed at their body boundary, but their titles
-    // remain obstacles for every wire, including ordinary data dependencies.
-    for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.protected_header_width??p.w,h:p.protected_header_height??p.header-10});
+    // Expanded titles are pass-through areas. The source/target ancestry is
+    // still respected and concrete nodes, including fixed arguments placed
+    // in a header, remain obstacles. The old title policy is explicit opt-in.
+    const protectTitles=context?.protectFrameTitles===true;
+    const bodyBox=(p,pad=0)=>{
+      const top=!protectTitles&&p.expanded&&p.header?Math.min(p.h,p.header-10):0;
+      return {x:p.x-pad,y:p.y+top-(top?0:pad),w:p.w+2*pad,h:p.h-top+(top?pad:2*pad),circle:!!p.symbol};
+    };
+    if(protectTitles)for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.protected_header_width??p.w,h:p.protected_header_height??p.header-10});
     for(const [id,p]of positions){
       if(sourceAnc.has(id)||targetAnc.has(id))continue;
-      // The outermost unrelated frame is enough; its children add no obstacles.
+      // A surrounding body covers its children. Header children stay real
+      // obstacles even when the surrounding title band is pass-through.
       let parent=idx?.nodes.get(id)?.parent,covered=false;
-      while(parent){if(positions.has(parent)&&!sourceAnc.has(parent)&&!targetAnc.has(parent)){covered=true;break;}parent=idx?.nodes.get(parent)?.parent;}
-      if(!covered)boxes.push({x:p.x-8,y:p.y-8,w:p.w+16,h:p.h+16});
+      while(parent){if(positions.has(parent)&&!sourceAnc.has(parent)&&!targetAnc.has(parent)){
+        const box=bodyBox(positions.get(parent),8);
+        if(p.x>=box.x&&p.x+p.w<=box.x+box.w&&p.y>=box.y&&p.y+p.h<=box.y+box.h){covered=true;break;}
+      }parent=idx?.nodes.get(parent)?.parent;}
+      if(!covered)boxes.push(bodyBox(p,8));
     }
     // Terminals are legal on the boundary; subsequent segments may not cut
     // back through the endpoint body. An inward ancestor interface is exempt.
-    if(!startInward)boxes.push({x:a.x,y:a.y,w:a.w,h:a.h,circle:!!a.symbol});
-    if(!endInward)boxes.push({x:b.x,y:b.y,w:b.w,h:b.h,circle:!!b.symbol});
+    if(!startInward)boxes.push(bodyBox(a));
+    if(!endInward)boxes.push(bodyBox(b));
     const middle=(start.y+end.y)/2;
     const candidates=[
       [start,point(start.x,end.y),end],

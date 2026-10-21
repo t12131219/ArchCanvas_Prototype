@@ -4,8 +4,8 @@ const E=require('../semantic_studio/semantic-engine.js'),L=require('../semantic_
 const load=n=>JSON.parse(fs.readFileSync('verification/input-docks/current/'+n+'.json'));
 const state={paperMedium:'canvas',paperGranularity:'roles',paperPipelineSummaries:false};
 const facts=r=>JSON.stringify({nodes:r.graph.nodes.map(n=>n.id),edges:r.graph.edges.map(e=>({id:e.id,source:e.source,target:e.target,source_port:e.source_port,target_port:e.target_port,kind:e.kind,condition:e.condition,originals:e.originals,bundle_members:e.bundle_members})),open:r.graph.publication.open,nodes_accounted:r.graph.node_accounting,edges_accounted:r.graph.edge_accounting,boundary:r.graph.publication.boundary,roles:r.graph.publication.role_frontier,expression:r.document.expression_coverage,summary:r.document.summary_coverage});
-test('unfamiliar source composition reduces measured wires with one external terminal and exact original uses',()=>{
- const ir=load('BraidedInputs'),original=JSON.stringify(ir),a=R.render(ir,{...state,paperInputDocks:false}),b=R.render(ir,state),receipt=b.prepared.routing.input_dock_refinement;
+test('unfamiliar source composition with protected titles reduces wires with one exact external terminal',()=>{
+ const ir=load('BraidedInputs'),original=JSON.stringify(ir),s={...state,paperProtectFrameTitles:true},a=R.render(ir,{...s,paperInputDocks:false}),b=R.render(ir,s),receipt=b.prepared.routing.input_dock_refinement;
  assert.equal(receipt.accepted,true);assert.equal(facts(a),facts(b));assert.equal(JSON.stringify(ir),original);
  assert.equal(b.document.layout.input_docks.length,1);assert.ok(b.prepared.quality.wire_length<a.prepared.quality.wire_length*.9);
  assert.ok(b.prepared.quality.native_width_px>a.prepared.quality.native_width_px);assert.deepEqual(b.prepared.quality.issues,[]);
@@ -65,6 +65,6 @@ test('explicit opt-out, user offsets and print views do not select a new input l
  const r=R.render(ir,{...state,paperInputDocks:true,offsets:{[ir.nodes[0].id]:{x:8,y:0}}});assert.equal(r.document.layout.input_docks,undefined);
 });
 test('class renaming does not choose the rule; manual expansion retains its requested frontier',()=>{
- const ir=load('BraidedInputs');for(const n of ir.nodes)n.class_name='Unseen';const a=R.render(ir,state);assert.equal(a.prepared.routing.input_dock_refinement.accepted,true);
+ const ir=load('BraidedInputs'),original=R.render(ir,state);for(const n of ir.nodes)n.class_name='Unseen';const a=R.render(ir,state);assert.deepEqual(a.prepared.routing.input_dock_refinement,original.prepared.routing.input_dock_refinement);
  const s={...state,paperAuto:false,open:a.graph.publication.open},b=R.render(ir,s);assert.deepEqual(b.graph.publication.open,s.open);assert.equal(facts(b),facts(a));
 });

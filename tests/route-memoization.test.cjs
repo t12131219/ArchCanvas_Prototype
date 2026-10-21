@@ -4,7 +4,9 @@ const before=require('../verification/route-memoization/experiment/architecture-
 const candidate=require('../semantic_studio/architecture-layout.js');
 function scene(nodes,edges){
  const positions=new Map(nodes.map(n=>[n.id,{id:n.id,x:n.x,y:n.y,w:n.w||82,h:n.h||54,...n}]));
- positions.context={idx:{nodes:new Map(nodes.map(n=>[n.id,{id:n.id,parent:n.parent??null}]))},edges,feedback:new Set(),reserved:[],crossingCost:18,contactCost:0};
+ // Compare score memoization under the archived obstacle policy. The new
+ // default title passages have separate geometry and fidelity tests.
+ positions.context={protectFrameTitles:true,idx:{nodes:new Map(nodes.map(n=>[n.id,{id:n.id,parent:n.parent??null}]))},edges,feedback:new Set(),reserved:[],crossingCost:18,contactCost:0};
  return positions;
 }
 function replay(positions,edges,policies){

@@ -34,8 +34,11 @@ test('vector and convolution residuals route certified exact skip operands in a 
       assert.ok(route.points.some(p=>p.x>owner.x&&p.x<owner.x+owner.design_gutter));
       assert.match(out.svg,/data-design-route="bypass"/);
     }
-    for(const e of out.prepared.routes)for(let i=1;i<e.route.points.length;i++)for(const p of g.positions.values())if(p.expanded)
-      assert.ok(!cutsHeader(e.route.points[i-1],e.route.points[i],p),'wire cuts a visible title');
+    // Title avoidance is now an explicit legacy preference. It does not
+    // constrain the default pass-through routing of the same residual facts.
+    const protectedView=R.render(ir,{paperGranularity:'modules',paperProtectFrameTitles:true});
+    for(const e of protectedView.prepared.routes)for(let i=1;i<e.route.points.length;i++)for(const p of protectedView.graph.positions.values())if(p.expanded)
+      assert.ok(!cutsHeader(e.route.points[i-1],e.route.points[i],p),'explicitly protected title crossed');
     assert.deepEqual(out.prepared.quality.issues,[]);accounted(ir,g);assert.equal(JSON.stringify(ir),before);
   }
   const image=R.render(irs.ImageResidual,{}).svg;assert.match(image,/BatchNorm2d/);assert.doesNotMatch(image,/Post-LN/);

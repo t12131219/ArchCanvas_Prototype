@@ -630,8 +630,14 @@
       scope:'One measured header arrangement of existing invocation-bound literal terminals. Same frontier, original operands and realized relations; reduced area or wire required, with no added crossings, contacts, routing failures or constraint conflicts. Fixed values stay explicit if the arrangement is rejected.'};
     return chosen;
   }
+  function preparePresented(ir,state){
+    // Measure the same presentation that will be serialized. Post-selection
+    // alignment would otherwise make semantic decisions on different paths
+    // and leave their quality/evidence receipts stale in the final SVG.
+    return prepareRegionFollowers(ir,state,prepareContextSources(ir,state,prepareInvocationDocks(ir,state)));
+  }
   function prepareAdaptive(ir,state={}){
-    let chosen=prepareInvocationDocks(ir,state);
+    let chosen=preparePresented(ir,state);
     if(state.paperAdaptive!==true||state.paperMedium!=='canvas'||state.paperGranularity!=='roles'||state.paperAuto===false||state.paperRelation||Object.keys(state.offsets||{}).length)return chosen;
     const engine=root.SemanticAdaptiveFrontier||(typeof require==='function'?require('./adaptive-frontier.js'):null);
     attachExpressionEvidence(ir,chosen);
@@ -671,7 +677,7 @@
       const trials=[];
       for(const item of shortlist.slice(0,Math.min(planning?2:1,3-measured))){
         seen.add(item.candidate.id);
-        const trial=attachExpressionEvidence(ir,prepareInvocationDocks(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
+        const trial=attachExpressionEvidence(ir,preparePresented(ir,item.next)),assessment=engine.assess(ir,chosen,trial);measured++;
         const receipt={opportunity:item.candidate,requested_state:{paperRoleDetails:item.next.paperRoleDetails||[],paperRolePaths:item.next.paperRolePaths||[],paperExpressionDetails:item.next.paperExpressionDetails||[]},
           ...assessment,eligible:assessment.accepted,accepted:false,comparison_round:attempts.length};
         trials.push({item,trial,assessment,receipt});
@@ -689,6 +695,7 @@
     const receipt={rule_version:engine.VERSION,requested:true,policy:planning?'structure':'detail',baseline:initial,selected:engine.metrics(chosen),attempts,preflights,
       selected_role_details:selectedState.paperRoleDetails||[],selected_role_paths:selectedState.paperRolePaths||[],selected_expression_details:selectedState.paperExpressionDetails||[],
       unmeasured_opportunities:remaining.length,measurement_limit:3,preflight_limit:36,
+      geometry_scope:'Every baseline and candidate includes final context-source routing and region-follower alignment before evidence, quality and benefit are compared. Selected metrics describe the serialized figure.',
       scope:'Bounded measured comparison of local role/relation expressions; critical boundaries, newly expressed structure and detailed paths remain distinct. Existing summaries preserve structure without fulfilling atomic detail. Canonical IR and saved requests remain unchanged; this is not global summary/detail or graph-set planning.'};
     chosen.graph.publication.adaptive_frontier=receipt;chosen.prepared.routing.semantic_refinement=receipt;
     return chosen;
@@ -779,7 +786,7 @@
     return chosen;
   }
   function prepareFigure(ir,state={}){
-    return attachExpressionEvidence(ir,prepareRegionFollowers(ir,state,prepareContextSources(ir,state,selectFigure(ir,state))));
+    return attachExpressionEvidence(ir,selectFigure(ir,state));
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));

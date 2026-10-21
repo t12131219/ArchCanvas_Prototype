@@ -1,0 +1,1774 @@
+{
+  "schema": "semantic-canvas/1",
+  "ir": {
+    "schema": "archcanvas-source-semantic/2",
+    "title": "MixedChoices",
+    "entry": {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+      "class": "MixedChoices",
+      "cell": null,
+      "constructor": {}
+    },
+    "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+    "sources": [
+      {
+        "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+        "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+        "cell": null,
+        "sha256": "2c3fe56ab8993071794642f883f26b2651326b835bf7a67cefefda278770c487",
+        "unit_sha256": "2c3fe56ab8993071794642f883f26b2651326b835bf7a67cefefda278770c487"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "model/69:4:composite:1",
+        "kind": "composite",
+        "label": "MixedChoices",
+        "parent": null,
+        "source_parent": null,
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 69,
+            "end_line": 71,
+            "column": 4,
+            "end_column": 29,
+            "symbol": "MixedChoices.forward",
+            "expression": "def forward(self, x):\n    a = self.weave(x, selected=False)\n    return self.bridge(a)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-module",
+        "module_path": "",
+        "constructor": {},
+        "source_class": "MixedChoices"
+      },
+      {
+        "id": "model/69:4:composite:1/69:22:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/69:4:composite:1",
+        "source_parent": "model/69:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 69,
+            "end_line": 69,
+            "column": 22,
+            "end_column": 23,
+            "symbol": "MixedChoices.forward",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1",
+        "kind": "composite",
+        "label": "self.weave",
+        "parent": "model/69:4:composite:1",
+        "source_parent": "model/69:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 53,
+            "end_line": 61,
+            "column": 4,
+            "end_column": 16,
+            "symbol": "weave",
+            "expression": "def weave(self, x, *, selected=False):\n    a = x.sin()\n    b = x.cos()\n    c = x.tanh()\n    y = a + b + c\n    y = y.relu().sin().cos().tanh()\n    if selected:\n        return (y, a)\n    return y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-function",
+        "module_path": "",
+        "constructor": {},
+        "source_class": null
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/53:20:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 53,
+            "end_line": 53,
+            "column": 20,
+            "end_column": 21,
+            "symbol": "weave",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/53:26:interface:1",
+        "kind": "interface",
+        "label": "selected",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 53,
+            "end_line": 53,
+            "column": 26,
+            "end_column": 34,
+            "symbol": "weave",
+            "expression": "selected"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "selected",
+        "source_constant_input": {
+          "value": false,
+          "scope": "literal argument or default of this source invocation; other paths retained"
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/54:12:compute:1",
+        "kind": "compute",
+        "label": "sin",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 54,
+            "end_line": 54,
+            "column": 12,
+            "end_column": 19,
+            "symbol": "weave",
+            "expression": "x.sin()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "sin",
+        "function_target": "x.sin",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/54:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "a",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 54,
+            "end_line": 54,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "weave",
+            "expression": "a"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/55:12:compute:1",
+        "kind": "compute",
+        "label": "cos",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 55,
+            "end_line": 55,
+            "column": 12,
+            "end_column": 19,
+            "symbol": "weave",
+            "expression": "x.cos()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "cos",
+        "function_target": "x.cos",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/55:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "b",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 55,
+            "end_line": 55,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "weave",
+            "expression": "b"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/56:12:compute:1",
+        "kind": "compute",
+        "label": "tanh",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 56,
+            "end_line": 56,
+            "column": 12,
+            "end_column": 20,
+            "symbol": "weave",
+            "expression": "x.tanh()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "x.tanh",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/56:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "c",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 56,
+            "end_line": 56,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "weave",
+            "expression": "c"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/57:12:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 57,
+            "end_line": 57,
+            "column": 12,
+            "end_column": 21,
+            "symbol": "weave",
+            "expression": "a + b + c"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "syntax": {
+          "type": "BinOp",
+          "fields": {
+            "left": {
+              "operand": ".left"
+            },
+            "op": {
+              "type": "Add",
+              "fields": {}
+            },
+            "right": {
+              "operand": ".right"
+            }
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/57:12:compute:2",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 57,
+            "end_line": 57,
+            "column": 12,
+            "end_column": 17,
+            "symbol": "weave",
+            "expression": "a + b"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "syntax": {
+          "type": "BinOp",
+          "fields": {
+            "left": {
+              "operand": ".left"
+            },
+            "op": {
+              "type": "Add",
+              "fields": {}
+            },
+            "right": {
+              "operand": ".right"
+            }
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/57:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "y",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 57,
+            "end_line": 57,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "weave",
+            "expression": "y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/58:12:compute:1",
+        "kind": "compute",
+        "label": "relu",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 58,
+            "end_line": 58,
+            "column": 12,
+            "end_column": 20,
+            "symbol": "weave",
+            "expression": "y.relu()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "y.relu",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/58:12:compute:2",
+        "kind": "compute",
+        "label": "sin",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 58,
+            "end_line": 58,
+            "column": 12,
+            "end_column": 26,
+            "symbol": "weave",
+            "expression": "y.relu().sin()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "sin",
+        "function_target": "y.relu().sin",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/58:12:compute:3",
+        "kind": "compute",
+        "label": "cos",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 58,
+            "end_line": 58,
+            "column": 12,
+            "end_column": 32,
+            "symbol": "weave",
+            "expression": "y.relu().sin().cos()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "cos",
+        "function_target": "y.relu().sin().cos",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/58:12:compute:4",
+        "kind": "compute",
+        "label": "tanh",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 58,
+            "end_line": 58,
+            "column": 12,
+            "end_column": 39,
+            "symbol": "weave",
+            "expression": "y.relu().sin().cos().tanh()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "y.relu().sin().cos().tanh",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/58:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "y",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 58,
+            "end_line": 58,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "weave",
+            "expression": "y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/59:11:control:1",
+        "kind": "control",
+        "label": "selected",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 59,
+            "end_line": 59,
+            "column": 11,
+            "end_column": 19,
+            "symbol": "weave",
+            "expression": "selected"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "diamond",
+          "fill": "#fff0c1"
+        },
+        "runtime_evidence": [],
+        "operator": "if"
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1",
+        "kind": "composite",
+        "label": "true",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 59,
+            "end_line": 60,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "weave",
+            "expression": "if selected:\n    return (y, a)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "conditional-region",
+        "condition": {
+          "branch": "model/69:4:composite:1/53:4:composite:1/59:11:control:1",
+          "outcome": "true"
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1/60:19:compute:1",
+        "kind": "compute",
+        "label": "structured value",
+        "parent": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 60,
+            "end_line": 60,
+            "column": 19,
+            "end_column": 23,
+            "symbol": "weave",
+            "expression": "(y, a)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "structure",
+        "structure_kind": "tuple",
+        "syntax": {
+          "type": "Tuple",
+          "fields": {
+            "elts": [
+              {
+                "operand": ".elts:0"
+              },
+              {
+                "operand": ".elts:1"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1/60:12:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 60,
+            "end_line": 60,
+            "column": 12,
+            "end_column": 23,
+            "symbol": "weave",
+            "expression": "return (y, a)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/59:8:composite:2",
+        "kind": "composite",
+        "label": "false",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 59,
+            "end_line": 60,
+            "column": 8,
+            "end_column": 23,
+            "symbol": "weave",
+            "expression": "if selected:\n    return (y, a)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "conditional-region",
+        "condition": {
+          "branch": "model/69:4:composite:1/53:4:composite:1/59:11:control:1",
+          "outcome": "false"
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/61:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 61,
+            "end_line": 61,
+            "column": 8,
+            "end_column": 16,
+            "symbol": "weave",
+            "expression": "return y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/53:4:interface:1",
+        "kind": "interface",
+        "label": "outputs / conditional returns",
+        "parent": "model/69:4:composite:1/53:4:composite:1",
+        "source_parent": "model/69:4:composite:1/53:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 53,
+            "end_line": 61,
+            "column": 4,
+            "end_column": 16,
+            "symbol": "weave",
+            "expression": "def weave(self, x, *, selected=False):\n    a = x.sin()\n    b = x.cos()\n    c = x.tanh()\n    y = a + b + c\n    y = y.relu().sin().cos().tanh()\n    if selected:\n        return (y, a)\n    return y"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output",
+        "return_selection": {
+          "selected": "model/69:4:composite:1/53:4:composite:1/61:8:interface:1",
+          "call_constants": {
+            "selected": false
+          },
+          "scope": "normal-return paths of this invocation; source alternatives retained"
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/70:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "a",
+        "parent": "model/69:4:composite:1",
+        "source_parent": "model/69:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 70,
+            "end_line": 70,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "MixedChoices.forward",
+            "expression": "a"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1",
+        "kind": "composite",
+        "label": "self.bridge",
+        "parent": "model/69:4:composite:1",
+        "source_parent": "model/69:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 63,
+            "end_line": 67,
+            "column": 4,
+            "end_column": 51,
+            "symbol": "bridge",
+            "expression": "def bridge(self, x, *, option=None):\n    a = x.sin()\n    b = x.cos()\n    c = x.tanh()\n    return unfamiliar_bridge(a + b + c, option)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "composite",
+        "glyph": {
+          "shape": "frame",
+          "fill": "#edf2ff"
+        },
+        "runtime_evidence": [],
+        "semantic_type": "source-function",
+        "module_path": "",
+        "constructor": {},
+        "source_class": null
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/63:21:interface:1",
+        "kind": "interface",
+        "label": "x",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 63,
+            "end_line": 63,
+            "column": 21,
+            "end_column": 22,
+            "symbol": "bridge",
+            "expression": "x"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "x"
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/63:27:interface:1",
+        "kind": "interface",
+        "label": "option",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 63,
+            "end_line": 63,
+            "column": 27,
+            "end_column": 33,
+            "symbol": "bridge",
+            "expression": "option"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "input",
+        "slot": "option",
+        "source_constant_input": {
+          "value": null,
+          "scope": "literal argument or default of this source invocation; other paths retained"
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/64:12:compute:1",
+        "kind": "compute",
+        "label": "sin",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 64,
+            "end_line": 64,
+            "column": 12,
+            "end_column": 19,
+            "symbol": "bridge",
+            "expression": "x.sin()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "sin",
+        "function_target": "x.sin",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/64:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "a",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 64,
+            "end_line": 64,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "bridge",
+            "expression": "a"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/65:12:compute:1",
+        "kind": "compute",
+        "label": "cos",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 65,
+            "end_line": 65,
+            "column": 12,
+            "end_column": 19,
+            "symbol": "bridge",
+            "expression": "x.cos()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "cos",
+        "function_target": "x.cos",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/65:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "b",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 65,
+            "end_line": 65,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "bridge",
+            "expression": "b"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/66:12:compute:1",
+        "kind": "compute",
+        "label": "tanh",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 66,
+            "end_line": 66,
+            "column": 12,
+            "end_column": 20,
+            "symbol": "bridge",
+            "expression": "x.tanh()"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "activation",
+        "function_target": "x.tanh",
+        "arguments": {
+          "args": [],
+          "kwargs": {}
+        },
+        "reason": null,
+        "syntax": {
+          "type": "Call",
+          "fields": {
+            "args": [],
+            "keywords": []
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/66:8:value-alias:1",
+        "kind": "value-alias",
+        "label": "c",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 66,
+            "end_line": 66,
+            "column": 8,
+            "end_column": 9,
+            "symbol": "bridge",
+            "expression": "c"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "value",
+          "fill": "#e8f6ef"
+        },
+        "runtime_evidence": [],
+        "slot": null
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/67:33:compute:1",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 67,
+            "end_line": 67,
+            "column": 33,
+            "end_column": 42,
+            "symbol": "bridge",
+            "expression": "a + b + c"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "syntax": {
+          "type": "BinOp",
+          "fields": {
+            "left": {
+              "operand": ".left"
+            },
+            "op": {
+              "type": "Add",
+              "fields": {}
+            },
+            "right": {
+              "operand": ".right"
+            }
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/67:33:compute:2",
+        "kind": "compute",
+        "label": "add",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 67,
+            "end_line": 67,
+            "column": 33,
+            "end_column": 38,
+            "symbol": "bridge",
+            "expression": "a + b"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "rounded-rect",
+          "fill": "#dceffc"
+        },
+        "runtime_evidence": [],
+        "operator": "add",
+        "syntax": {
+          "type": "BinOp",
+          "fields": {
+            "left": {
+              "operand": ".left"
+            },
+            "op": {
+              "type": "Add",
+              "fields": {}
+            },
+            "right": {
+              "operand": ".right"
+            }
+          }
+        }
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/67:15:opaque:1",
+        "kind": "opaque",
+        "label": "unfamiliar_bridge",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 67,
+            "end_line": 67,
+            "column": 15,
+            "end_column": 51,
+            "symbol": "bridge",
+            "expression": "unfamiliar_bridge(a + b + c, option)"
+          }
+        ],
+        "evidence_status": "opaque",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "dashed-rect",
+          "fill": "#fbe4e4"
+        },
+        "runtime_evidence": [],
+        "operator": "unfamiliar_bridge",
+        "function_target": "unfamiliar_bridge",
+        "arguments": {
+          "args": [
+            {
+              "unresolved": "a + b + c"
+            },
+            {
+              "unresolved": "option"
+            }
+          ],
+          "kwargs": {}
+        },
+        "reason": "unresolved-call-target"
+      },
+      {
+        "id": "model/69:4:composite:1/63:4:composite:1/67:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/69:4:composite:1/63:4:composite:1",
+        "source_parent": "model/69:4:composite:1/63:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 67,
+            "end_line": 67,
+            "column": 8,
+            "end_column": 51,
+            "symbol": "bridge",
+            "expression": "return unfamiliar_bridge(a + b + c, option)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      },
+      {
+        "id": "model/69:4:composite:1/71:8:interface:1",
+        "kind": "interface",
+        "label": "return",
+        "parent": "model/69:4:composite:1",
+        "source_parent": "model/69:4:composite:1",
+        "source": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+            "line": 71,
+            "end_line": 71,
+            "column": 8,
+            "end_column": 29,
+            "symbol": "MixedChoices.forward",
+            "expression": "return self.bridge(a)"
+          }
+        ],
+        "evidence_status": "static-only",
+        "granularity": "atomic",
+        "glyph": {
+          "shape": "port",
+          "fill": "#e7edf4"
+        },
+        "runtime_evidence": [],
+        "role": "output"
+      }
+    ],
+    "edges": [
+      {
+        "source": "model/69:4:composite:1/69:22:interface:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/53:20:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00000"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/53:20:interface:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/54:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00001"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/54:12:compute:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/54:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00002"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/53:20:interface:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/55:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00003"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/55:12:compute:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/55:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00004"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/53:20:interface:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/56:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00005"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/56:12:compute:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/56:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00006"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/54:8:value-alias:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/57:12:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00007"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/55:8:value-alias:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/57:12:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00008"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/57:12:compute:2",
+        "target": "model/69:4:composite:1/53:4:composite:1/57:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00009"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/56:8:value-alias:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/57:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00010"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/57:12:compute:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/57:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00011"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/57:8:value-alias:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/58:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00012"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/58:12:compute:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/58:12:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00013"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/58:12:compute:2",
+        "target": "model/69:4:composite:1/53:4:composite:1/58:12:compute:3",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00014"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/58:12:compute:3",
+        "target": "model/69:4:composite:1/53:4:composite:1/58:12:compute:4",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00015"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/58:12:compute:4",
+        "target": "model/69:4:composite:1/53:4:composite:1/58:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00016"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/53:26:interface:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/59:11:control:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00017"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/59:11:control:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "true",
+        "evidence": "source-dependency",
+        "id": "e00018"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/58:8:value-alias:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1/60:19:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00019"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/54:8:value-alias:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1/60:19:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00020"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1/60:19:compute:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1/60:12:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00021"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/59:11:control:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/59:8:composite:2",
+        "kind": "control",
+        "source_port": "out",
+        "target_port": "false",
+        "evidence": "source-dependency",
+        "id": "e00022"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/58:8:value-alias:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/61:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00023"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/59:8:composite:1/60:12:interface:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/53:4:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00024"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/61:8:interface:1",
+        "target": "model/69:4:composite:1/53:4:composite:1/53:4:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "1",
+        "evidence": "source-dependency",
+        "id": "e00025"
+      },
+      {
+        "source": "model/69:4:composite:1/53:4:composite:1/53:4:interface:1",
+        "target": "model/69:4:composite:1/70:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00026"
+      },
+      {
+        "source": "model/69:4:composite:1/70:8:value-alias:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/63:21:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "x",
+        "evidence": "source-dependency",
+        "id": "e00027"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/63:21:interface:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/64:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00028"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/64:12:compute:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/64:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00029"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/63:21:interface:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/65:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00030"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/65:12:compute:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/65:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00031"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/63:21:interface:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/66:12:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "receiver",
+        "evidence": "source-dependency",
+        "id": "e00032"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/66:12:compute:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/66:8:value-alias:1",
+        "kind": "alias",
+        "source_port": "out",
+        "target_port": "value",
+        "evidence": "source-dependency",
+        "id": "e00033"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/64:8:value-alias:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/67:33:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00034"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/65:8:value-alias:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/67:33:compute:2",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00035"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/67:33:compute:2",
+        "target": "model/69:4:composite:1/63:4:composite:1/67:33:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "0",
+        "evidence": "source-dependency",
+        "id": "e00036"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/66:8:value-alias:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/67:33:compute:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "2",
+        "evidence": "source-dependency",
+        "id": "e00037"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/67:33:compute:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/67:15:opaque:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:0",
+        "evidence": "source-dependency",
+        "id": "e00038"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/63:27:interface:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/67:15:opaque:1",
+        "kind": "data",
+        "source_port": "out",
+        "target_port": "arg:1",
+        "evidence": "source-dependency",
+        "id": "e00039"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/67:15:opaque:1",
+        "target": "model/69:4:composite:1/63:4:composite:1/67:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00040"
+      },
+      {
+        "source": "model/69:4:composite:1/63:4:composite:1/67:8:interface:1",
+        "target": "model/69:4:composite:1/71:8:interface:1",
+        "kind": "interface-binding",
+        "source_port": "out",
+        "target_port": "in",
+        "evidence": "source-dependency",
+        "id": "e00041"
+      }
+    ],
+    "branches": [
+      {
+        "id": "model/69:4:composite:1/53:4:composite:1/59:11:control:1",
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/consumer_arguments.py",
+        "line": 59,
+        "column": 8,
+        "outcomes": [
+          "true",
+          "false"
+        ],
+        "kind": "if"
+      }
+    ],
+    "motifs": [],
+    "diagnostics": [],
+    "runtime": {
+      "status": "not-requested",
+      "model_executed": false
+    },
+    "coverage_blockers": [],
+    "coverage": {
+      "status": "not-verified",
+      "scope": "static-source",
+      "complete": false,
+      "reason": "static dependencies are not execution proof"
+    },
+    "limitations": [
+      "Static edges express source dependencies, not observed tensor bindings.",
+      "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+      "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+      "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+    ],
+    "ir_digest": "e0a689cddd7e90498647ea664a655f042ec5e84fdb826c270edbe8d19645fa45"
+  },
+  "state": {
+    "mode": "source",
+    "view": "publication",
+    "paperMedium": "canvas",
+    "paperGranularity": "roles",
+    "paperAdaptive": true,
+    "paperPipelineSummaries": false,
+    "paperAuto": false,
+    "open": [
+      "model/69:4:composite:1",
+      "model/69:4:composite:1/53:4:composite:1",
+      "model/69:4:composite:1/53:4:composite:1/59:8:composite:1",
+      "model/69:4:composite:1/53:4:composite:1/59:8:composite:2",
+      "model/69:4:composite:1/63:4:composite:1"
+    ]
+  }
+}

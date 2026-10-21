@@ -91,6 +91,41 @@
     }
     return result;
   }
+  // Stage an existing fixed call input beside its single closed consumer.
+  // Literal evidence comes from the invocation compiler, not an input name.
+  // Only this input's position changes; containment and conditional structure
+  // remain intact. The renderer must measure actual paths before accepting it.
+  function consumerArguments(positions,literals,preference='left'){
+    const ctx=positions.context,idx=ctx?.idx,records=[];
+    const result=new Map([...positions].map(([id,p])=>[id,{...p}]));
+    result.context={...ctx,routeCache:new Map(),reserved:[]};
+    if(!idx)return {positions:result,records};
+    const ancestors=id=>{const seen=new Set();while(id!=null&&!seen.has(id)){seen.add(id);id=idx.nodes.get(id)?.parent;}return seen;};
+    const overlap=(a,b)=>a.x<b.x+b.w+12&&a.x+a.w+12>b.x&&a.y<b.y+b.h+12&&a.y+a.h+12>b.y;
+    const ordinary=e=>!e.design_route&&!e.context_lane&&!e.layout_after&&!e.iteration&&!e.condition&&!ctx.feedback?.has(e.id)&&
+      (e.bundle_members||[e]).every(m=>['data','alias','interface-binding','control'].includes(m.kind)&&!m.design_route&&!m.context_lane&&!m.layout_after&&!m.iteration&&!m.condition);
+    for(const [id,p]of result){
+      if(!literals.has(id))continue;
+      const n=idx.nodes.get(id),parent=result.get(n?.parent),uses=(ctx.edges||[]).filter(e=>e.source===id),targets=[...new Set(uses.map(e=>e.target))];
+      if(n?.kind!=='interface'||n.role!=='input'||p.expanded||p.cyclic||!parent?.expanded||targets.length!==1||uses.some(e=>!ordinary(e))||
+        (ctx.edges||[]).some(e=>e.target===id)||ctx.fixedInputs?.some(r=>r.nodes.includes(id))||ctx.inputDocks?.some(r=>r.node===id))continue;
+      const target=targets[0],b=result.get(target);
+      if(!b||b.expanded||b.cyclic||idx.nodes.get(target)?.parent!==n.parent)continue;
+      const lanes=(ctx.contextLanes||[]).filter(c=>c.owner===n.parent&&c.selected!==false);
+      const left=parent.x+16+(parent.design_gutter||0)+(lanes.some(c=>c.side==='left')?(parent.context_gutter||0):0);
+      const right=parent.x+parent.w-16-(lanes.some(c=>c.side==='right')?(parent.context_gutter||0):0);
+      const sides=preference==='right'?['right','left']:['left','right'],parents=ancestors(id);
+      const candidate=sides.map(side=>({side,x:side==='left'?b.x-p.w-20:b.x+b.w+20,y:b.y+(b.h-p.h)/2})).find(c=>
+        c.x>=left&&c.x+p.w<=right&&c.y>=parent.y+(parent.header||0)+8&&c.y+p.h<=parent.y+parent.h-16&&
+        [...result].every(([other,box])=>other===id||parents.has(other)||!overlap({...p,...c},box)));
+      if(!candidate||Math.abs(p.x-candidate.x)+Math.abs(p.y-candidate.y)<1)continue;
+      records.push({node:id,parent:n.parent,target,side:candidate.side,before:{x:p.x,y:p.y},after:{x:candidate.x,y:candidate.y},
+        edges:uses.map(e=>({edge:e.id,source_port:e.source_port,target_port:e.target_port,kind:e.kind})),
+        scope:'Existing invocation-bound literal beside one closed consumer. Canonical value, source ownership, conditions and operand slots retained; no branch pruning, scheduling, purity or input-role inference.'});
+      Object.assign(p,{x:candidate.x,y:candidate.y});
+    }
+    return {positions:result,records};
+  }
   // Parallel labelled wires need clearance where their visible branches meet,
   // not in every helper in the figure. Use the drawing hierarchy after frame
   // ownership; source nesting may no longer be the visible containment tree.
@@ -752,5 +787,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

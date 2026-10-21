@@ -3,6 +3,7 @@
   'use strict';
   const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
   const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
+  const InvocationInputs=root.SemanticInvocationInputs||(typeof require==='function'?require('./invocation-inputs.js'):null);
   const P=root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
   const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const SummaryGoals=root.SemanticSummaryGoals||(typeof require==='function'?require('./summary-goals.js'):null);
@@ -890,6 +891,40 @@
     chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,cross_scope_refinement:record};
     return chosen;
   }
+  function prepareConsumerArguments(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperConsumerArguments===false||Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
+    const literals=InvocationInputs.compile(ir);if(!literals.size)return baseline;
+    let chosen=baseline,before=realizedRelations(baseline);
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
+    let applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));
+    const goals=Goals.build(ir,g.architecture);
+    let covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal));
+    const record={max_trials:2,attempts:[],before:clearanceMetrics(b)},seen=new Set();
+    for(const preference of ['left','right']){
+      const proposal=L.consumerArguments(g.positions,literals,preference),key=JSON.stringify(proposal.records);
+      if(!proposal.records.length||seen.has(key))continue;seen.add(key);
+      const graph={...g,positions:proposal.positions,constraint_receipts:JSON.parse(JSON.stringify(g.constraint_receipts))};
+      let trial={graph,prepared:prepare(graph)};if(state.paperSelectedRoutes!==false)trial=polishRoutes(trial);
+      E.auditConstraintRoutes(graph,trial.prepared.routes);
+      const q=trial.prepared.quality,old=chosen.prepared.quality,after=realizedRelations(trial);
+      const coverage=new Set(Goals.evaluate(goals,graph,trial.prepared,ir).filter(c=>c.status==='fulfilled').map(c=>c.goal)),facts=clearanceIdentity(g)===clearanceIdentity(graph);
+      const accepted=facts&&(q.line_geometry.crossings<old.line_geometry.crossings||q.wire_length<old.wire_length*.98)&&
+        q.line_geometry.crossings<=old.line_geometry.crossings&&q.wire_length<=old.wire_length&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&fontMetric(q)>=fontMetric(b)&&
+        q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&
+        q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(issue=>old.issues.includes(issue))&&
+        graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
+      record.attempts.push({preference,records:proposal.records,accepted,facts_preserved:facts,before:clearanceMetrics(old),candidate:clearanceMetrics(q),
+        realized_before:before,realized_candidate:after,direct_goals_before:covered.size,direct_goals_candidate:coverage.size});
+      if(accepted){chosen=trial;before=after;covered=coverage;applied=new Set(graph.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));
+        chosen.graph.positions.context.consumerArguments=proposal.records;}
+    }
+    if(!record.attempts.length)return baseline;
+    record.after=clearanceMetrics(chosen.prepared.quality);record.selected=chosen.graph.positions.context.consumerArguments||[];
+    record.scope='At most two measured placements of existing fixed call inputs beside their single closed consumer; no semantic frontier change, branch pruning or scheduling assertion.';
+    chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,consumer_argument_refinement:record};return chosen;
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     const g=chosen.graph,b=chosen.prepared.quality;
@@ -914,6 +949,7 @@
     }
     if(state.paperSelectedRoutes!==false&&!Object.keys(state.offsets||{}).length&&chosen.graph.edges.length>64)chosen=polishRoutes(chosen);
     chosen=prepareCrossScopePorts(ir,state,chosen);
+    chosen=prepareConsumerArguments(ir,state,chosen);
     return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
@@ -934,6 +970,7 @@
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       summary_goals:g.summary_goals,summary_coverage:g.summary_coverage,
       layout:{frame_title_routing:g.positions.context.protectFrameTitles?'avoid':'pass-through',bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
+        ...(g.positions.context.consumerArguments?.length?{consumer_arguments:g.positions.context.consumerArguments}:{}),
         ...(g.positions.context.crossScopePorts?.length?{cross_scope_ports:g.positions.context.crossScopePorts}:{}),
         ...(g.positions.context.inputDocks.length?{input_docks:g.positions.context.inputDocks.map(record=>({...record,geometry_verified:L.inputDockGeometry(record,g.positions),
           routes_verified:record.edges.every(e=>routes.find(r=>r.id===e.edge)?.route.ok)}))}:{}),
@@ -957,5 +994,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

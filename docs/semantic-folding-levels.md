@@ -93,3 +93,11 @@ and browser text bounds, and 61 groups / 720 tests pass. The historical
 27-crossing main baseline is still not recovered. Browser comparison with the
 dedicated reference still shows differences in reading direction, grouping and
 source-detail density; the broad convergence goal is not complete.
+
+### 固定调用输入靠近消费者（2026-10-21）
+
+[消费者邻近布局](consumer-arguments.md)进一步在同一语义状态中调整已证明固定值的输入，保留输入节点、原始用途、条件和所有分支；消费者展开后仍按新的可见图组织。通用资格来自调用字面值证明与单一可见消费者，不依赖模型或参数名称。模块标题继续允许连线通过。
+
+正式 Transformer 主图交叉 29 → 18、线长约减少 6.1%，73 节点 / 82 边及 1968 × 3594 尺寸不变，已恢复并改善先前 27 个交叉的历史水平。两张所选详图分别为 3 → 3、16 → 8 个交叉，图组直接覆盖保持 74 项。真实源码 MixedChoices 的条件返回和未知调用均保留，线长约减少 28.1%。732 项测试、30 张独立 SVG 检查及原生浏览器文字检查通过。
+
+实际编辑器中的局部展开为 23 → 30 → 23 个图元；保存重开和收回均恢复一致 SVG。小样例源码视图实际导出 41 节点 / 42 边。大输入 3371 节点 / 3663 边的源码投影也保持完整，但数千节点完整 SVG 路由和浏览器性能仍未验证。通用语义状态与专用参考在阅读方向、分组、helper/返回细节密度和长上下文路径上仍有差异，整体收敛目标未完成。

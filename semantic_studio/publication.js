@@ -274,6 +274,12 @@
       if(summary){n.paper.caption=summary.text;n.paper.captions=summary.lines;n.paper.caption_scope='unit-inventory';n.paper.layout_caption_rows=captions.length;
         n.paper.inventory_summary={shown_terms:summary.shown_terms,omitted_kinds:summary.omitted_kinds};}
     }
+    if(n.module_arguments?.length){
+      const extra=n.module_arguments.flatMap(r=>wrap(r.label,maxWidth,13));
+      n.paper.captions.push(...extra);n.paper.caption+=(n.paper.caption?' · ':'')+n.module_arguments.map(r=>r.label).join(' · ');
+      if(n.paper.layout_caption_rows!=null)n.paper.layout_caption_rows+=extra.length;
+      n.paper.h=Math.max(n.paper.h,22+n.paper.lines.length*20+n.paper.captions.length*16);
+    }
     return n.paper;
   }
   function build(ir){
@@ -837,6 +843,20 @@
     // transparent aliases. Their parent branches still control visibility.
     for(const r of returnStages?.rows||[])for(const site of r.return_sites)pol.bindings.delete(site.node);
     if(pipelines)for(const id of pipelines.keys()){const n=idx.nodes.get(id);n.local_pipeline_expanded=open.includes(id);decorate(n,idx);}
+    // Lower module-reference arguments only after selecting the logical
+    // frontier. Released space must not implicitly open unrelated regions.
+    const moduleArgumentEngine=canvas&&granularity==='roles'&&!local&&state.paperModuleArguments!==false?
+      (root.SemanticModuleArguments||(typeof require==='function'?require('./module-arguments.js'):null)):null;
+    const moduleArguments=moduleArgumentEngine?.compile({ir,plan:focused.plan,open:new Set(open),focus,requested:[...explicitRoles]});
+    if(moduleArguments){
+      options.metadataTargets=new Map();options.metadataKinds=new Map();
+      for(const row of moduleArguments.rows.filter(r=>r.status==='attached')){
+        pol.metadata.add(row.node);options.metadataTargets.set(row.node,row.consumer);options.metadataKinds.set(row.node,'module-reference-argument');
+        const consumer=idx.nodes.get(row.consumer);consumer.module_arguments=[...(consumer.module_arguments||[]),copy(row)];
+      }
+      for(const row of moduleArguments.rows.filter(r=>r.status==='source-detail'))pol.bindings.delete(row.input);
+      for(const n of focused.plan.nodes.filter(n=>n.module_arguments?.length))decorate(n,idx);
+    }
     let projected=E.project(ir,{...state,view:'architecture',details:false,open},focused.plan,options);
     const edgePairs=new Map(),labeledPairs=new Set();
     for(const e of projected.edges){const key=JSON.stringify([e.source,e.target]);edgePairs.set(key,(edgePairs.get(key)||0)+1);if(e.condition||e.bundle_members)labeledPairs.add(key);}
@@ -884,6 +904,7 @@
       paper_width_mm:Math.max(80,Math.min(400,Number(state.paperWidthMm)||180)),fit_page:state.paperFitPage!==false,min_font_pt:8,unknowns:projected.nodes.filter(n=>!projected.positions.get(n.id).expanded).reduce((s,n)=>s+n.paper.unknown_count,0)};
     if(reservations)projected.publication.frontier_reservations=reservations;
     if(coherentChoices.length)projected.publication.coherent_frontier={rule_version:'coherent-frontier/1',phase:'logical-frontier-before-summary-and-stage-lowering',choices:coherentChoices};
+    if(moduleArguments?.rows.length)projected.publication.module_arguments=copy(moduleArguments);
     if(invocationInputs)projected.publication.invocation_inputs={rule_version:'invocation-inputs/1',rows:[...invocationInputs.values()].map(r=>({...copy(r),
       status:projected.positions.get(r.node)?.arrangement==='fixed-call-argument'?'docked':projected.positions.has(r.node)?'visible':projected.representatives[r.node]?'folded':'outside',
       visible_node:projected.representatives[r.node]||null})),docks:projected.positions.context.fixedInputs||[]};

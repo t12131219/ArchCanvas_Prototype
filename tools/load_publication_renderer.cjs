@@ -10,6 +10,9 @@ module.exports=function loadRenderer(directory,{engine=false,diagramSet=false}={
     if(name==='summary-goals.js'&&!fs.existsSync(path.join(directory,name)))continue;
     const file=path.join(directory,name);if(['adaptive-frontier.js','symbolic-values.js','structural-representatives.js','sequence-frontier.js','frame-ownership.js','role-frontier.js','contract-stages.js','role-path-stages.js','role-operation-stages.js','dimension-paths.js','local-pipelines.js','local-expressions.js','local-relations.js','relation-constraints.js','expression-goals.js','presentation-regions.js'].includes(name)&&!fs.existsSync(file))continue;vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
   }
+  // Older frozen renderers have no module-argument policy. Current
+  // publication resolves this optional registry only when projecting.
+  const modules=path.join(directory,'module-arguments.js');if(fs.existsSync(modules))vm.runInContext(fs.readFileSync(modules,'utf8'),context,{filename:modules});
   if(diagramSet){
     if(fs.existsSync(path.join(directory,'compact-diagrams.js')))vm.runInContext(fs.readFileSync(path.join(directory,'compact-diagrams.js'),'utf8'),context,{filename:path.join(directory,'compact-diagrams.js')});
     vm.runInContext(fs.readFileSync(path.join(directory,'diagram-set.js'),'utf8'),context,{filename:path.join(directory,'diagram-set.js')});

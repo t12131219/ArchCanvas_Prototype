@@ -67,6 +67,7 @@ COMMANDS = {
     'role-operation-stages': ['node', 'tests/role-operation-stages.test.cjs'],
     'role-path-stages': ['node', 'tests/role-path-stages.test.cjs'],
     'prefix-role-paths': ['node', 'tests/prefix-role-paths.test.cjs'],
+    'module-arguments': ['node', 'tests/module-arguments.test.cjs'],
     'compact-main': ['node', 'tests/compact-main.test.cjs'],
     'cohort-folds': ['node', 'tests/cohort-folds.test.cjs'],
     'joint-preflights': ['node', 'tests/joint-preflights.test.cjs'],

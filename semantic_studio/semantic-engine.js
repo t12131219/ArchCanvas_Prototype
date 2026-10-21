@@ -46,7 +46,7 @@
     roots.forEach(visit);
     const ownership=options.frameOwnership?.({ir,plan,idx,visible,open,roots})||new Map();
     for(const id of ownership.keys())visible.delete(id);
-    function rep(id){const seen=new Set();while(id&&!visible.has(id)&&!seen.has(id)){if(!eligible(id))return null;seen.add(id);id=ownership.get(id)?.target||idx.nodes.get(id)?.parent;}return visible.has(id)?id:null;}
+    function rep(id){const seen=new Set();while(id&&!visible.has(id)&&!seen.has(id)){if(!eligible(id))return null;seen.add(id);id=options.metadataTargets?.get(id)||ownership.get(id)?.target||idx.nodes.get(id)?.parent;}return visible.has(id)?id:null;}
     let drawingIdx=idx;
     if(ownership.size){
       const nodes=plan.nodes.map(n=>({...n})),by=new Map(nodes.map(n=>[n.id,n]));
@@ -62,7 +62,7 @@
       if(!eligible(raw.source)||!eligible(raw.target)){excluded.push(raw.id);continue;}
       if(metadata.has(raw.source)||metadata.has(raw.target)){
         attached.push(raw.id);const id=rep(metadata.has(raw.source)?raw.target:raw.source);
-        if(id){if(!annotations.has(id))annotations.set(id,[]);annotations.get(id).push({edge:clone(raw),resource:idx.nodes.get(metadata.has(raw.source)?raw.source:raw.target),annotation_kind:'configuration-dependency'});}
+        if(id){if(!annotations.has(id))annotations.set(id,[]);const resource=metadata.has(raw.source)?raw.source:raw.target;annotations.get(id).push({edge:clone(raw),resource:idx.nodes.get(resource),annotation_kind:options.metadataKinds?.get(resource)||'configuration-dependency'});}
         continue;
       }
       if(resources.has(raw.source)){attached.push(raw.id);const id=rep(raw.target);if(id){if(!annotations.has(id))annotations.set(id,[]);annotations.get(id).push({edge:clone(raw),resource:idx.nodes.get(raw.source)});}continue;}

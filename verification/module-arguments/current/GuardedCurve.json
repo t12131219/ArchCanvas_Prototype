@@ -1,0 +1,759 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "GuardedCurve",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+    "class": "GuardedCurve",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+      "cell": null,
+      "sha256": "a07ad56c9f4fd4c38374a76c5e93748719a82fc35bc8a2ce1b6bb2a9fcc45b67",
+      "unit_sha256": "a07ad56c9f4fd4c38374a76c5e93748719a82fc35bc8a2ce1b6bb2a9fcc45b67"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/51:4:composite:1",
+      "kind": "composite",
+      "label": "GuardedCurve",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 51,
+          "end_line": 54,
+          "column": 4,
+          "end_column": 21,
+          "symbol": "GuardedCurve.forward",
+          "expression": "def forward(self, signal, flag):\n    if flag:\n        return self.weave(signal, transform=self.adjust)\n    return signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "GuardedCurve"
+    },
+    {
+      "id": "model/51:4:composite:1/51:22:interface:1",
+      "kind": "interface",
+      "label": "signal",
+      "parent": "model/51:4:composite:1",
+      "source_parent": "model/51:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 22,
+          "end_column": 28,
+          "symbol": "GuardedCurve.forward",
+          "expression": "signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "signal"
+    },
+    {
+      "id": "model/51:4:composite:1/51:30:interface:1",
+      "kind": "interface",
+      "label": "flag",
+      "parent": "model/51:4:composite:1",
+      "source_parent": "model/51:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 30,
+          "end_column": 34,
+          "symbol": "GuardedCurve.forward",
+          "expression": "flag"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "flag"
+    },
+    {
+      "id": "model/51:4:composite:1/52:11:control:1",
+      "kind": "control",
+      "label": "flag",
+      "parent": "model/51:4:composite:1",
+      "source_parent": "model/51:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 11,
+          "end_column": 15,
+          "symbol": "GuardedCurve.forward",
+          "expression": "flag"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/51:4:composite:1",
+      "source_parent": "model/51:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 52,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 60,
+          "symbol": "GuardedCurve.forward",
+          "expression": "if flag:\n    return self.weave(signal, transform=self.adjust)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/51:4:composite:1/52:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/53:48:state:1",
+      "kind": "state",
+      "label": "self.adjust",
+      "parent": "model/51:4:composite:1/52:8:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 48,
+          "end_column": 59,
+          "symbol": "GuardedCurve.forward",
+          "expression": "self.adjust"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "adjust",
+      "value": {
+        "unresolved": "self.adjust"
+      },
+      "resource_framework_type": "torch.nn.GELU",
+      "resource_constructor": {
+        "args": [],
+        "kwargs": {}
+      },
+      "module_resource": true,
+      "module_resource_binding": {
+        "reference": "entry|adjust@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py:46:22",
+        "selection": "self.adjust",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+            "line": 46,
+            "end_line": 46,
+            "column": 22,
+            "end_column": 31,
+            "symbol": "constructor",
+            "expression": "nn.GELU()"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "read": "model/51:4:composite:1/52:8:composite:1/53:48:state:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|adjust@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py:46:22",
+      "symbolic_value": {
+        "rule_version": "source-symbolic-value/1",
+        "kind": "module-resource",
+        "reference": "entry|adjust@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py:46:22",
+        "framework_type": "torch.nn.GELU",
+        "scope": "constructor resource selected at this source read; not a call or parameter-stability claim"
+      }
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "kind": "composite",
+      "label": "self.weave",
+      "parent": "model/51:4:composite:1/52:8:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 48,
+          "end_line": 49,
+          "column": 4,
+          "end_column": 41,
+          "symbol": "weave",
+          "expression": "def weave(self, signal, transform):\n    return transform(signal) + signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/48:20:interface:1",
+      "kind": "interface",
+      "label": "signal",
+      "parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 48,
+          "end_line": 48,
+          "column": 20,
+          "end_column": 26,
+          "symbol": "weave",
+          "expression": "signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "signal"
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/48:28:interface:1",
+      "kind": "interface",
+      "label": "transform",
+      "parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 48,
+          "end_line": 48,
+          "column": 28,
+          "end_column": 37,
+          "symbol": "weave",
+          "expression": "transform"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "transform"
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 15,
+          "end_column": 41,
+          "symbol": "weave",
+          "expression": "transform(signal) + signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:2",
+      "kind": "compute",
+      "label": "transform · GELU",
+      "parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 15,
+          "end_column": 32,
+          "symbol": "weave",
+          "expression": "transform(signal)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "adjust",
+      "framework_type": "torch.nn.GELU",
+      "constructor": {
+        "args": [],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.GELU",
+      "module_binding": {
+        "reference": "entry|adjust@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py:46:22",
+        "selection": "transform",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+            "line": 46,
+            "end_line": 46,
+            "column": 22,
+            "end_column": 31,
+            "symbol": "constructor",
+            "expression": "nn.GELU()"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:2",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|adjust@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py:46:22"
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 8,
+          "end_column": 41,
+          "symbol": "weave",
+          "expression": "return transform(signal) + signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:1/53:12:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/51:4:composite:1/52:8:composite:1",
+      "source_parent": "model/51:4:composite:1/52:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 12,
+          "end_column": 60,
+          "symbol": "GuardedCurve.forward",
+          "expression": "return self.weave(signal, transform=self.adjust)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/51:4:composite:1/52:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/51:4:composite:1",
+      "source_parent": "model/51:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 52,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 60,
+          "symbol": "GuardedCurve.forward",
+          "expression": "if flag:\n    return self.weave(signal, transform=self.adjust)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/51:4:composite:1/52:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/51:4:composite:1/54:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/51:4:composite:1",
+      "source_parent": "model/51:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 8,
+          "end_column": 21,
+          "symbol": "GuardedCurve.forward",
+          "expression": "return signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/51:4:composite:1/51:4:interface:1",
+      "kind": "interface",
+      "label": "outputs / conditional returns",
+      "parent": "model/51:4:composite:1",
+      "source_parent": "model/51:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 51,
+          "end_line": 54,
+          "column": 4,
+          "end_column": 21,
+          "symbol": "GuardedCurve.forward",
+          "expression": "def forward(self, signal, flag):\n    if flag:\n        return self.weave(signal, transform=self.adjust)\n    return signal"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/51:4:composite:1/51:30:interface:1",
+      "target": "model/51:4:composite:1/52:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/51:4:composite:1/52:11:control:1",
+      "target": "model/51:4:composite:1/52:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/51:4:composite:1/51:22:interface:1",
+      "target": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/48:20:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "signal",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/51:4:composite:1/52:8:composite:1/53:48:state:1",
+      "target": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/48:28:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "transform",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/48:20:interface:1",
+      "target": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:2",
+      "target": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/48:20:interface:1",
+      "target": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1",
+      "target": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:8:interface:1",
+      "target": "model/51:4:composite:1/52:8:composite:1/53:12:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/51:4:composite:1/52:11:control:1",
+      "target": "model/51:4:composite:1/52:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/51:4:composite:1/51:22:interface:1",
+      "target": "model/51:4:composite:1/54:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/51:4:composite:1/52:8:composite:1/53:12:interface:1",
+      "target": "model/51:4:composite:1/51:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/51:4:composite:1/54:8:interface:1",
+      "target": "model/51:4:composite:1/51:4:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/51:4:composite:1/52:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+      "line": 52,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "semantic_contracts": [
+    {
+      "id": "contract:residual-plain:74ca5c6acf0b",
+      "rule": "residual-plain",
+      "rule_version": "source-contracts/1",
+      "node": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1",
+      "members": [
+        "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:2",
+        "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1"
+      ],
+      "roles": {
+        "skip": "model/51:4:composite:1/51:22:interface:1",
+        "skip_slot": "out",
+        "branch": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:2",
+        "branch_slot": "out",
+        "add": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1",
+        "output": "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:1",
+        "order": "plain",
+        "normalization": null,
+        "normalization_type": null,
+        "branch_path": [
+          "model/51:4:composite:1/52:8:composite:1/48:4:composite:1/49:15:compute:2"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/module_arguments.py",
+          "line": 49,
+          "end_line": 49,
+          "column": 15,
+          "end_column": 41,
+          "symbol": "weave",
+          "expression": "transform(signal) + signal"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00004",
+        "e00005",
+        "e00006",
+        "e00007"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence"
+      ]
+    }
+  ],
+  "semantic_contract_basis": "e6cf5b64a86877a108c1028669d919adf72763ccc1c0c944be43dc70d66987e8",
+  "ir_digest": "07c7cd5373c4c5ccd9f01f2082adc3f7b8c16568b87d1c8d40fa3d628a6fc2d8"
+}

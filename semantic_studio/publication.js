@@ -239,7 +239,8 @@
     if(n.local_pipeline&&!n.local_pipeline_expanded){
       const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
       const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
-      title=p.dependency_dag?'Result '+p.dependency_dag.result:p.dependency_tree?expression(p.dependency_tree):p.operations.map(o=>o.label).join(' → ');
+      const pathTitle=p.path_display?p.path_display.runs.map(r=>r.label+(r.operations.length>1?' · '+r.operations.length+' calls':'')).join(' → '):p.operations.map(o=>o.label).join(' → ');
+      title=p.dependency_dag?'Result '+p.dependency_dag.result:p.dependency_tree?expression(p.dependency_tree):pathTitle;
       caption=p.dependency_dag?'Dependency DAG':p.dependency_tree?'Dependency tree':'Dependency path';
     }
     const dagSummary=n.local_pipeline?.dependency_dag&&!n.local_pipeline_expanded;

@@ -2,7 +2,7 @@
  * presentation form, not fusion, purity, scheduling or a new family contract. */
 (function(root){
   'use strict';
-  const VERSION='local-pipelines/4',flow=e=>['data','alias','interface-binding'].includes(e.kind);
+  const VERSION='local-pipelines/5',flow=e=>['data','alias','interface-binding'].includes(e.kind);
   function compile({ir,plan,bindings,metadata,configurationUses}){
     const by=new Map(plan.nodes.map(n=>[n.id,n])),canonical=new Map(ir.nodes.map(n=>[n.id,n])),children=new Map(),result=new Map();
     for(const n of plan.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
@@ -20,16 +20,25 @@
     for(const owner of plan.nodes){
       if(!owner.parent||!['source-function','source-module'].includes(owner.semantic_type)||guarded(owner))continue;
       const ids=closure(owner.id),inside=new Set(ids),members=ids.slice(1).map(id=>by.get(id));
-      if(!members.length||members.some(n=>guarded(n)||!canonical.has(n.id)))continue;
+      // Contiguous topological partitions are display frames, not source or
+      // semantic boundaries. Inspect their full canonical contents and exact
+      // cuts before looking through them. No other synthetic region is erased.
+      const partitions=members.filter(n=>!canonical.has(n.id));
+      if(!members.length||members.some(guarded)||partitions.some(n=>{
+        if(n.kind!=='composite'||!n.presentation_only||n.semantic_type!=='structural-region')return true;
+        const actual=closure(n.id).filter(id=>canonical.has(id)),set=new Set(actual);
+        return actual.length!==n.canonical_members?.length||new Set(n.canonical_members).size!==actual.length||n.canonical_members.some(id=>!set.has(id))||
+          JSON.stringify(n.boundary_ports)!==JSON.stringify(ir.edges.filter(e=>set.has(e.source)!==set.has(e.target)));
+      }))continue;
       // Source refactoring alone need not break a proved value path. Nested
       // enclosures retain their own original cuts and provenance; a grouping,
       // certificate, effect or identity boundary cannot authorize composition.
-      const boundaries=[owner,...members.filter(n=>n.kind==='composite')];
+      const boundaries=[owner,...members.filter(n=>n.kind==='composite'&&canonical.has(n.id))];
       if(boundaries.slice(1).some(n=>!['source-function','source-module'].includes(n.semantic_type)||
         ir.edges.some(e=>e.source===n.id||e.target===n.id)))continue;
       const auxiliary=members.filter(n=>n.symbolic_value?.kind==='tensor-attribute'),aux=new Set(auxiliary.map(n=>n.id));
       const steps=members.filter(n=>n.kind==='compute'&&!aux.has(n.id)&&!metadata.has(n.id));
-      if(steps.length<2||steps.length>6||steps.some(n=>!n.operator&&!n.framework_type))continue;
+      if(steps.length<2||steps.some(n=>!n.operator&&!n.framework_type))continue;
       // Match the compact projection's read-only parameter attachment policy.
       // Do not absorb writes, incoming values, shared escapes or identity facts.
       const parameters=members.filter(n=>n.kind==='parameter'&&!metadata.has(n.id)),resources=new Set(parameters.map(n=>n.id));
@@ -69,6 +78,9 @@
       for(let i=0;i<todo.length;i++){const at=todo[i];ordered.push(at);for(const next of adj.get(at)){degree.set(next,degree.get(next)-1);if(!degree.get(next))todo.push(next);}if(dag)todo.splice(i+1,todo.length-i-1,...todo.slice(i+1).sort());}
       if(ordered.length!==steps.length)continue;
       const tree=!dag&&steps.some(n=>incoming.get(n.id).length>1);
+      // Long paths have linear receipts. Trees and reused-result DAGs retain
+      // their bounded formula policy, rather than being silently serialized.
+      if(steps.length>6&&(dag||tree))continue;
       // An intermediate result escaping the helper requires its own interface;
       // a single output-path summary would hide the distinguishing connection.
       const cuts=edges.filter(e=>inside.has(e.source)!==inside.has(e.target));
@@ -79,14 +91,25 @@
         return {node:id,operator:n.operator,framework_type:n.framework_type||null,
           label:n.framework_type?.split('.').at(-1)||(framework?n.function_target.split('.').at(-1):n.operator),
           label_basis:n.framework_type?'framework-type':framework?'source-framework-function':'operator'};});
+      const runs=[];
+      if(operations.length>6)for(const o of operations){
+        const previous=runs.at(-1),signature=JSON.stringify([o.operator,o.framework_type,o.label,o.label_basis]);
+        if(previous?.signature===signature)previous.operations.push(o.node);
+        else runs.push({signature,label:o.label,operations:[o.node]});
+      }
+      const pathDisplay=runs.length?{schema:'dependency-path-display/1',runs:runs.map(({signature,...r})=>r),
+        scope:'Consecutive call labels only. Every call, operand and configuration remains distinct; no value, parameter or behavioral equivalence is asserted.'}:null;
       const expression=id=>({node:id,inputs:incoming.get(id).map(t=>({edge:t.edge,target_port:t.target_port,source_port:t.source_port,expression:expression(t.producer)}))});
       const references=new Map(ordered.map((id,i)=>[id,'#'+(i+1)]));
       const dependencyDag=dag?{result:references.get(sinks[0].id),nodes:ordered.map(id=>({node:id,reference:references.get(id),
         inputs:incoming.get(id).map(t=>({edge:t.edge,reference:references.get(t.producer),source_port:t.source_port,target_port:t.target_port}))}))}:null;
-      result.set(owner.id,{rule_version:dag?VERSION:tree||resources.size?'local-pipelines/3':'local-pipelines/2',node:owner.id,form:dag?'dependency-dag-summary':tree?'dependency-tree-summary':'dependency-path-summary',operations,
+      const extended=!!pathDisplay||!!partitions.length;
+      result.set(owner.id,{rule_version:extended?VERSION:dag?'local-pipelines/4':tree||resources.size?'local-pipelines/3':'local-pipelines/2',node:owner.id,form:dag?'dependency-dag-summary':tree?'dependency-tree-summary':'dependency-path-summary',operations,
+        ...(pathDisplay?{path_display:pathDisplay}:{}),
+        ...(partitions.length?{display_partitions:partitions.map(n=>({node:n.id,canonical_members:n.canonical_members.slice(),cuts:n.boundary_ports.map(e=>({...e}))}))}:{}),
         ...(tree?{entry_operations:starts.map(n=>n.id),result_operation:sinks[0].id,dependency_tree:expression(sinks[0].id)}:{}),
         ...(dag?{entry_operations:starts.map(n=>n.id).sort(),result_operation:sinks[0].id,dependency_dag:dependencyDag}:{}),
-        ...(dag||tree||resources.size?{parameter_reads:parameters.map(n=>({node:n.id,source:n.source||[],module_identity:n.module_identity??null,
+        ...(extended||dag||tree||resources.size?{parameter_reads:parameters.map(n=>({node:n.id,source:n.source||[],module_identity:n.module_identity??null,
           edges:ir.edges.filter(e=>e.source===n.id).map(e=>({...e}))})),
           output_bindings:cuts.filter(e=>inside.has(e.source)).map(e=>({edge:e.id,producer:resolve(e.source,e.source_port??'out').node,
             source_port:resolve(e.source,e.source_port??'out').slot,target:e.target,target_port:e.target_port}))}:{}),

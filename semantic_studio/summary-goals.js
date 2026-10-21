@@ -2,7 +2,7 @@
  * structure. Neither form proves every operand, configuration or execution. */
 (function(root){
   'use strict';
-  const VERSION='summary-goals/1',flow=e=>['data','alias','interface-binding'].includes(e.kind);
+  const VERSION='summary-goals/2',flow=e=>['data','alias','interface-binding'].includes(e.kind);
   const normalized=s=>String(s).replace(/\s/g,'');
   function sourceIndex(ir){
     const by=new Map(ir.nodes.map(n=>[n.id,n])),incoming=new Map(),outgoing=new Map();
@@ -29,8 +29,22 @@
       for(let i=0;i<todo.length;i++)for(const id of children.get(todo[i])||[]){inside.add(id);todo.push(id);}
       if(p.node!==owner.id||!['source-function','source-module'].includes(by.get(owner.id)?.semantic_type)||
         [...inside].some(id=>guarded(by.get(id))||guarded(planned.get(id))))errors.push('protected-source-boundary');
-      if(ids.length<2||ids.length>6||active.size!==ids.length||operations.some(o=>!inside.has(o.node)||by.get(o.node)?.kind!=='compute'||label(by.get(o.node))!==o.label))errors.push('invalid-operations');
-      if(inside.size!==p.canonical_members?.length||p.canonical_members?.some(id=>!inside.has(id)))errors.push('incomplete-source-membership');
+      if(ids.length<2||ids.length>6&&(p.dependency_dag||p.dependency_tree)||active.size!==ids.length||operations.some(o=>!inside.has(o.node)||by.get(o.node)?.kind!=='compute'||label(by.get(o.node))!==o.label))errors.push('invalid-operations');
+      if(inside.size!==p.canonical_members?.length||new Set(p.canonical_members).size!==inside.size||p.canonical_members?.some(id=>!inside.has(id)))errors.push('incomplete-source-membership');
+      // Source ownership proves membership; a display frame may only repartition
+      // that same set. Independently check every transparent frame's real cuts.
+      const displayChildren=new Map();for(const n of plan.nodes){if(!displayChildren.has(n.parent))displayChildren.set(n.parent,[]);displayChildren.get(n.parent).push(n.id);}
+      const displayClosure=id=>{const ids=[id];for(let i=0;i<ids.length;i++)ids.push(...displayChildren.get(ids[i])||[]);return ids;};
+      const displayed=displayClosure(owner.id),canonicalDisplayed=displayed.filter(id=>by.has(id)),partitions=displayed.filter(id=>!by.has(id));
+      if(canonicalDisplayed.length!==inside.size||canonicalDisplayed.some(id=>!inside.has(id)))errors.push('changed-display-membership');
+      if(partitions.length!==(p.display_partitions||[]).length||partitions.some(id=>{
+        const n=planned.get(id),r=p.display_partitions?.find(r=>r.node===id),members=new Set(displayClosure(id).filter(id=>by.has(id)));
+        const cuts=ir.edges.filter(e=>members.has(e.source)!==members.has(e.target));
+        return guarded(n)||n.kind!=='composite'||!n.presentation_only||n.semantic_type!=='structural-region'||!r||
+          members.size!==r.canonical_members.length||new Set(r.canonical_members).size!==members.size||r.canonical_members.some(id=>!members.has(id))||
+          JSON.stringify(r.cuts)!==JSON.stringify(cuts)||JSON.stringify(n.boundary_ports)!==JSON.stringify(cuts)||
+          n.canonical_members.length!==members.size||new Set(n.canonical_members).size!==members.size||n.canonical_members.some(id=>!members.has(id));
+      }))errors.push('changed-display-partition');
       const uses=ir.edges.filter(e=>active.has(e.target)).map(e=>{const from=resolve(e.source,e.source_port);return {edge:e.id,producer:from.node,source_port:from.port,target:e.target,target_port:e.target_port};});
       const key=b=>JSON.stringify([b.edge,b.producer,b.source_port,b.target,b.target_port]);
       if(uses.length!==p.bindings?.length||uses.some(b=>!p.bindings.some(t=>key(t)===key(b))))errors.push('changed-canonical-binding');
@@ -59,7 +73,17 @@
         title=expression(sinks[0]);
       }
       else {title=operations.map(o=>o.label).join(' → ');
-        if(internal.length!==ids.length-1||ids.slice(1).some((id,i)=>inputs.get(id).length!==1||inputs.get(id)[0].producer!==ids[i]))errors.push('not-a-path');}
+        if(internal.length!==ids.length-1||ids.slice(1).some((id,i)=>inputs.get(id).length!==1||inputs.get(id)[0].producer!==ids[i]))errors.push('not-a-path');
+        if(p.path_display){
+          const expected=[];let previous=null;
+          for(const o of operations){const n=by.get(o.node),signature=JSON.stringify([n?.operator,n?.framework_type||null,label(n||{}),
+            n?.framework_type?'framework-type':n?.source_framework_function&&n.source_framework_function===n.function_target?'source-framework-function':'operator']);
+            if(previous?.signature===signature)previous.operations.push(o.node);else {previous={signature,label:label(n||{}),operations:[o.node]};expected.push(previous);}}
+          const runs=expected.map(({signature,...r})=>r);
+          if(p.path_display.schema!=='dependency-path-display/1'||JSON.stringify(p.path_display.runs)!==JSON.stringify(runs))errors.push('changed-call-label-runs');
+          title=runs.map(r=>r.label+(r.operations.length>1?' · '+r.operations.length+' calls':'')).join(' → ');
+        }
+      }
       goals.push({id:'goal:summary:'+owner.id,kind:'dependency-structure',node:owner.id,form:p.form,
         operations:operations.map(o=>({node:o.node,label:o.label})),internal_bindings:internal,cuts,
         printed_title:title,printed_formulas:formulas,proof_errors:errors,

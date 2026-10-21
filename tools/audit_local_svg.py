@@ -118,8 +118,24 @@ def audit_pipeline_summaries(document, row, nodes):
             added = {n['id'] for n in planned.values() if n.get('parent') in members} - members
             members.update(added)
             changed = bool(added)
-        assert members == set(r['canonical_members'])
-        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4']:
+        display_members = members.copy()
+        members &= canonical.keys()
+        assert members == set(r['canonical_members']) and len(members) == len(r['canonical_members'])
+        partitions = display_members - canonical.keys()
+        assert partitions == {p['node'] for p in r.get('display_partitions', [])}
+        for partition in r.get('display_partitions', []):
+            n = planned[partition['node']]
+            assert n['presentation_only'] and n['semantic_type'] == 'structural-region'
+            descendants = {n['id']}
+            changed = True
+            while changed:
+                added = {c['id'] for c in planned.values() if c.get('parent') in descendants} - descendants
+                descendants.update(added); changed = bool(added)
+            descendants &= canonical.keys()
+            assert len(descendants) == len(partition['canonical_members']) == len(n['canonical_members'])
+            assert descendants == set(partition['canonical_members']) == set(n['canonical_members'])
+            assert partition['cuts'] == n['boundary_ports'] == [e for e in edges if (e['source'] in descendants) != (e['target'] in descendants)]
+        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4', 'local-pipelines/5']:
             boundaries = [n for n in planned.values() if n['id'] in members and n['kind'] == 'composite']
             assert {n['id'] for n in boundaries} == {b['node'] for b in r['source_boundaries']}
             for boundary in r['source_boundaries']:
@@ -137,14 +153,29 @@ def audit_pipeline_summaries(document, row, nodes):
                 assert boundary['cuts'] == [e for e in edges if (e['source'] in inside) != (e['target'] in inside)]
                 if n['id'] != node:
                     assert not any(e['source'] == n['id'] or e['target'] == n['id'] for e in edges)
-        for id in members:
+        for id in display_members:
             n = planned[id]
             assert n['kind'] not in ['opaque', 'control'] and n.get('evidence_status') != 'runtime-only'
             assert not any(n.get(k) for k in ['condition', 'mutable', 'identity_display', 'observed_calls', 'semantic_contracts', 'repeat_contract', 'iteration', 'runtime_evidence'])
         cuts = [e for e in edges if (e['source'] in members) != (e['target'] in members)]
         assert cuts == r['cuts']
         ordered = [o['node'] for o in r['operations']]
-        assert 2 <= len(ordered) <= 6 and len(ordered) == len(set(ordered))
+        assert 2 <= len(ordered) and len(ordered) == len(set(ordered))
+        assert len(ordered) <= 6 or r['rule_version'] == 'local-pipelines/5' and r.get('path_display')
+        if r.get('path_display'):
+            runs, signature = [], None
+            for o in r['operations']:
+                n = canonical[o['node']]
+                label = n.get('framework_type', '').split('.')[-1] if n.get('framework_type') else n['function_target'].split('.')[-1] if n.get('source_framework_function') and n['source_framework_function'] == n.get('function_target') else n['operator']
+                key = (n.get('operator'), n.get('framework_type'), label,
+                       'framework-type' if n.get('framework_type') else 'source-framework-function' if n.get('source_framework_function') and n['source_framework_function'] == n.get('function_target') else 'operator')
+                if key == signature:
+                    runs[-1]['operations'].append(o['node'])
+                else:
+                    runs.append(dict(label=label, operations=[o['node']]))
+                    signature = key
+            assert r['path_display']['schema'] == 'dependency-path-display/1' and r['path_display']['runs'] == runs
+            assert not r.get('dependency_dag') and not r.get('dependency_tree')
         for a in r['auxiliary_reads']:
             assert facts[a['node']] == a['fact'] and a['fact']['kind'] == 'tensor-attribute'
         expected = [e for e in edges if e['target'] in ordered]
@@ -156,7 +187,8 @@ def audit_pipeline_summaries(document, row, nodes):
             if b['producer'] in ordered:
                 adjacency.add((b['producer'], b['target']))
         if r.get('dependency_dag'):
-            assert r['rule_version'] == 'local-pipelines/4' and r['form'] == 'dependency-dag-summary'
+            assert r['rule_version'] in ['local-pipelines/4', 'local-pipelines/5'] and r['form'] == 'dependency-dag-summary'
+            assert len(ordered) <= 6
             steps = r['dependency_dag']['nodes']
             assert [s['node'] for s in steps] == ordered
             assert [s['reference'] for s in steps] == ['#' + str(i + 1) for i in range(len(ordered))]
@@ -179,6 +211,7 @@ def audit_pipeline_summaries(document, row, nodes):
             assert set(r['entry_operations']) == set(ordered) - {b for a, b in adjacency}
             assert len(actual_dag) > len(set(actual_dag)) or any(sum(a == id for a, b in adjacency) > 1 for id in ordered)
         elif r.get('dependency_tree'):
+            assert len(ordered) <= 6
             visited, tree_edges = [], set()
             binding_by = {b['edge']: b for b in r['bindings']}
 
@@ -200,7 +233,7 @@ def audit_pipeline_summaries(document, row, nodes):
             assert all(sum(a == id for a, b in adjacency) <= 1 for id in ordered)
         else:
             assert adjacency == set(zip(ordered, ordered[1:]))
-        if r['rule_version'] in ['local-pipelines/3', 'local-pipelines/4']:
+        if r['rule_version'] in ['local-pipelines/3', 'local-pipelines/4', 'local-pipelines/5']:
             assert r['output_bindings'] == [dict(edge=e['id'], producer=resolve(e['source'], e.get('source_port', 'out'))[0],
                                                 source_port=resolve(e['source'], e.get('source_port', 'out'))[1],
                                                 target=e['target'], target_port=e['target_port'])
@@ -217,7 +250,7 @@ def audit_pipeline_summaries(document, row, nodes):
                     assert e['id'] in document['layout']['edge_accounting']['attached']
                     title = ''.join(nodes[node].find('{http://www.w3.org/2000/svg}title').itertext())
                     assert f"Parameter read {e['id']}: {n['id']} → {e['target']} [{e['target_port']}]" in title
-        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4']:
+        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4', 'local-pipelines/5']:
             outputs = [n for n in planned.values() if n['id'] in members and n.get('parent') == node and n['kind'] == 'interface' and n.get('role') == 'output']
             assert outputs
             for output in outputs:
@@ -241,6 +274,8 @@ def audit_pipeline_summaries(document, row, nodes):
             def label(t):
                 return labels[t['node']] + (' ← {' + '; '.join(label(c['expression']) for c in t['inputs']) + '}' if t['inputs'] else '')
             expected_title = ('Result' + r['dependency_dag']['result']) if r.get('dependency_dag') else label(r['dependency_tree']) if r.get('dependency_tree') else '→'.join(o['label'] for o in r['operations'])
+            if r.get('path_display'):
+                expected_title = ' → '.join(s['label'] + (f" · {len(s['operations'])} calls" if len(s['operations']) > 1 else '') for s in r['path_display']['runs'])
             assert re.sub(r'\s', '', expected_title) in text
             if r.get('dependency_dag'):
                 assert 'DependencyDAG' in text

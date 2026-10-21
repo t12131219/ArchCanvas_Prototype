@@ -331,6 +331,8 @@ if __name__ == '__main__':
             from summarize_entry_bands import main as summarize_stage
         elif stage == 'diagram-set':
             from summarize_diagram_sets import main as summarize_stage
+        elif stage == 'serial-paths':
+            from summarize_serial_paths import main as summarize_stage
         elif stage == 'branch-tail-stages':
             from summarize_branch_tail_stages import main as summarize_stage
         elif stage == 'condition-predicates':

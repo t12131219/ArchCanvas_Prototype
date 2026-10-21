@@ -1,5 +1,7 @@
 # Local dependency path summaries
 
+This page records the original bounded-path stage and its historical measurements. Current long serial paths, exact display-partition checks and reversible expansion are described in [serial-paths.md](serial-paths.md); the original 2–6 operation limit still applies to dependency-tree and reused-result DAG formulas.
+
 Folded source functions and source modules can show the modeled operation path instead of only a helper name. For example, an unfamiliar helper becomes `relu → sin → tanh`. The same rule describes source-backed reshape/transpose/copy helpers in the Transformer evaluation. No model name, class name, source hash or case ID selects this representation.
 
 The rule requires 2–6 operations forming one dependency chain within one source boundary. It retains every canonical member, exact operand binding, auxiliary tensor-attribute read and cut edge. Configuration-only values remain attached with their existing evidence. Unknown calls, runtime-only evidence, control/condition/effect/identity boundaries, certificates, iteration/repeat scopes, nested modules, forks, cycles and escaping intermediate results prevent a single-path summary. An unaffected neighboring helper may still receive a summary. The arrow describes extracted dependency order; it does not certify fusion, purity, execution order or concurrent execution.

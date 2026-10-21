@@ -985,6 +985,71 @@
     record.scope='At most two row arrangements and four route measurements of independent closed visible operands; exact bindings and all boundaries retained, no semantic frontier or scheduling change.';
     chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,operand_row_refinement:record};return chosen;
   }
+  function prepareFinalSampleFrames(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperFinalSampleFrames===false||state.paperSampleFrame!==undefined||
+      state.paperFrameView==='source'||state.paperProtectFrameTitles===true||Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
+    const F=root.SemanticFrameOwnership||(typeof require==='function'?require('./frame-ownership.js'):null);
+    const frames=[...F.select({ir,idx:g.idx,visible:new Set(g.positions.keys()),open:new Set(g.publication.open),
+      roots:[g.publication.focus],flattenSequenceSamples:true}).values()].filter(r=>r.kind==='sequence-sample');
+    if(!frames.length)return baseline;
+    const copy=x=>JSON.parse(JSON.stringify(x)),ids=new Set(frames.map(r=>r.node));
+    if(g.edges.some(e=>ids.has(e.source)||ids.has(e.target))||g.positions.context.contextLanes.some(r=>ids.has(r.owner)))return baseline;
+    const targets=new Map(frames.map(r=>[r.node,r.target])),destination=id=>targets.get(id)||id;
+    // Nested simultaneous attachments need a separate ownership/size proof.
+    // Keep those boundaries rather than partially applying a transitive move.
+    if(frames.some(r=>ids.has(r.target)))return baseline;
+    const nodes=[...g.idx.nodes.values()].map(copy);
+    for(const n of nodes){n.parent=destination(n.parent);if(n.frame_ownership)n.frame_ownership=n.frame_ownership.map(r=>({...r,target:destination(r.target)}));}
+    const idx=E.index({nodes});
+    for(const r of frames){const owner=idx.nodes.get(r.target),sample=idx.nodes.get(r.node);
+      owner.frame_ownership=[...owner.frame_ownership||[],...sample.frame_ownership||[],r].map(r=>({...r,target:owner.id}));
+      P.decorate(owner,idx);
+    }
+    const drawingIdx=E.index({nodes}),positions=new Map([...g.positions].filter(([id])=>!ids.has(id)).map(([id,p])=>[id,{...p}])),windows=[];
+    for(const r of frames){const p=positions.get(r.target),old=g.positions.get(r.target),sample=g.positions.get(r.node),paper=drawingIdx.nodes.get(r.target).paper;
+      const extra=paper.h-g.idx.nodes.get(r.target).paper.h;
+      Object.assign(p,{...paper,w:old.w,h:old.h,header:old.header+extra,protected_header_height:(old.protected_header_height||0)+extra});
+      if(sample.design_gutter)p.design_gutter=Math.max(p.design_gutter||0,sample.x+sample.design_gutter-p.x);
+      windows.push({top:Math.max(sample.y+8,p.y+p.header+8),bottom:sample.y+sample.header});
+    }
+    const bands=L.emptyBands(positions,baseline.prepared.routes,windows,baseline.prepared.labeling.placed);
+    if(!bands.length)return baseline;
+    const map=y=>y-bands.reduce((sum,r)=>sum+Math.max(0,Math.min(y,r.bottom)-r.top),0);
+    for(const p of positions.values()){const bottom=map(p.y+p.h),y=map(p.y);p.h=bottom-y;p.y=y;}
+    const context={...g.positions.context,idx:drawingIdx,routeCache:new Map(),reserved:[]};
+    // Geometry receipts describe the current layout. Earlier routing-stage
+    // measurements stay untouched and continue to describe their own stage.
+    for(const key of ['consumerArguments','operandRows'])if(context[key]){
+      context[key]=copy(context[key]);for(const row of context[key])for(const n of row.nodes||[row])for(const at of ['before','after'])if(n[at])n[at].y=map(n[at].y);
+    }
+    const edges=g.edges.map(e=>e.design_route?{...e,design_route:{...e.design_route,owner:destination(e.design_route.owner)}}:e);
+    context.edges=edges;positions.context=context;
+    const accounting=copy(g.node_accounting);
+    accounting.visible=accounting.visible.filter(id=>!ids.has(id));accounting.attached=[...new Set([...accounting.attached,...ids])];
+    const graph={...g,nodes:g.nodes.filter(n=>!ids.has(n.id)).map(n=>drawingIdx.nodes.get(n.id)),positions,idx:drawingIdx,edges,node_accounting:accounting,
+      frame_ownership:[...g.frame_ownership||[],...frames].map(r=>({...r,target:destination(r.target)})),
+      representatives:Object.fromEntries(Object.entries(g.representatives).map(([id,target])=>[id,destination(target)])),
+      constraint_receipts:copy(g.constraint_receipts),bounds:{...g.bounds,h:map(g.bounds.y+g.bounds.h)-map(g.bounds.y)}};
+    const routes=baseline.prepared.routes.map(e=>({...e,...(e.design_route?{design_route:{...e.design_route,owner:destination(e.design_route.owner)}}:{}),
+      route:{...e.route,points:e.route.points.map(p=>({...p,y:map(p.y)}))}}));
+    const prepared=evaluateRoutes(graph,routes,b.route_strategy),trial={graph,prepared},q=prepared.quality,before=realizedRelations(baseline),after=realizedRelations(trial);
+    E.auditConstraintRoutes(graph,routes);
+    const applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id)),goals=Goals.build(ir,g.architecture);
+    const done=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const evaluated=Goals.evaluate(goals,graph,prepared,ir),covered=new Set(evaluated.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const accepted=areaMetric(q)<areaMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<b.native_height_px&&q.wire_length<=b.wire_length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(issue=>b.issues.includes(issue))&&
+      graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...done].every(id=>covered.has(id));
+    const chosen=accepted?trial:baseline;
+    chosen.prepared.routing={...baseline.prepared.routing,final_sample_frame_refinement:{accepted,frames,windows,bands,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      realized_before:before,realized_candidate:after,direct_goals_before:done.size,direct_goals_candidate:covered.size,
+      lost_goals:evaluated.filter(r=>done.has(r.goal)&&r.status!=='fulfilled'),
+      scope:'One final ownership candidate, no rerouting. A common monotone map removes globally empty title bands, preserving concrete nodes, horizontal wires, labels, terminals and exact bindings; no call equivalence or execution claim.'}};
+    return chosen;
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     const g=chosen.graph,b=chosen.prepared.quality;
@@ -1011,6 +1076,7 @@
     chosen=prepareCrossScopePorts(ir,state,chosen);
     chosen=prepareConsumerArguments(ir,state,chosen);
     chosen=prepareOperandRows(ir,state,chosen);
+    chosen=prepareFinalSampleFrames(ir,state,chosen);
     return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
@@ -1056,5 +1122,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -175,6 +175,31 @@
     }
     return {positions:result,records};
   }
+  // Delete only globally empty horizontal bands. Protect every body/title,
+  // label, terminal and horizontal wire; a common monotone map then shortens
+  // vertical wires without changing their order or physical correspondence.
+  function emptyBands(positions,routes,windows,labels=[]){
+    const forbidden=[...positions.values()].map(p=>[p.y-8,p.y+(p.expanded?p.header:p.h)+8]);
+    for(const p of labels)forbidden.push([p.y-8,p.y+p.h+8]);
+    for(const e of routes){
+      const ps=e.route.points;
+      for(const p of [ps[0],ps.at(-1)])forbidden.push([p.y-8,p.y+8]);
+      for(let i=1;i<ps.length;i++)if(ps[i-1].y===ps[i].y)forbidden.push([ps[i].y-8,ps[i].y+8]);
+    }
+    const bands=[];
+    for(const {top,bottom}of windows){
+      let free=[[top,bottom]];
+      for(const [a,b]of forbidden)free=free.flatMap(([l,h])=>b<=l||a>=h?[[l,h]]:
+        [[l,Math.min(a,h)],[Math.max(l,b),h]].filter(([x,y])=>y>x));
+      bands.push(...free.filter(([a,b])=>b-a>=16));
+    }
+    const merged=[];
+    for(const [top,bottom]of bands.sort((a,b)=>a[0]-b[0])){
+      if(merged.length&&top<=merged.at(-1).bottom)merged.at(-1).bottom=Math.max(bottom,merged.at(-1).bottom);
+      else merged.push({top,bottom});
+    }
+    return merged;
+  }
   // Parallel labelled wires need clearance where their visible branches meet,
   // not in every helper in the figure. Use the drawing hierarchy after frame
   // ownership; source nesting may no longer be the visible containment tree.
@@ -836,5 +861,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,emptyBands,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

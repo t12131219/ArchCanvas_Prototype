@@ -48,6 +48,7 @@ COMMANDS = {
     'exact-expression': ['node', 'tests/exact-expression.test.cjs'],
     'selected-routes': ['node', 'tests/selected-routes.test.cjs'],
     'title-passages': ['node', 'tests/title-passages.test.cjs'],
+    'final-sample-frames': ['node', 'tests/final-sample-frames.test.cjs'],
     'operand-rows': ['node', 'tests/operand-rows.test.cjs'],
     'consumer-arguments': ['node', 'tests/consumer-arguments.test.cjs'],
     'cross-scope-ports': ['node', 'tests/cross-scope-ports.test.cjs'],

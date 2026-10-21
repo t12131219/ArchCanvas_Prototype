@@ -695,6 +695,7 @@
       return !path.bindings.some(b=>b.kind==='value'&&!operations.has(b.producer)&&!entries.has(b.target));
     };
     let open=state.paperAuto===false?(state.open||[]):focus?[focus]:[];
+    const coherentChoices=[];
     if(state.paperAuto!==false&&focus){
       // Unwrap a single source wrapper when it improves the actual overview.
       for(let i=0;i<4;i++){
@@ -732,15 +733,44 @@
           },0);
         };
         const candidates=frontier().filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible));
-        const queue=candidates.slice();
+        const queue=candidates.slice(),decided=new Set();
+        // Match presentation detail profiles, not values or module identities.
+        // Spending a shared budget on just the first of several comparable
+        // local regions gives source order an accidental visual meaning.
+        // Protected boundaries and explicit detail requests remain independent.
+        const profileCache=new Map(),profile=id=>{
+          if(profileCache.has(id))return profileCache.get(id);
+          const n=idx.nodes.get(id);
+          // Arbitrary topological chunks are temporary layout partitions;
+          // matching their sizes is not meaningful expression consistency.
+          if(!canvas||granularity!=='roles'||state.paperCoherentFrontier===false||!n.presentation_only||n.semantic_type==='structural-region'){profileCache.set(id,null);return null;}
+          const members=[n,...descendants(id,idx.children).map(id=>idx.nodes.get(id))];
+          const memberIds=new Set(members.map(n=>n.id));
+          const protectedNode=n=>['opaque','control'].includes(n.kind)||n.mutable||n.condition||n.identity_display||n.observed_calls||n.runtime_evidence?.length||
+            n.evidence_status==='runtime-only'||n.kind==='composite'&&n.semantic_contracts?.length||n.repeat_contract||n.iteration||roleFrontier?.open.has(n.id)||expressions?.open.has(n.id);
+          const protectedEdge=ir.edges.some(e=>(memberIds.has(e.source)||memberIds.has(e.target))&&
+            (e.condition||e.iteration||e.design_route||!flow(e)&&e.kind!=='parameter-read'));
+          const signature=!protectedEdge&&!members.some(protectedNode)?JSON.stringify([n.semantic_type,(idx.children.get(id)||[]).filter(eligible).map(id=>{
+              const c=idx.nodes.get(id);return [c.kind,c.semantic_type||null,c.operator||null,c.framework_type||null,(idx.children.get(id)||[]).filter(eligible).length];
+            }).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)))]):null;
+          profileCache.set(id,signature);return signature;
+        };
+        const deltaFor=id=>idx.nodes.get(id).sequence_frontier||frontierScopes.has(id)?0:
+          (idx.children.get(id)||[]).filter(eligible).reduce((s,id)=>s+cost(id),0)-cost(id);
         for(let i=0;i<queue.length&&i<256;i++){
-          const id=queue[i],kids=(idx.children.get(id)||[]).filter(eligible),scope=scopeOf(id),used=localUsed(scope);
+          const id=queue[i];if(decided.has(id))continue;
+          const scope=scopeOf(id),used=localUsed(scope),signature=profile(id);
+          const peers=signature?queue.slice(i).filter(other=>!decided.has(other)&&scopeOf(other)===scope&&profile(other)===signature):[id];
           // A proved sequence is one unit in its parent's frontier, with its
           // own bounded local detail budget. Concrete suffixes stay folded.
-          const delta=idx.nodes.get(id).sequence_frontier||frontierScopes.has(id)?0:kids.reduce((s,id)=>s+cost(id),0)-cost(id);
-          if(used+delta>budget||frontierScopes.has(id)&&kids.reduce((s,id)=>s+cost(id),0)>budget)continue;
-          open.push(id);
-          if(granularity==='detailed'||granularity==='semantic'||granularity==='roles')queue.push(...kids.filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
+          const delta=peers.reduce((s,id)=>s+deltaFor(id),0),accepted=used+delta<=budget&&
+            !peers.some(id=>frontierScopes.has(id)&&(idx.children.get(id)||[]).filter(eligible).reduce((s,id)=>s+cost(id),0)>budget);
+          for(const peer of peers)decided.add(peer);
+          if(peers.length>1)coherentChoices.push({nodes:peers,scope,profile:JSON.parse(signature),used,delta,budget,status:accepted?'expanded':'deferred',
+            scope_of_claim:'Comparable local presentation detail only; no computational, parameter, value or object equivalence is asserted.'});
+          if(!accepted)continue;
+          open.push(...peers);
+          if(granularity==='detailed'||granularity==='semantic'||granularity==='roles')for(const peer of peers)queue.push(...(idx.children.get(peer)||[]).filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
         }
       }
       if(expressions)open=expressionEngine.select(expressions,{plan:focused.plan,focus,open,budget,eligible,budgetScopes:frontierScopes});
@@ -825,6 +855,7 @@
       configuration_arithmetic:pol.configurationArithmetic.filter(row=>allowed(row.node)),
       paper_width_mm:Math.max(80,Math.min(400,Number(state.paperWidthMm)||180)),fit_page:state.paperFitPage!==false,min_font_pt:8,unknowns:projected.nodes.filter(n=>!projected.positions.get(n.id).expanded).reduce((s,n)=>s+n.paper.unknown_count,0)};
     if(reservations)projected.publication.frontier_reservations=reservations;
+    if(coherentChoices.length)projected.publication.coherent_frontier={rule_version:'coherent-frontier/1',phase:'logical-frontier-before-summary-and-stage-lowering',choices:coherentChoices};
     if(canvas){
       const input=state.paperCanvasLimits||{},limit=(key,fallback,min,max)=>Number.isFinite(input[key])?Math.max(min,Math.min(max,input[key])):fallback;
       projected.publication.medium='canvas';

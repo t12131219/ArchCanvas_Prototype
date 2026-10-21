@@ -1,12 +1,11 @@
 {
   "schema": "adaptive-role-paths-progress/1",
-  "observed_at_utc": "2026-10-21 00:44:36 UTC",
+  "observed_at_utc": "2026-10-21T01:13:29.459405+00:00",
   "pending_check": "transformer-default-adaptive-comparison",
-  "session_id": 51885,
-  "process_pid": 681657,
-  "parent_pid": 681655,
-  "last_announced_phase": "before",
-  "handle_observation": "Session51885 was polled in the current turn and returned the same live session without exit_code or phase output. Read-only ps confirmed PID681657 R,elapsed02:10:52,CPU100 percent. Do not restart on observation timeout.",
+  "session_id": 5446,
+  "process_pid": 4,
+  "last_announced_phase": "current-only",
+  "handle_observation": "Session5446 returned same live handle without exit_code.",
   "input": "verification/helper-contracts/current/Transformer-current.json",
   "state": {
     "paperMedium": "canvas",
@@ -22,7 +21,7 @@
   ],
   "orchestration": "The observed parent shell command loads the frozen iteration41 renderer in an isolated VM, renders before and writes its two outputs, then loads current semantic_studio in another isolated VM and renders current.",
   "reproduction_tool": "tools/render_adaptive_role_transformer.cjs",
-  "next_action": "Poll the existing session51885. After terminal success, run audit_adaptive_role_paths.cjs without --small, repeat receipt/SVG/UI report checks, regenerate and inspect review artifacts, refresh native browser text measurements and rerun summarizer. No current-stage Transformer result or timing is inferred from historical fixed-path panels.",
+  "next_action": "Poll current-only session5446. Do not restart while live. On terminal completion inspect resume-launch/timing producer hashes,then run audit_adaptive_role_paths.cjs without --small and refresh independent receipts,SVG,native/UI/visual review honestly. The frozen before output came from original51885,not a new timing measurement.",
   "current_adapter_sha256": "b0ef02f9d7dd8844aa0b64258764feb8f574c2ba723de77d33e4605b8306d35f",
   "observed_after_final_adapter_edit": "Session51885 remained live with no phase-change output; both transformer-before.svg and transformer-current.svg were still absent after the final adapter edit. The current VM is loaded only after the before files are written.",
   "current_layout_sha256": "ce8a323a99f12407b8f93d92545da76d5b9cd2266f829e76a2c1fb9372f31147",
@@ -37,10 +36,19 @@
   "detail_alternatives_validation": "verification/detail-alternatives/experiment/validation-report.json",
   "detail_alternatives_update": "diagram-set/2 adds exact nested-source and local-detail alternatives plus paged editor navigation. The main renderer and its loaded producer files are unchanged by this stage;fixed-policy Transformer main/detail SVGs remain byte-identical.",
   "outputs_observed_this_turn": {
-    "transformer-before.svg": false,
-    "transformer-before.layout.json": false,
+    "transformer-before.svg": true,
+    "transformer-before.layout.json": true,
     "transformer-current.svg": false,
     "transformer-current.layout.json": false
   },
-  "detail_planner_sha256": "acbb0687a769e4167d69a1cfdfdb7f49b19996605ebb3d04315da7f4d1d9448b"
+  "detail_planner_sha256": "acbb0687a769e4167d69a1cfdfdb7f49b19996605ebb3d04315da7f4d1d9448b",
+  "original_session_id": 51885,
+  "original_process_pid": 681657,
+  "original_exit_code": 143,
+  "original_terminal_observation": "write_stdin session51885 returned exit143 after before metrics and START current;read-only host ps found no PID681657. Before SVG and45MB layout saved;current files absent.",
+  "process_pid_scope": "current-only resume process namespace;use authoritative session handle to poll",
+  "resume_launch": "verification/adaptive-role-paths/current/resume-launch.json",
+  "resume_tool": "tools/resume_adaptive_role_transformer.cjs",
+  "coherent_frontiers_validation": "verification/coherent-frontiers/current/validation-report.json",
+  "current_publication_sha256": "812c68365e348ee4c4512f992e6b42eb5b419710b13989d947bbf52948882735"
 }

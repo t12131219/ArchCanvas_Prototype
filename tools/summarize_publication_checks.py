@@ -333,6 +333,8 @@ if __name__ == '__main__':
             from summarize_diagram_sets import main as summarize_stage
         elif stage == 'detail-alternatives':
             from summarize_detail_alternatives import main as summarize_stage
+        elif stage == 'coherent-frontiers':
+            from summarize_coherent_frontiers import main as summarize_stage
         elif stage == 'serial-paths':
             from summarize_serial_paths import main as summarize_stage
         elif stage == 'branch-tail-stages':

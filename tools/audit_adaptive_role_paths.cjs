@@ -44,7 +44,7 @@ const firstTrial=render('BoundedWeave-first-path',input,{...planned,paperAdaptiv
 assert.deepEqual(A.metrics(firstTrial),first.candidate);
 for(const suffix of process.argv.includes('--small')?[]:['before','current']){
  const name='transformer-'+suffix,doc=read(folder+'/'+name+'.layout.json'),svg=fs.readFileSync(out+'/'+name+'.svg','utf8');
- assert.deepEqual(doc.state,planned);save(name,'verification/helper-contracts/current/Transformer-current.json',planned,{document:doc,svg});
+ assert.deepEqual(doc.state,{...planned,view:'publication'});save(name,'verification/helper-contracts/current/Transformer-current.json',planned,{document:doc,svg});
 }
 for(const [f,h]of Object.entries(implementation))assert.equal(sha(f),h,'producer changed: '+f);
 fs.writeFileSync(out+'/render-report.json',JSON.stringify({schema:'adaptive-role-paths-render/1',implementation_sha256:implementation,

@@ -262,6 +262,74 @@
     }
     return records;
   }
+  // Coordinate uses of one already resolved output value. Every edge and
+  // physical terminal survives; the common stem is drawing geometry only.
+  function fanoutInk(routes){
+    const lines=new Map();
+    for(const e of routes)for(let i=1;i<e.route.points.length;i++){
+      const a=e.route.points[i-1],b=e.route.points[i],vertical=a.x===b.x;
+      const key=JSON.stringify([e.source,e.resolved_source,e.source_port,vertical,vertical?a.x:a.y]);
+      if(!lines.has(key))lines.set(key,[]);
+      lines.get(key).push(vertical?[Math.min(a.y,b.y),Math.max(a.y,b.y)]:[Math.min(a.x,b.x),Math.max(a.x,b.x)]);
+    }
+    let length=0;for(const ranges of lines.values()){
+      let end=-Infinity;for(const [a,b]of ranges.sort((a,b)=>a[0]-b[0])){length+=Math.max(0,b-Math.max(a,end));end=Math.max(end,b);}
+    }return length;
+  }
+  function fanoutJunctions(routes){
+    const points=new Map(routes.flatMap(e=>e.route.points.map(p=>[JSON.stringify(p),p]))),result=[];
+    for(const p of points.values()){
+      const directions=new Set();
+      for(const e of routes)for(let i=1;i<e.route.points.length;i++){
+        const a=e.route.points[i-1],b=e.route.points[i];
+        if(a.x===b.x&&p.x===a.x&&p.y>=Math.min(a.y,b.y)&&p.y<=Math.max(a.y,b.y)){
+          if(Math.min(a.y,b.y)<p.y)directions.add('up');if(Math.max(a.y,b.y)>p.y)directions.add('down');
+        }
+        if(a.y===b.y&&p.y===a.y&&p.x>=Math.min(a.x,b.x)&&p.x<=Math.max(a.x,b.x)){
+          if(Math.min(a.x,b.x)<p.x)directions.add('left');if(Math.max(a.x,b.x)>p.x)directions.add('right');
+        }
+      }
+      if(directions.size>=3)result.push({...p});
+    }return result.sort((a,b)=>a.y-b.y||a.x-b.x);
+  }
+  function sharedFanouts(positions,routes,{forkOffsets=new Map()}={}){
+    const ctx=positions.context,groups=new Map(),records=[];
+    const ordinary=e=>e.route.ok&&!e.bundle_members&&!e.design_route&&!e.context_lane&&!e.condition&&!e.iteration&&!e.layout_after&&
+      !ctx.feedback?.has(e.id)&&['data','alias','interface-binding'].includes(e.kind)&&e.resolved_source&&e.source_port&&
+      !e.paper_labels?.length&&e.route.source_side==='bottom'&&e.route.target_side==='top';
+    for(const e of routes)if(ordinary(e)){
+      const p=positions.get(e.source),n=ctx.idx.nodes.get(e.source);
+      if(!p||p.expanded||p.cyclic||!n||n.mutable||n.condition||n.evidence_status==='runtime-only'||
+        ['parameter','buffer','state','control'].includes(n.kind))continue;
+      const key=JSON.stringify([e.source,e.resolved_source,e.source_port]);
+      if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);
+    }
+    for(const edges of groups.values()){
+      if(edges.length<2||edges.length>6||new Set(edges.map(e=>e.target)).size!==edges.length)continue;
+      const starts=edges.map(e=>e.route.points[0]),ends=edges.map(e=>e.route.points.at(-1));
+      // Round operations can have different boundary ordinates on one row.
+      // Rank eligibility uses actual node tops; every curved terminal stays.
+      if(new Set(starts.map(p=>p.y)).size!==1||new Set(edges.map(e=>positions.get(e.target).y)).size!==1)continue;
+      const join=starts[0].y+16,fork=Math.min(...ends.map(p=>p.y))-16-(forkOffsets.get(edges[0].source)||0);
+      if(fork-join<32)continue;
+      const hub=starts.map(p=>p.x).sort((a,b)=>a-b)[Math.floor(starts.length/2)];
+      const fresh=edges.map(e=>{
+        const s=e.route.points[0],t=e.route.points.at(-1),raw=[s,{x:s.x,y:join},{x:hub,y:join},{x:hub,y:fork},{x:t.x,y:fork},t];
+        const points=raw.filter((p,i)=>!i||p.x!==raw[i-1].x||p.y!==raw[i-1].y);
+        for(let i=1;i<points.length-1;)if(points[i-1].x===points[i].x&&points[i].x===points[i+1].x||points[i-1].y===points[i].y&&points[i].y===points[i+1].y)points.splice(i,1);else i++;
+        return {...e,route:{...e.route,points}};
+      });
+      // Reuse the router's actual title/body and endpoint obstacle policy.
+      if(fresh.some(e=>{const boxes=routeObstacles(e,positions);return e.route.points.some((b,i,ps)=>i&&blocked(ps[i-1],b,boxes));}))continue;
+      const junctions=fanoutJunctions(fresh);
+      if(!junctions.length)continue;
+      records.push({source:edges[0].source,resolved_source:edges[0].resolved_source,source_port:edges[0].source_port,
+        edges:edges.map(e=>e.id),hub,join,fork,junctions,routes:fresh,
+        terminal_detour_budget:2*starts.reduce((sum,p)=>sum+Math.abs(p.x-hub),0),
+        ink_before:fanoutInk(edges),ink_candidate:fanoutInk(fresh),
+        scope:'Repeated uses of one resolved output, with distinct original terminals and operand slots. Shared drawing paths do not merge computations, parameters or invocations.'});
+    }return records;
+  }
   // Parallel labelled wires need clearance where their visible branches meet,
   // not in every helper in the figure. Use the drawing hierarchy after frame
   // ownership; source nesting may no longer be the visible containment tree.
@@ -770,6 +838,28 @@
     return p[0].y===p[1].y&&p[1].x===p[2].x&&p[2].y===p[3].y&&p[0].x>p[1].x&&p[3].x>p[2].x&&
       p[1].x>=left-52&&p[1].x<=left-16&&p[1].y<=top&&p[2].y>=bottom;
   }
+  function routeObstacles(e,positions){
+    const a=positions.get(e.source),b=positions.get(e.target),context=positions.context,idx=context?.idx;
+    const ancestors=id=>{const set=new Set([id]);while(idx?.nodes.get(id)?.parent){id=idx.nodes.get(id).parent;set.add(id);}return set;};
+    const sourceAnc=ancestors(e.source),targetAnc=ancestors(e.target),boxes=[],protectTitles=context?.protectFrameTitles===true;
+    const bodyBox=(p,pad=0)=>{
+      const top=!protectTitles&&p.expanded&&p.header?Math.min(p.h,p.header-10):0;
+      return {x:p.x-pad,y:p.y+top-(top?0:pad),w:p.w+2*pad,h:p.h-top+(top?pad:2*pad),circle:!!p.symbol};
+    };
+    if(protectTitles)for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.protected_header_width??p.w,h:p.protected_header_height??p.header-10});
+    for(const [id,p]of positions){
+      if(sourceAnc.has(id)||targetAnc.has(id))continue;
+      let parent=idx?.nodes.get(id)?.parent,covered=false;
+      while(parent){if(positions.has(parent)&&!sourceAnc.has(parent)&&!targetAnc.has(parent)){
+        const box=bodyBox(positions.get(parent),8);
+        if(p.x>=box.x&&p.x+p.w<=box.x+box.w&&p.y>=box.y&&p.y+p.h<=box.y+box.h){covered=true;break;}
+      }parent=idx?.nodes.get(parent)?.parent;}
+      if(!covered)boxes.push(bodyBox(p,8));
+    }
+    if(!(e.source!==e.target&&a.expanded&&targetAnc.has(e.source)))boxes.push(bodyBox(a));
+    if(!(e.source!==e.target&&b.expanded&&sourceAnc.has(e.target)))boxes.push(bodyBox(b));
+    return boxes;
+  }
   function route(e,positions){
     const a=positions.get(e.source),b=positions.get(e.target);if(!a||!b)return {points:[],ok:false,reason:'missing-endpoint'};
     const context=positions.context,idx=context?.idx;
@@ -839,31 +929,9 @@
     const sn=normals[ss],tn=normals[ts],stub=headerControl&&(startInward||endInward)?1:(context?.stubLength??16);
     const start=point(s.x+sn[0]*stub*(startInward?-1:1),s.y+sn[1]*stub*(startInward?-1:1));
     const end=point(t.x+tn[0]*stub*(endInward?-1:1),t.y+tn[1]*stub*(endInward?-1:1));
-    const boxes=[];
-    // Expanded titles are pass-through areas. The source/target ancestry is
-    // still respected and concrete nodes, including fixed arguments placed
-    // in a header, remain obstacles. The old title policy is explicit opt-in.
-    const protectTitles=context?.protectFrameTitles===true;
-    const bodyBox=(p,pad=0)=>{
-      const top=!protectTitles&&p.expanded&&p.header?Math.min(p.h,p.header-10):0;
-      return {x:p.x-pad,y:p.y+top-(top?0:pad),w:p.w+2*pad,h:p.h-top+(top?pad:2*pad),circle:!!p.symbol};
-    };
-    if(protectTitles)for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.protected_header_width??p.w,h:p.protected_header_height??p.header-10});
-    for(const [id,p]of positions){
-      if(sourceAnc.has(id)||targetAnc.has(id))continue;
-      // A surrounding body covers its children. Header children stay real
-      // obstacles even when the surrounding title band is pass-through.
-      let parent=idx?.nodes.get(id)?.parent,covered=false;
-      while(parent){if(positions.has(parent)&&!sourceAnc.has(parent)&&!targetAnc.has(parent)){
-        const box=bodyBox(positions.get(parent),8);
-        if(p.x>=box.x&&p.x+p.w<=box.x+box.w&&p.y>=box.y&&p.y+p.h<=box.y+box.h){covered=true;break;}
-      }parent=idx?.nodes.get(parent)?.parent;}
-      if(!covered)boxes.push(bodyBox(p,8));
-    }
-    // Terminals are legal on the boundary; subsequent segments may not cut
-    // back through the endpoint body. An inward ancestor interface is exempt.
-    if(!startInward)boxes.push(bodyBox(a));
-    if(!endInward)boxes.push(bodyBox(b));
+    // Expanded titles remain pass-through; real nodes, unrelated bodies
+    // and endpoint interiors use the same obstacle policy as shared fanouts.
+    const boxes=routeObstacles(e,positions);
     const middle=(start.y+end.y)/2;
     const candidates=[
       [start,point(start.x,end.y),end],
@@ -1014,5 +1082,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,routeObstacles,sharedFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

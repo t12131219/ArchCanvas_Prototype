@@ -50,6 +50,7 @@ COMMANDS = {
     'title-passages': ['node', 'tests/title-passages.test.cjs'],
     'final-sample-frames': ['node', 'tests/final-sample-frames.test.cjs'],
     'operand-rows': ['node', 'tests/operand-rows.test.cjs'],
+    'declared-operands': ['node', 'tests/declared-operands.test.cjs'],
     'consumer-arguments': ['node', 'tests/consumer-arguments.test.cjs'],
     'cross-scope-ports': ['node', 'tests/cross-scope-ports.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],

@@ -130,7 +130,29 @@
   // Independent visible operands may share a row even when their producers
   // enter at different heights. This is correspondence, not equal operations
   // or concurrent execution. Keep every existing consumer slot and boundary.
-  function operandRows(positions,order='existing',canonicalEdges=[]){
+  // A helper's input declaration supplies a stable reading order. Neither
+  // port spelling nor the order of projected edges is an ordering contract.
+  function declaredOperandOrder(uses,idx,canonicalEdges){
+    if(uses.length<2||uses.length>6)return null;
+    const rows=[];
+    for(const e of uses){
+      const n=idx.nodes.get(e.canonical_target),binding=canonicalEdges.find(b=>b.id===e.id),loc=n?.source?.[0];
+      if(e.kind!=='interface-binding'||e.evidence!=='source-dependency'||e.bundle_members||e.condition||e.iteration||
+        !binding||binding.kind!=='interface-binding'||binding.evidence!=='source-dependency'||binding.condition||binding.iteration||binding.design_route||binding.layout_after||
+        binding.source!==e.canonical_source||binding.target!==e.canonical_target||binding.target_port!==e.target_port||
+        n?.kind!=='interface'||n.role!=='input'||n.parent!==e.target||n.slot!==e.target_port||
+        n.evidence_status!=='static-only'||n.runtime_evidence?.length||n.condition||n.source?.length!==1||
+        !loc?.file||!loc.symbol||!Number.isInteger(loc.line)||loc.line<1||!Number.isInteger(loc.column)||loc.column<0)return null;
+      rows.push({node:e.source,edge:e.id,input:n.id,owner:n.parent,slot:n.slot,source:{...loc}});
+    }
+    if(new Set(rows.map(r=>r.owner)).size!==1||new Set(rows.map(r=>r.input)).size!==rows.length||
+      new Set(rows.map(r=>JSON.stringify([r.source.file,r.source.symbol]))).size!==1||
+      new Set(rows.map(r=>JSON.stringify([r.source.line,r.source.column]))).size!==rows.length)return null;
+    rows.sort((a,b)=>a.source.line-b.source.line||a.source.column-b.source.column);
+    return {rule_version:'declared-operand-order/1',owner:rows[0].owner,inputs:rows,
+      scope:'Source parameter declaration order is a visual preference, not an assertion of execution order or interchangeable operands.'};
+  }
+  function operandRows(positions,order='existing',canonicalEdges=[],{sink:onlySink}={}){
     const ctx=positions.context,idx=ctx?.idx,records=[],result=new Map([...positions].map(([id,p])=>[id,{...p}]));
     result.context={...ctx,routeCache:new Map(),reserved:[]};
     if(!idx)return {positions:result,records};
@@ -150,6 +172,7 @@
       !['data','alias','interface-binding','parameter-read','buffer-read','state-read'].includes(e.kind)));};
     const claimed=new Set(),overlap=(a,b)=>a.x<b.x+b.w+12&&a.x+a.w+12>b.x&&a.y<b.y+b.h+12&&a.y+a.h+12>b.y;
     for(const [sink,s]of result){
+      if(onlySink!==undefined&&sink!==onlySink)continue;
       const target=idx.nodes.get(sink),parent=result.get(target?.parent);
       if(guarded(target)||protectedAncestor(sink)||s.expanded||s.cyclic||!parent?.expanded)continue;
       const incoming=(ctx.edges||[]).filter(e=>e.target===sink),ids=[...new Set(incoming.map(e=>e.source))].filter(id=>{
@@ -160,15 +183,17 @@
       if(ids.length<2||ids.length>6)continue;
       const uses=ids.map(id=>incoming.find(e=>e.source===id));
       if(uses.some(e=>!e.target_port)||new Set(uses.map(e=>e.target_port)).size!==uses.length)continue;
+      const declaration=order==='declared'?declaredOperandOrder(uses,idx,canonicalEdges):null;
+      if(order==='declared'&&!declaration)continue;
       const byX=ids.slice().sort((a,b)=>result.get(a).x-result.get(b).x),centers=byX.map(id=>{const p=result.get(id);return p.x+p.w/2;});
-      const ordered=order==='operands'?ids:byX,y=Math.max(...ids.map(id=>result.get(id).y));
+      const ordered=declaration?declaration.inputs.map(r=>r.node):order==='operands'?ids:byX,y=Math.max(...ids.map(id=>result.get(id).y));
       const candidates=ordered.map((id,i)=>({...result.get(id),x:centers[i]-result.get(id).w/2,y}));
       if(candidates.every(p=>p.x===result.get(p.id).x&&p.y===result.get(p.id).y))continue;
       const lanes=(ctx.contextLanes||[]).filter(c=>c.owner===target.parent&&c.selected!==false),left=parent.x+16+(parent.design_gutter||0)+(lanes.some(c=>c.side==='left')?(parent.context_gutter||0):0),
         right=parent.x+parent.w-16-(lanes.some(c=>c.side==='right')?(parent.context_gutter||0):0);
       if(candidates.some((p,i)=>p.x<left||p.x+p.w>right||p.y<parent.y+(parent.header||0)+8||p.y+p.h+20>s.y||
         candidates.some((q,j)=>i!==j&&overlap(p,q))||[...result].some(([other,box])=>!ids.includes(other)&&!ancestors(p.id).has(other)&&overlap(p,box))))continue;
-      records.push({parent:target.parent,sink,order,nodes:ordered.map((id,i)=>({node:id,before:{x:result.get(id).x,y:result.get(id).y},after:{x:candidates[i].x,y},
+      records.push({parent:target.parent,sink,order,...(declaration?{declaration}:{}),nodes:ordered.map((id,i)=>({node:id,before:{x:result.get(id).x,y:result.get(id).y},after:{x:candidates[i].x,y},
         edge:uses.find(e=>e.source===id).id,target_port:uses.find(e=>e.source===id).target_port})),
         scope:'Independent closed visible operands share a measured row; canonical slots and source ownership retained. No operation equivalence, purity or concurrent execution asserted.'});
       candidates.forEach(p=>{Object.assign(result.get(p.id),{x:p.x,y:p.y});claimed.add(p.id);});
@@ -861,5 +886,5 @@
       source_side:ss,target_side:ts};
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,emptyBands,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={layout,route,path,components,blocked,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

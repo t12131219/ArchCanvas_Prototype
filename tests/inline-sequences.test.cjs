@@ -57,7 +57,7 @@ test('summary and print retain the pre-inline sequence projection',()=>{
  const frozen=require('../tools/load_publication_renderer.cjs')(path.resolve(__dirname,'../verification/local-relations/iteration-10-before-inline-sequences/implementation/semantic_studio'));
  const ir=read('EquivalentSteps');for(const preset of ['overview','modules','detailed']){
   assert.equal(R.render(ir,{paperGranularity:preset}).svg,frozen.render(ir,{paperGranularity:preset}).svg);
-  const s={paperGranularity:preset,paperMedium:'canvas'};
+  const s={paperGranularity:preset,paperMedium:'canvas',paperEmptyBandCompaction:false};
   assert.equal(R.render(ir,{...s,paperSequenceView:'summary',paperFrameView:'source'}).svg,frozen.render(ir,s).svg);
  }
 });

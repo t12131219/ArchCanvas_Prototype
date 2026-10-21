@@ -42,7 +42,10 @@ def final_entries(doc):
         assert t['direct_goals_before']<=t['direct_goals_candidate']
         previous=b;selected.update({c['edge']:c for c in t['entries']})
     assert rec['after']==previous and rec['selected']==list(selected.values())==doc['layout'].get('cross_scope_ports',[])
-    q=doc['diagnostics']['publication'];assert (q['line_geometry']['crossings'],q['wire_length'])==(previous['crossings'],previous['wire_length'])
+    compact=doc['diagnostics']['routing'].get('empty_band_compaction')
+    if compact:assert (compact['before']['crossings'],compact['before']['wire_length'])==(previous['crossings'],previous['wire_length'])
+    else:
+        q=doc['diagnostics']['publication'];assert (q['line_geometry']['crossings'],q['wire_length'])==(previous['crossings'],previous['wire_length'])
     def ancestors(id):
         seen=set()
         while id is not None and id not in seen:seen.add(id);id=parents.get(id)

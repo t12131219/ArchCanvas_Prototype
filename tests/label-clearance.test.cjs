@@ -52,7 +52,7 @@ test('explicit minimum gaps are honored in every container, and zero-gain propos
  // A single required channel has no smaller rank allocation. Use a fresh
  // immutable input; publication plans cache by IR object identity.
  ir.nodes=ir.nodes.filter(n=>['root','a','b'].includes(n.id));for(const n of ir.nodes)if(n.id!=='root')n.parent='root';ir.edges=ir.edges.filter(e=>['e1','e2'].includes(e.id));
- const fresh=JSON.parse(JSON.stringify(ir)),same=R.render(fresh,state);assert.equal(same.prepared.routing.clearance_refinement.accepted,false);
+ const fresh=JSON.parse(JSON.stringify(ir)),same=R.render(fresh,{...state,paperEmptyBandCompaction:false});assert.equal(same.prepared.routing.clearance_refinement.accepted,false);
  assert.equal(same.prepared.routing.rank_clearance_refinement.accepted,false);
  assert.equal(same.svg,R.render(fresh,{...state,paperLabelSpacing:'global'}).svg);
 });

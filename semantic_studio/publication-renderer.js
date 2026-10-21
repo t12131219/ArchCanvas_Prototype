@@ -108,8 +108,8 @@
     for(const e of graph.edges.slice().sort((a,b)=>direction*(distance(a)-distance(b))||a.id.localeCompare(b.id))){const route=E.route(e,graph.positions);context.routeCache.set(e.id,route);for(let i=1;i<route.points.length;i++)context.reserved.push([route.points[i-1],route.points[i]]);}
     return evaluateRoutes(graph,graph.edges.map(e=>({...e,route:context.routeCache.get(e.id)})),strategy);
   }
-  function evaluateRoutes(graph,routes,strategy){
-    const b={...graph.bounds},labeling=labels(graph,routes);
+  function evaluateRoutes(graph,routes,strategy,fixedLabeling){
+    const b={...graph.bounds},labeling=fixedLabeling||labels(graph,routes);
     const boxes=[...routes.flatMap(e=>e.route.points.map(p=>({x:p.x-14,y:p.y-14,w:28,h:28}))),...labeling.placed];
     for(const p of boxes){const right=b.x+b.w,bottom=b.y+b.h;b.x=Math.min(b.x,p.x-8);b.y=Math.min(b.y,p.y-8);b.w=Math.max(right,p.x+p.w+8)-b.x;b.h=Math.max(bottom,p.y+p.h+8)-b.y;}
     const failures=routes.filter(e=>!e.route.ok).map(e=>({id:e.id,reason:e.route.reason}));
@@ -1080,6 +1080,56 @@
       scope:'One final ownership candidate, no rerouting. A common monotone map removes globally empty title bands, preserving concrete nodes, horizontal wires, labels, terminals and exact bindings; no call equivalence or execution claim.'}};
     return chosen;
   }
+  function prepareEmptyBandCompaction(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality,ctx=g.positions.context;
+    if(b.medium!=='canvas'||state.paperEmptyBandCompaction===false||state.paperProtectFrameTitles===true||
+      state.paperLabelSpacing!==undefined||state.paperLabelGapY!==undefined||Object.keys(state.offsets||{}).length||
+      g.nodes.length>512||g.edges.length>2048||b.route_failures.length||b.unplaced_port_labels.length)return baseline;
+    const protectedGaps=[];
+    // Keep outer margins and explicit entry/rank clearance contracts. A frame
+    // body may shrink, but its title, bottom border and all concrete contents
+    // keep their original size and at least the existing obstacle padding.
+    for(const p of g.positions.values())if(p.expanded)protectedGaps.push({y:p.y+p.h,h:0});
+    for(const r of ctx.compoundAlignments||[])if(L.entryBandGeometry(r,g.positions)){
+      const y=Math.max(...r.input_band.inputs.map(id=>{const p=g.positions.get(id);return p.y+p.h;}));
+      protectedGaps.push({y,h:r.input_band.gap_y});
+    }
+    for(const r of ctx.rankClearances||[])if(r.applied)for(const row of r.ranks){
+      const kids=row.nodes.map(id=>g.positions.get(id)).filter(Boolean);
+      if(kids.length&&row.gap_after)protectedGaps.push({y:Math.max(...kids.map(p=>p.y+p.h)),h:row.gap_after});
+    }
+    const windows=[{top:g.bounds.y+24,bottom:g.bounds.y+g.bounds.h-24}],bands=L.emptyBands(g.positions,baseline.prepared.routes,windows,[...baseline.prepared.labeling.placed,...protectedGaps]);
+    if(!bands.length)return baseline;
+    const map=y=>y-bands.reduce((sum,r)=>sum+Math.max(0,Math.min(y,r.bottom)-r.top),0);
+    const positions=new Map([...g.positions].map(([id,p])=>[id,{...p,y:map(p.y),h:map(p.y+p.h)-map(p.y)}]));
+    const copy=x=>JSON.parse(JSON.stringify(x));
+    positions.context={...ctx,routeCache:new Map(),reserved:[]};
+    for(const key of ['consumerArguments','operandRows','declaredOperandRows'])if(ctx[key]){
+      positions.context[key]=copy(ctx[key]);
+      for(const row of positions.context[key])for(const n of row.nodes||[row])for(const at of ['before','after'])if(n[at])n[at].y=map(n[at].y);
+    }
+    const graph={...g,positions,constraint_receipts:copy(g.constraint_receipts),bounds:{...g.bounds,h:map(g.bounds.y+g.bounds.h)-map(g.bounds.y)}};
+    const routes=baseline.prepared.routes.map(e=>({...e,route:{...e.route,points:e.route.points.map(p=>({...p,y:map(p.y)}))}}));
+    const labeling={placed:baseline.prepared.labeling.placed.map(p=>({...p,y:map(p.y)})),suppressed:[]};
+    const trial={graph,prepared:evaluateRoutes(graph,routes,b.route_strategy,labeling)},q=trial.prepared.quality;
+    E.auditConstraintRoutes(graph,routes);
+    const before=realizedRelations(baseline),after=realizedRelations(trial),applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id));
+    const goals=Goals.build(ir,g.architecture),done=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const evaluated=Goals.evaluate(goals,graph,trial.prepared,ir),covered=new Set(evaluated.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const bandsPreserved=(ctx.compoundAlignments||[]).every(r=>!L.entryBandGeometry(r,g.positions)||L.entryBandGeometry(r,positions));
+    const accepted=clearanceIdentity(g)===clearanceIdentity(graph)&&bandsPreserved&&areaMetric(q)<areaMetric(b)&&
+      q.native_height_px<b.native_height_px&&q.native_width_px<=b.native_width_px&&q.wire_length<=b.wire_length&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings===b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(issue=>b.issues.includes(issue))&&
+      graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...done].every(id=>covered.has(id));
+    const chosen=accepted?trial:baseline;
+    chosen.prepared.routing={...baseline.prepared.routing,empty_band_compaction:{accepted,windows,bands,protected_gaps:protectedGaps,
+      before:clearanceMetrics(b),candidate:clearanceMetrics(q),realized_before:before,realized_candidate:after,
+      direct_goals_before:done.size,direct_goals_candidate:covered.size,bands_preserved:bandsPreserved,
+      scope:'One common monotone vertical map of globally empty bands, without rerouting or changing the semantic frontier. Concrete nodes, titles, horizontal wires, labels, terminals, frame borders and explicit clearances are protected; no execution or operation-equivalence claim.'}};
+    return chosen;
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     const g=chosen.graph,b=chosen.prepared.quality;
@@ -1109,6 +1159,7 @@
     chosen=prepareFinalSampleFrames(ir,state,chosen);
     chosen=prepareOperandRows(ir,state,chosen,{declared:true});
     chosen=prepareCrossScopePorts(ir,state,chosen,{final:true});
+    chosen=prepareEmptyBandCompaction(ir,state,chosen);
     return attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
@@ -1155,5 +1206,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

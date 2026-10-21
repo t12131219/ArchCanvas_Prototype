@@ -49,13 +49,24 @@ def declared_rows(doc):
         for key, ids in trial['realized_before'].items():assert set(ids) <= set(trial['realized_candidate'][key])
         assert trial['direct_goals_before'] <= trial['direct_goals_candidate']
         chosen.update({r['sink']: r for r in trial['records']});previous = b
-    assert rec['after'] == previous and rec['selected'] == selected == list(chosen.values())
+    assert rec['after'] == previous and rec['selected'] == list(chosen.values())
+    current = copy.deepcopy(rec['selected'])
+    compact = doc['diagnostics']['routing'].get('empty_band_compaction')
+    if compact and compact['accepted']:
+        T = lambda y: y-sum(max(0,min(y,g['bottom'])-g['top']) for g in compact['bands'])
+        for row in current:
+            for node in row['nodes']:
+                for key in ['before','after']:node[key]['y'] = T(node[key]['y'])
+    assert selected == current
     final = doc['diagnostics']['routing'].get('final_scope_entry_refinement')
     if final:
         assert final['before'] == previous, 'later routing must start from the declared-row result'
     else:
-        q = doc['diagnostics']['publication']
-        assert (q['line_geometry']['crossings'], q['wire_length']) == (previous['crossings'], previous['wire_length'])
+        if compact:
+            assert (compact['before']['crossings'], compact['before']['wire_length']) == (previous['crossings'], previous['wire_length'])
+        else:
+            q = doc['diagnostics']['publication']
+            assert (q['line_geometry']['crossings'], q['wire_length']) == (previous['crossings'], previous['wire_length'])
     trees = {};checked = []
     for row in selected:
         proof = row['declaration'];assert proof['rule_version'] == 'declared-operand-order/1' and proof['owner'] == row['sink']

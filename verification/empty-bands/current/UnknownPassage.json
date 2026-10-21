@@ -1,0 +1,56 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "Unfamiliar conditional passage",
+  "nodes": [
+    {
+      "id": "root",
+      "parent": null,
+      "kind": "composite",
+      "label": "Outer",
+      "source": []
+    },
+    {
+      "id": "a",
+      "parent": "root",
+      "kind": "compute",
+      "label": "a",
+      "source": []
+    },
+    {
+      "id": "b",
+      "parent": "root",
+      "kind": "opaque",
+      "label": "b",
+      "source": []
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "a",
+      "target": "b",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "kind": "data",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "choice",
+        "outcome": "1"
+      }
+    },
+    {
+      "id": "e2",
+      "source": "a",
+      "target": "b",
+      "source_port": "out",
+      "target_port": "arg:2",
+      "kind": "data",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "choice",
+        "outcome": "2"
+      }
+    }
+  ],
+  "motifs": []
+}

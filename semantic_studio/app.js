@@ -33,6 +33,7 @@
       const button=document.createElement('button');button.textContent='恢复源码外框';button.onclick=()=>{snapshot();state.paperFrameView='source';state.offsets={};syncPaperControls();render();fit();persist();};$('details').append(button);
     }
     if(n.content_inventory)$('details').insertAdjacentHTML('afterbegin','<h3>摘要内容</h3><p>按当前语义单元计数，包含操作、调用和已确认的局部组合；不表示重复堆叠、执行并发或参数共享。</p>'+n.content_inventory.terms.map(t=>'<div class="source"><strong>'+esc(t.label)+' × '+t.count+'</strong><br>'+t.units.map(id=>esc(projection.idx.nodes.get(id)?.label||id)).join(' · ')+'</div>').join(''));
+    if(n.role_operation_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>角色阶段与原始运算</summary><p>摘要保留说明中列出的每一步运算。双击可展开；输入输出仍对应原始边界。</p><pre>'+esc(JSON.stringify(n.role_operation_stage,null,2))+'</pre></details>');
     if(n.contract_stage)$('details').insertAdjacentHTML('beforeend','<details open><summary>认证角色阶段与原始绑定</summary><p>摘要保留相加、后置归一化及说明中列出的独占分支末端。双击可展开原始操作。</p><pre>'+esc(JSON.stringify(n.contract_stage,null,2))+'</pre></details>');
     if(n.return_region)$('details').insertAdjacentHTML('beforeend','<details open><summary>条件返回与输出接口</summary><p>这些源码返回点汇入同一个输出接口。双击可查看分支、返回值及槽位；摘要不表示已执行或已选中某个分支。</p><pre>'+esc(JSON.stringify(n.return_region,null,2))+'</pre></details>');
     const dock=projection.positions?.context?.inputDocks.find(r=>r.node===id);
@@ -136,7 +137,7 @@
   function syncPaperControls(){
     if(!ir||!state)return;
     $('paperAuto').checked=state.paperAuto!==false;$('paperWidth').value=state.paperWidthMm||180;$('paperGranularity').value=state.paperGranularity||'overview';$('paperGranularity').disabled=state.paperAuto===false;
-    const canvas=state.paperMedium==='canvas';$('paperMedium').value=canvas?'canvas':'print';$('paperPrintWidth').hidden=canvas;$('nativeScale').hidden=!canvas;$('paperSequenceTools').hidden=!canvas;$('paperSequenceView').value=state.paperSequenceView==='summary'?'summary':'representatives';$('paperFrameTools').hidden=!canvas;$('paperFrameView').value=state.paperFrameView==='source'?'source':'compact';
+    const canvas=state.paperMedium==='canvas';$('paperMedium').value=canvas?'canvas':'print';$('paperRoleStageTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperRoleOperationStages').checked=state.paperRoleOperationStages===true;$('paperPrintWidth').hidden=canvas;$('nativeScale').hidden=!canvas;$('paperSequenceTools').hidden=!canvas;$('paperSequenceView').value=state.paperSequenceView==='summary'?'summary':'representatives';$('paperFrameTools').hidden=!canvas;$('paperFrameView').value=state.paperFrameView==='source'?'source':'compact';
     $('planDiagramSet').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptiveTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptive').checked=state.paperAdaptive===true;$('paperAdaptive').disabled=state.paperAuto===false;
     $('paperAdaptivePolicyTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptivePolicy').value=state.paperAdaptivePolicy||'detail';$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;
     const plan=P.plan(ir),idx=E.index(plan),select=$('paperFocus');select.replaceChildren(new Option('模型总览',''));
@@ -152,6 +153,7 @@
   $('paperWidth').onchange=()=>{snapshot();state.paperWidthMm=Math.max(80,Math.min(400,Number($('paperWidth').value)||180));render();fit();persist();};
   $('paperMedium').onchange=()=>{snapshot();state.paperMedium=$('paperMedium').value;state.offsets={};syncPaperControls();render();fit();persist();};
   $('paperSequenceView').onchange=()=>{snapshot();state.paperSequenceView=$('paperSequenceView').value;state.paperAuto=true;state.open=[];state.offsets={};syncPaperControls();render();fit();persist();};
+  $('paperRoleOperationStages').onchange=()=>{snapshot();state.paperRoleOperationStages=$('paperRoleOperationStages').checked;state.offsets={};render();fit();persist();};
   $('paperFrameView').onchange=()=>{snapshot();state.paperFrameView=$('paperFrameView').value;state.offsets={};render();fit();persist();};
   $('planDiagramSet').onclick=()=>{
     snapshot();const requested=E.clone(state);delete requested.paperDiagramPlan;

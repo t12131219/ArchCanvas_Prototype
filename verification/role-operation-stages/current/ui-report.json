@@ -1,0 +1,554 @@
+{
+  "schema": "role-operation-stages-ui/1",
+  "auditor_sha256": "09a90263202a89fd607e54c6f176cc59f6551abddbeaf3f4e16438a55cc55edc",
+  "rows": [
+    {
+      "name": "ui-QuartzPath-summary",
+      "input": "verification/role-operation-stages/current/QuartzPath.json",
+      "input_sha256": "de5d1e456b08410932d0609ac1234e9cad92db02cfe5af4ae63de7cd50a5423b",
+      "svg": "ui-QuartzPath-summary.svg",
+      "svg_sha256": "e9505e5c3c193ed1f2e03bca71409940acf7b010f0d0bf91e11b534e9c48dad3",
+      "document": "ui-QuartzPath-summary.layout.json",
+      "document_sha256": "c820d8fb2c2969268a2b0c8ead437b932b8596a3b2715fe46185bee990d00d1b",
+      "nodes": 6,
+      "edges": 4,
+      "state": {
+        "open": [
+          "model/15:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAuto": true,
+        "paperRoleOperationStages": true
+      },
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "canonical-short",
+        "wire_length": 112,
+        "min_print_font_pt": 15.74,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 128.1138790035587,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 300,
+        "native_height_px": 562,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_operation_stages": {
+        "rule_version": "role-operation-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-operation-stages/1",
+            "node": "paper:role-operation-stage:model/15:4:composite:1/16:49:compute:1",
+            "anchor": "model/15:4:composite:1/16:49:compute:1",
+            "tail": [
+              "model/15:4:composite:1/16:39:compute:1",
+              "model/15:4:composite:1/16:26:compute:1"
+            ],
+            "operations": [
+              {
+                "node": "model/15:4:composite:1/16:49:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/15:4:composite:1/16:39:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/15:4:composite:1/16:26:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "roles": [
+              {
+                "owner": "model/15:4:composite:1",
+                "certificate": "contract:feed-forward:5991807ef58d",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/15:4:composite:1/16:49:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/15:4:composite:1/16:49:compute:1"
+              }
+            ],
+            "canonical_members": [
+              "model/15:4:composite:1/16:49:compute:1",
+              "model/15:4:composite:1/16:39:compute:1",
+              "model/15:4:composite:1/16:26:compute:1"
+            ],
+            "internal_edges": [
+              "e00003",
+              "e00004"
+            ],
+            "cuts": [
+              {
+                "source": "model/15:4:composite:1/16:60:compute:1",
+                "target": "model/15:4:composite:1/16:49:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00002"
+              },
+              {
+                "source": "model/15:4:composite:1/16:26:compute:1",
+                "target": "model/15:4:composite:1/16:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00006"
+              }
+            ],
+            "scope": "One certified role plus at most three exclusive unary operations in its original scope. Ordered dependency labels only; no purity, fusion, input/output equality, shared-parameter or family assertion.",
+            "status": "summary",
+            "detailed_operations_exposed": false
+          }
+        ]
+      },
+      "contract_stages": {
+        "rule_version": "contract-stages/2",
+        "rows": [],
+        "rejected": [],
+        "partitions": []
+      },
+      "local_pipelines": {
+        "rule_version": "local-pipelines/5",
+        "rows": []
+      }
+    },
+    {
+      "name": "ui-QuartzPath-opened",
+      "input": "verification/role-operation-stages/current/QuartzPath.json",
+      "input_sha256": "de5d1e456b08410932d0609ac1234e9cad92db02cfe5af4ae63de7cd50a5423b",
+      "svg": "ui-QuartzPath-opened.svg",
+      "svg_sha256": "e85ccf771a5e0e819336cb10989318bf48877feed66c90a50c929b250d9425b8",
+      "document": "ui-QuartzPath-opened.layout.json",
+      "document_sha256": "ce295b7f4b502db9c7717c951cb68a8cdf26488b8092318d8f89ebb1721a894a",
+      "nodes": 9,
+      "edges": 6,
+      "state": {
+        "open": [
+          "model/15:4:composite:1",
+          "paper:role-operation-stage:model/15:4:composite:1/16:49:compute:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAuto": false,
+        "paperRoleOperationStages": true
+      },
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "canonical-short",
+        "wire_length": 492,
+        "min_print_font_pt": 10.53,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 86.85714285714286,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 304,
+        "native_height_px": 840,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_operation_stages": {
+        "rule_version": "role-operation-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-operation-stages/1",
+            "node": "paper:role-operation-stage:model/15:4:composite:1/16:49:compute:1",
+            "anchor": "model/15:4:composite:1/16:49:compute:1",
+            "tail": [
+              "model/15:4:composite:1/16:39:compute:1",
+              "model/15:4:composite:1/16:26:compute:1"
+            ],
+            "operations": [
+              {
+                "node": "model/15:4:composite:1/16:49:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/15:4:composite:1/16:39:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/15:4:composite:1/16:26:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "roles": [
+              {
+                "owner": "model/15:4:composite:1",
+                "certificate": "contract:feed-forward:5991807ef58d",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/15:4:composite:1/16:49:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/15:4:composite:1/16:49:compute:1"
+              }
+            ],
+            "canonical_members": [
+              "model/15:4:composite:1/16:49:compute:1",
+              "model/15:4:composite:1/16:39:compute:1",
+              "model/15:4:composite:1/16:26:compute:1"
+            ],
+            "internal_edges": [
+              "e00003",
+              "e00004"
+            ],
+            "cuts": [
+              {
+                "source": "model/15:4:composite:1/16:60:compute:1",
+                "target": "model/15:4:composite:1/16:49:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00002"
+              },
+              {
+                "source": "model/15:4:composite:1/16:26:compute:1",
+                "target": "model/15:4:composite:1/16:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00006"
+              }
+            ],
+            "scope": "One certified role plus at most three exclusive unary operations in its original scope. Ordered dependency labels only; no purity, fusion, input/output equality, shared-parameter or family assertion.",
+            "status": "expanded",
+            "detailed_operations_exposed": true
+          }
+        ]
+      },
+      "contract_stages": {
+        "rule_version": "contract-stages/2",
+        "rows": [],
+        "rejected": [],
+        "partitions": []
+      },
+      "local_pipelines": {
+        "rule_version": "local-pipelines/5",
+        "rows": []
+      }
+    },
+    {
+      "name": "ui-MixedStageWeave-grouped",
+      "input": "verification/role-operation-stages/current/MixedStageWeave.json",
+      "input_sha256": "a6467d1efb6f12f65351cef5abe5199874724f9dfab088e95ca004db0160173e",
+      "svg": "ui-MixedStageWeave-grouped.svg",
+      "svg_sha256": "212fbaa4eac0a8e2b6bdbf852bfd6c54fe5793c82dd28dbdf6c3371cd52ffa7d",
+      "document": "ui-MixedStageWeave-grouped.layout.json",
+      "document_sha256": "952661e24091ba677a1e5bb774cece86602950aa2cc8d5e6ea508f3c5f7df39a",
+      "nodes": 17,
+      "edges": 14,
+      "state": {
+        "open": [
+          "model/77:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false,
+        "paperRoleOperationStages": true
+      },
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "neighbors-clear-short",
+        "wire_length": 2862,
+        "min_print_font_pt": 8.77,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 160.47619047619048,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 674,
+        "native_height_px": 1008,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_operation_stages": {
+        "rule_version": "role-operation-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-operation-stages/1",
+            "node": "paper:role-operation-stage:model/77:4:composite:1/15:4:composite:1/16:49:compute:1",
+            "anchor": "model/77:4:composite:1/15:4:composite:1/16:49:compute:1",
+            "tail": [
+              "model/77:4:composite:1/15:4:composite:1/16:39:compute:1",
+              "model/77:4:composite:1/15:4:composite:1/16:26:compute:1"
+            ],
+            "operations": [
+              {
+                "node": "model/77:4:composite:1/15:4:composite:1/16:49:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/77:4:composite:1/15:4:composite:1/16:39:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/77:4:composite:1/15:4:composite:1/16:26:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "roles": [
+              {
+                "owner": "model/77:4:composite:1/15:4:composite:1",
+                "certificate": "contract:feed-forward:fce95d9f82b1",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/77:4:composite:1/15:4:composite:1/16:49:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/77:4:composite:1/15:4:composite:1/16:49:compute:1"
+              }
+            ],
+            "canonical_members": [
+              "model/77:4:composite:1/15:4:composite:1/16:49:compute:1",
+              "model/77:4:composite:1/15:4:composite:1/16:39:compute:1",
+              "model/77:4:composite:1/15:4:composite:1/16:26:compute:1"
+            ],
+            "internal_edges": [
+              "e00004",
+              "e00005"
+            ],
+            "cuts": [
+              {
+                "source": "model/77:4:composite:1/15:4:composite:1/16:60:compute:1",
+                "target": "model/77:4:composite:1/15:4:composite:1/16:49:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00003"
+              },
+              {
+                "source": "model/77:4:composite:1/15:4:composite:1/16:26:compute:1",
+                "target": "model/77:4:composite:1/15:4:composite:1/16:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00007"
+              }
+            ],
+            "scope": "One certified role plus at most three exclusive unary operations in its original scope. Ordered dependency labels only; no purity, fusion, input/output equality, shared-parameter or family assertion.",
+            "status": "summary",
+            "detailed_operations_exposed": false
+          }
+        ]
+      },
+      "contract_stages": {
+        "rule_version": "contract-stages/2",
+        "rows": [],
+        "rejected": [],
+        "partitions": []
+      },
+      "local_pipelines": {
+        "rule_version": "local-pipelines/5",
+        "rows": []
+      }
+    }
+  ],
+  "results": [
+    {
+      "name": "QuartzPath-summary",
+      "nodes": 6,
+      "edges": 4,
+      "status": "summary",
+      "svg_reconstructed": true
+    },
+    {
+      "name": "QuartzPath-opened",
+      "nodes": 9,
+      "edges": 6,
+      "status": "expanded",
+      "svg_reconstructed": true
+    },
+    {
+      "name": "MixedStageWeave-grouped",
+      "nodes": 17,
+      "edges": 14,
+      "status": "summary",
+      "svg_reconstructed": true
+    },
+    {
+      "name": "Transformer-grouped",
+      "nodes": 78,
+      "edges": 89,
+      "svg_byte_identical_to_formal": true
+    }
+  ],
+  "files_sha256": {
+    "ui-MixedStageWeave-grouped.json": "dc462a2630059d89ea2574b43abd0e9fd1fc5204dfdec21d630a981b9ead0685",
+    "ui-MixedStageWeave-grouped.layout.json": "952661e24091ba677a1e5bb774cece86602950aa2cc8d5e6ea508f3c5f7df39a",
+    "ui-MixedStageWeave-grouped.svg": "212fbaa4eac0a8e2b6bdbf852bfd6c54fe5793c82dd28dbdf6c3371cd52ffa7d",
+    "ui-QuartzPath-opened.json": "be17659dbfb7b6f5cddc09b8d7b334d1d5d02e0907e2a53e195e9e9848b9279d",
+    "ui-QuartzPath-opened.layout.json": "ce295b7f4b502db9c7717c951cb68a8cdf26488b8092318d8f89ebb1721a894a",
+    "ui-QuartzPath-opened.svg": "e85ccf771a5e0e819336cb10989318bf48877feed66c90a50c929b250d9425b8",
+    "ui-QuartzPath-raw.json": "cb7b9f37d04ccf8c51f567860154fd47b615fcba87bd2aa0a9e1beb9bc038add",
+    "ui-QuartzPath-raw.svg": "3a7c91f1a00d7798865c2695f7799e730962af6e0c79cbd9ae06382db1cd3b73",
+    "ui-QuartzPath-refolded.svg": "e9505e5c3c193ed1f2e03bca71409940acf7b010f0d0bf91e11b534e9c48dad3",
+    "ui-QuartzPath-reopened.svg": "e9505e5c3c193ed1f2e03bca71409940acf7b010f0d0bf91e11b534e9c48dad3",
+    "ui-QuartzPath-returned.svg": "e9505e5c3c193ed1f2e03bca71409940acf7b010f0d0bf91e11b534e9c48dad3",
+    "ui-QuartzPath-summary.json": "bb705977a8a7d1296375a9e6e1c59e61dc226a179b4fb23a903c19bea26c9339",
+    "ui-QuartzPath-summary.layout.json": "c820d8fb2c2969268a2b0c8ead437b932b8596a3b2715fe46185bee990d00d1b",
+    "ui-QuartzPath-summary.svg": "e9505e5c3c193ed1f2e03bca71409940acf7b010f0d0bf91e11b534e9c48dad3",
+    "ui-Transformer-grouped.json": "f1f000fcdd6c57d79f46aba9ddb66f494cc6933149f3fb01b915e2f3e5bf03cf",
+    "ui-Transformer-grouped.svg": "2758ef5aed852ca99b4b09ca831387e576ca3c084ec5beae6752d55d60f2f29a",
+    "ui-opened.png": "b8d2a3c0de1de5367bbede1afae784913cb9329ccf562d1f3f8645148ccab154",
+    "ui-raw-projection.json": "143e9ceb1596f09ba2ae34a5efc20661315479f018de8506ed3c03e76f2905c5",
+    "ui-summary-inspector.txt": "fef85f5ef28671bf98d927ed5f3c0326b39dc87cc80cbb000ea411fa2a4e0f7f",
+    "ui-summary.png": "9b59ef68361bfee7fe67c819f501cb52ecf78ef758373a535448cf39599001b7",
+    "ui-transformer.png": "7a1069726731820a6b88187682b36c7fb34a7e03a68fb18c5190b6c88d013dcf"
+  },
+  "svg_byte_identical": true,
+  "canonical_ir_preserved": true,
+  "raw_source_nodes": 10,
+  "raw_source_edges": 8,
+  "passed": true,
+  "scope": "Actual chooser import, checkbox, inspector, double-click expansion/refolding, save/reopen, raw-source all IDs and return. Formal Transformer SVG reproduced in UI; no thousands-node UI claim."
+}

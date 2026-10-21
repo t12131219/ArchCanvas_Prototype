@@ -1,0 +1,21 @@
+
+    - paragraph: SEMANTIC INSPECTOR
+    - heading "curve · GELU" [level=2]
+    - generic: composite
+    - generic: static-only
+    - paragraph: role-operation-stage
+    - paragraph: 架构摘要 · 3 个原始节点 · 2 个边界端口
+    - text: semantic_fixtures/role_operation_stages.py:16
+    - code: QuartzPath.forward
+    - generic: self.curve(self.enter(x))
+    - text: semantic_fixtures/role_operation_stages.py:16
+    - code: QuartzPath.forward
+    - generic: self.damp(self.curve(self.enter(x)))
+    - text: semantic_fixtures/role_operation_stages.py:16
+    - code: QuartzPath.forward
+    - generic: self.passage(self.damp(self.curve(self.enter(x))))
+    - generic "完整语义与证据"
+    - generic "角色阶段与原始运算"
+    - paragraph: 摘要保留说明中列出的每一步运算。双击可展开；输入输出仍对应原始边界。
+    - generic: "{ \"rule_version\": \"role-operation-stages/1\", \"node\": \"paper:role-operation-stage:model/15:4:composite:1/16:49:compute:1\", \"anchor\": \"model/15:4:composite:1/16:49:compute:1\", \"tail\": [ \"model/15:4:composite:1/16:39:compute:1\", \"model/15:4:composite:1/16:26:compute:1\" ], \"operations\": [ { \"node\": \"model/15:4:composite:1/16:49:compute:1\", \"label\": \"GELU\", \"operator\": \"activation\", \"framework_type\": \"torch.nn.GELU\", \"configuration\": { \"args\": [], \"kwargs\": {} } }, { \"node\": \"model/15:4:composite:1/16:39:compute:1\", \"label\": \"Dropout\", \"operator\": \"dropout\", \"framework_type\": \"torch.nn.Dropout\", \"configuration\": { \"args\": [ 0.2 ], \"kwargs\": {} } }, { \"node\": \"model/15:4:composite:1/16:26:compute:1\", \"label\": \"Identity\", \"operator\": \"identity\", \"framework_type\": \"torch.nn.Identity\", \"configuration\": { \"args\": [], \"kwargs\": {} } } ], \"roles\": [ { \"owner\": \"model/15:4:composite:1\", \"certificate\": \"contract:feed-forward:5991807ef58d\", \"role\": \"activation\", \"role_keys\": [ \"activation\" ], \"node\": \"model/15:4:composite:1/16:49:compute:1\", \"scope\": \"normal-return paths of the extracted invocation and its fixed constructor configuration\", \"not_asserted\": [ \"arbitrary-input execution coverage\", \"independent projection parameters\", \"helper purity or arbitrary alias equivalence\" ], \"location\": \"internal\", \"frontier_node\": \"model/15:4:composite:1/16:49:compute:1\" } ], \"canonical_members\": [ \"model/15:4:composite:1/16:49:compute:1\", \"model/15:4:composite:1/16:39:compute:1\", \"model/15:4:composite:1/16:26:compute:1\" ], \"internal_edges\": [ \"e00003\", \"e00004\" ], \"cuts\": [ { \"source\": \"model/15:4:composite:1/16:60:compute:1\", \"target\": \"model/15:4:composite:1/16:49:compute:1\", \"kind\": \"data\", \"source_port\": \"out\", \"target_port\": \"arg:0\", \"evidence\": \"source-dependency\", \"id\": \"e00002\" }, { \"source\": \"model/15:4:composite:1/16:26:compute:1\", \"target\": \"model/15:4:composite:1/16:15:compute:1\", \"kind\": \"data\", \"source_port\": \"out\", \"target_port\": \"arg:0\", \"evidence\": \"source-dependency\", \"id\": \"e00006\" } ], \"scope\": \"One certified role plus at most three exclusive unary operations in its original scope. Ordered dependency labels only; no purity, fusion, input/output equality, shared-parameter or family assertion.\" }"
+    - generic "当前画面的关系约束"

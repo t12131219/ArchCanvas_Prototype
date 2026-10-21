@@ -1,0 +1,487 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "InterruptedPath",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+    "class": "InterruptedPath",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+      "cell": null,
+      "sha256": "b1bd0c11ddb53a0f80869beaeef60434b487fc8ba8d3d06730302eb3b8ee8da3",
+      "unit_sha256": "b1bd0c11ddb53a0f80869beaeef60434b487fc8ba8d3d06730302eb3b8ee8da3"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/52:4:composite:1",
+      "kind": "composite",
+      "label": "InterruptedPath",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 52,
+          "end_line": 53,
+          "column": 4,
+          "end_column": 75,
+          "symbol": "InterruptedPath.forward",
+          "expression": "def forward(self, x):\n    return self.leave(unfamiliar_adjustment(self.curve(self.enter(x))))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "InterruptedPath"
+    },
+    {
+      "id": "model/52:4:composite:1/52:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "InterruptedPath.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/52:4:composite:1/53:59:compute:1",
+      "kind": "compute",
+      "label": "enter \u00b7 Linear",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 59,
+          "end_column": 72,
+          "symbol": "InterruptedPath.forward",
+          "expression": "self.enter(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "enter",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          8,
+          12
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "module_binding": {
+        "reference": "entry|enter@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py:48:21",
+        "selection": "self.enter",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+            "line": 48,
+            "end_line": 48,
+            "column": 21,
+            "end_column": 37,
+            "symbol": "constructor",
+            "expression": "nn.Linear(8, 12)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/52:4:composite:1/53:59:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|enter@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py:48:21"
+    },
+    {
+      "id": "model/52:4:composite:1/48:21:parameter:1",
+      "kind": "parameter",
+      "label": "enter.parameters",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 48,
+          "end_line": 48,
+          "column": 21,
+          "end_column": 37,
+          "symbol": "InterruptedPath.forward",
+          "expression": "nn.Linear(8, 12)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "enter",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/52:4:composite:1/53:48:compute:1",
+      "kind": "compute",
+      "label": "curve \u00b7 GELU",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 48,
+          "end_column": 73,
+          "symbol": "InterruptedPath.forward",
+          "expression": "self.curve(self.enter(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "curve",
+      "framework_type": "torch.nn.GELU",
+      "constructor": {
+        "args": [],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.GELU",
+      "module_binding": {
+        "reference": "entry|curve@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py:49:21",
+        "selection": "self.curve",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+            "line": 49,
+            "end_line": 49,
+            "column": 21,
+            "end_column": 30,
+            "symbol": "constructor",
+            "expression": "nn.GELU()"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/52:4:composite:1/53:48:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|curve@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py:49:21"
+    },
+    {
+      "id": "model/52:4:composite:1/53:26:opaque:1",
+      "kind": "opaque",
+      "label": "unfamiliar_adjustment",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 26,
+          "end_column": 74,
+          "symbol": "InterruptedPath.forward",
+          "expression": "unfamiliar_adjustment(self.curve(self.enter(x)))"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "unfamiliar_adjustment",
+      "function_target": "unfamiliar_adjustment",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self.curve(self.enter(x))"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/52:4:composite:1/53:15:compute:1",
+      "kind": "compute",
+      "label": "leave \u00b7 Linear",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 15,
+          "end_column": 75,
+          "symbol": "InterruptedPath.forward",
+          "expression": "self.leave(unfamiliar_adjustment(self.curve(self.enter(x))))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "leave",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          12,
+          8
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "module_binding": {
+        "reference": "entry|leave@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py:50:21",
+        "selection": "self.leave",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+            "line": 50,
+            "end_line": 50,
+            "column": 21,
+            "end_column": 37,
+            "symbol": "constructor",
+            "expression": "nn.Linear(12, 8)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/52:4:composite:1/53:15:compute:1",
+        "status": "unresolved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted",
+        "barrier": "model/52:4:composite:1/53:26:opaque:1"
+      }
+    },
+    {
+      "id": "model/52:4:composite:1/50:21:parameter:1",
+      "kind": "parameter",
+      "label": "leave.parameters",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 21,
+          "end_column": 37,
+          "symbol": "InterruptedPath.forward",
+          "expression": "nn.Linear(12, 8)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "leave",
+      "identity_status": "declared-scope; sharing-unresolved"
+    },
+    {
+      "id": "model/52:4:composite:1/53:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/52:4:composite:1",
+      "source_parent": "model/52:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_operation_stages.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 75,
+          "symbol": "InterruptedPath.forward",
+          "expression": "return self.leave(unfamiliar_adjustment(self.curve(self.enter(x))))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/52:4:composite:1/48:21:parameter:1",
+      "target": "model/52:4:composite:1/53:59:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/52:4:composite:1/52:22:interface:1",
+      "target": "model/52:4:composite:1/53:59:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/52:4:composite:1/53:59:compute:1",
+      "target": "model/52:4:composite:1/53:48:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/52:4:composite:1/53:48:compute:1",
+      "target": "model/52:4:composite:1/53:26:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/52:4:composite:1/50:21:parameter:1",
+      "target": "model/52:4:composite:1/53:15:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00004"
+    },
+    {
+      "source": "model/52:4:composite:1/53:26:opaque:1",
+      "target": "model/52:4:composite:1/53:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/52:4:composite:1/53:15:compute:1",
+      "target": "model/52:4:composite:1/53:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "b0e7d6e568f57c816545967445fe6fabeab7bd1dd19a28a032baee76aa179a1d"
+}

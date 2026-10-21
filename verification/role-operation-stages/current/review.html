@@ -1,0 +1,51 @@
+<!doctype html><meta charset="utf-8"><title>角色与后续运算合组审核</title><style>body{font:15px system-ui;color:#233348;background:#edf2f7;margin:24px}h1{font-size:26px}p{max-width:1100px;line-height:1.6}table{border-collapse:collapse;background:white}td,th{border:1px solid #cbd5e1;padding:8px;text-align:left}.grid{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}.panel{background:white;padding:14px;border:1px solid #cbd5e1}.panel img{display:block;max-width:100%;height:auto}.whole{width:500px}.local{width:310px}section{margin:28px 0}a{color:#1d4ed8}</style>
+<h1>角色与后续运算合组：可展开的语义中间状态</h1>
+<p>可选开关：角色与后续运算合组。基于证书角色和独占依赖，将角色及其后续普通一元运算放入一个展示阶段；摘要仍列出每一步运算。规则不按模型名称选择。默认 SVG 与冻结基线逐字节相同。</p>
+<p>这是局部表达改进。宽度、原子计算直接覆盖及展开后尺寸都可能付出代价；它尚未使整张图达到专用参考的模块组织和版式，也未验证数千节点完整 SVG 的交互性能。</p>
+<p><a href="text-qa.html">全部原始 SVG 与原生文字审核页</a> · <a href="independent-report.json">独立事实及几何审核</a></p>
+<table><tr><th>输入</th><th>节点 / 边</th><th>宽 × 高</th><th>面积变化</th><th>交叉</th><th>直接表达目标</th></tr>
+<tr><td>QuartzPath</td><td>8/6 → 6/4</td><td>272 × 736 → 300 × 562</td><td>-15.8%</td><td>0 → 0</td><td>7 → 4 / 7</td></tr>
+<tr><td>RenamedPath</td><td>8/6 → 6/4</td><td>268 × 736 → 300 × 562</td><td>-14.5%</td><td>0 → 0</td><td>7 → 4 / 7</td></tr>
+<tr><td>EscapingPath</td><td>9/7 → 9/7</td><td>348 × 792 → 348 × 792</td><td>+0.0%</td><td>0 → 0</td><td>7 → 7 / 7</td></tr>
+<tr><td>InterruptedPath</td><td>7/5 → 7/5</td><td>295 × 644 → 295 × 644</td><td>+0.0%</td><td>0 → 0</td><td>6 → 6 / 6</td></tr>
+<tr><td>ConditionalStageWeave</td><td>16/14 → 14/12</td><td>606 × 1104 → 606 × 930</td><td>-15.8%</td><td>1 → 0</td><td>14 → 11 / 19</td></tr>
+<tr><td>MixedStageWeave</td><td>19/16 → 17/14</td><td>674 × 1100 → 674 × 1008</td><td>-8.4%</td><td>0 → 0</td><td>16 → 13 / 16</td></tr>
+<tr><td>Transformer</td><td>80/91 → 78/89</td><td>2166 × 3656 → 2166 × 3564</td><td>-2.5%</td><td>47 → 46</td><td>33 → 29 / 1855</td></tr>
+</table><h2>Transformer 前馈局部：同一实际 SVG 的裁切</h2>
+<p>左为基线，右为开启合组。ReLU → Dropout 明确打印在摘要中；双击后恢复两个原始运算。此处仅调整查看窗口，内部坐标和连线保持实际输出。</p><div class="grid">
+<div class="panel local"><h3>基线</h3><img src="Transformer-before-local.svg"></div>
+<div class="panel local"><h3>合组</h3><img src="Transformer-grouped-local.svg"></div>
+</div><h2>陌生、残缺与混合结构</h2>
+<section><h3>QuartzPath</h3><div class="grid">
+<div class="panel" style="max-width:440px"><h4>基线</h4><img src="QuartzPath-before.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>合组</h4><img src="QuartzPath-grouped.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>展开</h4><img src="QuartzPath-opened.svg" style="max-height:720px"></div>
+</div></section>
+<section><h3>RenamedPath</h3><div class="grid">
+<div class="panel" style="max-width:440px"><h4>基线</h4><img src="RenamedPath-before.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>合组</h4><img src="RenamedPath-grouped.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>展开</h4><img src="RenamedPath-opened.svg" style="max-height:720px"></div>
+</div></section>
+<section><h3>EscapingPath</h3><div class="grid">
+<div class="panel" style="max-width:440px"><h4>基线</h4><img src="EscapingPath-before.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>合组</h4><img src="EscapingPath-grouped.svg" style="max-height:720px"></div>
+</div></section>
+<section><h3>InterruptedPath</h3><div class="grid">
+<div class="panel" style="max-width:440px"><h4>基线</h4><img src="InterruptedPath-before.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>合组</h4><img src="InterruptedPath-grouped.svg" style="max-height:720px"></div>
+</div></section>
+<section><h3>ConditionalStageWeave</h3><div class="grid">
+<div class="panel" style="max-width:440px"><h4>基线</h4><img src="ConditionalStageWeave-before.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>合组</h4><img src="ConditionalStageWeave-grouped.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>展开</h4><img src="ConditionalStageWeave-opened.svg" style="max-height:720px"></div>
+</div></section>
+<section><h3>MixedStageWeave</h3><div class="grid">
+<div class="panel" style="max-width:440px"><h4>基线</h4><img src="MixedStageWeave-before.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>合组</h4><img src="MixedStageWeave-grouped.svg" style="max-height:720px"></div>
+<div class="panel" style="max-width:440px"><h4>展开</h4><img src="MixedStageWeave-opened.svg" style="max-height:720px"></div>
+</div></section>
+<h2>完整 Transformer 与专用参考</h2><p>专用详细图作为表达质量参照。整体差距仍然存在；本次只改变两个局部运算阶段。隐藏原始运算仍记为未直接表达，不能用摘要冒充原子计算覆盖。</p><div class="grid">
+<div class="panel whole"><h3>通用基线</h3><a href="Transformer-before.svg"><img src="Transformer-before.svg"></a></div>
+<div class="panel whole"><h3>通用合组</h3><a href="Transformer-grouped.svg"><img src="Transformer-grouped.svg"></a></div>
+<div class="panel whole"><h3>专用详细图</h3><a href="../../../snapshots/transformer_programmatic_guide/generated/figure3_detailed.svg"><img src="../../../snapshots/transformer_programmatic_guide/generated/figure3_detailed.svg"></a></div>
+</div>

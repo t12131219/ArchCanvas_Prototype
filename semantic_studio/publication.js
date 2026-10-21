@@ -234,6 +234,7 @@
       else if(n.contract_roles)caption=n.label;
     }
     if(n.condition_predicate){title='If '+n.condition_predicate.label;caption='Conditional alternatives · exact interfaces';}
+    if(n.role_operation_stage){const r=n.role_operation_stage;const role=r.roles[0].role_keys||r.roles[0].role.split('.');title=role.at(-1).replaceAll('_',' ');caption=r.operations.map(o=>o.label).join(' → ');}
     if(n.return_region){title='Return alternatives';caption='If '+n.return_region.predicate+' · '+n.return_region.return_sites.length+' source returns';}
     if(n.contract_stage){title='Add & Norm';caption=(n.contract_stage.branch_tail?n.contract_stage.branch_tail.label+' → ':'')+n.contract_stage.normalization_type.split('.').at(-1)+' · Post-Norm';}
     if(n.local_pipeline&&!n.local_pipeline_expanded){
@@ -808,6 +809,10 @@
     // counts. A local summary must not consume an unrelated region's budget.
     const stages=stageEngine?.compile({ir,plan:focused.plan,branchTails:state.paperStageTails!==false,open:new Set(open)});
     if(stages){focused.plan=stages.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
+    const roleStageEngine=canvas&&granularity==='roles'&&state.paperRoleOperationStages===true?(root.SemanticRoleOperationStages||(typeof require==='function'?require('./role-operation-stages.js'):null)):null;
+    const explicitRoles=new Set([...(roleFrontier?.records||[]).filter(r=>(state.paperRoleDetails||[]).includes(r.owner)||(state.paperRolePaths||[]).some(p=>p.node===r.owner&&p.certificate===r.certificate&&JSON.stringify(p.role)===JSON.stringify(r.role_keys))).map(r=>r.node)]);
+    const roleStages=roleStageEngine?.compile({ir,plan:focused.plan,open:new Set(open),requested:[...explicitRoles]});
+    if(roleStages){focused.plan=roleStages.plan;idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     const predicateStages=canvas&&granularity==='roles'&&state.paperConditionPredicates!==false?Regions.predicates({ir,plan:focused.plan}):null;
     if(predicateStages){focused.plan=predicateStages.plan;idx=index(focused.plan);for(const r of predicateStages.rows)idx.nodes.get(r.group).content_inventory=inventory(idx.children.get(r.group)||[],idx);for(const n of focused.plan.nodes)decorate(n,idx);}
     const returnStages=canvas&&granularity==='roles'&&state.paperReturnRegions!==false?Regions.returns({ir,plan:focused.plan}):null;
@@ -877,6 +882,7 @@
       projected.publication.inline_sequences=base.publication?.inline_sequences||null;
       projected.publication.frame_ownership=projected.frame_ownership||[];
       if(roleFrontier)projected.publication.role_frontier=roleEngine.receipt(roleFrontier,projected);
+      if(roleStages)projected.publication.role_operation_stages=roleStageEngine.receipt(roleStages,projected);
       if(stages)projected.publication.contract_stages=stageEngine.receipt(stages,projected);
       if(predicateStages)projected.publication.condition_predicates={rule_version:'condition-predicates/1',rows:predicateStages.rows.map(r=>({...r,
         canonical_members:idx.nodes.get(r.group).canonical_members,cuts:idx.nodes.get(r.group).boundary_ports,

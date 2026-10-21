@@ -1,0 +1,1383 @@
+{
+  "schema": "role-path-stages-ui/1",
+  "auditor_sha256": "27447eaaf5532a9cad4584e56b1bd2f3fa57063bbd37572993f93fde75232048",
+  "passed": true,
+  "rows": [
+    {
+      "name": "ui-PrismPath-summary",
+      "input": "verification/role-path-stages/current/PrismPath.json",
+      "input_sha256": "a9c9bddd00fc8f423d0d14f3b9a2a827925aa7c1298484957cef6e7d7c11742d",
+      "state": {
+        "open": [
+          "model/17:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false,
+        "paperRolePathStages": true
+      },
+      "svg": "ui-PrismPath-summary.svg",
+      "svg_sha256": "536fd9d0af8e31fb0069f1510cc856b5c439b5d2f31d85bee6a9b6dc81669f0d",
+      "document": "ui-PrismPath-summary.layout.json",
+      "document_sha256": "0d197c678715517d5007ddb5fbe4b9ac12becd8367f1a383019efa0a781b8eeb",
+      "nodes": 6,
+      "edges": 4,
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "canonical-short",
+        "wire_length": 112,
+        "min_print_font_pt": 15.74,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 128.1138790035587,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 300,
+        "native_height_px": 562,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_path_stages": {
+        "rule_version": "role-path-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-path-stages/1",
+            "node": "paper:role-path-stage:model/17:4:composite:1/18:36:compute:1",
+            "anchor": "model/17:4:composite:1/18:36:compute:1",
+            "helper": "model/17:4:composite:1/14:4:composite:1",
+            "display_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1"
+            ],
+            "roles": [
+              {
+                "owner": "model/17:4:composite:1",
+                "certificate": "contract:feed-forward:0c4ba3b74e65",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/17:4:composite:1/18:36:compute:1"
+              }
+            ],
+            "role_title": "activation",
+            "operations": [
+              {
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "canonical_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1",
+              "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+              "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+            ],
+            "internal_edges": [
+              "e00003",
+              "e00004",
+              "e00005",
+              "e00006"
+            ],
+            "cuts": [
+              {
+                "source": "model/17:4:composite:1/18:47:compute:1",
+                "target": "model/17:4:composite:1/18:36:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00002"
+              },
+              {
+                "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                "target": "model/17:4:composite:1/18:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00008"
+              }
+            ],
+            "helper_path": {
+              "rule_version": "local-pipelines/2",
+              "node": "model/17:4:composite:1/14:4:composite:1",
+              "form": "dependency-path-summary",
+              "operations": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "operator": "dropout",
+                  "framework_type": "torch.nn.Dropout",
+                  "label": "Dropout",
+                  "label_basis": "framework-type"
+                },
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "operator": "identity",
+                  "framework_type": "torch.nn.Identity",
+                  "label": "Identity",
+                  "label_basis": "framework-type"
+                }
+              ],
+              "auxiliary_reads": [],
+              "bindings": [
+                {
+                  "edge": "e00004",
+                  "producer": "model/17:4:composite:1/18:36:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                },
+                {
+                  "edge": "e00005",
+                  "producer": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                }
+              ],
+              "cuts": [
+                {
+                  "source": "model/17:4:composite:1/18:36:compute:1",
+                  "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                  "kind": "interface-binding",
+                  "source_port": "out",
+                  "target_port": "x",
+                  "evidence": "source-dependency",
+                  "id": "e00003"
+                },
+                {
+                  "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                  "target": "model/17:4:composite:1/18:15:compute:1",
+                  "kind": "data",
+                  "source_port": "out",
+                  "target_port": "arg:0",
+                  "evidence": "source-dependency",
+                  "id": "e00008"
+                }
+              ],
+              "canonical_members": [
+                "model/17:4:composite:1/14:4:composite:1",
+                "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+              ],
+              "source_boundaries": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1",
+                  "parent": "model/17:4:composite:1",
+                  "semantic_type": "source-function",
+                  "source": [
+                    {
+                      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+                      "line": 14,
+                      "end_line": 15,
+                      "column": 4,
+                      "end_column": 46,
+                      "symbol": "tail",
+                      "expression": "def tail(self, x):\n    return self.pass_through(self.damp(x))"
+                    }
+                  ],
+                  "module_identity": null,
+                  "cuts": [
+                    {
+                      "source": "model/17:4:composite:1/18:36:compute:1",
+                      "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                      "kind": "interface-binding",
+                      "source_port": "out",
+                      "target_port": "x",
+                      "evidence": "source-dependency",
+                      "id": "e00003"
+                    },
+                    {
+                      "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                      "target": "model/17:4:composite:1/18:15:compute:1",
+                      "kind": "data",
+                      "source_port": "out",
+                      "target_port": "arg:0",
+                      "evidence": "source-dependency",
+                      "id": "e00008"
+                    }
+                  ]
+                }
+              ],
+              "scope": "Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion."
+            },
+            "scope": "Certified role and one exclusive proved source dependency path. Two-step expansion preserves helper ownership, all operands, reads and cuts. No fusion, purity, equivalence or family assertion.",
+            "status": "summary",
+            "stage_children_exposed": false,
+            "detailed_operations_exposed": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ui-PrismPath-opened",
+      "input": "verification/role-path-stages/current/PrismPath.json",
+      "input_sha256": "a9c9bddd00fc8f423d0d14f3b9a2a827925aa7c1298484957cef6e7d7c11742d",
+      "state": {
+        "open": [
+          "model/17:4:composite:1",
+          "paper:role-path-stage:model/17:4:composite:1/18:36:compute:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false,
+        "paperRolePathStages": true,
+        "paperAuto": false
+      },
+      "svg": "ui-PrismPath-opened.svg",
+      "svg_sha256": "759d13fbe60285270f229f3a60e7f14b30af83492e1915e2f64a7870b5470c4b",
+      "document": "ui-PrismPath-opened.layout.json",
+      "document_sha256": "031f418e4ad22695c515fb03b9d9aaf485cc7da6a1b9324d3da1253b9ef408d3",
+      "nodes": 8,
+      "edges": 5,
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "canonical-short",
+        "wire_length": 492,
+        "min_print_font_pt": 11.82,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 106.524064171123,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 332,
+        "native_height_px": 748,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_path_stages": {
+        "rule_version": "role-path-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-path-stages/1",
+            "node": "paper:role-path-stage:model/17:4:composite:1/18:36:compute:1",
+            "anchor": "model/17:4:composite:1/18:36:compute:1",
+            "helper": "model/17:4:composite:1/14:4:composite:1",
+            "display_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1"
+            ],
+            "roles": [
+              {
+                "owner": "model/17:4:composite:1",
+                "certificate": "contract:feed-forward:0c4ba3b74e65",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/17:4:composite:1/18:36:compute:1"
+              }
+            ],
+            "role_title": "activation",
+            "operations": [
+              {
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "canonical_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1",
+              "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+              "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+            ],
+            "internal_edges": [
+              "e00003",
+              "e00004",
+              "e00005",
+              "e00006"
+            ],
+            "cuts": [
+              {
+                "source": "model/17:4:composite:1/18:47:compute:1",
+                "target": "model/17:4:composite:1/18:36:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00002"
+              },
+              {
+                "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                "target": "model/17:4:composite:1/18:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00008"
+              }
+            ],
+            "helper_path": {
+              "rule_version": "local-pipelines/2",
+              "node": "model/17:4:composite:1/14:4:composite:1",
+              "form": "dependency-path-summary",
+              "operations": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "operator": "dropout",
+                  "framework_type": "torch.nn.Dropout",
+                  "label": "Dropout",
+                  "label_basis": "framework-type"
+                },
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "operator": "identity",
+                  "framework_type": "torch.nn.Identity",
+                  "label": "Identity",
+                  "label_basis": "framework-type"
+                }
+              ],
+              "auxiliary_reads": [],
+              "bindings": [
+                {
+                  "edge": "e00004",
+                  "producer": "model/17:4:composite:1/18:36:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                },
+                {
+                  "edge": "e00005",
+                  "producer": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                }
+              ],
+              "cuts": [
+                {
+                  "source": "model/17:4:composite:1/18:36:compute:1",
+                  "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                  "kind": "interface-binding",
+                  "source_port": "out",
+                  "target_port": "x",
+                  "evidence": "source-dependency",
+                  "id": "e00003"
+                },
+                {
+                  "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                  "target": "model/17:4:composite:1/18:15:compute:1",
+                  "kind": "data",
+                  "source_port": "out",
+                  "target_port": "arg:0",
+                  "evidence": "source-dependency",
+                  "id": "e00008"
+                }
+              ],
+              "canonical_members": [
+                "model/17:4:composite:1/14:4:composite:1",
+                "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+              ],
+              "source_boundaries": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1",
+                  "parent": "model/17:4:composite:1",
+                  "semantic_type": "source-function",
+                  "source": [
+                    {
+                      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+                      "line": 14,
+                      "end_line": 15,
+                      "column": 4,
+                      "end_column": 46,
+                      "symbol": "tail",
+                      "expression": "def tail(self, x):\n    return self.pass_through(self.damp(x))"
+                    }
+                  ],
+                  "module_identity": null,
+                  "cuts": [
+                    {
+                      "source": "model/17:4:composite:1/18:36:compute:1",
+                      "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                      "kind": "interface-binding",
+                      "source_port": "out",
+                      "target_port": "x",
+                      "evidence": "source-dependency",
+                      "id": "e00003"
+                    },
+                    {
+                      "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                      "target": "model/17:4:composite:1/18:15:compute:1",
+                      "kind": "data",
+                      "source_port": "out",
+                      "target_port": "arg:0",
+                      "evidence": "source-dependency",
+                      "id": "e00008"
+                    }
+                  ]
+                }
+              ],
+              "scope": "Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion."
+            },
+            "scope": "Certified role and one exclusive proved source dependency path. Two-step expansion preserves helper ownership, all operands, reads and cuts. No fusion, purity, equivalence or family assertion.",
+            "status": "expanded",
+            "stage_children_exposed": true,
+            "detailed_operations_exposed": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ui-PrismPath-detail",
+      "input": "verification/role-path-stages/current/PrismPath.json",
+      "input_sha256": "a9c9bddd00fc8f423d0d14f3b9a2a827925aa7c1298484957cef6e7d7c11742d",
+      "state": {
+        "open": [
+          "model/17:4:composite:1",
+          "paper:role-path-stage:model/17:4:composite:1/18:36:compute:1",
+          "model/17:4:composite:1/14:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false,
+        "paperRolePathStages": true,
+        "paperAuto": false
+      },
+      "svg": "ui-PrismPath-detail.svg",
+      "svg_sha256": "cbaef92f07f0326fb9192e38095176bf99a7e771f1dd1742bea057d4d9b7fdab",
+      "document": "ui-PrismPath-detail.layout.json",
+      "document_sha256": "942fed107fc1ca9a1f4e72a69b0a1dd318575d08adba46155b9f21952b5f28b9",
+      "nodes": 10,
+      "edges": 6,
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "canonical-short",
+        "wire_length": 824,
+        "min_print_font_pt": 9.39,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 84.5859872611465,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 332,
+        "native_height_px": 942,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_path_stages": {
+        "rule_version": "role-path-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-path-stages/1",
+            "node": "paper:role-path-stage:model/17:4:composite:1/18:36:compute:1",
+            "anchor": "model/17:4:composite:1/18:36:compute:1",
+            "helper": "model/17:4:composite:1/14:4:composite:1",
+            "display_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1"
+            ],
+            "roles": [
+              {
+                "owner": "model/17:4:composite:1",
+                "certificate": "contract:feed-forward:0c4ba3b74e65",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/17:4:composite:1/18:36:compute:1"
+              }
+            ],
+            "role_title": "activation",
+            "operations": [
+              {
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "canonical_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1",
+              "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+              "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+            ],
+            "internal_edges": [
+              "e00003",
+              "e00004",
+              "e00005",
+              "e00006"
+            ],
+            "cuts": [
+              {
+                "source": "model/17:4:composite:1/18:47:compute:1",
+                "target": "model/17:4:composite:1/18:36:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00002"
+              },
+              {
+                "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                "target": "model/17:4:composite:1/18:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00008"
+              }
+            ],
+            "helper_path": {
+              "rule_version": "local-pipelines/2",
+              "node": "model/17:4:composite:1/14:4:composite:1",
+              "form": "dependency-path-summary",
+              "operations": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "operator": "dropout",
+                  "framework_type": "torch.nn.Dropout",
+                  "label": "Dropout",
+                  "label_basis": "framework-type"
+                },
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "operator": "identity",
+                  "framework_type": "torch.nn.Identity",
+                  "label": "Identity",
+                  "label_basis": "framework-type"
+                }
+              ],
+              "auxiliary_reads": [],
+              "bindings": [
+                {
+                  "edge": "e00004",
+                  "producer": "model/17:4:composite:1/18:36:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                },
+                {
+                  "edge": "e00005",
+                  "producer": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                }
+              ],
+              "cuts": [
+                {
+                  "source": "model/17:4:composite:1/18:36:compute:1",
+                  "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                  "kind": "interface-binding",
+                  "source_port": "out",
+                  "target_port": "x",
+                  "evidence": "source-dependency",
+                  "id": "e00003"
+                },
+                {
+                  "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                  "target": "model/17:4:composite:1/18:15:compute:1",
+                  "kind": "data",
+                  "source_port": "out",
+                  "target_port": "arg:0",
+                  "evidence": "source-dependency",
+                  "id": "e00008"
+                }
+              ],
+              "canonical_members": [
+                "model/17:4:composite:1/14:4:composite:1",
+                "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+              ],
+              "source_boundaries": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1",
+                  "parent": "model/17:4:composite:1",
+                  "semantic_type": "source-function",
+                  "source": [
+                    {
+                      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+                      "line": 14,
+                      "end_line": 15,
+                      "column": 4,
+                      "end_column": 46,
+                      "symbol": "tail",
+                      "expression": "def tail(self, x):\n    return self.pass_through(self.damp(x))"
+                    }
+                  ],
+                  "module_identity": null,
+                  "cuts": [
+                    {
+                      "source": "model/17:4:composite:1/18:36:compute:1",
+                      "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                      "kind": "interface-binding",
+                      "source_port": "out",
+                      "target_port": "x",
+                      "evidence": "source-dependency",
+                      "id": "e00003"
+                    },
+                    {
+                      "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                      "target": "model/17:4:composite:1/18:15:compute:1",
+                      "kind": "data",
+                      "source_port": "out",
+                      "target_port": "arg:0",
+                      "evidence": "source-dependency",
+                      "id": "e00008"
+                    }
+                  ]
+                }
+              ],
+              "scope": "Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion."
+            },
+            "scope": "Certified role and one exclusive proved source dependency path. Two-step expansion preserves helper ownership, all operands, reads and cuts. No fusion, purity, equivalence or family assertion.",
+            "status": "expanded",
+            "stage_children_exposed": true,
+            "detailed_operations_exposed": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "ui-PrismPath-refolded",
+      "input": "verification/role-path-stages/current/PrismPath.json",
+      "input_sha256": "a9c9bddd00fc8f423d0d14f3b9a2a827925aa7c1298484957cef6e7d7c11742d",
+      "state": {
+        "open": [
+          "model/17:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false,
+        "paperRolePathStages": true,
+        "paperAuto": false
+      },
+      "svg": "ui-PrismPath-refolded.svg",
+      "svg_sha256": "536fd9d0af8e31fb0069f1510cc856b5c439b5d2f31d85bee6a9b6dc81669f0d",
+      "document": "ui-PrismPath-refolded.layout.json",
+      "document_sha256": "9ab83d50d4a43467126d155566661f2a727fcae755dd7cefcd90266aec692c62",
+      "nodes": 6,
+      "edges": 4,
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "canonical-short",
+        "wire_length": 112,
+        "min_print_font_pt": 15.74,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 128.1138790035587,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 300,
+        "native_height_px": 562,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_path_stages": {
+        "rule_version": "role-path-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-path-stages/1",
+            "node": "paper:role-path-stage:model/17:4:composite:1/18:36:compute:1",
+            "anchor": "model/17:4:composite:1/18:36:compute:1",
+            "helper": "model/17:4:composite:1/14:4:composite:1",
+            "display_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1"
+            ],
+            "roles": [
+              {
+                "owner": "model/17:4:composite:1",
+                "certificate": "contract:feed-forward:0c4ba3b74e65",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/17:4:composite:1/18:36:compute:1"
+              }
+            ],
+            "role_title": "activation",
+            "operations": [
+              {
+                "node": "model/17:4:composite:1/18:36:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "canonical_members": [
+              "model/17:4:composite:1/18:36:compute:1",
+              "model/17:4:composite:1/14:4:composite:1",
+              "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+              "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+              "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+            ],
+            "internal_edges": [
+              "e00003",
+              "e00004",
+              "e00005",
+              "e00006"
+            ],
+            "cuts": [
+              {
+                "source": "model/17:4:composite:1/18:47:compute:1",
+                "target": "model/17:4:composite:1/18:36:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00002"
+              },
+              {
+                "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                "target": "model/17:4:composite:1/18:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00008"
+              }
+            ],
+            "helper_path": {
+              "rule_version": "local-pipelines/2",
+              "node": "model/17:4:composite:1/14:4:composite:1",
+              "form": "dependency-path-summary",
+              "operations": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "operator": "dropout",
+                  "framework_type": "torch.nn.Dropout",
+                  "label": "Dropout",
+                  "label_basis": "framework-type"
+                },
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "operator": "identity",
+                  "framework_type": "torch.nn.Identity",
+                  "label": "Identity",
+                  "label_basis": "framework-type"
+                }
+              ],
+              "auxiliary_reads": [],
+              "bindings": [
+                {
+                  "edge": "e00004",
+                  "producer": "model/17:4:composite:1/18:36:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                },
+                {
+                  "edge": "e00005",
+                  "producer": "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "source_port": "out",
+                  "target": "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                }
+              ],
+              "cuts": [
+                {
+                  "source": "model/17:4:composite:1/18:36:compute:1",
+                  "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                  "kind": "interface-binding",
+                  "source_port": "out",
+                  "target_port": "x",
+                  "evidence": "source-dependency",
+                  "id": "e00003"
+                },
+                {
+                  "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                  "target": "model/17:4:composite:1/18:15:compute:1",
+                  "kind": "data",
+                  "source_port": "out",
+                  "target_port": "arg:0",
+                  "evidence": "source-dependency",
+                  "id": "e00008"
+                }
+              ],
+              "canonical_members": [
+                "model/17:4:composite:1/14:4:composite:1",
+                "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                "model/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "model/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+              ],
+              "source_boundaries": [
+                {
+                  "node": "model/17:4:composite:1/14:4:composite:1",
+                  "parent": "model/17:4:composite:1",
+                  "semantic_type": "source-function",
+                  "source": [
+                    {
+                      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+                      "line": 14,
+                      "end_line": 15,
+                      "column": 4,
+                      "end_column": 46,
+                      "symbol": "tail",
+                      "expression": "def tail(self, x):\n    return self.pass_through(self.damp(x))"
+                    }
+                  ],
+                  "module_identity": null,
+                  "cuts": [
+                    {
+                      "source": "model/17:4:composite:1/18:36:compute:1",
+                      "target": "model/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                      "kind": "interface-binding",
+                      "source_port": "out",
+                      "target_port": "x",
+                      "evidence": "source-dependency",
+                      "id": "e00003"
+                    },
+                    {
+                      "source": "model/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                      "target": "model/17:4:composite:1/18:15:compute:1",
+                      "kind": "data",
+                      "source_port": "out",
+                      "target_port": "arg:0",
+                      "evidence": "source-dependency",
+                      "id": "e00008"
+                    }
+                  ]
+                }
+              ],
+              "scope": "Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion."
+            },
+            "scope": "Certified role and one exclusive proved source dependency path. Two-step expansion preserves helper ownership, all operands, reads and cuts. No fusion, purity, equivalence or family assertion.",
+            "status": "summary",
+            "stage_children_exposed": false,
+            "detailed_operations_exposed": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "ui-MixedPaths-grouped",
+      "input": "verification/role-path-stages/current/MixedPaths.json",
+      "input_sha256": "9a389ee1f65a4c0e335384f749b1dee550ab91c304dd3b08acd52381628f0a22",
+      "state": {
+        "open": [
+          "model/91:4:composite:1"
+        ],
+        "offsets": {},
+        "mode": "source",
+        "view": "publication",
+        "paperMedium": "canvas",
+        "paperGranularity": "roles",
+        "paperAdaptive": false,
+        "paperRolePathStages": true
+      },
+      "svg": "ui-MixedPaths-grouped.svg",
+      "svg_sha256": "c1f17eecd66032ac98bfab8515c3ec20d0be1851ba3099e3cf8dd56dfdf6ec30",
+      "document": "ui-MixedPaths-grouped.layout.json",
+      "document_sha256": "f35c45bdd83a711bef6e6b3b3db89462ce19af5170213502e0f0401c25e13cfe",
+      "nodes": 20,
+      "edges": 16,
+      "quality": {
+        "schema": "publication-quality/2",
+        "route_strategy": "neighbors-clear-short",
+        "wire_length": 3865,
+        "min_print_font_pt": 6.83,
+        "target_min_font_pt": 8,
+        "requested_width_mm": 180,
+        "width_mm": 127.04791344667697,
+        "height_mm": 240,
+        "route_failures": [],
+        "unplaced_port_labels": [],
+        "line_geometry": {
+          "crossings": 0,
+          "overlapping_paths": [],
+          "unrelated_contacts": []
+        },
+        "issues": [],
+        "medium": "canvas",
+        "scale_scope": "native-svg-css-pixels; viewport zoom is separate",
+        "native_width_px": 685,
+        "native_height_px": 1294,
+        "min_canvas_font_px": 13,
+        "target_min_canvas_font_px": 12,
+        "canvas_limits": {
+          "width_px": 8192,
+          "height_px": 16384,
+          "area_px2": 16777216,
+          "nodes": 512,
+          "edges": 2048
+        }
+      },
+      "role_path_stages": {
+        "rule_version": "role-path-stages/1",
+        "rows": [
+          {
+            "rule_version": "role-path-stages/1",
+            "node": "paper:role-path-stage:model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+            "anchor": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+            "helper": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1",
+            "display_members": [
+              "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+              "model/91:4:composite:1/17:4:composite:1/14:4:composite:1"
+            ],
+            "roles": [
+              {
+                "owner": "model/91:4:composite:1/17:4:composite:1",
+                "certificate": "contract:feed-forward:f89c83644b04",
+                "role": "activation",
+                "role_keys": [
+                  "activation"
+                ],
+                "node": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+                "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+                "not_asserted": [
+                  "arbitrary-input execution coverage",
+                  "independent projection parameters",
+                  "helper purity or arbitrary alias equivalence"
+                ],
+                "location": "internal",
+                "frontier_node": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1"
+              }
+            ],
+            "role_title": "activation",
+            "operations": [
+              {
+                "node": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+                "label": "GELU",
+                "operator": "activation",
+                "framework_type": "torch.nn.GELU",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "label": "Dropout",
+                "operator": "dropout",
+                "framework_type": "torch.nn.Dropout",
+                "configuration": {
+                  "args": [
+                    0.2
+                  ],
+                  "kwargs": {}
+                }
+              },
+              {
+                "node": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "label": "Identity",
+                "operator": "identity",
+                "framework_type": "torch.nn.Identity",
+                "configuration": {
+                  "args": [],
+                  "kwargs": {}
+                }
+              }
+            ],
+            "canonical_members": [
+              "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+              "model/91:4:composite:1/17:4:composite:1/14:4:composite:1",
+              "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+              "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+              "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+              "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+            ],
+            "internal_edges": [
+              "e00004",
+              "e00005",
+              "e00006",
+              "e00007"
+            ],
+            "cuts": [
+              {
+                "source": "model/91:4:composite:1/17:4:composite:1/18:47:compute:1",
+                "target": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00003"
+              },
+              {
+                "source": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                "target": "model/91:4:composite:1/17:4:composite:1/18:15:compute:1",
+                "kind": "data",
+                "source_port": "out",
+                "target_port": "arg:0",
+                "evidence": "source-dependency",
+                "id": "e00009"
+              }
+            ],
+            "helper_path": {
+              "rule_version": "local-pipelines/2",
+              "node": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1",
+              "form": "dependency-path-summary",
+              "operations": [
+                {
+                  "node": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "operator": "dropout",
+                  "framework_type": "torch.nn.Dropout",
+                  "label": "Dropout",
+                  "label_basis": "framework-type"
+                },
+                {
+                  "node": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "operator": "identity",
+                  "framework_type": "torch.nn.Identity",
+                  "label": "Identity",
+                  "label_basis": "framework-type"
+                }
+              ],
+              "auxiliary_reads": [],
+              "bindings": [
+                {
+                  "edge": "e00005",
+                  "producer": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+                  "source_port": "out",
+                  "target": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                },
+                {
+                  "edge": "e00006",
+                  "producer": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                  "source_port": "out",
+                  "target": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                  "target_port": "arg:0",
+                  "kind": "value"
+                }
+              ],
+              "cuts": [
+                {
+                  "source": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+                  "target": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                  "kind": "interface-binding",
+                  "source_port": "out",
+                  "target_port": "x",
+                  "evidence": "source-dependency",
+                  "id": "e00004"
+                },
+                {
+                  "source": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                  "target": "model/91:4:composite:1/17:4:composite:1/18:15:compute:1",
+                  "kind": "data",
+                  "source_port": "out",
+                  "target_port": "arg:0",
+                  "evidence": "source-dependency",
+                  "id": "e00009"
+                }
+              ],
+              "canonical_members": [
+                "model/91:4:composite:1/17:4:composite:1/14:4:composite:1",
+                "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:33:compute:1",
+                "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:15:compute:1",
+                "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:8:interface:1"
+              ],
+              "source_boundaries": [
+                {
+                  "node": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1",
+                  "parent": "model/91:4:composite:1/17:4:composite:1",
+                  "semantic_type": "source-function",
+                  "source": [
+                    {
+                      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/role_path_stages.py",
+                      "line": 14,
+                      "end_line": 15,
+                      "column": 4,
+                      "end_column": 46,
+                      "symbol": "tail",
+                      "expression": "def tail(self, x):\n    return self.pass_through(self.damp(x))"
+                    }
+                  ],
+                  "module_identity": "known",
+                  "cuts": [
+                    {
+                      "source": "model/91:4:composite:1/17:4:composite:1/18:36:compute:1",
+                      "target": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/14:19:interface:1",
+                      "kind": "interface-binding",
+                      "source_port": "out",
+                      "target_port": "x",
+                      "evidence": "source-dependency",
+                      "id": "e00004"
+                    },
+                    {
+                      "source": "model/91:4:composite:1/17:4:composite:1/14:4:composite:1/15:8:interface:1",
+                      "target": "model/91:4:composite:1/17:4:composite:1/18:15:compute:1",
+                      "kind": "data",
+                      "source_port": "out",
+                      "target_port": "arg:0",
+                      "evidence": "source-dependency",
+                      "id": "e00009"
+                    }
+                  ]
+                }
+              ],
+              "scope": "Modeled dependency path across retained source boundaries; exact operands, auxiliary reads and each source cut retained. No purity, fusion, execution-order or model-family assertion."
+            },
+            "scope": "Certified role and one exclusive proved source dependency path. Two-step expansion preserves helper ownership, all operands, reads and cuts. No fusion, purity, equivalence or family assertion.",
+            "status": "summary",
+            "stage_children_exposed": false,
+            "detailed_operations_exposed": false
+          }
+        ]
+      }
+    }
+  ],
+  "files_sha256": {
+    "ui-MixedPaths-grouped.json": "4b5578d73d20e811a121fa8067d1cfe5b2afce5aad993eb97e1e593d621a0931",
+    "ui-MixedPaths-grouped.svg": "c1f17eecd66032ac98bfab8515c3ec20d0be1851ba3099e3cf8dd56dfdf6ec30",
+    "ui-PrismPath-detail.json": "653699b1e0c2ab9f9a13547559653855bbe14e9d03b16a30a094a3cc588c50a0",
+    "ui-PrismPath-detail.svg": "cbaef92f07f0326fb9192e38095176bf99a7e771f1dd1742bea057d4d9b7fdab",
+    "ui-PrismPath-opened.json": "65f07b98e99d226bf0fe9a9ac7d67386d567d430285f95fcd6d52a6caccb2f7e",
+    "ui-PrismPath-opened.svg": "759d13fbe60285270f229f3a60e7f14b30af83492e1915e2f64a7870b5470c4b",
+    "ui-PrismPath-raw.json": "de1ad98602cd4a3c4e17f837d88d52111643fe2d65acad236f49402f3a3d39aa",
+    "ui-PrismPath-raw.svg": "44ead8a93952f74e110fbe9d0d440d80edda81172cdd81aeeaa8e136a5150e05",
+    "ui-PrismPath-refolded.json": "ff0331447eb8080b79e7285634cf3fc60ca383b3ec0277b45ae4cbd0f773021f",
+    "ui-PrismPath-refolded.svg": "536fd9d0af8e31fb0069f1510cc856b5c439b5d2f31d85bee6a9b6dc81669f0d",
+    "ui-PrismPath-reopened.svg": "cbaef92f07f0326fb9192e38095176bf99a7e771f1dd1742bea057d4d9b7fdab",
+    "ui-PrismPath-summary.json": "01dff44e040d839a2a354161c114eebd6a1a2b2e1d9e0f5dce2462bdc75fb70d",
+    "ui-PrismPath-summary.svg": "536fd9d0af8e31fb0069f1510cc856b5c439b5d2f31d85bee6a9b6dc81669f0d",
+    "ui-Transformer-grouped.svg": "c364a78f6a16a0749f2e473e319b9c9b2472baa5efe2c01f5a46047d271393ed",
+    "ui-raw-projection.json": "e2247211379cb5665e092f1c7a4eefa4fc0bbac599059f16e3fa276290408284"
+  },
+  "raw_nodes": 13,
+  "raw_edges": 10,
+  "goal_complete": false,
+  "results": [
+    "Actual file chooser import and optional checkbox",
+    "Two-level title doubleclick expansion",
+    "Deep stage collapse clears stale helper request",
+    "Saved deep state reopens to identical SVG",
+    "Source view expands all canonical IDs",
+    "Mixed unknown and recurrent state boundaries retained",
+    "Actual Transformer SVG matches formal renderer"
+  ],
+  "scope": "Actual editor interactions and SVGs; no thousands-node routed UI/performance claim."
+}

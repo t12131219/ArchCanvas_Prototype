@@ -375,6 +375,8 @@ if __name__ == '__main__':
             from summarize_local_pipelines import main as summarize_stage
         elif stage == 'role-operation-stages':
             from summarize_role_operation_stages import main as summarize_stage
+        elif stage == 'role-path-stages':
+            from summarize_role_path_stages import main as summarize_stage
         elif stage == 'joint-preflights':
             from summarize_joint_preflights import main as summarize_stage
         elif stage == 'joint-expressions':

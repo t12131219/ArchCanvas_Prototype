@@ -1,0 +1,72 @@
+/* A measured architecture composition, independent of model names. This is
+ * a drawing projection: canonical operations, calls and edges are untouched. */
+(function(root){
+  'use strict';
+  const P=root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
+  const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
+  function compose(graph,state={}){
+    const old=graph.positions,source=old.context.idx;
+    const nodes=graph.nodes.map(n=>({...n,paper:{...n.paper}})),by=new Map(nodes.map(n=>[n.id,n]));
+    const idx={nodes:new Map(source.nodes),children:new Map()};
+    for(const n of nodes){
+      let parent=source.nodes.get(n.id)?.parent;while(parent&&!by.has(parent))parent=source.nodes.get(parent)?.parent;
+      idx.nodes.set(n.id,{...source.nodes.get(n.id),parent,paper:n.paper});
+      if(!idx.children.has(parent||null))idx.children.set(parent||null,[]);idx.children.get(parent||null).push(n.id);
+    }
+    const positions=new Map(),records=[];
+    const children=id=>(idx.children.get(id)||[]).filter(id=>old.has(id));
+    function measure(id){
+      const n=by.get(id),original=old.get(id),kids=children(id);
+      const p={...original,x:0,y:0};positions.set(id,p);
+      const w=original.symbol?original.w:n.kind==='interface'?Math.max(154,original.w):Math.max(320,Math.min(480,original.w));
+      const complex=n.paper.read_binding_rows||n.paper.call_boundary||n.local_pipeline;
+      const captions=complex?n.paper.captions.flatMap(s=>P.wrap(s,w-28,13)):P.wrap(n.paper.caption,w-28,13);
+      Object.assign(n.paper,{lines:P.wrap(n.paper.title,w-28,n.paper.font),captions,w});
+      const textHeight=22+n.paper.lines.length*20+captions.length*16;
+      if(!original.expanded||!kids.length){p.w=w;p.h=original.symbol?original.h:Math.max(n.kind==='interface'?44:54,textHeight);n.paper.h=p.h;return p;}
+      for(const child of kids)measure(child);
+      const rows=[];
+      for(const child of kids.slice().sort((a,b)=>old.get(a).y-old.get(b).y||old.get(a).x-old.get(b).x)){
+        let row=rows.find(r=>Math.abs(r.y-old.get(child).y)<4);
+        if(!row){row={y:old.get(child).y,ids:[]};rows.push(row);}row.ids.push(child);
+      }
+      const under=(child,scope)=>{let at=child;while(at){if(at===scope)return true;at=idx.nodes.get(at)?.parent;}return false;};
+      const streams=kids.filter(child=>old.get(child).expanded&&graph.edges.some(e=>under(e.target,child)&&
+        kids.includes(e.source)&&by.get(e.source)?.kind==='interface'&&by.get(e.source)?.role==='input'&&!e.condition));
+      if(streams.length>1){
+        const first=Math.min(...streams.map(c=>old.get(c).y));
+        for(const row of rows)row.ids=row.ids.filter(c=>!streams.includes(c));
+        rows.push({y:first+.1,ids:streams.slice().sort((a,b)=>old.get(a).x-old.get(b).x)});
+        rows.splice(0,rows.length,...rows.filter(r=>r.ids.length).sort((a,b)=>a.y-b.y));
+      }
+      const gutter=original.design_gutter||0,pad=18,gap=32;
+      p.w=Math.max(w,...rows.map(r=>r.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+Math.max(0,r.ids.length-1)*72+pad*2+gutter));
+      n.paper.lines=P.wrap(n.paper.title,p.w-28,n.paper.font);
+      n.paper.captions=P.wrap(n.paper.caption,p.w-28,13);
+      p.header=22+n.paper.lines.length*20+n.paper.captions.length*16+12;
+      let y=p.header;
+      for(const row of rows){
+        const width=row.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+(row.ids.length-1)*72;
+        let x=gutter+pad+(p.w-gutter-pad*2-width)/2;
+        for(const child of row.ids){const c=positions.get(child);Object.assign(c,{x,y});x+=c.w+72;}
+        y+=Math.max(...row.ids.map(c=>positions.get(c).h))+gap;
+      }
+      p.h=y-gap+pad;
+      records.push({node:id,children:kids,rows:rows.map(r=>r.ids),before:{w:original.w,h:original.h},after:{w:p.w,h:p.h},
+        scope:'Measured sibling rows and wider cards; dependencies and source ownership unchanged. Row alignment does not assert parallel execution.'});
+      return p;
+    }
+    const roots=nodes.filter(n=>!by.has(idx.nodes.get(n.id)?.parent)).map(n=>n.id);
+    let x=32;for(const id of roots){const p=measure(id);p.x=x;p.y=30;x+=p.w+72;}
+    function absolute(id,dx,dy){const p=positions.get(id);p.x+=dx;p.y+=dy;for(const child of children(id))absolute(child,p.x,p.y);}
+    for(const id of roots)absolute(id,0,0);
+    positions.context={...old.context,idx,edges:graph.edges,routeCache:new Map(),reserved:[],
+      compoundAlignments:[],contextLanes:[],branchColumns:[],rankClearances:[],inputDocks:[],fixedInputs:[],sourceForkWidths:[],
+      crossScopePorts:[],coincidentPorts:[],localBypassScopes:[],entryBandRouting:false};
+    const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
+    const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:1,records}}};
+    return result;
+  }
+  const api={compose};root.SemanticCompositionLayout=api;if(typeof module!=='undefined')module.exports=api;
+})(typeof window!=='undefined'?window:globalThis);

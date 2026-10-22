@@ -1756,6 +1756,11 @@
     return chosen;
   }
   function prepareFigure(ir,state={}){
+    if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
+      const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
+      const graph=composition.compose(E.project(ir,{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state,view:'publication'}),state);
+      return attachExpressionEvidence(ir,{graph,prepared:prepare(graph)});
+    }
     // Stages run only after all summary recipes and complete layout choices
     // settle. Keep roles on their existing path, with identical serialization.
     const baseline=prepareSourceHeadingFigure(ir,state);

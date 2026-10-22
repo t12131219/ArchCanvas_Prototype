@@ -72,3 +72,61 @@ test('upward source streams retain a real cross-region context and downstream ou
   assert.ok(p.y<source.y);assert.ok(row.edges.every(id=>a.edges.some(e=>e.id===id)));
  }
 });
+test('hidden children remain indexed so actual summary controls can reopen finer source facts',()=>{
+ const ir=read('ReadWorkshop'),g=E.project(ir,state),r=C.compose(g,state);
+ for(const n of g.nodes){
+  const before=g.idx.children.get(n.id)||[];
+  for(const child of before.filter(id=>!g.positions.has(id)))assert.ok(r.idx.children.get(n.id)?.includes(child));
+ }
+ const summary=r.nodes.find(n=>n.local_pipeline);assert.ok(summary);assert.ok(r.idx.children.get(summary.id).length);
+});
+test('architecture frontier navigation preserves an exact coarse return snapshot through local edits and save/reopen',()=>{
+ const ir=read('ReadWorkshop'),original={...state,paperDirection:'up',paperAuto:true,open:[],offsets:{},paperReadSummary:'bindings'};
+ const before=R.render(ir,original),fine=C.frontier(original,'detail');
+ assert.deepEqual(fine.paperFrontierReturn,original);assert.equal(fine.paperGranularity,'roles');
+ const local={...fine,paperAuto:false,open:['changed-local-selection'],paperFocus:'local'};
+ const saved=JSON.parse(JSON.stringify(local)),back=C.frontier(saved,'return');assert.deepEqual(back,original);
+ assert.equal(R.render(ir,back).svg,before.svg);
+ const overview=C.frontier(saved,'overview');assert.equal(overview.paperGranularity,'stages');assert.ok(!overview.paperFocus&&!overview.paperFrontierReturn);
+});
+test('serial siblings cannot share a row merely because their previous coordinates coincided',()=>{
+ const ir=read('ReadWorkshop'),g=E.project(ir,state);
+ // Force every old sibling to the same y. Rebuilt dependency ranks must
+ // still separate the source-boundary path; row order is never old-y proof.
+ for(const p of g.positions.values())p.y=100;
+ const result=C.compose(g,state);
+ for(const record of result.publication.composition.records){
+  const branch=id=>{let at=id;while(at&&!record.children.includes(at))at=result.idx.nodes.get(at)?.parent;return at;};
+  for(const e of result.edges){
+   const a=branch(e.source),b=branch(e.target);if(!a||!b||a===b||e.design_route?.kind==='iteration-feedback')continue;
+   const ra=record.rows.findIndex(r=>r.includes(a)),rb=record.rows.findIndex(r=>r.includes(b));
+   if(ra>=0&&rb>=0)assert.ok(ra<rb,'actual dependency controls the row order');
+  }
+ }
+});
+test('detailed frontier opens certified stage computations and records guarded nested scopes as deferred',()=>{
+ const ir=JSON.parse(fs.readFileSync('verification/helper-contracts/current/Transformer-current.json'));
+ const fine=C.certifiedDetails(ir,C.frontier({...state,paperDirection:'up'},'detail'));
+ assert.ok(fine.paperFrontierRecipe.stage_requests.length>=5);assert.ok(fine.paperFrontierRecipe.nested_deferred.length);
+ const graph=E.project(ir,{...fine,paperSampleFrame:true});
+ for(const id of fine.paperFrontierRecipe.stage_requests){assert.ok(graph.positions.get(id)?.expanded);
+  const stage=graph.idx.nodes.get(id);for(const member of stage.contract_stage.canonical_members){
+   if(ir.nodes.find(n=>n.id===member)?.kind==='compute')assert.ok(graph.positions.has(member));
+  }
+ }
+ for(const d of fine.paperFrontierRecipe.nested_deferred)assert.ok(!fine.paperRolePaths.some(p=>p.node===d.node));
+ assert.deepEqual(C.frontier(fine,'return'),{...state,paperDirection:'up'});
+});
+test('a composed drawing with unresolved labels retains a clean dependency drawing of the same semantic frontier',()=>{
+ const ir=JSON.parse(fs.readFileSync('verification/cell-interfaces/current/StateWorkshop.json'));
+ for(const s of [{...state,paperDirection:'up'},C.certifiedDetails(ir,C.frontier({...state,paperDirection:'up'},'detail'))]){
+  const original=E.project(ir,{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...s,offsets:{}}),raw=JSON.stringify(ir);
+  const r=R.render(ir,s),receipt=r.graph.publication.composition;
+  assert.equal(receipt.status,'fallback');assert.ok(receipt.rejected_quality.unplaced_port_labels.length);
+  assert.deepEqual(r.prepared.quality.issues,[]);assert.deepEqual(r.prepared.quality.unplaced_port_labels,[]);
+  assert.deepEqual(r.graph.nodes.map(n=>n.id),original.nodes.map(n=>n.id));assert.deepEqual(r.graph.edges,original.edges);
+  assert.deepEqual(r.graph.node_accounting,original.node_accounting);assert.deepEqual(r.graph.edge_accounting,original.edge_accounting);
+  assert.deepEqual(receipt.input_docks,[]);assert.equal(JSON.stringify(ir),raw);
+  assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
+ }
+});

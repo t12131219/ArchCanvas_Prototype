@@ -116,7 +116,7 @@ def audit_binding_rows(pipeline, display, text):
     assert display['title'] == title and re.sub(r'\s', '', title) in text
 
 
-def audit_pipeline_summaries(document, row, nodes):
+def audit_pipeline_summaries(document, row, nodes, *, allow_role_path_parents=False):
     from semantic_adapter.symbolic_values import derive
     receipt = document['publication'].get('local_pipelines')
     assert receipt == row.get('local_pipelines')
@@ -191,7 +191,16 @@ def audit_pipeline_summaries(document, row, nodes):
             for boundary in r['source_boundaries']:
                 n = canonical[boundary['node']]
                 assert n['kind'] == 'composite' and planned[n['id']]['semantic_type'] in {'source-function', 'source-module'}
-                assert boundary['parent'] == planned[n['id']].get('parent')
+                actual_parent = planned[n['id']].get('parent')
+                if allow_role_path_parents and actual_parent != boundary['parent']:
+                    stage = planned[actual_parent]
+                    matches = [r for r in document['publication'].get('role_path_stages', {}).get('rows', [])
+                        if r['node'] == actual_parent and r['helper'] == n['id']]
+                    assert len(matches) == 1 and stage['presentation_only']
+                    assert stage['semantic_type'] == 'role-path-stage'
+                    assert boundary['parent'] == n.get('parent') == stage.get('parent')
+                else:
+                    assert boundary['parent'] == actual_parent
                 assert boundary['source'] == n.get('source', []) and boundary['module_identity'] == n.get('module_identity')
                 inside = {n['id']}
                 changed = True

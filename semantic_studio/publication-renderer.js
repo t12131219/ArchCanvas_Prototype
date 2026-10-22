@@ -1758,8 +1758,29 @@
   function prepareFigure(ir,state={}){
     if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
       const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
-      const graph=composition.compose(E.project(ir,{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state,offsets:{},view:'publication'}),state);
-      return attachExpressionEvidence(ir,{graph,prepared:prepare(graph)});
+      const source=E.project(ir,{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state,offsets:{},view:'publication'});
+      const graph=composition.compose(source,state);
+      let chosen={graph,prepared:prepare(graph)};
+      if(state.paperSelectedRoutes!==false&&!Object.keys(state.offsets||{}).length&&graph.edges.length>64)chosen=polishRoutes(chosen);
+      // Admit the geometry only after measurement. A clean original drawing
+      // of this exact frontier takes precedence over a composed drawing with
+      // unresolved routes, labels or canvas limits. Manual placement is kept.
+      if(!Object.keys(state.offsets||{}).length&&chosen.prepared.quality.issues.length){
+        const baseline=prepareFigure(ir,{...state,paperComposition:'dependency'});
+        const identities=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id).sort(),
+          edges:g.edges.map(e=>[e.id,e.source,e.target,e.source_port,e.target_port,e.kind,e.condition,e.originals,
+            (e.bundle_members||[e]).map(m=>[m.id,m.canonical_source,m.canonical_target,m.resolved_source,m.source_port,m.target_port,m.kind,m.condition,m.originals])]).sort((a,b)=>a[0].localeCompare(b[0])),
+          nodes_accounted:g.node_accounting,edges_accounted:g.edge_accounting});
+        if(!baseline.prepared.quality.issues.length&&identities(baseline.graph)===identities(source)){
+          baseline.graph={...baseline.graph,publication:{...baseline.graph.publication,composition:{schema:'architecture-composition/1',round:5,
+            status:'fallback',direction:'dependency',requested_direction:state.paperDirection==='up'?'up':'down',
+            records:[],input_docks:[],facing:[],followers:[],
+            rejected_quality:chosen.prepared.quality,
+            reason:'The composed drawing has unresolved quality issues; the same visible frontier passes in the original dependency layout.'}}};
+          chosen=baseline;
+        }
+      }
+      return attachExpressionEvidence(ir,chosen);
     }
     // Stages run only after all summary recipes and complete layout choices
     // settle. Keep roles on their existing path, with identical serialization.

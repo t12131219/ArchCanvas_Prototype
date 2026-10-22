@@ -2,7 +2,7 @@
 import re
 
 
-def verify(doc, svg):
+def verify(doc, svg, *, allow_normal_returns=False):
     raw = {n['id']: n for n in doc['ir']['nodes']}
     planned = {n['id']: n for n in doc['architecture']['nodes']}
     visible = {n['id']: n for n in doc['layout']['nodes']}
@@ -11,6 +11,10 @@ def verify(doc, svg):
     by_edge = {e['id']: e for e in edges}
     protected = ['mutable', 'identity_display', 'observed_calls', 'runtime_evidence', 'repeat_contract', 'iteration', 'semantic_contracts', 'contract_roles']
     rows = doc['publication'].get('return_regions', {}).get('rows', [])
+    normal = set()
+    if allow_normal_returns:
+        from check_normal_returns import normal_returns
+        normal = set(normal_returns(doc))
     for row in rows:
         group = planned[row['group']]
         assert group['presentation_only'] and group['semantic_type'] == 'conditional-collection'
@@ -74,8 +78,12 @@ def verify(doc, svg):
         if status != 'folded':
             texts = ' '.join(''.join(e.itertext()) for e in elements[group['id']] if e.tag.endswith('text'))
             text = re.sub(r'\s+', '', texts)
-            assert 'Returnalternatives' in text
-            if status == 'summary':
+            if group['id'] in normal:
+                assert status == 'summary' and 'Normalreturn' in text
+                assert 'Othersourcepathretained' in text
+            else:
+                assert 'Returnalternatives' in text
+            if status == 'summary' and group['id'] not in normal:
                 assert re.sub(r'\s+', '', 'If ' + row['predicate']) in text
                 assert str(len(incoming)) + 'sourcereturns' in text
                 assert not members.intersection(visible)

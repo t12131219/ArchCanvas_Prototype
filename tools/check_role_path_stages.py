@@ -22,7 +22,8 @@ PROTECTED = ['mutable', 'condition', 'identity_display', 'observed_calls', 'runt
              'semantic_contracts', 'contract_roles', 'repeat_contract', 'iteration', 'contract_stage', 'role_operation_stage']
 
 
-def check(row, *, compare_expression=True, require_quality=True, allow_label_notes=False):
+def check(row, *, compare_expression=True, require_quality=True, allow_label_notes=False,
+          allow_attached_return_uses=False):
     doc = read(OUT / row['document'])
     assert sha(OUT / row['document']) == row['document_sha256'] and sha(OUT / row['svg']) == row['svg_sha256']
     assert doc['ir'] == read(ROOT / row['input']) and sha(ROOT / row['input']) == row['input_sha256']
@@ -195,6 +196,22 @@ def check(row, *, compare_expression=True, require_quality=True, allow_label_not
                     todo.extend(outs[n['id']])
                 else:
                     expected.add(at['id'])
+            if allow_attached_return_uses:
+                # A folded conditional return can attach a tuple operand to
+                # its explicit source-return boundary instead of drawing a
+                # second physical wire. Never accept an arbitrary attachment.
+                attached = expected & set(doc['layout']['edge_accounting']['attached'])
+                for edge_id in attached:
+                    original = next(edge for edge in edges if edge['id'] == edge_id)
+                    regions = [n for id, n in planned.items() if id in visible
+                        and n.get('semantic_type') == 'conditional-collection'
+                        and original in n.get('boundary_ports', [])
+                        and original in n.get('normal_return', {}).get('alternative_inputs', [])
+                        and original['target'] in n.get('canonical_members', [])]
+                    assert len(regions) == 1 and original['kind'] in FLOW
+                    assert original in regions[0]['boundary_ports']
+                    assert not any(edge_id in v.get('originals', [v['id']]) for _, v in carriers)
+                expected -= attached
             assert carriers and len(carriers) == len(expected) and {v['id'] for _, v in carriers} == expected
             for physical, v in carriers:
                 final = next(edge for edge in edges if edge['id'] == v['id'])
@@ -249,7 +266,7 @@ def check(row, *, compare_expression=True, require_quality=True, allow_label_not
     assert round(length, 1) == q['wire_length'] and crossings == q['line_geometry']['crossings']
     assert list(map(float, tree.getroot().get('viewBox').split()))[2:] == [q['native_width_px'], q['native_height_px']]
     docks(doc, tree)
-    returns(doc, tree)
+    returns(doc, tree, allow_normal_returns=allow_attached_return_uses)
     actual = assignments(doc['ir'], doc['expression_goals']['goals'], {**doc, 'quality': q}, tree.getroot())
     reported = {r['goal']: r['status'] == 'fulfilled' for r in doc['expression_coverage']}
     if compare_expression:

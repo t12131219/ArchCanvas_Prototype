@@ -1,0 +1,24 @@
+--- a/semantic_studio/architecture-layout.js
++++ b/semantic_studio/architecture-layout.js
+@@ -1159,8 +1159,8 @@
+   // labels, exact uses and realized relations before accepting a shortcut.
+   function routeShortcuts(edge,positions,labelBoxes=[]){
+     const ctx=positions.context,ps=edge.route?.points;
+-    if(!edge.route?.ok||!ps||ps.length<4||ps.length>24||edge.bundle_members||edge.design_route||edge.context_lane||edge.layout_after||edge.iteration||
+-      ctx?.feedback?.has(edge.id)||!['data','alias','interface-binding','parameter-read','buffer-read'].includes(edge.kind))return [];
++    if(!edge.route?.ok||!ps||ps.length<4||ps.length>24||edge.design_route||edge.context_lane||edge.layout_after||edge.iteration||
++      ctx?.feedback?.has(edge.id)||!['data','alias','interface-binding','parameter-read','buffer-read','data-bundle'].includes(edge.kind))return [];
+     const length=points=>points.reduce((sum,p,i)=>sum+(i?Math.abs(p.x-points[i-1].x)+Math.abs(p.y-points[i-1].y):0),0),before=length(ps);
+     const boxes=[...routeObstacles(edge,positions),...labelBoxes],seen=new Set(),result=[];
+     const simplify=points=>{const out=[];for(const p of points){if(out.at(-1)?.x===p.x&&out.at(-1)?.y===p.y)continue;
+--- a/semantic_studio/publication-renderer.js
++++ b/semantic_studio/publication-renderer.js
+@@ -1501,7 +1501,7 @@
+   }
+   function prepareRouteShortcuts(ir,state,baseline){
+     const g=baseline.graph,b=baseline.prepared.quality;
+-    if(state.paperRouteShortcuts===false||b.medium!=='canvas'||g.publication.granularity!=='roles'||Object.keys(state.offsets||{}).length||
++    if(state.paperRouteShortcuts===false||b.medium!=='canvas'||!['roles','stages'].includes(g.publication.granularity)||Object.keys(state.offsets||{}).length||
+       g.edges.length>128||!b.line_geometry.crossings||b.route_failures.length||b.unplaced_port_labels.length)return baseline;
+     const shared=new Set((baseline.prepared.routing?.shared_fanout_refinement?.selected||[]).flatMap(r=>r.edges));
+     const scored=baseline.prepared.routes.map(e=>({edge:e,score:baseline.prepared.routes.reduce((sum,f)=>sum+(e.id===f.id?0:lineGeometry([e,f]).crossings),0)}))

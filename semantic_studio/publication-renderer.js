@@ -21,7 +21,7 @@
     const contents=n.content_inventory;
     const pipeline=n.local_pipeline,labels=new Map(pipeline?.operations.map(o=>[o.node,o.label])||[]);
     const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
-    return [n.label,...(n.transform_configurations||[]).flatMap(r=>['Source literal configuration: '+r.text,r.scope,
+    return [n.label,...(n.paper?.call_boundary?[n.paper.call_boundary.scope,'Expand to inspect the retained dependency DAG and exact operand bindings.']:[]),...(n.transform_configurations||[]).flatMap(r=>['Source literal configuration: '+r.text,r.scope,
       'Original operation: '+r.node+'; slots: '+JSON.stringify(r.slots)]),...(n.normal_return?[n.normal_return.scope,'Selected source return: '+n.normal_return.selected_return.node,
       'Fixed predicate: '+n.normal_return.predicate.slot+' = '+n.normal_return.predicate.value,
       'Retained source-alternative inputs: '+JSON.stringify(n.normal_return.alternative_inputs)]:[]),...(n.module_arguments||[]).flatMap(r=>[r.label,r.scope,'Reference: '+r.module_identity,JSON.stringify(r.edge),'Construction evidence: '+JSON.stringify(r.proof.construction_evidence)]),...(n.invocation_binding?['Fixed call argument: '+n.invocation_binding.label,n.invocation_binding.proof_scope,n.invocation_binding.claim,
@@ -1772,7 +1772,7 @@
     const {bounds:b,routes,labeling,quality}=prepared;
     const expressionGoals=g.expression_goals,expressionCoverage=g.expression_coverage;
     const frames=[],nodes=[];
-    for(const n of E.drawingOrder(g.nodes,g.idx)){const p=g.positions.get(n.id),body=`<g class="node" data-node-id="${esc(n.id)}" data-id="${esc(n.id)}"${n.identity_display?` data-identity="${esc(JSON.stringify(n.identity_display))}"`:''} transform="translate(${p.x},${p.y})"><title>${esc(nodeTitle(n,g.idx))}</title>${nodeBody(n,p)}</g>`;(p.expanded?frames:nodes).push(body);}
+    for(const n of E.drawingOrder(g.nodes,g.idx)){const p=g.positions.get(n.id),body=`<g class="node" data-node-id="${esc(n.id)}" data-id="${esc(n.id)}"${n.identity_display?` data-identity="${esc(JSON.stringify(n.identity_display))}"`:''}${n.paper.call_boundary?` data-call-boundary="${esc(JSON.stringify(n.paper.call_boundary))}"`:''} transform="translate(${p.x},${p.y})"><title>${esc(nodeTitle(n,g.idx))}</title>${nodeBody(n,p)}</g>`;(p.expanded?frames:nodes).push(body);}
     // Crossing halos express overpasses, never junctions. Separate canonical
     // edges and terminals remain individually inspectable in the vector file.
     const fanouts=prepared.routing?.shared_fanout_refinement?.selected||[];

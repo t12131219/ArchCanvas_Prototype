@@ -134,6 +134,20 @@
     }
     return {schema:VERSION,goals};
   }
+  // This deliberately weaker view exposes a real source-call boundary. It
+  // must not satisfy the internal dependency-structure goal below. The same
+  // independently checked operations, reads and cuts remain expandable.
+  function callBoundary(goal,ir){
+    if(goal.proof_errors.length||!goal.source_reads?.length)return null;
+    const source=ir.nodes.find(n=>n.id===goal.node),sinks=goal.operations.filter(o=>!goal.internal_bindings.some(b=>b.producer===o.node));
+    if(!source?.label||sinks.length!==1)return null;
+    const captions=[goal.operations.length+' operations · folded','Result: '+sinks[0].label,
+      goal.source_reads.length+' source read'+(goal.source_reads.length===1?'':'s'),...(goal.printed_identity?[goal.printed_identity]:[])];
+    return {schema:'source-call-boundary/1',node:goal.node,label:source.label,operations:goal.operations,
+      result:sinks[0],source_reads:goal.source_reads.map(r=>({node:r.node,expression:r.expression})),cuts:goal.cuts,
+      identity:goal.printed_identity||null,printed_title:'Source: '+source.label,printed_captions:captions,
+      scope:'Source call, result operation, read occurrences and routed boundary only. Internal dependency structure and operands are folded; no purity, value equality, execution or model-family assertion.'};
+  }
   function evaluate(goalSet,ir,graph,prepared){
     const {by,resolve,transparent,outgoing}=sourceIndex(ir),paths=new Map();
     for(const path of prepared.routes)for(const member of path.bundle_members||[path])for(const id of new Set([member.id,...member.originals||[]])){
@@ -177,13 +191,18 @@
         return !printed||n?.operator!==by.get(o.node)?.operator||n?.framework_type!==by.get(o.node)?.framework_type;
       }).map(o=>o.node);
       const missingEdges=goal.internal_bindings.filter(b=>!canonical.has(b.edge)||!routeFor(canonical.get(b.edge)).length).map(b=>b.edge);
-      const summary=folded&&!goal.proof_errors.length&&!missingText.length&&!missingCuts.length;
+      const boundary=n?.paper?.call_boundary,expectedBoundary=boundary&&callBoundary(goal,ir);
+      const boundaryValid=folded&&expectedBoundary&&JSON.stringify(boundary)===JSON.stringify(expectedBoundary)&&
+        title===normalized(expectedBoundary.printed_title)&&caption===normalized(expectedBoundary.printed_captions.join(''))&&!missingCuts.length;
+      const summary=!boundary&&folded&&!goal.proof_errors.length&&!missingText.length&&!missingCuts.length;
       const detail=!goal.proof_errors.length&&!missingNodes.length&&!missingOperationLabels.length&&!missingEdges.length&&!missingCuts.length;
       return {goal:goal.id,kind:goal.kind,node:goal.node,status:summary||detail?'fulfilled':'unfulfilled',
-        form:summary?'summary':detail?'operation-paths':'deferred',proof_errors:goal.proof_errors,
+        form:summary?'summary':detail?'operation-paths':boundaryValid?'call-boundary':'deferred',proof_errors:goal.proof_errors,
+        ...(boundary?{boundary_status:boundaryValid?'fulfilled':'unfulfilled',boundary_scope:expectedBoundary?.scope,
+          refinement_required:'Expand this source call to inspect internal dependency structure and operand bindings.'}:{}),
         missing_summary_text:missingText,missing_cut_paths:missingCuts,missing_operation_nodes:missingNodes,missing_operation_labels:missingOperationLabels,missing_internal_paths:missingEdges,
         detailed_relationships_fulfilled:false,scope:goal.scope};
     });
   }
-  const api={VERSION,build,evaluate};root.SemanticSummaryGoals=api;if(typeof module!=='undefined')module.exports=api;
+  const api={VERSION,build,callBoundary,evaluate};root.SemanticSummaryGoals=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -291,6 +291,13 @@
       w:symbol?48:dagSummary?320:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
     if(dagSummary&&n.local_pipeline_binding_rows)n.paper.read_binding_rows=n.local_pipeline_binding_rows;
     if(sourceHeading)n.paper.source_heading=sourceHeading;
+    if(n.local_pipeline_call_boundary&&!n.local_pipeline_expanded){
+      const boundary=n.local_pipeline_call_boundary;
+      const lines=wrap(boundary.printed_title,212,16),captions=boundary.printed_captions.flatMap(s=>wrap(s,212,13));
+      n.paper={...n.paper,title:boundary.printed_title,caption:boundary.printed_captions.join(' · '),lines,captions,
+        w:240,h:22+lines.length*20+captions.length*16,call_boundary:boundary};
+      delete n.paper.read_binding_rows;delete n.paper.source_heading;
+    }
     if(n.invocation_binding){
       const compact=wrap(title,176,13);n.paper={...n.paper,lines:compact,captions:[],font:13,
         w:Math.max(110,Math.ceil(Math.max(...compact.map(s=>width(s,13)))+28)),h:Math.max(40,16+compact.length*20),fill:'#fff8e9',stroke:'#a18b5e'};
@@ -891,7 +898,13 @@
     const normalReturns=returnStages&&state.paperNormalReturns!==false&&!local&&!state.paperFocus?
       Regions.normalReturns({ir,plan:focused.plan,open:new Set(open),inputs:invocationInputs,requested:[...explicitRoles,...(state.paperExpressionDetails||[])]}):null;
     if(normalReturns){focused.plan=normalReturns.plan;idx=index(focused.plan);options.edgeAttachments=normalReturns.attachments;for(const row of normalReturns.rows)decorate(idx.nodes.get(row.group),idx);}
-    if(pipelines)for(const id of pipelines.keys()){const n=idx.nodes.get(id);n.local_pipeline_expanded=open.includes(id);decorate(n,idx);}
+    const summaryEngine=canvas&&granularity==='stages'&&state.paperReadSummary==='boundary'?
+      (root.SemanticSummaryGoals||(typeof require==='function'?require('./summary-goals.js'):null)):null;
+    const callBoundaries=new Map(summaryEngine?summaryEngine.build(ir,focused.plan).goals.flatMap(goal=>{
+      const boundary=summaryEngine.callBoundary(goal,ir);return boundary?[[goal.node,boundary]]:[];
+    }):[]);
+    if(pipelines)for(const id of pipelines.keys()){const n=idx.nodes.get(id);n.local_pipeline_expanded=open.includes(id);
+      if(callBoundaries.has(id))n.local_pipeline_call_boundary=callBoundaries.get(id);decorate(n,idx);}
     // Lower module-reference arguments only after selecting the logical
     // frontier. Released space must not implicitly open unrelated regions.
     const moduleArgumentEngine=canvas&&granularity==='roles'&&!local&&state.paperModuleArguments!==false?

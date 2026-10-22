@@ -74,6 +74,7 @@
     if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');
     if(n.local_pipeline_binding_rows)$('details').insertAdjacentHTML('beforeend','<details><summary>逐行输入引用</summary><p>readN 标识当前提取图的读取节点，inputN 标识输入接口；#N 标识算子结果。它们不证明运行时读取值相等。每行保留对应输入槽，双击模块可继续展开。</p><pre>'+esc(JSON.stringify(n.local_pipeline_binding_rows,null,2))+'</pre></details>');
     const summaryCheck=projection.summary_coverage?.find(r=>r.node===id);
+    if(n.paper.call_boundary)$('details').insertAdjacentHTML('afterbegin','<details open><summary>调用边界摘要</summary><p>当前显示源码调用、结果算子及读取次数。内部依赖和操作数已折叠；双击展开，或将“摘要内容”切回“运算与绑定”查看。原始读取、调用身份和边界仍保留。</p><pre>'+esc(JSON.stringify(n.paper.call_boundary,null,2))+'</pre></details>');
     if(summaryCheck)$('details').insertAdjacentHTML('afterbegin','<details open data-summary-coverage="'+esc(summaryCheck.status)+'"><summary>依赖结构表达检查</summary><p>'+(
       summaryCheck.status==='fulfilled'?(summaryCheck.form==='summary'?'当前摘要已表达操作及内部依赖结构。双击可继续展开原始操作和路径。':'当前操作与路径已表达这段依赖结构。'):
       '当前状态尚未完整表达这段依赖结构；可展开本区域检查缺少的内容。')+'</p><p>此项不代表所有操作数、参数、配置或运行行为已经验证。</p><details><summary>检查记录</summary><pre>'+esc(JSON.stringify(summaryCheck,null,2))+'</pre></details></details>');
@@ -177,6 +178,7 @@
     if(!ir||!state)return;
     $('paperAuto').checked=state.paperAuto!==false;$('paperWidth').value=state.paperWidthMm||180;$('paperGranularity').value=state.paperGranularity||'overview';$('paperGranularity').disabled=state.paperAuto===false;
     const canvas=state.paperMedium==='canvas';$('paperMedium').value=canvas?'canvas':'print';$('paperRoleStageTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperRoleOperationStages').checked=state.paperRoleOperationStages===true;$('paperRolePathStageTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperRolePathStages').checked=state.paperRolePathStages===true;$('paperPrintWidth').hidden=canvas;$('nativeScale').hidden=!canvas;$('paperSequenceTools').hidden=!canvas;$('paperSequenceView').value=state.paperSequenceView==='summary'?'summary':'representatives';$('paperFrameTools').hidden=!canvas;$('paperFrameView').value=state.paperFrameView==='source'?'source':'compact';
+    $('paperReadSummaryTools').hidden=!canvas||state.paperGranularity!=='stages';$('paperReadSummary').value=state.paperReadSummary==='boundary'?'boundary':'bindings';
     $('planDiagramSet').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptiveTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptive').checked=state.paperAdaptive===true;$('paperAdaptive').disabled=state.paperAuto===false;
     $('paperAdaptivePolicyTools').hidden=!canvas||state.paperGranularity!=='roles';$('paperAdaptivePolicy').value=state.paperAdaptivePolicy||'detail';$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;
     const plan=P.plan(ir),idx=E.index(plan),select=$('paperFocus');select.replaceChildren(new Option('模型总览',''));
@@ -195,6 +197,7 @@
   $('paperRoleOperationStages').onchange=()=>{snapshot();state.paperRoleOperationStages=$('paperRoleOperationStages').checked;state.offsets={};render();fit();persist();};
   $('paperRolePathStages').onchange=()=>{snapshot();state.paperRolePathStages=$('paperRolePathStages').checked;delete state.paperRolePathStageOwners;state.offsets={};render();fit();persist();};
   $('paperFrameView').onchange=()=>{snapshot();state.paperFrameView=$('paperFrameView').value;state.offsets={};render();fit();persist();};
+  $('paperReadSummary').onchange=()=>{snapshot();state.paperReadSummary=$('paperReadSummary').value;state.offsets={};render();fit();persist();};
   $('planDiagramSet').onclick=()=>{
     snapshot();const requested=E.clone(state);delete requested.paperDiagramPlan;
     const main=R.renderPrepared(ir,requested,displayedFigure),set=window.SemanticDiagramSet.render(ir,requested,R,{main,maxPanels:3,maxTrials:6,policy:'compact'});

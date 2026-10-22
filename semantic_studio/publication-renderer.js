@@ -769,7 +769,8 @@
   }
   function prepareRegionFollowers(ir,state,baseline){
     const g=baseline.graph,b=baseline.prepared.quality;
-    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperRegionFollowers===false||
+    if(b.medium!=='canvas'||!['roles','stages'].includes(g.publication.granularity)||state.paperRegionFollowers===false||
+      g.publication.granularity==='stages'&&state.paperRegionFollowers!==true||
       Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
     const proposal=L.regionFollowers(g.idx,g.nodes,g.edges,g.positions);
     if(!proposal.records.length)return baseline;
@@ -1646,7 +1647,7 @@
     // Shortcuts cannot affect adaptive folding or earlier profile selection.
     return attachExpressionEvidence(ir,prepareRouteShortcuts(ir,state,prepareWidthFigure(ir,state)));
   }
-  function prepareFigure(ir,state={}){
+  function prepareReadBindingFigure(ir,state={}){
     const baseline=prepareBaseFigure(ir,state),g=baseline.graph,b=baseline.prepared.quality;
     if(state.paperReadBindingRows!==undefined||b.medium!=='canvas'||g.publication.granularity!=='stages'||
       Object.keys(state.offsets||{}).length||g.edges.length>128||
@@ -1676,6 +1677,42 @@
       direct_goals_preserved:direct,summary_goals_preserved:summary,applied_relations_preserved:constraints,geometry_preserved:geometry,
       before:clearanceMetrics(b),candidate:clearanceMetrics(q),
       scope:'One measured alternate printing of the same bounded DAG uses. Each extracted source-read node and input interface has a distinct reference; canonical facts, frontier, exact uses, fulfilled goals and relations must survive. Smaller area without taller/wider bounds, longer wires or added crossings; otherwise retain the original text. No runtime read equality assertion.'}};
+    return chosen;
+  }
+  function prepareFigure(ir,state={}){
+    const baseline=prepareReadBindingFigure(ir,state),g=baseline.graph,b=baseline.prepared.quality;
+    if(b.medium!=='canvas'||g.publication.granularity!=='stages'||state.paperRegionFollowers!==undefined||
+      Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
+    // A coarse source region can have the same scattered outlet as a role
+    // diagram. Measure the entire existing pipeline once, since local
+    // alignment can also change later compaction and routing choices.
+    const proposal=L.regionFollowers(g.idx,g.nodes,g.edges,g.positions);
+    if(!proposal.records.length)return baseline;
+    const trial=prepareReadBindingFigure(ir,{...state,paperRegionFollowers:true}),h=trial.graph,q=trial.prepared.quality;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const covered=(r,key)=>new Set(r.graph[key].filter(c=>c.status==='fulfilled').map(c=>c.goal));
+    const direct=covered(baseline,'expression_coverage'),summary=covered(baseline,'summary_coverage');
+    const nextDirect=covered(trial,'expression_coverage'),nextSummary=covered(trial,'summary_coverage');
+    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+    const before=realizedRelations(baseline),after=realizedRelations(trial);
+    const facts=clearanceIdentity(g)===clearanceIdentity(h)&&JSON.stringify(g.publication)===JSON.stringify(h.publication)&&
+      JSON.stringify(g.expression_goals)===JSON.stringify(h.expression_goals)&&JSON.stringify(g.summary_goals)===JSON.stringify(h.summary_goals);
+    const goals=[...direct].every(id=>nextDirect.has(id))&&[...summary].every(id=>nextSummary.has(id));
+    const nextApplied=new Set(h.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+    const relations=[...applied].every(id=>nextApplied.has(id))&&
+      Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const geometry=q.wire_length<b.wire_length-1&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&
+      fontMetric(q)>=fontMetric(b)&&q.line_geometry.crossings<=b.line_geometry.crossings&&
+      q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(x=>b.issues.includes(x));
+    const accepted=facts&&goals&&relations&&geometry,chosen=accepted?trial:baseline;
+    chosen.prepared.routing={...chosen.prepared.routing,stage_exit_refinement:{accepted,max_trials:1,
+      facts_preserved:facts,goals_preserved:goals,applied_relations_preserved:relations,geometry_preserved:geometry,
+      local_accepted:trial.prepared.routing.region_follower_refinement?.accepted===true,
+      proposed:proposal.records,records:trial.prepared.routing.region_follower_refinement?.records||[],
+      before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      scope:'One complete measured stage-view alternative follows actual expanded-region exits. Same frontier, canonical bindings, fulfilled goals and realized relations; shorter wires with no taller/wider bounds or added conflicts. No execution or module-family assertion.'}};
     return chosen;
   }
   function render(ir,state){

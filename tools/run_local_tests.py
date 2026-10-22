@@ -67,6 +67,7 @@ COMMANDS = {
     'transform-operands': ['node', 'tests/transform-operands.test.cjs'],
     'source-fork-widths': ['node', 'tests/source-fork-widths.test.cjs'],
     'route-shortcuts': ['node', 'tests/route-shortcuts.test.cjs'],
+    'stage-routes': ['node', 'tests/stage-routes.test.cjs'],
     'cell-interfaces': ['node', 'tests/cell-interfaces.test.cjs'],
     'stage-overview': ['node', 'tests/stage-overview.test.cjs'],
     'source-read-paths': ['node', 'tests/source-read-paths.test.cjs'],

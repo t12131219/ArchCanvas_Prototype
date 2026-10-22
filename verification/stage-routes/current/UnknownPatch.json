@@ -1,0 +1,846 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "UnknownPatch",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+    "class": "UnknownPatch",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+      "cell": null,
+      "sha256": "3db1893f70fbd215126df2cf080670aece55be3c0e1d3191013d83f6c3bbbe24",
+      "unit_sha256": "3db1893f70fbd215126df2cf080670aece55be3c0e1d3191013d83f6c3bbbe24"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/22:4:composite:1",
+      "kind": "composite",
+      "label": "UnknownPatch",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 22,
+          "end_line": 26,
+          "column": 4,
+          "end_column": 52,
+          "symbol": "UnknownPatch.forward",
+          "expression": "def forward(self, x, width):\n    x.add_(1)\n    value = self.adjust(x)\n    shape = external_unresolved(width)\n    return value.reshape(shape, -1).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "UnknownPatch"
+    },
+    {
+      "id": "model/22:4:composite:1/22:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "UnknownPatch.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/22:4:composite:1/22:25:interface:1",
+      "kind": "interface",
+      "label": "width",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 25,
+          "end_column": 30,
+          "symbol": "UnknownPatch.forward",
+          "expression": "width"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "width"
+    },
+    {
+      "id": "model/22:4:composite:1/23:8:opaque:1",
+      "kind": "opaque",
+      "label": "add_",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 8,
+          "end_column": 17,
+          "symbol": "UnknownPatch.forward",
+          "expression": "x.add_(1)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "x.add_",
+      "function_target": "x.add_",
+      "arguments": {
+        "args": [
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "mutable": true,
+      "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+    },
+    {
+      "id": "model/22:4:composite:1/19:4:composite:1",
+      "kind": "composite",
+      "label": "self.adjust",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 19,
+          "end_line": 20,
+          "column": 4,
+          "end_column": 46,
+          "symbol": "adjust",
+          "expression": "def adjust(self, x):\n    return torch.sin(x) * torch.cos(x) + x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/22:4:composite:1/19:4:composite:1/19:21:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/22:4:composite:1/19:4:composite:1",
+      "source_parent": "model/22:4:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 19,
+          "end_line": 19,
+          "column": 21,
+          "end_column": 22,
+          "symbol": "adjust",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/22:4:composite:1/19:4:composite:1/20:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/22:4:composite:1/19:4:composite:1",
+      "source_parent": "model/22:4:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 15,
+          "end_column": 46,
+          "symbol": "adjust",
+          "expression": "torch.sin(x) * torch.cos(x) + x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/22:4:composite:1/19:4:composite:1/20:15:compute:2",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/22:4:composite:1/19:4:composite:1",
+      "source_parent": "model/22:4:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 15,
+          "end_column": 42,
+          "symbol": "adjust",
+          "expression": "torch.sin(x) * torch.cos(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/22:4:composite:1/19:4:composite:1/20:15:compute:3",
+      "kind": "compute",
+      "label": "sin",
+      "parent": "model/22:4:composite:1/19:4:composite:1",
+      "source_parent": "model/22:4:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 15,
+          "end_column": 27,
+          "symbol": "adjust",
+          "expression": "torch.sin(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sin",
+      "function_target": "torch.sin",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sin"
+    },
+    {
+      "id": "model/22:4:composite:1/19:4:composite:1/20:30:compute:1",
+      "kind": "compute",
+      "label": "cos",
+      "parent": "model/22:4:composite:1/19:4:composite:1",
+      "source_parent": "model/22:4:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 30,
+          "end_column": 42,
+          "symbol": "adjust",
+          "expression": "torch.cos(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "cos",
+      "function_target": "torch.cos",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.cos"
+    },
+    {
+      "id": "model/22:4:composite:1/19:4:composite:1/20:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/22:4:composite:1/19:4:composite:1",
+      "source_parent": "model/22:4:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "adjust",
+          "expression": "return torch.sin(x) * torch.cos(x) + x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/22:4:composite:1/24:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "value",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "UnknownPatch.forward",
+          "expression": "value"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/22:4:composite:1/25:16:opaque:1",
+      "kind": "opaque",
+      "label": "external_unresolved",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 16,
+          "end_column": 42,
+          "symbol": "UnknownPatch.forward",
+          "expression": "external_unresolved(width)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "external_unresolved",
+      "function_target": "external_unresolved",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "width"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/22:4:composite:1/25:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "shape",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "UnknownPatch.forward",
+          "expression": "shape"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/22:4:composite:1/26:15:compute:1",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 15,
+          "end_column": 39,
+          "symbol": "UnknownPatch.forward",
+          "expression": "value.reshape(shape, -1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "value.reshape",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "shape"
+          },
+          -1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            },
+            {
+              "literal_expression": "UnaryOp(op=USub(), operand=Constant(value=1))"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/22:4:composite:1/26:15:compute:2",
+      "kind": "compute",
+      "label": "contiguous",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 15,
+          "end_column": 52,
+          "symbol": "UnknownPatch.forward",
+          "expression": "value.reshape(shape, -1).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "copy",
+      "function_target": "value.reshape(shape, -1).contiguous",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/22:4:composite:1/26:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 8,
+          "end_column": 52,
+          "symbol": "UnknownPatch.forward",
+          "expression": "return value.reshape(shape, -1).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/22:4:composite:1/22:22:interface:1",
+      "target": "model/22:4:composite:1/23:8:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/22:4:composite:1/22:22:interface:1",
+      "target": "model/22:4:composite:1/23:8:opaque:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "previous",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/22:4:composite:1/23:8:opaque:1",
+      "target": "model/22:4:composite:1/19:4:composite:1/19:21:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "x",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/19:21:interface:1",
+      "target": "model/22:4:composite:1/19:4:composite:1/20:15:compute:3",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/20:15:compute:3",
+      "target": "model/22:4:composite:1/19:4:composite:1/20:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/19:21:interface:1",
+      "target": "model/22:4:composite:1/19:4:composite:1/20:30:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/20:30:compute:1",
+      "target": "model/22:4:composite:1/19:4:composite:1/20:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/20:15:compute:2",
+      "target": "model/22:4:composite:1/19:4:composite:1/20:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/19:21:interface:1",
+      "target": "model/22:4:composite:1/19:4:composite:1/20:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/20:15:compute:1",
+      "target": "model/22:4:composite:1/19:4:composite:1/20:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/22:4:composite:1/19:4:composite:1/20:8:interface:1",
+      "target": "model/22:4:composite:1/24:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/22:4:composite:1/22:25:interface:1",
+      "target": "model/22:4:composite:1/25:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/22:4:composite:1/25:16:opaque:1",
+      "target": "model/22:4:composite:1/25:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/22:4:composite:1/24:8:value-alias:1",
+      "target": "model/22:4:composite:1/26:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/22:4:composite:1/25:8:value-alias:1",
+      "target": "model/22:4:composite:1/26:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/22:4:composite:1/26:15:compute:1",
+      "target": "model/22:4:composite:1/26:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/22:4:composite:1/26:15:compute:2",
+      "target": "model/22:4:composite:1/26:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+      "line": 23,
+      "kind": "mutation-alias-coverage-unresolved"
+    }
+  ],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "semantic_contracts": [
+    {
+      "id": "contract:residual-plain:ef8a2520d5fa",
+      "rule": "residual-plain",
+      "rule_version": "source-contracts/1",
+      "node": "model/22:4:composite:1/19:4:composite:1/20:15:compute:1",
+      "members": [
+        "model/22:4:composite:1/19:4:composite:1/20:15:compute:3",
+        "model/22:4:composite:1/19:4:composite:1/20:15:compute:2",
+        "model/22:4:composite:1/19:4:composite:1/20:15:compute:1"
+      ],
+      "roles": {
+        "skip": "model/22:4:composite:1/23:8:opaque:1",
+        "skip_slot": "out",
+        "branch": "model/22:4:composite:1/19:4:composite:1/20:15:compute:2",
+        "branch_slot": "out",
+        "add": "model/22:4:composite:1/19:4:composite:1/20:15:compute:1",
+        "output": "model/22:4:composite:1/19:4:composite:1/20:15:compute:1",
+        "order": "plain",
+        "normalization": null,
+        "normalization_type": null,
+        "branch_path": [
+          "model/22:4:composite:1/19:4:composite:1/20:15:compute:3",
+          "model/22:4:composite:1/19:4:composite:1/20:15:compute:2"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/stage_route_shortcuts.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 15,
+          "end_column": 46,
+          "symbol": "adjust",
+          "expression": "torch.sin(x) * torch.cos(x) + x"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00003",
+        "e00004",
+        "e00006",
+        "e00007",
+        "e00008",
+        "e00009"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence"
+      ]
+    }
+  ],
+  "semantic_contract_basis": "539ad83468375d5d7623d7deb6213cd105d87c7de8e095dbba6f53b125d9527a",
+  "ir_digest": "1cb18e8381e6c24cf4d46303855c03eb512aa93cbf8a002e1f84b4dede3978a9"
+}

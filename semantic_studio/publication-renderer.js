@@ -1499,15 +1499,17 @@
     chosen=prepareSharedFanouts(ir,state,chosen);
     return chosen;
   }
-  function prepareRouteShortcuts(ir,state,baseline){
+  function prepareRouteShortcuts(ir,state,baseline,{stages=false}={}){
     const g=baseline.graph,b=baseline.prepared.quality;
-    if(state.paperRouteShortcuts===false||b.medium!=='canvas'||g.publication.granularity!=='roles'||Object.keys(state.offsets||{}).length||
+    if(state.paperRouteShortcuts===false||b.medium!=='canvas'||g.publication.granularity!==(stages?'stages':'roles')||Object.keys(state.offsets||{}).length||
       g.edges.length>128||!b.line_geometry.crossings||b.route_failures.length||b.unplaced_port_labels.length)return baseline;
     const shared=new Set((baseline.prepared.routing?.shared_fanout_refinement?.selected||[]).flatMap(r=>r.edges));
     const scored=baseline.prepared.routes.map(e=>({edge:e,score:baseline.prepared.routes.reduce((sum,f)=>sum+(e.id===f.id?0:lineGeometry([e,f]).crossings),0)}))
       .filter(r=>r.score&&!shared.has(r.edge.id)).sort((a,c)=>c.score-a.score||a.edge.id.localeCompare(c.edge.id)).slice(0,12);
     const identity=clearanceIdentity(g),goals=Goals.build(ir,g.architecture),relations=realizedRelations(baseline);
     const covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const summaries=stages?SummaryGoals.build(ir,g.architecture):null;
+    const summarized=stages?new Set(SummaryGoals.evaluate(summaries,ir,g,baseline.prepared).filter(r=>r.status==='fulfilled').map(r=>r.goal)):null;
     const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
     const record={max_edges:12,max_candidates_per_edge:64,max_path_points:24,max_generation_attempts:8192,attempts:[],selected:[],before:clearanceMetrics(b)};
     let chosen=baseline;
@@ -1534,13 +1536,16 @@
         const geometry=q.line_geometry.crossings<old.line_geometry.crossings&&q.wire_length<old.wire_length&&
           q.native_width_px<=old.native_width_px&&q.native_height_px<=old.native_height_px&&fontMetric(q)>=fontMetric(old)&&
           q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(x=>old.issues.includes(x));
-        let accepted=false;
+        let accepted=false,summaryEvaluation=null,lostSummaries=[];
         if(geometry){E.auditConstraintRoutes(graph,routes);const after=realizedRelations({graph,prepared});
           const coverage=new Set(Goals.evaluate(goals,graph,prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
           accepted=clearanceIdentity(graph)===identity&&graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
             Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
+          if(stages){summaryEvaluation=SummaryGoals.evaluate(summaries,ir,graph,prepared);
+            lostSummaries=summaryEvaluation.filter(r=>summarized.has(r.goal)&&r.status!=='fulfilled');
+            accepted=accepted&&!lostSummaries.length;}
         }
-        const row={edge:edge.id,removed_span:proposal.candidate.removed_span,accepted,before:clearanceMetrics(old),candidate:clearanceMetrics(q)};
+        const row={edge:edge.id,removed_span:proposal.candidate.removed_span,accepted,before:clearanceMetrics(old),candidate:clearanceMetrics(q),...(stages?{summary_goals_before:summarized.size,summary_goals_candidate:summaryEvaluation?.filter(r=>r.status==='fulfilled').length??null,lost_summaries:lostSummaries}:{})};
         record.attempts.push(row);
         if(accepted){chosen={graph,prepared};record.selected.push(row);break;}
       }
@@ -1552,6 +1557,8 @@
     }
     record.after=clearanceMetrics(chosen.prepared.quality);
     record.scope='Bounded shortcuts of existing crossed polylines. Fixed nodes, sides, physical terminals, canonical slots and all distant paths. Strictly fewer crossings and shorter wire; no added shared stems, contacts, body/label intrusion or lost direct goals and realized relations. No semantic inference.';
+    if(stages){record.final_stage_frontier=true;record.summary_goals_before=summarized.size;
+      record.scope+=' Final stage frontier only; independently re-evaluated summary text and canonical cuts must retain every fulfilled summary.';}
     chosen.prepared.routing={...baseline.prepared.routing,route_shortcuts:record};return chosen;
   }
   function normalReturnPreference(before,after){
@@ -1715,7 +1722,7 @@
       scope:'One complete measured stage-view alternative follows actual expanded-region exits. Same frontier, canonical bindings, fulfilled goals and realized relations; shorter wires with no taller/wider bounds or added conflicts. No execution or module-family assertion.'}};
     return chosen;
   }
-  function prepareFigure(ir,state={}){
+  function prepareSourceHeadingFigure(ir,state={}){
     const baseline=prepareStageExitFigure(ir,state),g=baseline.graph,b=baseline.prepared.quality;
     if(state.paperSourceHeadings!==undefined||b.medium!=='canvas'||g.publication.granularity!=='stages'||
       Object.keys(state.offsets||{}).length||g.edges.length>128||!g.nodes.some(n=>n.paper.read_binding_rows))return baseline;
@@ -1747,6 +1754,14 @@
       before:clearanceMetrics(b),candidate:clearanceMetrics(q),
       scope:'Source-call labels identify folded DAGs without certifying semantics. Exact result, use rows, source reads, call identities and cuts remain printed. One complete measured alternative; no larger bounds, longer wires, smaller fonts or added conflicts.'}};
     return chosen;
+  }
+  function prepareFigure(ir,state={}){
+    // Stages run only after all summary recipes and complete layout choices
+    // settle. Keep roles on their existing path, with identical serialization.
+    const baseline=prepareSourceHeadingFigure(ir,state);
+    if(baseline.graph.publication.granularity!=='stages')return baseline;
+    const chosen=prepareRouteShortcuts(ir,state,baseline,{stages:true});
+    return chosen===baseline?baseline:attachExpressionEvidence(ir,chosen);
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));

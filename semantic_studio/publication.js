@@ -257,6 +257,8 @@
       const pathTitle=p.path_display?p.path_display.runs.map(r=>r.label+(r.operations.length>1?' · '+r.operations.length+' calls':'')).join(' → '):p.operations.map(o=>o.label).join(' → ');
       title=p.dependency_dag?'Result '+p.dependency_dag.result:p.dependency_tree?expression(p.dependency_tree):pathTitle;
       caption=p.dependency_dag?'Dependency DAG':p.dependency_tree?'Dependency tree':'Dependency path';
+      if(p.source_reads?.length)caption+=' · Reads '+p.source_reads.map(r=>r.expression).join(', ');
+      if(p.owner_identity){const d=p.owner_identity;caption+=` · ${d.label} · source call ${d.invocation}/${d.count}`;}
     }
     if(n.invocation_binding){title=n.invocation_binding.label;caption='Fixed call argument';}
     const dagSummary=n.local_pipeline?.dependency_dag&&!n.local_pipeline_expanded;
@@ -269,6 +271,11 @@
         const ref=input=>input.reference+(input.source_port==='out'?'':'['+input.source_port+']');
         captions.push(...wrap(step.reference+' '+labels.get(step.node)+(inputs.length?' ← '+inputs.map(i=>i.target_port+'='+ref(i)).join('; '):''),maxWidth,13));
       }
+      for(const r of n.local_pipeline.source_reads||[])for(const e of r.edges){
+        const ref=n.local_pipeline.dependency_dag.nodes.find(s=>s.node===e.target)?.reference;
+        captions.push(...wrap(`Reads ${r.expression} → ${ref}[${e.target_port}]`,maxWidth,13));
+      }
+      for(const b of n.local_pipeline.external_inputs||[])captions.push(...wrap(`Input ${b.label} → ${b.reference}[${b.target_port}]`,maxWidth,13));
     }
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
       w:symbol?48:dagSummary?320:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
@@ -690,7 +697,7 @@
     const expressions=expressionEngine?.compile({plan:focused.plan,focus,details:state.paperExpressionDetails});
     const frontierScopes=new Set(roleFrontier?.owners||[]);
     const pol=policy(ir,focus,focused.inside,dimensionPaths,directOperands),pipelineEngine=summaryFrontier&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
-    const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol});
+    const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol,sourceReads:granularity==='stages'});
     if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id)}:n);
     let idx=index(focused.plan);
     if(invocationInputs){focused.plan.nodes=focused.plan.nodes.map(n=>invocationInputs.has(n.id)?{...n,invocation_binding:copy(invocationInputs.get(n.id))}:n);idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
@@ -741,7 +748,8 @@
       // A later external value is a meaningful context/skip entry. Keep its
       // exact consumer visible rather than reducing it to a helper interface.
       const entries=new Set(path.entry_operations||[path.operations[0].node]);
-      return !path.bindings.some(b=>b.kind==='value'&&!operations.has(b.producer)&&!entries.has(b.target));
+      return !path.bindings.some(b=>b.kind==='value'&&!operations.has(b.producer)&&!entries.has(b.target)&&
+        !path.external_inputs?.some(input=>input.edge===b.edge));
     };
     let open=state.paperAuto===false?(state.open||[]):focus?[focus]:[];
     const coherentChoices=[];

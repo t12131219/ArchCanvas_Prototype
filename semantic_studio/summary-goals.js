@@ -27,8 +27,11 @@
       const inside=new Set([owner.id]),todo=[owner.id];
       const children=new Map();for(const n of ir.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
       for(let i=0;i<todo.length;i++)for(const id of children.get(todo[i])||[]){inside.add(id);todo.push(id);}
+      const identity=p.source_reads?.length&&p.rule_version==='local-pipelines/6'&&p.owner_identity?.kind==='same-object-calls'&&
+        JSON.stringify(p.owner_identity)===JSON.stringify(owner.identity_display);
+      if(p.owner_identity&&!identity)errors.push('changed-owner-identity');
       if(p.node!==owner.id||!['source-function','source-module'].includes(by.get(owner.id)?.semantic_type)||
-        [...inside].some(id=>guarded(by.get(id))||guarded(planned.get(id))))errors.push('protected-source-boundary');
+        [...inside].some(id=>guarded(by.get(id))||guarded(identity&&id===owner.id?{...planned.get(id),identity_display:null}:planned.get(id))))errors.push('protected-source-boundary');
       if(ids.length<2||ids.length>6&&(p.dependency_dag||p.dependency_tree)||active.size!==ids.length||operations.some(o=>!inside.has(o.node)||by.get(o.node)?.kind!=='compute'||label(by.get(o.node))!==o.label))errors.push('invalid-operations');
       if(inside.size!==p.canonical_members?.length||new Set(p.canonical_members).size!==inside.size||p.canonical_members?.some(id=>!inside.has(id)))errors.push('incomplete-source-membership');
       // Source ownership proves membership; a display frame may only repartition
@@ -40,11 +43,25 @@
       if(partitions.length!==(p.display_partitions||[]).length||partitions.some(id=>{
         const n=planned.get(id),r=p.display_partitions?.find(r=>r.node===id),members=new Set(displayClosure(id).filter(id=>by.has(id)));
         const cuts=ir.edges.filter(e=>members.has(e.source)!==members.has(e.target));
-        return guarded(n)||n.kind!=='composite'||!n.presentation_only||n.semantic_type!=='structural-region'||!r||
+        const operand=p.rule_version==='local-pipelines/6'&&n?.semantic_type==='operand-expression'&&r?.semantic_type===n.semantic_type;
+        const ports=cuts.map(e=>({id:e.id,direction:members.has(e.source)?'output':'input',source:e.source,source_port:e.source_port,target:e.target,target_port:e.target_port,evidence:e.evidence}));
+        return guarded(n)||n.kind!=='composite'||!n.presentation_only||!operand&&n.semantic_type!=='structural-region'||!r||
           members.size!==r.canonical_members.length||new Set(r.canonical_members).size!==members.size||r.canonical_members.some(id=>!members.has(id))||
-          JSON.stringify(r.cuts)!==JSON.stringify(cuts)||JSON.stringify(n.boundary_ports)!==JSON.stringify(cuts)||
+          JSON.stringify(r.cuts)!==JSON.stringify(cuts)||JSON.stringify(n.boundary_ports)!==JSON.stringify(operand?ports:cuts)||
+          operand&&JSON.stringify(r.ports)!==JSON.stringify(ports)||
           n.canonical_members.length!==members.size||new Set(n.canonical_members).size!==members.size||n.canonical_members.some(id=>!members.has(id));
       }))errors.push('changed-display-partition');
+      const reads=p.source_reads||[],readIds=new Set(reads.map(r=>r.node));
+      const expectedReads=new Set((p.bindings||[]).filter(b=>b.kind==='source-read').map(b=>b.producer));
+      if(expectedReads.size!==readIds.size||[...expectedReads].some(id=>!readIds.has(id)))errors.push('missing-source-read');
+      if(reads.length&&(p.rule_version!=='local-pipelines/6'||readIds.size!==reads.length||reads.some(r=>{
+        const n=by.get(r.node),edges=ir.edges.filter(e=>e.source===r.node);
+        return !n||guarded(n)||!inside.has(n.id)||n.evidence_status!=='static-only'||n.operator!=='attribute'||
+          n.attribute_name!==r.attribute||n.source?.length!==1||r.expression!=='self.'+n.attribute_name||
+          r.expression!==n.source[0].expression||JSON.stringify(r.source)!==JSON.stringify(n.source)||
+          index.incoming.get(n.id)?.length||!edges.length||JSON.stringify(r.edges)!==JSON.stringify(edges)||
+          edges.some(e=>!flow(e)||e.source_port!=='out'||!active.has(e.target));
+      })))errors.push('changed-source-read');
       const uses=ir.edges.filter(e=>active.has(e.target)).map(e=>{const from=resolve(e.source,e.source_port);return {edge:e.id,producer:from.node,source_port:from.port,target:e.target,target_port:e.target_port};});
       const key=b=>JSON.stringify([b.edge,b.producer,b.source_port,b.target,b.target_port]);
       if(uses.length!==p.bindings?.length||uses.some(b=>!p.bindings.some(t=>key(t)===key(b))))errors.push('changed-canonical-binding');
@@ -58,6 +75,13 @@
       const edges=ir.edges.filter(e=>inside.has(e.source)||inside.has(e.target));
       if(edges.some(e=>(!flow(e)&&e.kind!=='parameter-read')||e.condition||e.iteration||e.design_route))errors.push('protected-dependency');
       const refs=new Map(ids.map((id,i)=>[id,'#'+(i+1)])),labels=new Map(operations.map(o=>[o.node,o.label]));
+      const external=p.external_inputs||[],expectedExternal=(p.bindings||[]).filter(b=>b.kind==='value'&&!active.has(b.producer));
+      if(reads.length&&(external.length!==expectedExternal.length||external.some((b,i)=>{
+        const port=by.get(b.port_node),origin=port&&resolve(port.id),expected=expectedExternal[i];
+        return !port||port.parent!==owner.id||port.kind!=='interface'||port.role!=='input'||
+          origin.node!==b.producer||origin.port!==b.source_port||b.label!==(port.slot||port.label)||
+          b.reference!==refs.get(b.target)||key(b)!==key(expected);
+      })))errors.push('changed-external-input');
       const expression=(id,seen=new Set())=>seen.has(id)?'?':labels.get(id)+((inputs.get(id)||[]).length?' ← {'+inputs.get(id).map(b=>expression(b.producer,new Set([...seen,id]))).join('; ')+'}':'');
       let title,formulas=[];
       if(p.dependency_dag){
@@ -87,6 +111,9 @@
       goals.push({id:'goal:summary:'+owner.id,kind:'dependency-structure',node:owner.id,form:p.form,
         operations:operations.map(o=>({node:o.node,label:o.label})),internal_bindings:internal,cuts,
         printed_title:title,printed_formulas:formulas,proof_errors:errors,
+        ...(reads.length?{source_reads:reads,printed_reads:reads.flatMap(r=>r.edges.map(e=>`Reads ${r.expression} → ${refs.get(e.target)}[${e.target_port}]`)),
+          printed_inputs:external.map(b=>`Input ${b.label} → ${b.reference}[${b.target_port}]`),
+          ...(identity?{printed_identity:`${p.owner_identity.label} · source call ${p.owner_identity.invocation}/${p.owner_identity.count}`}:{})}:{}),
         scope:'Operation labels and internal dependency structure with routed source cuts. Full operands, parameter/configuration values, unknown behavior and execution order are not covered.'});
     }
     return {schema:VERSION,goals};
@@ -110,6 +137,7 @@
       const n=graph.nodes.find(n=>n.id===goal.node),position=graph.positions.get(goal.node),folded=!!position&&!position.expanded;
       const title=normalized((n?.paper?.lines||[]).join('')),caption=normalized((n?.paper?.captions||[]).join(''));
       const missingText=folded?[...(!title.includes(normalized(goal.printed_title))?['title']:[]),...goal.printed_formulas.filter(s=>!caption.includes(normalized(s)))]:[];
+      if(folded)for(const text of [...goal.printed_reads||[],...goal.printed_inputs||[],...goal.printed_identity?[goal.printed_identity]:[]])if(!caption.includes(normalized(text)))missingText.push(text);
       const missingCuts=goal.cuts.filter(e=>!routeFor(e).some(({path})=>!folded||(by.get(e.source)&&path.source===goal.node)||(by.get(e.target)&&path.target===goal.node))).map(e=>e.id);
       const missingNodes=goal.operations.filter(o=>!graph.positions.has(o.node)).map(o=>o.node);
       const missingOperationLabels=goal.operations.filter(o=>{

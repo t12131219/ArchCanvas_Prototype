@@ -2,8 +2,8 @@
  * presentation form, not fusion, purity, scheduling or a new family contract. */
 (function(root){
   'use strict';
-  const VERSION='local-pipelines/5',flow=e=>['data','alias','interface-binding'].includes(e.kind);
-  function compile({ir,plan,bindings,metadata,configurationUses}){
+  const VERSION='local-pipelines/6',flow=e=>['data','alias','interface-binding'].includes(e.kind);
+  function compile({ir,plan,bindings,metadata,configurationUses,sourceReads=false}){
     const by=new Map(plan.nodes.map(n=>[n.id,n])),canonical=new Map(ir.nodes.map(n=>[n.id,n])),children=new Map(),result=new Map();
     for(const n of plan.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
     const closure=id=>{const todo=[id];for(let i=0;i<todo.length;i++)todo.push(...children.get(todo[i])||[]);return todo;};
@@ -18,17 +18,20 @@
     const resolve=(id,port)=>{const seen=new Set();while(proofBindings.has(id)&&!seen.has(id)){seen.add(id);const e=proofBindings.get(id);id=e.source;const outer=e.source_port??'out';port=outer==='out'?port:port==='out'?outer:outer+'.'+port;}return {node:id,slot:port};};
     const guarded=n=>n.evidence_status==='runtime-only'||['opaque','control'].includes(n.kind)||n.mutable||n.condition||n.identity_display||n.observed_calls||n.state_interface||n.semantic_contracts?.length||n.repeat_contract||n.iteration||n.runtime_evidence?.length;
     for(const owner of plan.nodes){
-      if(!owner.parent||!['source-function','source-module'].includes(owner.semantic_type)||guarded(owner))continue;
+      const identity=sourceReads&&owner.identity_display?.kind==='same-object-calls'?owner.identity_display:null;
+      if(!owner.parent||!['source-function','source-module'].includes(owner.semantic_type)||guarded(identity?{...owner,identity_display:null}:owner))continue;
       const ids=closure(owner.id),inside=new Set(ids),members=ids.slice(1).map(id=>by.get(id));
       // Contiguous topological partitions are display frames, not source or
       // semantic boundaries. Inspect their full canonical contents and exact
       // cuts before looking through them. No other synthetic region is erased.
       const partitions=members.filter(n=>!canonical.has(n.id));
       if(!members.length||members.some(guarded)||partitions.some(n=>{
-        if(n.kind!=='composite'||!n.presentation_only||n.semantic_type!=='structural-region')return true;
+        if(n.kind!=='composite'||!n.presentation_only||!['structural-region',...(sourceReads?['operand-expression']:[])].includes(n.semantic_type))return true;
         const actual=closure(n.id).filter(id=>canonical.has(id)),set=new Set(actual);
+        const cuts=ir.edges.filter(e=>set.has(e.source)!==set.has(e.target));
+        const ports=cuts.map(e=>({id:e.id,direction:set.has(e.source)?'output':'input',source:e.source,source_port:e.source_port,target:e.target,target_port:e.target_port,evidence:e.evidence}));
         return actual.length!==n.canonical_members?.length||new Set(n.canonical_members).size!==actual.length||n.canonical_members.some(id=>!set.has(id))||
-          JSON.stringify(n.boundary_ports)!==JSON.stringify(ir.edges.filter(e=>set.has(e.source)!==set.has(e.target)));
+          JSON.stringify(n.boundary_ports)!==JSON.stringify(n.semantic_type==='operand-expression'?ports:cuts);
       }))continue;
       // Source refactoring alone need not break a proved value path. Nested
       // enclosures retain their own original cuts and provenance; a grouping,
@@ -44,8 +47,17 @@
       const parameters=members.filter(n=>n.kind==='parameter'&&!metadata.has(n.id)),resources=new Set(parameters.map(n=>n.id));
       if(parameters.some(n=>ir.edges.some(e=>e.target===n.id)||!ir.edges.some(e=>e.source===n.id)||
         ir.edges.some(e=>e.source===n.id&&(!['data','parameter-read'].includes(e.kind)||!steps.some(n=>n.id===e.target)))))continue;
+      // This is a source read occurrence, not an immutable tensor, registered
+      // buffer identity, or a state-update contract. Keep the spelling and all
+      // consumers. A write, escaping read or incoming state binding rejects it.
+      const reads=members.filter(n=>['state','buffer'].includes(n.kind)&&!metadata.has(n.id)),readIds=new Set(reads.map(n=>n.id));
+      if(identity&&!reads.length)continue;
+      if(reads.length&&(!sourceReads||reads.some(n=>n.evidence_status!=='static-only'||n.operator!=='attribute'||
+        typeof n.attribute_name!=='string'||n.source?.length!==1||n.source[0].expression!=='self.'+n.attribute_name||
+        (ins.get(n.id)||[]).length||!ir.edges.some(e=>e.source===n.id)||
+        ir.edges.some(e=>e.source===n.id&&(!flow(e)||e.source_port!=='out'||!steps.some(s=>s.id===e.target))))))continue;
       if(members.some(n=>!['compute','interface','value-alias','parameter','state','buffer','composite'].includes(n.kind)||
-        ['state','buffer'].includes(n.kind)&&!metadata.has(n.id)))continue;
+        ['state','buffer'].includes(n.kind)&&!metadata.has(n.id)&&!readIds.has(n.id)))continue;
       const active=new Set(steps.map(n=>n.id)),edges=ir.edges.filter(e=>inside.has(e.source)||inside.has(e.target));
       if(edges.some(e=>!flow(e)&&!(e.kind==='parameter-read'&&resources.has(e.source))||e.condition||e.design_route||e.iteration))continue;
       const adj=new Map(steps.map(n=>[n.id,new Set()])),incoming=new Map(steps.map(n=>[n.id,[]])),traces=[];
@@ -55,7 +67,7 @@
         // Bindings are retained as proof traces, not new shortcut edges.
         if(active.has(e.target)){
           const trace={edge:e.id,producer:from.node,source_port:from.slot,target:e.target,target_port:e.target_port,
-            kind:aux.has(from.node)?'symbolic-read':resources.has(from.node)?'parameter-read':metadata.has(from.node)?'configuration':'value'};traces.push(trace);
+            kind:aux.has(from.node)?'symbolic-read':readIds.has(from.node)?'source-read':resources.has(from.node)?'parameter-read':metadata.has(from.node)?'configuration':'value'};traces.push(trace);
           if(aux.has(from.node)&&!configurationUses.has(e.id))valid=false;
           if(active.has(from.node)){adj.get(from.node).add(e.target);incoming.get(e.target).push(trace);}
         }
@@ -66,7 +78,7 @@
       // Internal reuse requires references, never recursive inlining of the
       // producer. Multiple operand uses count once for topological indegree,
       // while every use and its exact result/operand slot stays in the proof.
-      const dag=steps.some(n=>adj.get(n.id).size>1||new Set(incoming.get(n.id).map(t=>t.producer)).size!==incoming.get(n.id).length);
+      const dag=!!reads.length||steps.some(n=>adj.get(n.id).size>1||new Set(incoming.get(n.id).map(t=>t.producer)).size!==incoming.get(n.id).length);
       const starts=steps.filter(n=>!incoming.get(n.id).length),sinks=steps.filter(n=>!adj.get(n.id).size);
       if(!starts.length||sinks.length!==1)continue;
       // A tuple pack is not a single semantic result: its externally selectable
@@ -101,15 +113,29 @@
         scope:'Consecutive call labels only. Every call, operand and configuration remains distinct; no value, parameter or behavioral equivalence is asserted.'}:null;
       const expression=id=>({node:id,inputs:incoming.get(id).map(t=>({edge:t.edge,target_port:t.target_port,source_port:t.source_port,expression:expression(t.producer)}))});
       const references=new Map(ordered.map((id,i)=>[id,'#'+(i+1)]));
+      const externalInputs=[];
+      if(reads.length)for(const b of traces.filter(b=>b.kind==='value'&&!active.has(b.producer))){
+        const ports=members.filter(n=>n.kind==='interface'&&n.role==='input'&&n.parent===owner.id&&
+          resolve(n.id,'out').node===b.producer&&resolve(n.id,'out').slot===b.source_port);
+        if(ports.length!==1){valid=false;break;}
+        const port=ports[0];externalInputs.push({...b,port_node:port.id,label:port.slot||port.label,reference:references.get(b.target)});
+      }
+      if(!valid)continue;
       const dependencyDag=dag?{result:references.get(sinks[0].id),nodes:ordered.map(id=>({node:id,reference:references.get(id),
         inputs:incoming.get(id).map(t=>({edge:t.edge,reference:references.get(t.producer),source_port:t.source_port,target_port:t.target_port}))}))}:null;
-      const extended=!!pathDisplay||!!partitions.length;
-      result.set(owner.id,{rule_version:extended?VERSION:dag?'local-pipelines/4':tree||resources.size?'local-pipelines/3':'local-pipelines/2',node:owner.id,form:dag?'dependency-dag-summary':tree?'dependency-tree-summary':'dependency-path-summary',operations,
+      const extended=!!pathDisplay||!!partitions.length,newForm=!!reads.length||partitions.some(n=>n.semantic_type==='operand-expression');
+      result.set(owner.id,{rule_version:newForm?VERSION:extended?'local-pipelines/5':dag?'local-pipelines/4':tree||resources.size?'local-pipelines/3':'local-pipelines/2',node:owner.id,form:dag?'dependency-dag-summary':tree?'dependency-tree-summary':'dependency-path-summary',operations,
+        ...(identity?{owner_identity:{...identity}}:{}),
+        ...(reads.length?{external_inputs:externalInputs}:{}),
+        ...(reads.length?{source_reads:reads.map(n=>({node:n.id,expression:n.source[0].expression,attribute:n.attribute_name,source:n.source,
+          edges:ir.edges.filter(e=>e.source===n.id).map(e=>({...e})),scope:'Modeled source attribute read occurrence; value, immutability, alias identity and external effects unresolved.'}))}:{}),
         ...(pathDisplay?{path_display:pathDisplay}:{}),
-        ...(partitions.length?{display_partitions:partitions.map(n=>({node:n.id,canonical_members:n.canonical_members.slice(),cuts:n.boundary_ports.map(e=>({...e}))}))}:{}),
+        ...(partitions.length?{display_partitions:partitions.map(n=>({node:n.id,canonical_members:n.canonical_members.slice(),
+          ...(n.semantic_type==='operand-expression'?{semantic_type:n.semantic_type,ports:n.boundary_ports.map(e=>({...e}))}:{}),
+          cuts:ir.edges.filter(e=>{const set=new Set(n.canonical_members);return set.has(e.source)!==set.has(e.target);}).map(e=>({...e}))}))}:{}),
         ...(tree?{entry_operations:starts.map(n=>n.id),result_operation:sinks[0].id,dependency_tree:expression(sinks[0].id)}:{}),
         ...(dag?{entry_operations:starts.map(n=>n.id).sort(),result_operation:sinks[0].id,dependency_dag:dependencyDag}:{}),
-        ...(extended||dag||tree||resources.size?{parameter_reads:parameters.map(n=>({node:n.id,source:n.source||[],module_identity:n.module_identity??null,
+        ...(newForm||extended||dag||tree||resources.size?{parameter_reads:parameters.map(n=>({node:n.id,source:n.source||[],module_identity:n.module_identity??null,
           edges:ir.edges.filter(e=>e.source===n.id).map(e=>({...e}))})),
           output_bindings:cuts.filter(e=>inside.has(e.source)).map(e=>({edge:e.id,producer:resolve(e.source,e.source_port??'out').node,
             source_port:resolve(e.source,e.source_port??'out').slot,target:e.target,target_port:e.target_port}))}:{}),
@@ -121,7 +147,7 @@
     }
     return result;
   }
-  function receipt(candidates,graph){return {rule_version:VERSION,rows:[...candidates.values()].filter(r=>graph.positions.has(r.node)).map(r=>({...r,
+  function receipt(candidates,graph){const rows=[...candidates.values()].filter(r=>graph.positions.has(r.node));return {rule_version:rows.some(r=>r.rule_version===VERSION)?VERSION:'local-pipelines/5',rows:rows.map(r=>({...r,
     status:graph.positions.get(r.node).expanded?'expanded':'summary',visible_node:r.node,
     detailed_operations_exposed:r.operations.every(o=>graph.positions.has(o.node))}))};}
   const api={VERSION,compile,receipt};root.SemanticLocalPipelines=api;if(typeof module!=='undefined')module.exports=api;

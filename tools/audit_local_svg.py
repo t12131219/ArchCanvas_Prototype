@@ -125,7 +125,8 @@ def audit_pipeline_summaries(document, row, nodes):
         assert partitions == {p['node'] for p in r.get('display_partitions', [])}
         for partition in r.get('display_partitions', []):
             n = planned[partition['node']]
-            assert n['presentation_only'] and n['semantic_type'] == 'structural-region'
+            operand = r['rule_version'] == 'local-pipelines/6' and partition.get('semantic_type') == 'operand-expression'
+            assert n['presentation_only'] and n['semantic_type'] == ('operand-expression' if operand else 'structural-region')
             descendants = {n['id']}
             changed = True
             while changed:
@@ -134,8 +135,14 @@ def audit_pipeline_summaries(document, row, nodes):
             descendants &= canonical.keys()
             assert len(descendants) == len(partition['canonical_members']) == len(n['canonical_members'])
             assert descendants == set(partition['canonical_members']) == set(n['canonical_members'])
-            assert partition['cuts'] == n['boundary_ports'] == [e for e in edges if (e['source'] in descendants) != (e['target'] in descendants)]
-        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4', 'local-pipelines/5']:
+            cuts = [e for e in edges if (e['source'] in descendants) != (e['target'] in descendants)]
+            assert partition['cuts'] == cuts
+            if operand:
+                assert partition['ports'] == n['boundary_ports'] == [dict(id=e['id'], direction='output' if e['source'] in descendants else 'input',
+                    source=e['source'], source_port=e['source_port'], target=e['target'], target_port=e['target_port'], evidence=e['evidence']) for e in cuts]
+            else:
+                assert n['boundary_ports'] == cuts
+        if r['rule_version'] in ['local-pipelines/2', 'local-pipelines/3', 'local-pipelines/4', 'local-pipelines/5', 'local-pipelines/6']:
             boundaries = [n for n in planned.values() if n['id'] in members and n['kind'] == 'composite']
             assert {n['id'] for n in boundaries} == {b['node'] for b in r['source_boundaries']}
             for boundary in r['source_boundaries']:
@@ -156,7 +163,12 @@ def audit_pipeline_summaries(document, row, nodes):
         for id in display_members:
             n = planned[id]
             assert n['kind'] not in ['opaque', 'control'] and n.get('evidence_status') != 'runtime-only'
-            assert not any(n.get(k) for k in ['condition', 'mutable', 'identity_display', 'observed_calls', 'semantic_contracts', 'repeat_contract', 'iteration', 'runtime_evidence'])
+            protected = ['condition', 'mutable', 'identity_display', 'observed_calls', 'semantic_contracts', 'repeat_contract', 'iteration', 'runtime_evidence']
+            if id == node and r.get('owner_identity'):
+                assert r.get('source_reads') and r['rule_version'] == 'local-pipelines/6'
+                assert r['owner_identity'] == n['identity_display'] and n['identity_display']['kind'] == 'same-object-calls'
+                protected.remove('identity_display')
+            assert not any(n.get(k) for k in protected)
         cuts = [e for e in edges if (e['source'] in members) != (e['target'] in members)]
         assert cuts == r['cuts']
         ordered = [o['node'] for o in r['operations']]
@@ -187,7 +199,7 @@ def audit_pipeline_summaries(document, row, nodes):
             if b['producer'] in ordered:
                 adjacency.add((b['producer'], b['target']))
         if r.get('dependency_dag'):
-            assert r['rule_version'] in ['local-pipelines/4', 'local-pipelines/5'] and r['form'] == 'dependency-dag-summary'
+            assert r['rule_version'] in ['local-pipelines/4', 'local-pipelines/5', 'local-pipelines/6'] and r['form'] == 'dependency-dag-summary'
             assert len(ordered) <= 6
             steps = r['dependency_dag']['nodes']
             assert [s['node'] for s in steps] == ordered
@@ -209,7 +221,7 @@ def audit_pipeline_summaries(document, row, nodes):
             assert sinks == {ordered[-1]} and r['result_operation'] == ordered[-1]
             assert references[r['dependency_dag']['result']] == ordered[-1]
             assert set(r['entry_operations']) == set(ordered) - {b for a, b in adjacency}
-            assert len(actual_dag) > len(set(actual_dag)) or any(sum(a == id for a, b in adjacency) > 1 for id in ordered)
+            assert r.get('source_reads') or len(actual_dag) > len(set(actual_dag)) or any(sum(a == id for a, b in adjacency) > 1 for id in ordered)
         elif r.get('dependency_tree'):
             assert len(ordered) <= 6
             visited, tree_edges = [], set()
@@ -233,7 +245,7 @@ def audit_pipeline_summaries(document, row, nodes):
             assert all(sum(a == id for a, b in adjacency) <= 1 for id in ordered)
         else:
             assert adjacency == set(zip(ordered, ordered[1:]))
-        if r['rule_version'] in ['local-pipelines/3', 'local-pipelines/4', 'local-pipelines/5']:
+        if r['rule_version'] in ['local-pipelines/3', 'local-pipelines/4', 'local-pipelines/5', 'local-pipelines/6']:
             assert r['output_bindings'] == [dict(edge=e['id'], producer=resolve(e['source'], e.get('source_port', 'out'))[0],
                                                 source_port=resolve(e['source'], e.get('source_port', 'out'))[1],
                                                 target=e['target'], target_port=e['target_port'])
@@ -264,6 +276,25 @@ def audit_pipeline_summaries(document, row, nodes):
             assert o['operator'] == n.get('operator') and o['framework_type'] == n.get('framework_type')
             label = n.get('framework_type', '').split('.')[-1] if n.get('framework_type') else n['function_target'].split('.')[-1] if n.get('source_framework_function') and n['source_framework_function'] == n.get('function_target') else n['operator']
             assert o['label'] == label
+        reads = r.get('source_reads', [])
+        expected_reads = {b['producer'] for b in r['bindings'] if b['kind'] == 'source-read'}
+        assert expected_reads == {p['node'] for p in reads} and len(reads) == len(expected_reads)
+        for resource in reads:
+            n = canonical[resource['node']]
+            assert n['kind'] in ['state', 'buffer'] and n['operator'] == 'attribute' and n['evidence_status'] == 'static-only'
+            assert resource['expression'] == 'self.' + resource['attribute'] == n['source'][0]['expression']
+            assert resource['attribute'] == n['attribute_name'] and resource['source'] == n['source']
+            assert not ins.get(n['id']) and resource['edges'] == [e for e in edges if e['source'] == n['id']]
+            assert resource['edges'] and all(e['kind'] in ['data', 'alias', 'interface-binding'] and e['source_port'] == 'out' and e['target'] in ordered for e in resource['edges'])
+        if reads:
+            expected_inputs = [b for b in r['bindings'] if b['kind'] == 'value' and b['producer'] not in ordered]
+            assert len(expected_inputs) == len(r['external_inputs'])
+            for b, expected in zip(r['external_inputs'], expected_inputs):
+                assert all(b[k] == v for k, v in expected.items())
+                n = canonical[b['port_node']]
+                assert n['kind'] == 'interface' and n['role'] == 'input' and n['parent'] == node
+                assert b['label'] == (n.get('slot') or n['label']) and resolve(n['id']) == (b['producer'], b['source_port'])
+                assert b['reference'] == '#' + str(ordered.index(b['target']) + 1)
         measured = next(n for n in document['layout']['nodes'] if n['id'] == node)
         assert (r['status'] == 'expanded') == measured['expanded']
         assert r['detailed_operations_exposed'] == all(id in nodes for id in ordered)
@@ -284,6 +315,15 @@ def audit_pipeline_summaries(document, row, nodes):
                     ref = lambda i: i['reference'] + ('[' + i['source_port'] + ']' if i['source_port'] != 'out' else '')
                     line = step['reference'] + labels[step['node']] + ('←' + ';'.join(i['target_port'] + '=' + ref(i) for i in uses) if uses else '')
                     assert re.sub(r'\s', '', line) in text, ('missing physical DAG formula', line)
+            for resource in reads:
+                for e in resource['edges']:
+                    line = 'Reads ' + resource['expression'] + ' → #' + str(ordered.index(e['target']) + 1) + '[' + e['target_port'] + ']'
+                    assert re.sub(r'\s', '', line) in text
+            for b in r.get('external_inputs', []):
+                assert re.sub(r'\s', '', f"Input {b['label']} → {b['reference']}[{b['target_port']}]") in text
+            if r.get('owner_identity'):
+                d = r['owner_identity']
+                assert re.sub(r'\s', '', f"{d['label']} · source call {d['invocation']}/{d['count']}") in text
             assert not r['detailed_operations_exposed']
             assert all(c['status'] != 'fulfilled' for c in document['expression_coverage'] if c['goal'] in {'goal:node:' + id for id in ordered})
         title = ''.join(nodes[node].find('{http://www.w3.org/2000/svg}title').itertext())

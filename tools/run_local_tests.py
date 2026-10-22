@@ -69,6 +69,7 @@ COMMANDS = {
     'route-shortcuts': ['node', 'tests/route-shortcuts.test.cjs'],
     'cell-interfaces': ['node', 'tests/cell-interfaces.test.cjs'],
     'stage-overview': ['node', 'tests/stage-overview.test.cjs'],
+    'source-read-paths': ['node', 'tests/source-read-paths.test.cjs'],
     'unconsumed-dimensions': ['node', 'tests/unconsumed-dimensions.test.cjs'],
     'transform-sequences': ['node', 'tests/transform-sequences.test.cjs'],
     'residual-bands': ['node', 'tests/residual-bands.test.cjs'],

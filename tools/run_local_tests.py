@@ -71,6 +71,7 @@ COMMANDS = {
     'stage-overview': ['node', 'tests/stage-overview.test.cjs'],
     'source-read-paths': ['node', 'tests/source-read-paths.test.cjs'],
     'stage-sample-frames': ['node', 'tests/stage-sample-frames.test.cjs'],
+    'read-binding-rows': ['node', 'tests/read-binding-rows.test.cjs'],
     'unconsumed-dimensions': ['node', 'tests/unconsumed-dimensions.test.cjs'],
     'transform-sequences': ['node', 'tests/transform-sequences.test.cjs'],
     'residual-bands': ['node', 'tests/residual-bands.test.cjs'],

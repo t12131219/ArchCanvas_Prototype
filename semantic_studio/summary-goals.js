@@ -115,6 +115,22 @@
           printed_inputs:external.map(b=>`Input ${b.label} → ${b.reference}[${b.target_port}]`),
           ...(identity?{printed_identity:`${p.owner_identity.label} · source call ${p.owner_identity.invocation}/${p.owner_identity.count}`}:{})}:{}),
         scope:'Operation labels and internal dependency structure with routed source cuts. Full operands, parameter/configuration values, unknown behavior and execution order are not covered.'});
+      // Independently derive the alternate printed use rows from the checked
+      // binding records, not from the presentation recipe or its receipt.
+      if(reads.length){
+        const inputs=[];for(const b of external)if(!inputs.some(n=>n.node===b.port_node))inputs.push({node:b.port_node,label:b.label,producer:b.producer,source_port:b.source_port,reference:'input'+(inputs.length+1)});
+        const resources=reads.map((r,i)=>({node:r.node,reference:'read'+(i+1),expression:r.expression}));
+        const rows=operations.map(o=>{const uses=[];
+          for(const b of p.bindings){if(b.target!==o.node)continue;
+            const r=resources.find(r=>r.node===b.producer),e=external.find(e=>e.edge===b.edge),v=e&&inputs.find(n=>n.node===e.port_node);
+            const printed=refs.get(b.producer)||(r?r.reference+'('+JSON.stringify(r.expression)+')':v?v.reference+'('+JSON.stringify(v.label)+')':null);
+            if(printed)uses.push({edge:b.edge,producer:b.producer,source_port:b.source_port,target:b.target,target_port:b.target_port,value:printed+(b.source_port==='out'?'':'['+b.source_port+']')});
+          }
+          uses.sort((a,b)=>String(a.target_port).localeCompare(String(b.target_port))||a.edge.localeCompare(b.edge));
+          return {node:o.node,reference:refs.get(o.node),label:o.label,uses,text:refs.get(o.node)+' '+o.label+(uses.length?' ← '+uses.map(b=>b.target_port+'='+b.value).join('; '):'')};
+        });
+        goals.at(-1).binding_rows={reads:resources,inputs,rows,title:'Result '+refs.get(sinks[0])+' · '+labels.get(sinks[0])};
+      }
     }
     return {schema:VERSION,goals};
   }
@@ -136,8 +152,13 @@
     return goalSet.goals.map(goal=>{
       const n=graph.nodes.find(n=>n.id===goal.node),position=graph.positions.get(goal.node),folded=!!position&&!position.expanded;
       const title=normalized((n?.paper?.lines||[]).join('')),caption=normalized((n?.paper?.captions||[]).join(''));
-      const missingText=folded?[...(!title.includes(normalized(goal.printed_title))?['title']:[]),...goal.printed_formulas.filter(s=>!caption.includes(normalized(s)))]:[];
-      if(folded)for(const text of [...goal.printed_reads||[],...goal.printed_inputs||[],...goal.printed_identity?[goal.printed_identity]:[]])if(!caption.includes(normalized(text)))missingText.push(text);
+      const rows=n?.paper?.read_binding_rows,expected=goal.binding_rows;
+      const alternate=rows&&expected&&rows.schema==='dependency-binding-rows/1'&&
+        ['reads','inputs','rows','title'].every(k=>JSON.stringify(rows[k])===JSON.stringify(expected[k]));
+      const missingText=folded?(rows?[...(!alternate?['invalid-binding-rows']:[]),...(!title.includes(normalized(expected?.title))?['title']:[]),
+        ...(expected?.rows||[]).filter(r=>!caption.includes(normalized(r.text))).map(r=>r.text)]:
+        [...(!title.includes(normalized(goal.printed_title))?['title']:[]),...goal.printed_formulas.filter(s=>!caption.includes(normalized(s))) ]):[];
+      if(folded)for(const text of [...(!rows?goal.printed_reads||[]:[]),...(!rows?goal.printed_inputs||[]:[]),...goal.printed_identity?[goal.printed_identity]:[]])if(!caption.includes(normalized(text)))missingText.push(text);
       const missingCuts=goal.cuts.filter(e=>!routeFor(e).some(({path})=>!folded||(by.get(e.source)&&path.source===goal.node)||(by.get(e.target)&&path.target===goal.node))).map(e=>e.id);
       const missingNodes=goal.operations.filter(o=>!graph.positions.has(o.node)).map(o=>o.node);
       const missingOperationLabels=goal.operations.filter(o=>{

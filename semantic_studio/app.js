@@ -72,6 +72,7 @@
     const dock=projection.positions?.context?.inputDocks.find(r=>r.node===id);
     if(dock)$('details').insertAdjacentHTML('beforeend','<details open><summary>就近放置的外部输入</summary><p>这是原有的唯一输入接口，放在使用位置附近以减少长连线。位置不表示输入在此处生成或较晚提供；全部使用和参数槽位仍独立保留。</p><pre>'+esc(JSON.stringify(dock,null,2))+'</pre></details>');
     if(n.local_pipeline)$('details').insertAdjacentHTML('beforeend','<details open><summary>局部流程摘要与原始绑定</summary><p>依据已提取依赖展示操作路径；符号读取与操作数保留。双击可查看内部节点。</p><pre>'+esc(JSON.stringify(n.local_pipeline,null,2))+'</pre></details>');
+    if(n.local_pipeline_binding_rows)$('details').insertAdjacentHTML('beforeend','<details><summary>逐行输入引用</summary><p>readN 标识当前提取图的读取节点，inputN 标识输入接口；#N 标识算子结果。它们不证明运行时读取值相等。每行保留对应输入槽，双击模块可继续展开。</p><pre>'+esc(JSON.stringify(n.local_pipeline_binding_rows,null,2))+'</pre></details>');
     const summaryCheck=projection.summary_coverage?.find(r=>r.node===id);
     if(summaryCheck)$('details').insertAdjacentHTML('afterbegin','<details open data-summary-coverage="'+esc(summaryCheck.status)+'"><summary>依赖结构表达检查</summary><p>'+(
       summaryCheck.status==='fulfilled'?(summaryCheck.form==='summary'?'当前摘要已表达操作及内部依赖结构。双击可继续展开原始操作和路径。':'当前操作与路径已表达这段依赖结构。'):

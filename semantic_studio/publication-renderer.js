@@ -1641,10 +1641,42 @@
       scope:'One complete measured comparison of small equal-width padding for exact external-source consumers. No additional crossings, contacts, ambiguous overlaps, routing or label failures; existing bindings, direct goals, applied constraints, entries and path columns survive. An optional context gutter may be replaced on the same exact use only with strictly fewer crossings and shorter paths, preserving explicit channel choices. At most 5% global footprint and wire growth. No execution or operation-equivalence assertion.'}};
     return selected;
   }
-  function prepareFigure(ir,state={}){
+  function prepareBaseFigure(ir,state={}){
     // Hold the final semantic frontier and all prior layout choices fixed.
     // Shortcuts cannot affect adaptive folding or earlier profile selection.
     return attachExpressionEvidence(ir,prepareRouteShortcuts(ir,state,prepareWidthFigure(ir,state)));
+  }
+  function prepareFigure(ir,state={}){
+    const baseline=prepareBaseFigure(ir,state),g=baseline.graph,b=baseline.prepared.quality;
+    if(state.paperReadBindingRows!==undefined||b.medium!=='canvas'||g.publication.granularity!=='stages'||
+      Object.keys(state.offsets||{}).length||g.edges.length>128||
+      !g.nodes.some(n=>!g.positions.get(n.id).expanded&&n.local_pipeline?.source_reads?.length))return baseline;
+    const trial=prepareBaseFigure(ir,{...state,paperReadBindingRows:true}),h=trial.graph,q=trial.prepared.quality;
+    const rows=h.nodes.filter(n=>n.paper.read_binding_rows);
+    if(!rows.length)return baseline;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const done=new Set(g.expression_coverage.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const summaries=new Set(g.summary_coverage.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const covered=new Set(h.expression_coverage.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const summarized=new Set(h.summary_coverage.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+    const before=realizedRelations(baseline),after=realizedRelations(trial);
+    const facts=clearanceIdentity(g)===clearanceIdentity(h)&&JSON.stringify(g.publication)===JSON.stringify(h.publication)&&
+      JSON.stringify(g.expression_goals)===JSON.stringify(h.expression_goals)&&JSON.stringify(g.summary_goals)===JSON.stringify(h.summary_goals);
+    const direct=[...done].every(id=>covered.has(id)),summary=[...summaries].every(id=>summarized.has(id));
+    const constraints=h.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
+      Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const geometry=areaMetric(q)<areaMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&
+      q.wire_length<=b.wire_length&&fontMetric(q)>=fontMetric(b)&&q.line_geometry.crossings<=b.line_geometry.crossings&&
+      q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(x=>b.issues.includes(x));
+    const accepted=facts&&direct&&summary&&constraints&&geometry,chosen=accepted?trial:baseline;
+    chosen.prepared.routing={...chosen.prepared.routing,read_binding_rows:{accepted,max_trials:1,nodes:rows.map(n=>n.id),facts_preserved:facts,
+      direct_goals_preserved:direct,summary_goals_preserved:summary,applied_relations_preserved:constraints,geometry_preserved:geometry,
+      before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      scope:'One measured alternate printing of the same bounded DAG uses. Each extracted source-read node and input interface has a distinct reference; canonical facts, frontier, exact uses, fulfilled goals and relations must survive. Smaller area without taller/wider bounds, longer wires or added crossings; otherwise retain the original text. No runtime read equality assertion.'}};
+    return chosen;
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));

@@ -10,8 +10,11 @@ test('source read summaries retain exact numbered consumers and later input oper
  for(const p of rows(r.graph)){
   assert.equal(p.status,'summary');assert.equal(p.source_reads.length,1);assert.equal(p.dependency_dag.nodes.length,4);
   assert.ok(p.external_inputs.some(b=>b.reference==='#3'&&b.target_port==='0'));
-  const paper=r.graph.nodes.find(n=>n.id===p.node).paper.captions.join(' ');
-  assert.ok(paper.includes('Reads self.table → #1[value]'));assert.ok(paper.includes('Input x → #3[0]'));
+  const display=r.graph.nodes.find(n=>n.id===p.node).paper,paper=display.captions.join(' ');
+  if(display.read_binding_rows){
+    assert.ok(paper.includes('#1 getitem ← value=read1("self.table")'));
+    assert.ok(paper.includes('#3 add ← 0=input1("x"); 2=#2'));
+  }else {assert.ok(paper.includes('Reads self.table → #1[value]'));assert.ok(paper.includes('Input x → #3[0]'));}
   assert.ok(r.graph.summary_coverage.find(c=>c.node===p.node).status==='fulfilled');
   assert.ok(!r.graph.expression_coverage.some(c=>p.operations.some(o=>c.goal==='goal:node:'+o.node)&&c.status==='fulfilled'));
  }

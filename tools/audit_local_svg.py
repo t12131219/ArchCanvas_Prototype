@@ -73,6 +73,49 @@ def audit_atlas_coverage(manifest, panel, document, nodes, paths):
         assert 'sourcepositions' + ','.join(map(str, receipt['source_positions'])) in text
 
 
+def audit_binding_rows(pipeline, display, text):
+    """Rebuild every printed use independently from already checked canonical bindings."""
+    assert display['schema'] == 'dependency-binding-rows/1'
+    assert pipeline['source_reads'] and pipeline['dependency_dag']
+    refs = {o['node']: '#' + str(i + 1) for i, o in enumerate(pipeline['operations'])}
+    reads = [dict(node=r['node'], reference='read' + str(i + 1), expression=r['expression'])
+             for i, r in enumerate(pipeline['source_reads'])]
+    inputs = []
+    for b in pipeline['external_inputs']:
+        if not any(i['node'] == b['port_node'] for i in inputs):
+            inputs.append(dict(node=b['port_node'], label=b['label'], producer=b['producer'],
+                               source_port=b['source_port'], reference='input' + str(len(inputs) + 1)))
+    assert display['reads'] == reads and display['inputs'] == inputs
+    rows = []
+    for operation in pipeline['operations']:
+        uses = []
+        for b in pipeline['bindings']:
+            if b['target'] != operation['node']:
+                continue
+            value = refs.get(b['producer'])
+            if value is None:
+                read = next((r for r in reads if r['node'] == b['producer']), None)
+                external = next((e for e in pipeline['external_inputs'] if e['edge'] == b['edge']), None)
+                input = next((i for i in inputs if external and i['node'] == external['port_node']), None)
+                record = read or input
+                if record is not None:
+                    value = record['reference'] + '(' + json.dumps(record['expression'] if read else record['label'], ensure_ascii=False) + ')'
+            if value is None:
+                continue
+            value += '[' + b['source_port'] + ']' if b['source_port'] != 'out' else ''
+            uses.append({k: b[k] for k in ['edge', 'producer', 'source_port', 'target', 'target_port']} | dict(value=value))
+        uses.sort(key=lambda b: (str(b['target_port']), b['edge']))
+        line = refs[operation['node']] + ' ' + operation['label']
+        if uses:
+            line += ' ← ' + '; '.join(b['target_port'] + '=' + b['value'] for b in uses)
+        rows.append(dict(node=operation['node'], reference=refs[operation['node']], label=operation['label'], uses=uses, text=line))
+        assert re.sub(r'\s', '', line) in text, ('missing binding row', line)
+    assert display['rows'] == rows
+    result = pipeline['dependency_dag']['result']
+    title = 'Result ' + result + ' · ' + next(o['label'] for o in pipeline['operations'] if refs[o['node']] == result)
+    assert display['title'] == title and re.sub(r'\s', '', title) in text
+
+
 def audit_pipeline_summaries(document, row, nodes):
     from semantic_adapter.symbolic_values import derive
     receipt = document['publication'].get('local_pipelines')
@@ -300,6 +343,10 @@ def audit_pipeline_summaries(document, row, nodes):
         assert r['detailed_operations_exposed'] == all(id in nodes for id in ordered)
         text = re.sub(r'\s', '', ''.join(''.join(e.itertext()) for e in nodes[node] if e.tag.endswith('text')))
         if r['status'] == 'summary':
+            alternate = measured.get('read_binding_rows')
+            if alternate:
+                audit_binding_rows(r, alternate, text)
+                assert planned[node]['local_pipeline_binding_rows'] == alternate
             labels = {o['node']: o['label'] for o in r['operations']}
 
             def label(t):
@@ -308,18 +355,18 @@ def audit_pipeline_summaries(document, row, nodes):
             if r.get('path_display'):
                 expected_title = ' → '.join(s['label'] + (f" · {len(s['operations'])} calls" if len(s['operations']) > 1 else '') for s in r['path_display']['runs'])
             assert re.sub(r'\s', '', expected_title) in text
-            if r.get('dependency_dag'):
+            if r.get('dependency_dag') and not alternate:
                 assert 'DependencyDAG' in text
                 for step in r['dependency_dag']['nodes']:
                     uses = sorted(step['inputs'], key=lambda i: (str(i['target_port']), i['edge']))
                     ref = lambda i: i['reference'] + ('[' + i['source_port'] + ']' if i['source_port'] != 'out' else '')
                     line = step['reference'] + labels[step['node']] + ('←' + ';'.join(i['target_port'] + '=' + ref(i) for i in uses) if uses else '')
                     assert re.sub(r'\s', '', line) in text, ('missing physical DAG formula', line)
-            for resource in reads:
+            for resource in reads if not alternate else []:
                 for e in resource['edges']:
                     line = 'Reads ' + resource['expression'] + ' → #' + str(ordered.index(e['target']) + 1) + '[' + e['target_port'] + ']'
                     assert re.sub(r'\s', '', line) in text
-            for b in r.get('external_inputs', []):
+            for b in r.get('external_inputs', []) if not alternate else []:
                 assert re.sub(r'\s', '', f"Input {b['label']} → {b['reference']}[{b['target_port']}]") in text
             if r.get('owner_identity'):
                 d = r['owner_identity']

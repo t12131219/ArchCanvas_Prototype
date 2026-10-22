@@ -255,16 +255,20 @@
       const p=n.local_pipeline,labels=new Map(p.operations.map(o=>[o.node,o.label]));
       const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
       const pathTitle=p.path_display?p.path_display.runs.map(r=>r.label+(r.operations.length>1?' · '+r.operations.length+' calls':'')).join(' → '):p.operations.map(o=>o.label).join(' → ');
-      title=p.dependency_dag?'Result '+p.dependency_dag.result:p.dependency_tree?expression(p.dependency_tree):pathTitle;
+      const rows=n.local_pipeline_binding_rows;
+      title=rows?rows.title:p.dependency_dag?'Result '+p.dependency_dag.result:p.dependency_tree?expression(p.dependency_tree):pathTitle;
       caption=p.dependency_dag?'Dependency DAG':p.dependency_tree?'Dependency tree':'Dependency path';
-      if(p.source_reads?.length)caption+=' · Reads '+p.source_reads.map(r=>r.expression).join(', ');
+      if(rows)caption+=' · operand uses';
+      else if(p.source_reads?.length)caption+=' · Reads '+p.source_reads.map(r=>r.expression).join(', ');
       if(p.owner_identity){const d=p.owner_identity;caption+=` · ${d.label} · source call ${d.invocation}/${d.count}`;}
     }
     if(n.invocation_binding){title=n.invocation_binding.label;caption='Fixed call argument';}
     const dagSummary=n.local_pipeline?.dependency_dag&&!n.local_pipeline_expanded;
     const maxWidth=dagSummary?292:n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
     const lines=wrap(title,n.kind==='composite'?maxWidth-20:maxWidth,font),captions=caption?wrap(caption,maxWidth,13):[];
-    if(dagSummary){
+    if(dagSummary&&n.local_pipeline_binding_rows){
+      for(const row of n.local_pipeline_binding_rows.rows)captions.push(...wrap(row.text,maxWidth,13));
+    }else if(dagSummary){
       const labels=new Map(n.local_pipeline.operations.map(o=>[o.node,o.label]));
       for(const step of n.local_pipeline.dependency_dag.nodes){
         const inputs=step.inputs.slice().sort((a,b)=>String(a.target_port).localeCompare(String(b.target_port))||a.edge.localeCompare(b.edge));
@@ -279,6 +283,7 @@
     }
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
       w:symbol?48:dagSummary?320:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
+    if(dagSummary&&n.local_pipeline_binding_rows)n.paper.read_binding_rows=n.local_pipeline_binding_rows;
     if(n.invocation_binding){
       const compact=wrap(title,176,13);n.paper={...n.paper,lines:compact,captions:[],font:13,
         w:Math.max(110,Math.ceil(Math.max(...compact.map(s=>width(s,13)))+28)),h:Math.max(40,16+compact.length*20),fill:'#fff8e9',stroke:'#a18b5e'};
@@ -698,7 +703,9 @@
     const frontierScopes=new Set(roleFrontier?.owners||[]);
     const pol=policy(ir,focus,focused.inside,dimensionPaths,directOperands),pipelineEngine=summaryFrontier&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
     const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol,sourceReads:granularity==='stages'});
-    if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id)}:n);
+    if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id),
+      ...(granularity==='stages'&&state.paperReadBindingRows===true&&pipelineEngine.bindingRows(pipelines.get(n.id))?
+        {local_pipeline_binding_rows:pipelineEngine.bindingRows(pipelines.get(n.id))}:{})}:n);
     let idx=index(focused.plan);
     if(invocationInputs){focused.plan.nodes=focused.plan.nodes.map(n=>invocationInputs.has(n.id)?{...n,invocation_binding:copy(invocationInputs.get(n.id))}:n);idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
     const budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,stages:20,semantic:20,roles:20,detailed:28})[granularity]));

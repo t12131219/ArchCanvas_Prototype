@@ -150,5 +150,24 @@
   function receipt(candidates,graph){const rows=[...candidates.values()].filter(r=>graph.positions.has(r.node));return {rule_version:rows.some(r=>r.rule_version===VERSION)?VERSION:'local-pipelines/5',rows:rows.map(r=>({...r,
     status:graph.positions.get(r.node).expanded?'expanded':'summary',visible_node:r.node,
     detailed_operations_exposed:r.operations.every(o=>graph.positions.has(o.node))}))};}
-  const api={VERSION,compile,receipt};root.SemanticLocalPipelines=api;if(typeof module!=='undefined')module.exports=api;
+  function bindingRows(p){
+    if(p.rule_version!==VERSION||!p.source_reads?.length||!p.dependency_dag)return null;
+    const refs=new Map(p.dependency_dag.nodes.map(n=>[n.node,n.reference]));
+    const reads=p.source_reads.map((r,i)=>({node:r.node,reference:'read'+(i+1),expression:r.expression}));
+    const inputs=[...new Map(p.external_inputs.map(b=>[b.port_node,{node:b.port_node,label:b.label,producer:b.producer,source_port:b.source_port}])).values()]
+      .map((b,i)=>({...b,reference:'input'+(i+1)}));
+    const rows=p.operations.map(o=>{const uses=p.bindings.filter(b=>b.target===o.node).flatMap(b=>{
+      const read=reads.find(r=>r.node===b.producer),input=p.external_inputs.find(e=>e.edge===b.edge);
+      const port=input&&inputs.find(e=>e.node===input.port_node);
+      const value=refs.get(b.producer)||(read?read.reference+'('+JSON.stringify(read.expression)+')':port?port.reference+'('+JSON.stringify(port.label)+')':null);
+      return value?[{edge:b.edge,producer:b.producer,source_port:b.source_port,target:b.target,target_port:b.target_port,
+        value:value+(b.source_port==='out'?'':'['+b.source_port+']')}]:[];
+    }).sort((a,b)=>String(a.target_port).localeCompare(String(b.target_port))||a.edge.localeCompare(b.edge));
+      return {node:o.node,reference:refs.get(o.node),label:o.label,uses,
+        text:refs.get(o.node)+' '+o.label+(uses.length?' ← '+uses.map(b=>b.target_port+'='+b.value).join('; '):'')};});
+    const last=p.operations.find(o=>refs.get(o.node)===p.dependency_dag.result);
+    return {schema:'dependency-binding-rows/1',reads,inputs,rows,title:'Result '+p.dependency_dag.result+' · '+last.label,
+      scope:'One reference per extracted operation, source-read node and input interface; each modeled use keeps its result and operand slot. References do not assert runtime read identity, read equality, evaluation or execution order.'};
+  }
+  const api={VERSION,compile,receipt,bindingRows};root.SemanticLocalPipelines=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

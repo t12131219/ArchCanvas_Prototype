@@ -21,7 +21,8 @@ test('read summaries, Add and Norm stages, and exact consumer captions survive t
  assert.deepEqual(summaries(a),summaries(b));assert.ok(summaries(b).length>=2);assert.deepEqual(done(a),done(b));
  assert.deepEqual(rec.lost_summaries,[]);assert.equal(rec.summary_goals_before,rec.summary_goals_candidate);
  const p=b.graph.publication.local_pipelines.rows.find(p=>p.source_reads?.length);assert.ok(p);
- assert.ok(b.graph.nodes.find(n=>n.id===p.node).paper.captions.join(' ').includes('Input x → #4[0]'));
+ const paper=b.graph.nodes.find(n=>n.id===p.node).paper;
+ assert.ok(paper.captions.join(' ').includes(paper.read_binding_rows?'#4 add ← 0=input1("x"); 2=#3':'Input x → #4[0]'));
  assert.ok(b.graph.publication.contract_stages.rows.some(r=>r.status==='summary'));
 });
 test('accepted compaction only removes empty title bands and never increases crossings or route failures',()=>{

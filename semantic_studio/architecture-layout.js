@@ -388,7 +388,7 @@
     return [...regions.values()];
   }
   function layout(idx,roots,visible,edges,offsets={},options={}){
-    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[],inputDocks=[],fixedInputs=[];
+    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[],inputDocks=[],fixedInputs=[],sourceForkWidths=[];
     const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
     const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
     const laneKinds=['bypass','state-interface','iteration-feedback'];
@@ -509,6 +509,38 @@
       if(options.alignForks)for(const row of rows.values()){
         const candidates=row.filter(id=>idx.nodes.get(id)?.kind==='compute'&&!positions.get(id).symbol);
         for(const id of candidates){const peers=candidates.filter(other=>[...pred.get(id)].some(p=>pred.get(other).has(p)));if(peers.length>1){const w=Math.max(...peers.map(id=>positions.get(id).w));for(const peer of peers)positions.get(peer).w=w;}}
+      }
+      // An outer input has no predecessor in this container's condensed DAG.
+      // Use its exact visible output slot to recover only the drawing fork.
+      // Width padding does not imply common operations, shapes or execution.
+      if(options.sourceForkWidths&&!Object.keys(offsets).length)for(const row of rows.values()){
+        const guarded=id=>{const seen=new Set();while(id!=null){const n=idx.nodes.get(id);
+          if(!n||seen.has(id)||['opaque','control','state','buffer','parameter'].includes(n.kind)||n.condition||n.mutable||n.iteration||
+            n.identity_display||n.observed_calls||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||
+            ['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant'].includes(n.semantic_type))return true;
+          seen.add(id);id=n.parent;}return false;};
+        const candidates=new Set(row.filter(id=>idx.nodes.get(id)?.kind==='compute'&&!positions.get(id).symbol&&
+          !positions.get(id).expanded&&scc[unit.get(id)].length===1&&!guarded(id)));
+        const groups=new Map(),claimedWidths=new Set();
+        for(const e of edges)if(candidates.has(e.target)&&owner(e.source)===null&&e.resolved_source===e.source&&
+          typeof e.source_port==='string'&&e.source_port.length&&!e.bundle_members&&!e.design_route&&!e.context_lane&&!e.layout_after&&
+          !e.condition&&!e.iteration&&['source-dependency','static-source'].includes(e.evidence)&&
+          typeof e.target_port==='string'&&e.target_port.length&&(!e.canonical_target||e.canonical_target===e.target)&&
+          ['data','alias','interface-binding'].includes(e.kind)&&!guarded(e.source)){
+          const key=JSON.stringify([e.source,e.source_port]);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);
+        }
+        for(const group of groups.values()){
+          const ids=[...new Set(group.map(e=>e.target))];
+          // Never add padding to a wrapped row or a very unequal pair. The
+          // normal layout remains available without an extra routing trial.
+          if(ids.length<2||ids.length>3||ids.some(id=>claimedWidths.has(id))||rankColumns&&row.length>rankColumns)continue;
+          const before=ids.map(id=>({node:id,width:positions.get(id).w})),width=Math.max(...before.map(n=>n.width));
+          if(width>Math.min(...before.map(n=>n.width))*1.2||before.every(n=>n.width===width))continue;
+          for(const id of ids){positions.get(id).w=width;claimedWidths.add(id);}
+          sourceForkWidths.push({parent,source:group[0].source,source_port:group[0].source_port,
+            uses:group.map(e=>({edge:e.id,target:e.target,target_port:e.target_port})),before,width,
+            max_width_ratio:1.2,scope:'Small equal-width padding for same-rank consumers of one exact external output slot. No computation, shape, purity, parameter sharing or execution claim.'});
+        }
       }
       const sorted=[...rows.keys()].sort((a,b)=>a-b),order=new Map();
       // Reserve label space at the receiving rank, not in every rank of its
@@ -754,7 +786,7 @@
     arrange(roots.filter(id=>visible.has(id)),null);
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={protectFrameTitles:options.protectFrameTitles===true,preserveContextEdges:options.contextEdges,contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,
+    positions.context={protectFrameTitles:options.protectFrameTitles===true,preserveContextEdges:options.contextEdges,contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,sourceForkWidths,
       entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){

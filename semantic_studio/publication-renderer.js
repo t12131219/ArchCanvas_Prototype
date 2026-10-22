@@ -1500,7 +1500,7 @@
       benefit:cost<1-1e-9,max_dimension_ratio:1.05,max_area_ratio:1.05,
       scope:'Bounded aspect/area tradeoff for an already proved source-return presentation. Fewer crossings or shorter paths must outweigh any footprint growth; no extra semantic coverage is earned.'};
   }
-  function prepareFigure(ir,state={}){
+  function prepareUngatedFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     if(chosen.prepared.quality.medium!=='canvas')chosen=prepareFinalGeometry(ir,state,chosen);
     chosen=attachExpressionEvidence(ir,chosen);
@@ -1509,7 +1509,7 @@
     // Source evidence licenses a summary, not its layout. Compare one complete
     // measured presentation against the ordinary source-return representation.
     // Do not let a shorter cut silently buy a different logical frontier.
-    const baseline=prepareFigure(ir,{...state,paperNormalReturns:false}),bq=baseline.prepared.quality,cq=chosen.prepared.quality;
+    const baseline=prepareUngatedFigure(ir,{...state,paperNormalReturns:false}),bq=baseline.prepared.quality,cq=chosen.prepared.quality;
     const old=baseline.graph,newGraph=chosen.graph,unpack=g=>g.edges.flatMap(e=>e.bundle_members||[e]);
     const alternatives=new Set(normal.flatMap(r=>r.attached_edges)),previous=new Map(unpack(old).map(e=>[e.id,e])),current=new Map(unpack(newGraph).map(e=>[e.id,e]));
     const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
@@ -1534,6 +1534,51 @@
       scope:'One measured source-invocation return presentation. Source alternatives stay attached only if frontier, exact surviving uses, prior direct goals and applied relations survive, routes and labels do not regress, wire and crossings do not increase, and bounded footprint trades lower measured total cost. Otherwise keep the ordinary return representation.'}};
     return selected;
   }
+  function sourceForkContextBinding(a,b){
+    return !!(a?.route.ok&&b?.route.ok&&!a.bundle_members&&!b.bundle_members&&!a.design_route&&!b.design_route&&
+      !a.condition&&!b.condition&&!a.iteration&&!b.iteration&&['data','alias','interface-binding'].includes(a.kind)&&
+      ['id','source','target','canonical_source','canonical_target','resolved_source','source_port','target_port','kind','evidence',
+        'condition','iteration','originals','semantic_bindings'].every(k=>JSON.stringify(a[k])===JSON.stringify(b[k])));
+  }
+  function prepareFigure(ir,state={}){
+    const candidate=prepareUngatedFigure(ir,state),groups=candidate.graph.positions.context.sourceForkWidths||[];
+    if(!groups.length||state.paperSourceForkWidths===false)return candidate;
+    // Width padding is only a proposal. Measure the complete final drawing
+    // once without it as well; local symmetry cannot justify worse crossings,
+    // hidden bindings, lost relations or unbounded cost elsewhere in the graph.
+    const baseline=prepareUngatedFigure(ir,{...state,paperSourceForkWidths:false}),b=baseline.prepared.quality,q=candidate.prepared.quality;
+    for(const r of [baseline,candidate])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const done=new Set(baseline.graph.expression_coverage.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const coverage=new Set(candidate.graph.expression_coverage.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const applied=new Set(baseline.graph.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+    const before=realizedRelations(baseline),after=realizedRelations(candidate);
+    const lostContexts=before.contexts.filter(id=>!after.contexts.includes(id)),oldRoutes=new Map(baseline.prepared.routes.map(e=>[e.id,e])),newRoutes=new Map(candidate.prepared.routes.map(e=>[e.id,e]));
+    const contextReplacements=lostContexts.map(id=>({edge:id,binding_preserved:sourceForkContextBinding(oldRoutes.get(id),newRoutes.get(id)),
+      before_side:oldRoutes.get(id)?.route.target_side,candidate_side:newRoutes.get(id)?.route.target_side}));
+    // A context gutter is optional geometry. It can be replaced only on the
+    // same exact use, with strictly fewer crossings AND shorter total paths.
+    // Explicit channel choices, semantic lanes and path columns stay binding.
+    const contextSafe=!lostContexts.length||state.paperContextLanes===undefined&&state.paperContextEdges===undefined&&
+      q.line_geometry.crossings<b.line_geometry.crossings&&q.wire_length<b.wire_length&&contextReplacements.every(r=>r.binding_preserved);
+    const facts=clearanceIdentity(baseline.graph)===clearanceIdentity(candidate.graph)&&
+      JSON.stringify(baseline.graph.expression_goals)===JSON.stringify(candidate.graph.expression_goals);
+    const constraints=candidate.graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
+      ['entries','columns'].every(k=>before[k].every(id=>after[k].includes(id)))&&contextSafe;
+    const geometry=groups.every(row=>{const ps=row.before.map(n=>candidate.graph.positions.get(n.node));
+      return ps.every(p=>p&&p.w===row.width&&p.y===ps[0].y);})&&
+      q.native_width_px<=b.native_width_px*1.05&&q.native_height_px<=b.native_height_px*1.05&&areaMetric(q)<=areaMetric(b)*1.05&&
+      q.wire_length<=b.wire_length*1.05&&fontMetric(q)>=fontMetric(b)&&q.line_geometry.crossings<=b.line_geometry.crossings&&
+      q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(issue=>b.issues.includes(issue));
+    const direct=[...done].every(id=>coverage.has(id)),accepted=facts&&constraints&&direct&&geometry,selected=accepted?candidate:baseline;
+    selected.prepared.routing={...selected.prepared.routing,source_fork_width_refinement:{accepted,groups,max_trials:1,
+      facts_preserved:facts,applied_relations_preserved:constraints,direct_goals_preserved:direct,geometry_preserved:geometry,
+      optional_contexts_preserved:!lostContexts.length,optional_context_replacements:contextReplacements,
+      before:clearanceMetrics(b),candidate:clearanceMetrics(q),max_dimension_ratio:1.05,max_area_ratio:1.05,max_wire_ratio:1.05,
+      scope:'One complete measured comparison of small equal-width padding for exact external-source consumers. No additional crossings, contacts, ambiguous overlaps, routing or label failures; existing bindings, direct goals, applied constraints, entries and path columns survive. An optional context gutter may be replaced on the same exact use only with strictly fewer crossings and shorter paths, preserving explicit channel choices. At most 5% global footprint and wire growth. No execution or operation-equivalence assertion.'}};
+    return selected;
+  }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));
   }
@@ -1554,6 +1599,10 @@
     return {svg,graph:g,prepared,document:{schema:'archcanvas-architecture-document/1',ir,state,architecture:g.architecture,publication:g.publication,expression_goals:expressionGoals,expression_coverage:expressionCoverage,
       summary_goals:g.summary_goals,summary_coverage:g.summary_coverage,
       layout:{...(fanouts.length?{shared_fanouts:fanouts}:{}),frame_title_routing:g.positions.context.protectFrameTitles?'avoid':'pass-through',bounds:{...b,h:totalH},nodes:[...g.positions.values()],edges:routes,edge_accounting:g.edge_accounting,node_accounting:g.node_accounting,representatives:g.representatives,...(g.frame_ownership?.length?{frame_ownership:g.frame_ownership}:{}),labels:labeling.placed,constraint_receipts:g.constraint_receipts,
+        ...(g.positions.context.sourceForkWidths?.length?{source_fork_widths:g.positions.context.sourceForkWidths.map(row=>{
+          const ps=row.before.map(n=>g.positions.get(n.node)),valid=ps.every(p=>p&&p.y===ps[0].y&&p.w===row.width);
+          return {...row,geometry_verified:valid,status:valid?'realized':'deferred'};
+        })}:{}),
         ...(g.positions.context.localBypassScopes?.length?{local_bypasses:g.positions.context.localBypassScopes.map(s=>({...s,geometry_verified:L.localBypassGeometry(s,routes.find(e=>e.id===s.edge),g.positions)}))}:{}),
         ...(g.positions.context.consumerArguments?.length?{consumer_arguments:g.positions.context.consumerArguments}:{}),
         ...(g.positions.context.operandRows?.length?{operand_rows:g.positions.context.operandRows}:{}),
@@ -1582,5 +1631,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={sourceForkContextBinding,normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

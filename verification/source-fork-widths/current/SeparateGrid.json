@@ -1,0 +1,734 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "SeparateGrid",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+    "class": "SeparateGrid",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+      "cell": null,
+      "sha256": "4f27565b82714a4009978ed28816ae8c84009aff1b6a8f8b8d720c43ded9b36a",
+      "unit_sha256": "4f27565b82714a4009978ed28816ae8c84009aff1b6a8f8b8d720c43ded9b36a"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/29:4:composite:1",
+      "kind": "composite",
+      "label": "SeparateGrid",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 29,
+          "end_line": 30,
+          "column": 4,
+          "end_column": 38,
+          "symbol": "SeparateGrid.forward",
+          "expression": "def forward(self, left: Tensor, right: Tensor):\n    return self.patch(left, right)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "SeparateGrid"
+    },
+    {
+      "id": "model/29:4:composite:1/29:22:interface:1",
+      "kind": "interface",
+      "label": "left",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 29,
+          "end_line": 29,
+          "column": 22,
+          "end_column": 34,
+          "symbol": "SeparateGrid.forward",
+          "expression": "left: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "left",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/29:4:composite:1/29:36:interface:1",
+      "kind": "interface",
+      "label": "right",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 29,
+          "end_line": 29,
+          "column": 36,
+          "end_column": 49,
+          "symbol": "SeparateGrid.forward",
+          "expression": "right: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "right",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1",
+      "kind": "composite",
+      "label": "self.patch",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 25,
+          "end_line": 27,
+          "column": 4,
+          "end_column": 103,
+          "symbol": "patch",
+          "expression": "def patch(self, left: Tensor, right: Tensor):\n    batch, rows, channels = left.shape\n    return right.view(batch, rows, self.group_count, self.group_width).transpose(0, 1).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/25:20:interface:1",
+      "kind": "interface",
+      "label": "left",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 20,
+          "end_column": 32,
+          "symbol": "patch",
+          "expression": "left: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "left",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/25:34:interface:1",
+      "kind": "interface",
+      "label": "right",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 25,
+          "end_line": 25,
+          "column": 34,
+          "end_column": 47,
+          "symbol": "patch",
+          "expression": "right: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "right",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/26:32:compute:1",
+      "kind": "compute",
+      "label": "left.shape",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 32,
+          "end_column": 42,
+          "symbol": "patch",
+          "expression": "left.shape"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "shape",
+      "value": {
+        "unresolved": "left.shape"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "shape"
+        }
+      },
+      "symbolic_value": {
+        "rule_version": "source-symbolic-value/1",
+        "kind": "tensor-attribute",
+        "receiver": "model/29:4:composite:1/25:4:composite:1/25:20:interface:1",
+        "edge": "e00002",
+        "attribute": "shape",
+        "scope": "source Tensor contract only; annotation is not runtime validation; actual value unresolved"
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/26:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "batch",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "patch",
+          "expression": "batch"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/26:15:value-alias:1",
+      "kind": "value-alias",
+      "label": "rows",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 15,
+          "end_column": 19,
+          "symbol": "patch",
+          "expression": "rows"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/26:21:value-alias:1",
+      "kind": "value-alias",
+      "label": "channels",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 26,
+          "end_line": 26,
+          "column": 21,
+          "end_column": 29,
+          "symbol": "patch",
+          "expression": "channels"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "2"
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/27:39:state:1",
+      "kind": "state",
+      "label": "self.group_count",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 39,
+          "end_column": 55,
+          "symbol": "patch",
+          "expression": "self.group_count"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "group_count",
+      "value": 3
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/27:57:state:1",
+      "kind": "state",
+      "label": "self.group_width",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 57,
+          "end_column": 73,
+          "symbol": "patch",
+          "expression": "self.group_width"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "group_width",
+      "value": 4
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/27:15:compute:1",
+      "kind": "compute",
+      "label": "view",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 15,
+          "end_column": 74,
+          "symbol": "patch",
+          "expression": "right.view(batch, rows, self.group_count, self.group_width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "right.view",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "batch"
+          },
+          {
+            "unresolved": "rows"
+          },
+          3,
+          4
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            },
+            {
+              "operand": ".args:1"
+            },
+            {
+              "operand": ".args:2"
+            },
+            {
+              "operand": ".args:3"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/27:15:compute:2",
+      "kind": "compute",
+      "label": "transpose",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 15,
+          "end_column": 90,
+          "symbol": "patch",
+          "expression": "right.view(batch, rows, self.group_count, self.group_width).transpose(0, 1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "transpose",
+      "function_target": "right.view(batch, rows, self.group_count, self.group_width).transpose",
+      "arguments": {
+        "args": [
+          0,
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "literal_type": "int",
+              "literal": "0"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/27:15:compute:3",
+      "kind": "compute",
+      "label": "contiguous",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 15,
+          "end_column": 103,
+          "symbol": "patch",
+          "expression": "right.view(batch, rows, self.group_count, self.group_width).transpose(0, 1).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "copy",
+      "function_target": "right.view(batch, rows, self.group_count, self.group_width).transpose(0, 1).contiguous",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/29:4:composite:1/25:4:composite:1/27:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/29:4:composite:1/25:4:composite:1",
+      "source_parent": "model/29:4:composite:1/25:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 27,
+          "end_line": 27,
+          "column": 8,
+          "end_column": 103,
+          "symbol": "patch",
+          "expression": "return right.view(batch, rows, self.group_count, self.group_width).transpose(0, 1).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/29:4:composite:1/30:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/29:4:composite:1",
+      "source_parent": "model/29:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/source_fork_widths.py",
+          "line": 30,
+          "end_line": 30,
+          "column": 8,
+          "end_column": 38,
+          "symbol": "SeparateGrid.forward",
+          "expression": "return self.patch(left, right)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/29:4:composite:1/29:22:interface:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/25:20:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "left",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/29:4:composite:1/29:36:interface:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/25:34:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "right",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/25:20:interface:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/26:32:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/26:32:compute:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/26:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/26:32:compute:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/26:15:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/26:32:compute:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/26:21:value-alias:1",
+      "kind": "alias",
+      "source_port": "2",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/25:34:interface:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/26:8:value-alias:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/26:15:value-alias:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/27:39:state:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:2",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/27:57:state:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:3",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/27:15:compute:1",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/27:15:compute:2",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:15:compute:3",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/27:15:compute:3",
+      "target": "model/29:4:composite:1/25:4:composite:1/27:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/29:4:composite:1/25:4:composite:1/27:8:interface:1",
+      "target": "model/29:4:composite:1/30:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "3f2f1282571567666a0ddd1be4bd4a4db087ecf494932287e40d885eab95ae6c"
+}

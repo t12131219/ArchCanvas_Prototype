@@ -62,6 +62,47 @@
       }
     }
     const terms=new Map();
+    // A registered single-step interface is independent of any enclosing
+    // model or time loop. Require the actual source call shape and every
+    // dynamic operand, rather than inferring omitted state from missing edges.
+    function cellInterface(n,bs){
+      const operators={'torch.nn.RNNCell':'rnn-cell','torch.nn.GRUCell':'gru-cell','torch.nn.LSTMCell':'lstm-cell'};
+      if(!Object.hasOwn(operators,n.framework_type)||n.operator!==operators[n.framework_type]||
+        n.source_framework_module!==n.framework_type||n.evidence_status!=='static-only'||n.runtime_evidence?.length||n.observed_calls||!clean(n)||n.syntax?.type!=='Call')return null;
+      const args=n.syntax.fields?.args,keywords=n.syntax.fields?.keywords;
+      if(!Array.isArray(args)||!Array.isArray(keywords)||args.length>2||keywords.length>2)return null;
+      const call=n.cell_call;
+      if(call?.rule_version!=='source-cell-call/1'||call.positional_count!==args.length||
+        JSON.stringify(call.keyword_names)!==JSON.stringify(keywords.map(k=>k?.fields?.arg))||
+        call.positional_expansion!==false||call.keyword_expansion!==false)return null;
+      const slots=new Map();
+      for(const [i,a]of args.entries())slots.set(i===0?'input':'hx',{port:'arg:'+i,syntax:a,path:'.args:'+i});
+      for(const [i,k]of keywords.entries()){
+        const name=k?.fields?.arg;
+        if(k?.type!=='keyword'||!['input','hx'].includes(name)||slots.has(name))return null;
+        slots.set(name,{port:'kw:'+name,syntax:k.fields.value,path:'.keywords:'+i+'.value'});
+      }
+      if(!slots.has('input'))return null;
+      const expected=[];
+      for(const [name,s]of slots){
+        if(s.syntax?.operand===s.path&&Object.keys(s.syntax).length===1){expected.push(s.port);continue;}
+        if(name==='hx'&&s.syntax?.literal_type==='NoneType'&&s.syntax.literal==='None'&&Object.keys(s.syntax).length===2)continue;
+        return null;
+      }
+      const incoming=ins.get(n.id)||[];
+      if(incoming.length!==expected.length||incoming.some(e=>!flow(e)||e.evidence!=='source-dependency'||e.condition||e.iteration)||
+        expected.some(port=>incoming.filter(e=>e.target_port===port).length!==1))return null;
+      const state=slots.get('hx'),explicit=state&&expected.includes(state.port),pair=n.framework_type==='torch.nn.LSTMCell';
+      const inputs=bs.map(b=>({...b,role:b.target_port===slots.get('input').port?'step-input':'initial-state'}));
+      const results=(outs.get(n.id)||[]).filter(flow).map(e=>binding(e,
+        (e.source_port??'out')==='out'?(pair?'final-state-pair':'final-state'):
+        pair&&['0','1'].includes(e.source_port)?'final-state':'result'));
+      return {bindings:inputs.concat(results),properties:{framework_type:n.framework_type,interface_kind:'single-step',
+        input_port:slots.get('input').port,state_input_port:explicit?state.port:null,
+        initial_state:explicit?'explicit':state?'explicit-none':'framework-default',
+        state_return_slot:'out',state_components:pair?{'0':'hidden','1':'cell'}:{out:'hidden'},
+        scope:'Registered framework single-step input/output contract; no temporal index or recurrence inferred.'}};
+    }
     for(const n of ir.nodes){
       const op=operator(n),bs=input(n);
       if(clean(n)&&['mult','mul'].includes(op)&&bs.length===2&&compatible(bs)){
@@ -88,6 +129,9 @@
         const results=(outs.get(n.id)||[]).filter(flow).map(e=>binding(e,e.source_port==='0'?'sequence-output':e.source_port==='1'?(recurrent?'final-state-pair':'final-state'):'result'));
         add('state-interface',n.id,[n.id],inputs.concat(results),{framework_type:n.framework_type,initial_state:inputs.some(b=>b.role==='initial-state')?'explicit':'framework-default',state_return_slot:'1'},['custom loop recurrence','internal gates','identity of sequence and final state']);
       }
+      const cell=cellInterface(n,bs);
+      if(cell)add('state-interface',n.id,[n.id],cell.bindings,cell.properties,
+        ['time recurrence','internal gates','storage identity','input/output equality','fixed call count']);
       if(n.kind==='opaque'||n.mutable){
         const bindings=[...bs,...(outs.get(n.id)||[]).filter(flow).map(e=>binding(e,'result'))];
         add('unknown-boundary',n.id,[n.id],bindings,{reason:n.reason||'mutable-operation',effects:n.effect_scope||'unresolved; inputs and external state may be affected'},['purity','transparency','storage alias stability']);

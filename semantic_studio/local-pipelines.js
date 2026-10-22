@@ -16,7 +16,7 @@
       es.length===1&&flow(es[0])&&!es[0].condition)proofBindings.set(n.id,{...es[0],
         source_port:n.kind==='value-alias'?n.slot??es[0].source_port:es[0].source_port});}
     const resolve=(id,port)=>{const seen=new Set();while(proofBindings.has(id)&&!seen.has(id)){seen.add(id);const e=proofBindings.get(id);id=e.source;const outer=e.source_port??'out';port=outer==='out'?port:port==='out'?outer:outer+'.'+port;}return {node:id,slot:port};};
-    const guarded=n=>n.evidence_status==='runtime-only'||['opaque','control'].includes(n.kind)||n.mutable||n.condition||n.identity_display||n.observed_calls||n.semantic_contracts?.length||n.repeat_contract||n.iteration||n.runtime_evidence?.length;
+    const guarded=n=>n.evidence_status==='runtime-only'||['opaque','control'].includes(n.kind)||n.mutable||n.condition||n.identity_display||n.observed_calls||n.state_interface||n.semantic_contracts?.length||n.repeat_contract||n.iteration||n.runtime_evidence?.length;
     for(const owner of plan.nodes){
       if(!owner.parent||!['source-function','source-module'].includes(owner.semantic_type)||guarded(owner))continue;
       const ids=closure(owner.id),inside=new Set(ids),members=ids.slice(1).map(id=>by.get(id));

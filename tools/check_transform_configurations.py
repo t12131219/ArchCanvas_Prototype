@@ -57,7 +57,7 @@ def check_literal(ir, row):
         n = nodes.get(n.get('parent'))
 
 
-def inspect(capture, name, operation_checker=check_literal):
+def inspect(capture, name, operation_checker=check_literal, *, require_quality=True):
     for key in ['svg', 'document']:
         assert sha(OUT / capture[key]) == capture[key + '_sha256']
     doc = read(OUT / capture['document'])
@@ -76,7 +76,7 @@ def inspect(capture, name, operation_checker=check_literal):
     geometry.OUT = OUT
     geometry.inspect({**capture, 'name': name})
     goals = doc['expression_goals']['goals']
-    exact = {g['id'] for g, ok in zip(goals, assignments(doc['ir'], goals, {**doc, 'quality': capture['quality']}, svg)) if ok}
+    exact = {g['id'] for g, ok in zip(goals, assignments(doc['ir'], goals, {**doc, 'quality': capture['quality']}, svg, require_quality=require_quality)) if ok}
     assert exact == {r['goal'] for r in doc['expression_coverage'] if r['status'] == 'fulfilled'}
     normalized = lambda s: re.sub(r'\s', '', s)
     count = 0

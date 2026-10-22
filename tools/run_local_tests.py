@@ -67,6 +67,7 @@ COMMANDS = {
     'transform-operands': ['node', 'tests/transform-operands.test.cjs'],
     'source-fork-widths': ['node', 'tests/source-fork-widths.test.cjs'],
     'route-shortcuts': ['node', 'tests/route-shortcuts.test.cjs'],
+    'cell-interfaces': ['node', 'tests/cell-interfaces.test.cjs'],
     'unconsumed-dimensions': ['node', 'tests/unconsumed-dimensions.test.cjs'],
     'transform-sequences': ['node', 'tests/transform-sequences.test.cjs'],
     'residual-bands': ['node', 'tests/residual-bands.test.cjs'],

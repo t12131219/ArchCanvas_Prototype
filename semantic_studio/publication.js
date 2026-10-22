@@ -109,7 +109,7 @@
     if(n.kind==='interface')return 'interface';
     if(n.kind==='control'||['conditional-region','loop-template','iteration-region'].includes(type))return 'control';
     if(type.startsWith('residual')||['add','mult','mul'].includes(op)||['gate','gated-sum'].includes(type))return 'algebra';
-    if(['lstm','gru','rnn'].includes(op))return 'recurrent';
+    if(['lstm','gru','rnn','lstm-cell','gru-cell','rnn-cell'].includes(op))return 'recurrent';
     if(op.includes('attention')||type.includes('attention'))return 'attention';
     if(op==='convolution'||type.includes('convolution')||type==='CNN block')return 'convolution';
     if(['parameter','buffer','state'].includes(n.kind))return 'resource';
@@ -132,13 +132,16 @@
     if(['rnn','lstm','gru'].includes(n.operator)){
       const size=a[1]??k.hidden_size,layers=k.num_layers??a[2];return [known(size)?`hidden ${fmt(size)}`:null,known(layers)?`${fmt(layers)} layers`:null,k.bidirectional===true?'bidirectional':null].filter(Boolean).join(' · ');
     }
+    if(['rnn-cell','lstm-cell','gru-cell'].includes(n.operator)){
+      const size=a[1]??k.hidden_size;return ['Single step',known(size)?`hidden ${fmt(size)}`:null].filter(Boolean).join(' · ');
+    }
     return '';
   }
   function inventory(units,idx){
     const names={linear:'Linear',convolution:'Convolution',normalization:'Normalization',activation:'Activation',
       sigmoid:'Sigmoid',tanh:'Tanh',add:'Add',mult:'Multiply',mul:'Multiply',matmul:'MatMul',
       softmax:'Softmax',pooling:'Pooling',dropout:'Dropout',embedding:'Embedding',concat:'Concat',
-      rnn:'RNN',lstm:'LSTM',gru:'GRU',structure:'Pack values',transpose:'Transpose',reshape:'Reshape'};
+      rnn:'RNN',lstm:'LSTM',gru:'GRU','rnn-cell':'RNNCell','lstm-cell':'LSTMCell','gru-cell':'GRUCell',structure:'Pack values',transpose:'Transpose',reshape:'Reshape'};
     const rules={'feed-forward':'Feed-forward',gate:'Sigmoid gate','gated-sum':'Gated sum','convolution-block':'Convolution block',
       residual:'Residual','residual-prenorm':'Residual · Pre-Norm','residual-postnorm':'Residual · Post-Norm',
       'scaled-attention-like':'Scaled attention-like'};
@@ -219,6 +222,8 @@
     if(n.boundary_caption)caption=n.boundary_caption;
     if(opaque&&n.kind!=='opaque')caption+=(caption?' · ':'')+opaque+' unresolved';
     if(n.kind==='opaque')caption='Unresolved operation';
+    if(n.state_interface?.initial_state==='framework-default'||n.state_interface?.initial_state==='explicit-none')
+      caption+=(caption?' · ':'')+'zero state default';
     if(n.mutable)caption+=(caption?' · ':'')+'In-place update';
     if(n.observed_calls){const observations=n.observed_calls.observations;caption+=(caption?' · ':'')+`${new Set(observations.map(o=>o.run)).size} observed runs`;}
     if(n.identity_display){const d=n.identity_display;caption+=(caption?' · ':'')+(d.kind==='same-object-calls'?
@@ -470,6 +475,9 @@
         for(const member of members)by.get(member).parent=id;
         children.set(parent,[...(children.get(parent)||[]).filter(id=>!members.includes(id)),id]);
       }
+    }
+    for(const r of plan.relation_graph?.relations||[])if(r.type==='state-interface'&&r.properties.interface_kind==='single-step'){
+      const n=by.get(r.node);if(n)n.state_interface={relation:r.id,...copy(r.properties)};
     }
     const final=index(plan);
     for(const n of plan.nodes)if(['dependency-band','dependency-panel'].includes(n.semantic_type)){
@@ -971,8 +979,15 @@
       projected.annotations.get(id).push({edge:copy(cut),resource:idx.nodes.get(pol.metadata.has(cut.source)?cut.source:cut.target),annotation_kind:'configuration-boundary'});
     }
     const original=new Map(ir.nodes.map(n=>[n.id,n]));
+    const cellInterfaces=new Map((base.relation_graph?.relations||[]).filter(r=>r.type==='state-interface'&&r.properties.interface_kind==='single-step').map(r=>[r.node,r.properties]));
     const portRoles=(node,port,input)=>{
       if(!node||node.kind==='opaque')return null;
+      const cell=cellInterfaces.get(node.id);
+      if(cell){
+        const pair=Object.hasOwn(cell.state_components,'1');
+        if(input)return port===cell.input_port?'input':port===cell.state_input_port?(pair?'(h, c) in':'h in'):null;
+        return pair?({out:'(h, c) out','0':'h out','1':'c out'})[port]:port==='out'?'h out':null;
+      }
       const op=A.operator(node);
       if(['rnn','gru','lstm'].includes(op)){
         if(input)return port==='arg:0'?'xₜ':port==='arg:1'||port==='kw:hx'?(op==='lstm'?'(h₀, c₀)':'h₀'):null;

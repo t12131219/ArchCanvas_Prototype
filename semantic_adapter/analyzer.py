@@ -19,6 +19,7 @@ MODULES = {
     'Softmax': 'softmax', 'LogSoftmax': 'softmax', 'Dropout': 'dropout',
     'MaxPool2d': 'pooling', 'AvgPool2d': 'pooling', 'AdaptiveAvgPool2d': 'pooling',
     'Flatten': 'reshape', 'Identity': 'identity', 'LSTM': 'lstm', 'GRU': 'gru', 'RNN': 'rnn',
+    'RNNCell': 'rnn-cell', 'GRUCell': 'gru-cell', 'LSTMCell': 'lstm-cell',
     'MultiheadAttention': 'multihead-attention', 'Transformer': 'transformer',
     'TransformerEncoder': 'encoder', 'TransformerEncoderLayer': 'encoder-layer',
     'TransformerDecoder': 'decoder', 'TransformerDecoderLayer': 'decoder-layer',
@@ -143,6 +144,14 @@ class Analyzer:
         if kind == 'compute' and isinstance(n, ast.expr):
             from .structure import syntax
             node['syntax'] = syntax(n)
+            if node.get('operator') in {'rnn-cell', 'gru-cell', 'lstm-cell'} and isinstance(n, ast.Call):
+                # syntax() intentionally abstracts dynamic expressions. Keep
+                # argument expansion separately: *args cannot prove absent hx.
+                node['cell_call'] = {'rule_version': 'source-cell-call/1',
+                                     'positional_count': len(n.args),
+                                     'keyword_names': [k.arg for k in n.keywords],
+                                     'positional_expansion': any(isinstance(a, ast.Starred) for a in n.args),
+                                     'keyword_expansion': any(k.arg is None for k in n.keywords)}
         self.nodes.append(node)
         self.node_by[identity] = node
         return identity

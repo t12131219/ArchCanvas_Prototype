@@ -1,0 +1,223 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ZeroStep",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+    "class": "ZeroStep",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+      "cell": null,
+      "sha256": "e0113587c08f615cc4cfc00d79427c12de9c2da05a62c0af852da2a46a97de6a",
+      "unit_sha256": "e0113587c08f615cc4cfc00d79427c12de9c2da05a62c0af852da2a46a97de6a"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/30:4:composite:1",
+      "kind": "composite",
+      "label": "ZeroStep",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+          "line": 30,
+          "end_line": 31,
+          "column": 4,
+          "end_column": 29,
+          "symbol": "ZeroStep.forward",
+          "expression": "def forward(self, x: Tensor):\n    return self.update(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ZeroStep"
+    },
+    {
+      "id": "model/30:4:composite:1/30:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/30:4:composite:1",
+      "source_parent": "model/30:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+          "line": 30,
+          "end_line": 30,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "ZeroStep.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/30:4:composite:1/31:15:compute:1",
+      "kind": "compute",
+      "label": "update \u00b7 RNNCell",
+      "parent": "model/30:4:composite:1",
+      "source_parent": "model/30:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+          "line": 31,
+          "end_line": 31,
+          "column": 15,
+          "end_column": 29,
+          "symbol": "ZeroStep.forward",
+          "expression": "self.update(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "rnn-cell",
+      "module_path": "update",
+      "framework_type": "torch.nn.RNNCell",
+      "constructor": {
+        "args": [
+          4,
+          4
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "cell_call": {
+        "rule_version": "source-cell-call/1",
+        "positional_count": 1,
+        "keyword_names": [],
+        "positional_expansion": false,
+        "keyword_expansion": false
+      },
+      "source_framework_module": "torch.nn.RNNCell",
+      "module_binding": {
+        "reference": "entry|update@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py:28:22",
+        "selection": "self.update",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+            "line": 28,
+            "end_line": 28,
+            "column": 22,
+            "end_column": 38,
+            "symbol": "constructor",
+            "expression": "nn.RNNCell(4, 4)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/30:4:composite:1/31:15:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry|update@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py:28:22"
+    },
+    {
+      "id": "model/30:4:composite:1/31:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/30:4:composite:1",
+      "source_parent": "model/30:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/cell_interfaces.py",
+          "line": 31,
+          "end_line": 31,
+          "column": 8,
+          "end_column": 29,
+          "symbol": "ZeroStep.forward",
+          "expression": "return self.update(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/30:4:composite:1/30:22:interface:1",
+      "target": "model/30:4:composite:1/31:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/30:4:composite:1/31:15:compute:1",
+      "target": "model/30:4:composite:1/31:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "6d590e35abdc9358c4e620e81ac309ac9ed4563d64dfb615bf55f129393dad13"
+}

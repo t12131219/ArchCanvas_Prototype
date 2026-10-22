@@ -41,3 +41,34 @@ test('cross-region input terminals face the original consumers without changing 
   assert.ok(row.source_side!==row.target_side);assert.ok(!edge.condition&&!edge.design_route);
  }
 });
+test('upward body composition preserves headings, containment and exact source boundaries on unfamiliar structures',()=>{
+ for(const name of ['ReadWorkshop','PairReads','InterruptedRead','ConditionalRead','MutableRead','EscapingRead']){
+  const ir=read(name),raw=JSON.stringify(ir),g=E.project(ir,state),down=C.compose(g,state),up=C.compose(g,{...state,paperDirection:'up'});
+  assert.equal(JSON.stringify(ir),raw);assert.deepEqual(up.edges,down.edges);assert.deepEqual(up.node_accounting,down.node_accounting);
+  for(const n of up.nodes){
+   const p=up.positions.get(n.id),owner=up.idx.nodes.get(n.id).parent,parent=up.positions.get(owner);
+   if(!parent)continue;
+   assert.ok(p.y>=parent.y+parent.header,`${name}: child stays below heading`);
+   assert.ok(p.y+p.h<=parent.y+parent.h,`${name}: body contains child`);
+  }
+  const rendered=R.render(ir,{...state,paperDirection:'up'});
+  assert.deepEqual(rendered.prepared.quality.route_failures,[]);assert.deepEqual(rendered.prepared.quality.unplaced_port_labels,[]);
+ }
+});
+test('manual drawing offsets survive architecture re-render and save/reopen instead of resetting silently',()=>{
+ const ir=read('PairReads'),a=R.render(ir,{...state,paperDirection:'up'}),node=a.graph.nodes.find(n=>!a.graph.positions.get(n.id).expanded),id=node.id;
+ const b=R.render(ir,{...state,paperDirection:'up',offsets:{[id]:{x:19,y:7}}});
+ assert.equal(b.graph.positions.get(id).x,a.graph.positions.get(id).x+19);
+ assert.equal(b.graph.positions.get(id).y,a.graph.positions.get(id).y+7);
+ assert.equal(R.render(b.document.ir,b.document.state).svg,b.svg);
+});
+test('upward source streams retain a real cross-region context and downstream outputs follow their source region',()=>{
+ const ir=JSON.parse(fs.readFileSync('verification/helper-contracts/current/Transformer-current.json'));
+ const a=C.compose(E.project(ir,{...state,paperSampleFrame:true}),{...state,paperDirection:'up'});
+ assert.ok(a.publication.composition.followers.length>=2);
+ for(const row of a.publication.composition.followers){
+  const p=a.positions.get(row.node),source=a.positions.get(row.source_scope);
+  assert.ok(Math.abs(p.x+p.w/2-source.x-source.w/2)<1);
+  assert.ok(p.y<source.y);assert.ok(row.edges.every(id=>a.edges.some(e=>e.id===id)));
+ }
+});

@@ -3,7 +3,7 @@ const fs=require('fs'),crypto=require('crypto'),assert=require('assert/strict');
 const R=require('./load_publication_renderer.cjs')('./semantic_studio');
 const out='verification/composition-rounds/current/',round=Number(process.argv[2]),sha=s=>crypto.createHash('sha256').update(fs.readFileSync(s)).digest('hex');
 const row=JSON.parse(fs.readFileSync('verification/call-boundaries/current/Transformer-F0-report.json')).rows[0];
-const ir=JSON.parse(fs.readFileSync(row.input)),raw=JSON.stringify(ir),state={...row.results[1].state,paperComposition:'architecture'};
+const ir=JSON.parse(fs.readFileSync(row.input)),raw=JSON.stringify(ir),state={...row.results[1].state,paperComposition:'architecture',...(round>=4?{paperDirection:'up'}:{})};
 const r=R.render(ir,state);assert.equal(raw,JSON.stringify(ir));
 const svg='round'+round+'.svg',document='round'+round+'.layout.json';fs.writeFileSync(out+svg,r.svg);fs.writeFileSync(out+document,JSON.stringify(r.document));
 const hashes=Object.fromEntries(fs.readdirSync('semantic_studio').filter(f=>f.endsWith('.js')).map(f=>['semantic_studio/'+f,sha('semantic_studio/'+f)]));

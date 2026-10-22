@@ -13,7 +13,7 @@
       idx.nodes.set(n.id,{...source.nodes.get(n.id),parent,paper:n.paper});
       if(!idx.children.has(parent||null))idx.children.set(parent||null,[]);idx.children.get(parent||null).push(n.id);
     }
-    const positions=new Map(),records=[],docks=[];
+    const positions=new Map(),records=[],docks=[],followers=[];
     const parents=id=>{const ids=[];while(id){ids.push(id);id=idx.nodes.get(id)?.parent;}return ids;};
     const ordinary=e=>(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
     for(const n of nodes){
@@ -71,6 +71,22 @@
         y+=Math.max(...row.ids.map(c=>positions.get(c).h))+gap;
       }
       p.h=y-gap+pad;
+      // A single downstream card follows the unique sibling region that
+      // actually supplies it. This does not create a new execution relation.
+      const branchOf=target=>{let at=target;while(at&&idx.nodes.get(at)?.parent!==id)at=idx.nodes.get(at)?.parent;return at;};
+      for(const row of rows){
+        if(row.ids.length!==1)continue;
+        const child=row.ids[0],c=positions.get(child);
+        if(c.expanded||by.get(child)?.condition||by.get(child)?.mutable)continue;
+        const incoming=graph.edges.filter(e=>under(e.target,child));
+        if(!incoming.length||incoming.some(e=>!ordinary(e)))continue;
+        const origins=[...new Set(incoming.map(e=>branchOf(e.source)).filter(Boolean))];
+        if(origins.length!==1||origins[0]===child)continue;
+        const from=positions.get(origins[0]);if(!from||from.y>=c.y)continue;
+        c.x=Math.max(gutter+pad,Math.min(bodyWidth-pad-c.w,from.x+(from.w-c.w)/2));
+        followers.push({node:child,source_scope:origins[0],edges:incoming.map(e=>e.id),
+          scope:'A downstream drawing card follows its unique actual source region; canonical relations remain unchanged.'});
+      }
       let sideY=p.header;for(const child of side){const c=positions.get(child);Object.assign(c,{x:bodyWidth+8,y:sideY});sideY+=c.h+24;}
       p.h=Math.max(p.h,sideY+pad);
       records.push({node:id,children:kids,rows:rows.map(r=>r.ids),before:{w:original.w,h:original.h},after:{w:p.w,h:p.h},
@@ -79,7 +95,13 @@
     }
     const roots=nodes.filter(n=>!by.has(idx.nodes.get(n.id)?.parent)).map(n=>n.id);
     let x=32;for(const id of roots){const p=measure(id);p.x=x;p.y=30;x+=p.w+72;}
-    function absolute(id,dx,dy){const p=positions.get(id);p.x+=dx;p.y+=dy;for(const child of children(id))absolute(child,p.x,p.y);}
+    // Reverse body rows only. Headings remain above their own body and text
+    // is never reflected. The router then recomputes actual upward paths.
+    if(state.paperDirection==='up')for(const id of nodes.map(n=>n.id)){
+      const p=positions.get(id);if(!p.expanded)continue;
+      for(const child of children(id)){const c=positions.get(child);c.y=p.header+p.h-18-c.y-c.h;}
+    }
+    function absolute(id,dx,dy){const p=positions.get(id),off=state.offsets?.[id]||{};p.x+=dx+(Number(off.x)||0);p.y+=dy+(Number(off.y)||0);for(const child of children(id))absolute(child,p.x,p.y);}
     for(const id of roots)absolute(id,0,0);
     positions.context={...old.context,idx,edges:graph.edges,routeCache:new Map(),reserved:[],
       compoundAlignments:[],contextLanes:[],branchColumns:[],rankClearances:[],inputDocks:[],fixedInputs:[],sourceForkWidths:[],
@@ -105,7 +127,7 @@
     positions.context.crossScopePorts=facing;
     const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
     const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
-    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:3,records,input_docks:docks,facing}}};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:4,direction:state.paperDirection==='up'?'up':'down',records,input_docks:docks,facing,followers}}};
     return result;
   }
   const api={compose};root.SemanticCompositionLayout=api;if(typeof module!=='undefined')module.exports=api;

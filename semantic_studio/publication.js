@@ -642,7 +642,7 @@
   function inlinePlan(ir,base){if(!inlinePlans.has(ir)){const engine=root.SemanticSequenceFrontier||(typeof require==='function'?require('./sequence-frontier.js'):null);inlinePlans.set(ir,engine.build(ir,base));}return inlinePlans.get(ir);}
   function project(ir,state,E){
     const canvas=state.paperMedium==='canvas';
-    if(canvas&&state.paperGranularity==='roles'&&state.paperCompact==null)state={...state,paperCompact:true};
+    if(canvas&&['stages','roles'].includes(state.paperGranularity)&&state.paperCompact==null)state={...state,paperCompact:true};
     const mode=state.mode||'source',originalPlan=plan(ir),originalIdx=index(originalPlan);
     const relationNode=state.paperRelation?.startsWith('node:')?state.paperRelation.slice(5):originalPlan.relation_graph?.relations.find(r=>r.id===state.paperRelation)?.node;
     const observed=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return true;id=originalIdx.nodes.get(id)?.parent;}return false;};
@@ -670,7 +670,7 @@
       homogeneous:repeat.homogeneous,parameter_sharing:repeat.parameter_sharing,
       structural_group:structuralGroup,
       scope:'one concrete instance; other instances remain in the canonical IR; output equality not asserted'}:null;
-    const granularity=['overview','modules','semantic','roles','detailed'].includes(state.paperGranularity)?state.paperGranularity:'overview';
+    const granularity=['overview','modules','stages','semantic','roles','detailed'].includes(state.paperGranularity)?state.paperGranularity:'overview';
     const invocationEngine=canvas&&granularity==='roles'&&state.paperInvocationInputs!==false?
       root.SemanticInvocationInputs||(typeof require==='function'?require('./invocation-inputs.js'):null):null;
     const invocationInputs=invocationEngine?.compile(ir);
@@ -679,19 +679,22 @@
     const directOperands=new Set(local&&state.paperRelation?.startsWith('node:')?[state.paperRelation.slice(5)]:[]);
     const focused=focusPlan(ir,base,focus,dimensionPaths,directOperands);
     if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);
-    const stageEngine=canvas&&granularity==='roles'&&state.paperContractStages!==false?(root.SemanticContractStages||(typeof require==='function'?require('./contract-stages.js'):null)):null;
+    // Coarser certified boundaries still need their local operation summaries.
+    // Role exposure and presentation folding are independent choices.
+    const summaryFrontier=canvas&&['stages','roles'].includes(granularity);
+    const stageEngine=summaryFrontier&&state.paperContractStages!==false?(root.SemanticContractStages||(typeof require==='function'?require('./contract-stages.js'):null)):null;
     const roleEngine=canvas&&granularity==='roles'&&!local?(root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null)):null;
     const roleFrontier=roleEngine?.compile({plan:focused.plan,focus,details:state.paperRoleDetails,paths:state.paperRolePaths});
     if(roleFrontier){focused.plan=roleFrontier.plan;const all=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,all);}
     const expressionEngine=roleFrontier?(root.SemanticLocalExpressions||(typeof require==='function'?require('./local-expressions.js'):null)):null;
     const expressions=expressionEngine?.compile({plan:focused.plan,focus,details:state.paperExpressionDetails});
     const frontierScopes=new Set(roleFrontier?.owners||[]);
-    const pol=policy(ir,focus,focused.inside,dimensionPaths,directOperands),pipelineEngine=canvas&&granularity==='roles'&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
+    const pol=policy(ir,focus,focused.inside,dimensionPaths,directOperands),pipelineEngine=summaryFrontier&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
     const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol});
     if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id)}:n);
     let idx=index(focused.plan);
     if(invocationInputs){focused.plan.nodes=focused.plan.nodes.map(n=>invocationInputs.has(n.id)?{...n,invocation_binding:copy(invocationInputs.get(n.id))}:n);idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);}
-    const budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,semantic:20,roles:20,detailed:28})[granularity]));
+    const budget=Math.max(4,Math.min(28,Number(state.paperBudget)||({overview:12,modules:20,stages:20,semantic:20,roles:20,detailed:28})[granularity]));
     if(structuralGroup)decorate(idx.nodes.get(focus),idx);
     // Input/output interfaces of a focused panel are real, named boundaries.
     for(const port of focused.boundary)if(!port.presentation)pol.bindings.delete(port.port_node);
@@ -767,7 +770,7 @@
       if(granularity!=='overview'){
         const frontier=()=>{const leaves=[],todo=[focus];for(let i=0;i<todo.length;i++){const id=todo[i];if(!eligible(id))continue;if(open.includes(id))todo.push(...idx.children.get(id)||[]);else leaves.push(id);}return leaves;};
         const cost=id=>idx.nodes.get(id).kind==='interface'?.25:1;
-        const blocked=n=>n.contract_stage||(roleFrontier?.ownerOf(n.id)?!roleFrontier.open.has(n.id):['semantic','roles'].includes(granularity)&&n.semantic_contracts?.length)||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
+        const blocked=n=>n.contract_stage||(roleFrontier?.ownerOf(n.id)?!roleFrontier.open.has(n.id):['stages','semantic','roles'].includes(granularity)&&n.semantic_contracts?.length)||(['serial-repeat','repeat-instance','serial-remainder'].includes(n.semantic_type)?!(n.sequence_frontier||n.sequence_sample):['loop-template','iteration-region','conditional-region','observed-variant','boundary-interface-group'].includes(n.semantic_type)||n.id==='runtime-observations'||n.semantic_type==='observed-module-call');
         const scopeOf=id=>{let at=idx.nodes.get(id)?.parent;while(at){if(idx.nodes.get(at)?.sequence_frontier||frontierScopes.has(at))return at;at=idx.nodes.get(at)?.parent;}return null;};
         const usedIn=scope=>{const seen=new Set();return frontier().reduce((total,id)=>{const localScope=scopeOf(id);if(scope)return total+(localScope===scope?cost(id):0);if(localScope){if(seen.has(localScope))return total;seen.add(localScope);return total+1;}return total+cost(id);},0);};
         const localUsed=scope=>{
@@ -816,7 +819,7 @@
             scope_of_claim:'Comparable local presentation detail only; no computational, parameter, value or object equivalence is asserted.'});
           if(!accepted)continue;
           open.push(...peers);
-          if(granularity==='detailed'||granularity==='semantic'||granularity==='roles')for(const peer of peers)queue.push(...(idx.children.get(peer)||[]).filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
+          if(['detailed','stages','semantic','roles'].includes(granularity))for(const peer of peers)queue.push(...(idx.children.get(peer)||[]).filter(id=>!blocked(idx.nodes.get(id))&&(idx.children.get(id)||[]).some(eligible)));
         }
       }
       if(expressions)open=expressionEngine.select(expressions,{plan:focused.plan,focus,open,budget,eligible,budgetScopes:frontierScopes});

@@ -48,7 +48,9 @@ test('an optional context route can change its drawing side only while its entir
   {bundle_members:[a]},{design_route:{kind:'state-interface'}},{route:{ok:false}}])assert.equal(R.sourceForkContextBinding(a,{...b,...change}),false);
 });
 const read=name=>JSON.parse(fs.readFileSync('verification/source-fork-widths/current/'+name+'.json'));
-function state(ir){return {mode:'source',paperMedium:'canvas',paperGranularity:'roles',paperCompact:true,
+// Keep the original shape-read/transform fork visible to exercise width trials.
+// Configuration-only folding is independently verified in unconsumed-dimensions.
+function state(ir){return {paperUnconsumedDimensions:false,mode:'source',paperMedium:'canvas',paperGranularity:'roles',paperCompact:true,
  paperAuto:false,paperAdaptive:false,paperPipelineSummaries:false,open:ir.nodes.filter(n=>n.kind==='composite').map(n=>n.id)};}
 for(const name of ['BorrowedGrid','SeparateGrid','MixedGrid'])test(name+' preserves all bindings, boundaries, coverage, saved state and further folding',()=>{
  const ir=read(name),raw=JSON.stringify(ir),s=state(ir),a=R.render(ir,{...s,paperSourceForkWidths:false}),b=R.render(ir,s);

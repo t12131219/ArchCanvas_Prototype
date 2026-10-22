@@ -4,12 +4,12 @@
 'use strict';
 const VERSION='dimension-paths/1',flow=e=>['data','alias','interface-binding'].includes(e.kind);
 const operators={Add:'add',Sub:'sub',Mult:'mult',FloorDiv:'floordiv',Mod:'mod'};
-function compile({ir,configurationUse}){
+function compile({ir,configurationUse,unconsumedBindings=true}){
  const by=new Map(ir.nodes.map(n=>[n.id,n])),ins=new Map(),uses=new Map(),cache=new Map(),active=new Set();
  for(const e of ir.edges){if(!ins.has(e.target))ins.set(e.target,[]);ins.get(e.target).push(e);if(!uses.has(e.source))uses.set(e.source,[]);uses.get(e.source).push(e);}
  const symbolic=(root.SemanticSymbolicValues||(typeof require==='function'?require('./symbolic-values.js'):null)).derive(ir);
  const local=n=>n&&n.evidence_status==='static-only'&&!n.mutable&&!n.condition&&!n.identity_display&&!n.observed_calls&&!n.runtime_evidence?.length&&!n.semantic_contracts?.length&&!['opaque','control'].includes(n.kind);
- const safe=n=>{const seen=new Set();while(n&&!seen.has(n.id)){if(!local(n))return false;seen.add(n.id);n=by.get(n.parent);}return true;};
+ const safe=n=>{if(!n)return false;const seen=new Set();while(n){if(seen.has(n.id)||!local(n)||n.parent&&!by.has(n.parent))return false;seen.add(n.id);n=by.get(n.parent);}return true;};
  const exact=e=>flow(e)&&!e.condition&&!e.design_route&&!e.iteration&&['source-dependency','static-source'].includes(e.evidence);
  const slot=e=>e.source_port??'out';
  function read(id,port='out',depth=0){
@@ -40,6 +40,34 @@ function compile({ir,configurationUse}){
  while(changed){changed=false;for(const [id]of facts){const out=uses.get(id)||[];
   if(!configurationOnly.has(id)&&out.length&&out.every(e=>exact(e)&&(configurationUse(e)&&safe(by.get(e.target))||configurationOnly.has(e.target)))){configurationOnly.add(id);changed=true;}
  }}
+ // An unused local unpack binding must not turn dimension configuration into
+ // a feature branch. License it only beside an already proved configuration
+ // use of the same shape read, and only when every remaining use is covered.
+ // This changes presentation, not execution: unpack validity remains unproved.
+ const unconsumed=new Map(),terminals=new Map();
+ if(unconsumedBindings)for(const [id,f]of facts){
+  const n=by.get(id),out=uses.get(id)||[];
+  if(f.kind!=='dimension-read'||f.scalar||n.attribute_name!=='shape'||!out.some(e=>configurationOnly.has(e.target)))continue;
+  const unused=[];let valid=true;
+  for(const e of out){
+   if(!exact(e)){valid=false;break;}
+   if(configurationOnly.has(e.target))continue;
+   const target=by.get(e.target),binding=facts.get(e.target),incoming=ins.get(e.target)||[];
+   if(!safe(target)||target.kind!=='value-alias'||target.operator||target.parent!==n.parent||
+     !/^\d+$/.test(target.slot??'')||target.slot!==slot(e)||e.kind!=='alias'||e.target_port!==target.slot||
+     incoming.length!==1||incoming[0]!==e||(uses.get(e.target)||[]).length||
+     out.filter(other=>other.kind==='alias'&&slot(other)===slot(e)).length!==1||
+     binding?.kind!=='dimension-binding'||!binding.scalar||binding.roots.length!==1||
+     binding.roots[0].node!==id||binding.roots[0].slot!==target.slot){valid=false;break;}
+   unused.push({node:target.id,slot:target.slot,dependency:{...e},source:target.source||[],uses:[],
+    scope:'Unconsumed local source unpack binding; not dead-code elimination. Rank, unpack validity and execution are unproved.'});
+  }
+  if(!valid||!unused.length)continue;
+  unconsumed.set(id,unused);for(const row of unused){configurationOnly.add(row.node);terminals.set(row.node,id);}
+ }
+ if(unconsumed.size){changed=true;while(changed){changed=false;for(const [id]of facts){const out=uses.get(id)||[];
+  if(!configurationOnly.has(id)&&out.length&&out.every(e=>exact(e)&&(configurationUse(e)&&safe(by.get(e.target))||configurationOnly.has(e.target)))){configurationOnly.add(id);changed=true;}
+ }}}
  // Only dimension-backed paths activate this policy. The dependency closure
  // also retains shared reads which must remain visible for other feature uses.
  const selected=new Set([...configurationOnly].filter(id=>facts.get(id).roots.length)),proof=new Set(),todo=[...selected];
@@ -47,6 +75,8 @@ function compile({ir,configurationUse}){
  const rows=[...proof].map(id=>{const n=by.get(id),f=facts.get(id);return {rule_version:VERSION,node:id,kind:f.kind,
   basis:'source-tensor-dimensions-and-exact-integer-operands',proof_scope:'full-extracted-graph',configuration_only:configurationOnly.has(id),
   expression:n.source?.[0]?.expression||n.label,roots:f.roots,dependencies:f.dependencies.map(e=>({...e})),uses:(uses.get(id)||[]).map(e=>({...e})),
+  ...(unconsumed.has(id)?{unconsumed_bindings:unconsumed.get(id)}:{}),
+  ...(terminals.has(id)?{unconsumed_binding_of:terminals.get(id)}:{}),
   value_evaluation:'not-performed',source:n.source||[],scope:'Source Tensor dimension contract and configuration-only uses; concrete dimensions, valid shapes and execution are not asserted.'};});
  return {metadata:new Set([...proof].filter(id=>configurationOnly.has(id))),rows};
 }

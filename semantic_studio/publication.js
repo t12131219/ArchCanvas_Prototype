@@ -49,7 +49,8 @@
       if(n?.kind!=='compute')return false;
       if(['kw:dim','kw:keepdim','kw:keepdims','kw:size','kw:device','kw:dtype','kw:p','kw:negative_slope','kw:eps','kw:training','kw:align_corners'].includes(port))return true;
       if(['view','expand','transpose','permute','squeeze','unsqueeze'].includes(name))return port.startsWith('arg:');
-      if(name==='reshape')return port!=='receiver'&&port!=='arg:0';
+      if(name==='reshape')return port!=='receiver'&&port!=='arg:0'||
+        dimensionPaths?.unconsumedBindings===true&&port==='arg:0'&&(ins.get(n.id)||[]).some(e=>e.target_port==='receiver');
       if(['zeros','ones','rand','randn'].includes(name))return port.startsWith('arg:');
       return false;
     }
@@ -87,7 +88,7 @@
     }
     if(dimensionPaths){
       const engine=root.SemanticDimensionPaths||(typeof require==='function'?require('./dimension-paths.js'):null);
-      const derived=engine.compile({ir,configurationUse:configUse});
+      const derived=engine.compile({ir,configurationUse:configUse,...dimensionPaths});
       for(const id of derived.metadata)metadata.add(id);
       const existing=new Set(configurationArithmetic.map(row=>row.node));
       configurationArithmetic.push(...derived.rows.filter(row=>!existing.has(row.node)));
@@ -665,7 +666,8 @@
     const invocationEngine=canvas&&granularity==='roles'&&state.paperInvocationInputs!==false?
       root.SemanticInvocationInputs||(typeof require==='function'?require('./invocation-inputs.js'):null):null;
     const invocationInputs=invocationEngine?.compile(ir);
-    const dimensionPaths=canvas&&granularity==='roles'&&state.paperDimensionPaths!==false;
+    const dimensionPaths=canvas&&granularity==='roles'&&state.paperDimensionPaths!==false?
+      {unconsumedBindings:state.paperUnconsumedDimensions!==false}:false;
     const directOperands=new Set(local&&state.paperRelation?.startsWith('node:')?[state.paperRelation.slice(5)]:[]);
     const focused=focusPlan(ir,base,focus,dimensionPaths,directOperands);
     if(structuralGroup)focused.plan.nodes=focused.plan.nodes.map(n=>n.id===focus?{...copy(n),structure_representative:structuralGroup}:n);

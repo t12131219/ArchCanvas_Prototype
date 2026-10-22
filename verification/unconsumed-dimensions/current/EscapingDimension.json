@@ -1,0 +1,440 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "EscapingDimension",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+    "class": "EscapingDimension",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+      "cell": null,
+      "sha256": "ba66728d52d3999b39e29cbd414c4f48831cfda3d57aabebc9d93e61540cf9a6",
+      "unit_sha256": "ba66728d52d3999b39e29cbd414c4f48831cfda3d57aabebc9d93e61540cf9a6"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/22:4:composite:1",
+      "kind": "composite",
+      "label": "EscapingDimension",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 22,
+          "end_line": 24,
+          "column": 4,
+          "end_column": 50,
+          "symbol": "EscapingDimension.forward",
+          "expression": "def forward(self, x: Tensor):\n    first, second, spare = x.shape\n    return (x.reshape(first, second, -1), spare)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "EscapingDimension"
+    },
+    {
+      "id": "model/22:4:composite:1/22:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "EscapingDimension.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/22:4:composite:1/23:31:compute:1",
+      "kind": "compute",
+      "label": "x.shape",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 31,
+          "end_column": 38,
+          "symbol": "EscapingDimension.forward",
+          "expression": "x.shape"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "shape",
+      "value": {
+        "unresolved": "x.shape"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "shape"
+        }
+      },
+      "symbolic_value": {
+        "rule_version": "source-symbolic-value/1",
+        "kind": "tensor-attribute",
+        "receiver": "model/22:4:composite:1/22:22:interface:1",
+        "edge": "e00000",
+        "attribute": "shape",
+        "scope": "source Tensor contract only; annotation is not runtime validation; actual value unresolved"
+      }
+    },
+    {
+      "id": "model/22:4:composite:1/23:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "first",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "EscapingDimension.forward",
+          "expression": "first"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/22:4:composite:1/23:15:value-alias:1",
+      "kind": "value-alias",
+      "label": "second",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 15,
+          "end_column": 21,
+          "symbol": "EscapingDimension.forward",
+          "expression": "second"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/22:4:composite:1/23:23:value-alias:1",
+      "kind": "value-alias",
+      "label": "spare",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 23,
+          "end_line": 23,
+          "column": 23,
+          "end_column": 28,
+          "symbol": "EscapingDimension.forward",
+          "expression": "spare"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "2"
+    },
+    {
+      "id": "model/22:4:composite:1/24:15:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 15,
+          "end_column": 50,
+          "symbol": "EscapingDimension.forward",
+          "expression": "(x.reshape(first, second, -1), spare)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/22:4:composite:1/24:15:compute:2",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 15,
+          "end_column": 43,
+          "symbol": "EscapingDimension.forward",
+          "expression": "x.reshape(first, second, -1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "x.reshape",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "first"
+          },
+          {
+            "unresolved": "second"
+          },
+          -1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            },
+            {
+              "operand": ".args:1"
+            },
+            {
+              "literal_expression": "UnaryOp(op=USub(), operand=Constant(value=1))"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/22:4:composite:1/24:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/22:4:composite:1",
+      "source_parent": "model/22:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/unconsumed_dimensions.py",
+          "line": 24,
+          "end_line": 24,
+          "column": 8,
+          "end_column": 50,
+          "symbol": "EscapingDimension.forward",
+          "expression": "return (x.reshape(first, second, -1), spare)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/22:4:composite:1/22:22:interface:1",
+      "target": "model/22:4:composite:1/23:31:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/22:4:composite:1/23:31:compute:1",
+      "target": "model/22:4:composite:1/23:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/22:4:composite:1/23:31:compute:1",
+      "target": "model/22:4:composite:1/23:15:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/22:4:composite:1/23:31:compute:1",
+      "target": "model/22:4:composite:1/23:23:value-alias:1",
+      "kind": "alias",
+      "source_port": "2",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/22:4:composite:1/22:22:interface:1",
+      "target": "model/22:4:composite:1/24:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/22:4:composite:1/23:8:value-alias:1",
+      "target": "model/22:4:composite:1/24:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/22:4:composite:1/23:15:value-alias:1",
+      "target": "model/22:4:composite:1/24:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/22:4:composite:1/24:15:compute:2",
+      "target": "model/22:4:composite:1/24:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/22:4:composite:1/23:23:value-alias:1",
+      "target": "model/22:4:composite:1/24:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/22:4:composite:1/24:15:compute:1",
+      "target": "model/22:4:composite:1/24:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "d0a16d7e79d400c35836d2bbad72b1dbef3265d2a7680730705f8900323830c0"
+}

@@ -155,9 +155,16 @@
       const rows=n?.paper?.read_binding_rows,expected=goal.binding_rows;
       const alternate=rows&&expected&&rows.schema==='dependency-binding-rows/1'&&
         ['reads','inputs','rows','title'].every(k=>JSON.stringify(rows[k])===JSON.stringify(expected[k]));
-      const missingText=folded?(rows?[...(!alternate?['invalid-binding-rows']:[]),...(!title.includes(normalized(expected?.title))?['title']:[]),
+      // Relocation is a distinct checked printing, not a general permission to
+      // satisfy a title from arbitrary caption text or presentation metadata.
+      const heading=n?.paper?.source_heading,source=by.get(goal.node);
+      const relocated=!!heading&&alternate&&source?.label&&
+        heading.schema==='source-summary-heading/1'&&heading.node===goal.node&&heading.label===source.label&&
+        heading.result_title===expected.title&&title===normalized('Source: '+source.label)&&
+        caption.includes(normalized(expected.title+' · Dependency DAG'));
+      const missingText=folded?[...(heading&&!relocated?['invalid-source-heading']:[]),...(rows?[...(!alternate?['invalid-binding-rows']:[]),...(!relocated&&!title.includes(normalized(expected?.title))?['title']:[]),
         ...(expected?.rows||[]).filter(r=>!caption.includes(normalized(r.text))).map(r=>r.text)]:
-        [...(!title.includes(normalized(goal.printed_title))?['title']:[]),...goal.printed_formulas.filter(s=>!caption.includes(normalized(s))) ]):[];
+        [...(!title.includes(normalized(goal.printed_title))?['title']:[]),...goal.printed_formulas.filter(s=>!caption.includes(normalized(s))) ])]:[];
       if(folded)for(const text of [...(!rows?goal.printed_reads||[]:[]),...(!rows?goal.printed_inputs||[]:[]),...goal.printed_identity?[goal.printed_identity]:[]])if(!caption.includes(normalized(text)))missingText.push(text);
       const missingCuts=goal.cuts.filter(e=>!routeFor(e).some(({path})=>!folded||(by.get(e.source)&&path.source===goal.node)||(by.get(e.target)&&path.target===goal.node))).map(e=>e.id);
       const missingNodes=goal.operations.filter(o=>!graph.positions.has(o.node)).map(o=>o.node);

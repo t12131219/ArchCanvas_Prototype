@@ -262,6 +262,12 @@
       else if(p.source_reads?.length)caption+=' · Reads '+p.source_reads.map(r=>r.expression).join(', ');
       if(p.owner_identity){const d=p.owner_identity;caption+=` · ${d.label} · source call ${d.invocation}/${d.count}`;}
     }
+    // A source name identifies the call; the result and every operand use
+    // remain printed below it. It never certifies a semantic family.
+    const sourceHeading=n.local_pipeline_source_heading&&n.local_pipeline?.dependency_dag&&
+      n.local_pipeline_binding_rows&&!n.local_pipeline_expanded&&n.local_pipeline_source_label?
+      {schema:'source-summary-heading/1',node:n.id,label:n.local_pipeline_source_label,result_title:title}:null;
+    if(sourceHeading){caption=title+' · '+caption.replace(' · operand uses','');title='Source: '+sourceHeading.label;}
     if(n.invocation_binding){title=n.invocation_binding.label;caption='Fixed call argument';}
     const dagSummary=n.local_pipeline?.dependency_dag&&!n.local_pipeline_expanded;
     const maxWidth=dagSummary?292:n.kind==='interface'?126:184,font=n.kind==='interface'?15:16;
@@ -284,6 +290,7 @@
     n.paper={title,caption,lines,captions,font,fill,stroke,category:cat,unknown_count:opaque,symbol,
       w:symbol?48:dagSummary?320:n.kind==='interface'?154:212,h:symbol?48:Math.max(n.kind==='interface'?44:64,22+lines.length*20+captions.length*16)};
     if(dagSummary&&n.local_pipeline_binding_rows)n.paper.read_binding_rows=n.local_pipeline_binding_rows;
+    if(sourceHeading)n.paper.source_heading=sourceHeading;
     if(n.invocation_binding){
       const compact=wrap(title,176,13);n.paper={...n.paper,lines:compact,captions:[],font:13,
         w:Math.max(110,Math.ceil(Math.max(...compact.map(s=>width(s,13)))+28)),h:Math.max(40,16+compact.length*20),fill:'#fff8e9',stroke:'#a18b5e'};
@@ -704,6 +711,8 @@
     const pol=policy(ir,focus,focused.inside,dimensionPaths,directOperands),pipelineEngine=summaryFrontier&&state.paperPipelineSummaries!==false?(root.SemanticLocalPipelines||(typeof require==='function'?require('./local-pipelines.js'):null)):null;
     const pipelines=pipelineEngine?.compile({ir,plan:focused.plan,...pol,sourceReads:granularity==='stages'});
     if(pipelines)focused.plan.nodes=focused.plan.nodes.map(n=>pipelines.has(n.id)?{...n,local_pipeline:pipelines.get(n.id),
+      ...(granularity==='stages'&&state.paperSourceHeadings===true?
+        {local_pipeline_source_heading:true,local_pipeline_source_label:ir.nodes.find(s=>s.id===n.id)?.label}:{}),
       ...(granularity==='stages'&&state.paperReadBindingRows===true&&pipelineEngine.bindingRows(pipelines.get(n.id))?
         {local_pipeline_binding_rows:pipelineEngine.bindingRows(pipelines.get(n.id))}:{})}:n);
     let idx=index(focused.plan);

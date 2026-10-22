@@ -347,6 +347,16 @@ def audit_pipeline_summaries(document, row, nodes):
             if alternate:
                 audit_binding_rows(r, alternate, text)
                 assert planned[node]['local_pipeline_binding_rows'] == alternate
+            heading = measured.get('source_heading')
+            if heading:
+                assert alternate and r.get('dependency_dag')
+                assert heading == dict(schema='source-summary-heading/1', node=node,
+                    label=canonical[node]['label'], result_title=alternate['title'])
+                assert planned[node]['paper']['source_heading'] == heading
+                title_text = re.sub(r'\s', '', ''.join(measured['lines']))
+                assert title_text == re.sub(r'\s', '', 'Source: ' + canonical[node]['label'])
+                assert title_text in text
+                assert re.sub(r'\s', '', alternate['title'] + ' · Dependency DAG') in text
             labels = {o['node']: o['label'] for o in r['operations']}
 
             def label(t):

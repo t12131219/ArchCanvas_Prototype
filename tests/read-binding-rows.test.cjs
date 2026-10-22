@@ -12,7 +12,8 @@ test('measured use rows retain the frontier, accounting, exact edges and fulfill
  assert.deepEqual(a.graph.publication,b.graph.publication);assert.deepEqual(a.graph.node_accounting,b.graph.node_accounting);assert.deepEqual(a.graph.edge_accounting,b.graph.edge_accounting);
  assert.deepEqual(a.graph.edges,b.graph.edges);assert.deepEqual(fulfilled(a,'expression_coverage'),fulfilled(b,'expression_coverage'));assert.deepEqual(fulfilled(a,'summary_coverage'),fulfilled(b,'summary_coverage'));
  assert.ok(b.prepared.quality.native_height_px<a.prepared.quality.native_height_px);assert.equal(JSON.stringify(ir),raw);
- assert.ok(rows(b)[0].paper.title.endsWith(' · tanh'));
+ assert.ok(rows(b)[0].paper.captions.join('').includes('Result #4 · tanh'));
+ assert.equal(rows(b)[0].paper.title,'Source: prepare');
 });
 test('one shared intermediate result has two exact operand uses, without duplicated operations',()=>{
  const r=render('ReusedWorkshop'),display=rows(r)[0].paper.read_binding_rows,mul=display.rows.find(r=>r.label==='mult');
@@ -76,7 +77,7 @@ test('opt outs retain the ordinary printing and protected presets do not start a
  for(const s of [{paperGranularity:'roles'},{paperMedium:'print'},{offsets:{[read('ReusedWorkshop').nodes[0].id]:{x:1,y:0}}}])assert.equal(render('ReusedWorkshop',s).prepared.routing.read_binding_rows,undefined);
 });
 test('a longer result label that increases height is rejected after measuring the complete graph',()=>{
- const ordinary=render('WideLabelWorkshop',{paperReadBindingRows:false}),chosen=render('WideLabelWorkshop'),forced=render('WideLabelWorkshop',{paperReadBindingRows:true});
+ const ordinary=render('WideLabelWorkshop',{paperReadBindingRows:false}),chosen=render('WideLabelWorkshop'),forced=render('WideLabelWorkshop',{paperReadBindingRows:true,paperSourceHeadings:false});
  const decision=chosen.prepared.routing.read_binding_rows;assert.equal(decision.accepted,false);assert.equal(decision.geometry_preserved,false);
  assert.ok(forced.prepared.quality.native_height_px>ordinary.prepared.quality.native_height_px);assert.equal(chosen.svg,ordinary.svg);
  assert.equal(rows(chosen).length,0);assert.ok(rows(forced).length);

@@ -1679,7 +1679,7 @@
       scope:'One measured alternate printing of the same bounded DAG uses. Each extracted source-read node and input interface has a distinct reference; canonical facts, frontier, exact uses, fulfilled goals and relations must survive. Smaller area without taller/wider bounds, longer wires or added crossings; otherwise retain the original text. No runtime read equality assertion.'}};
     return chosen;
   }
-  function prepareFigure(ir,state={}){
+  function prepareStageExitFigure(ir,state={}){
     const baseline=prepareReadBindingFigure(ir,state),g=baseline.graph,b=baseline.prepared.quality;
     if(b.medium!=='canvas'||g.publication.granularity!=='stages'||state.paperRegionFollowers!==undefined||
       Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
@@ -1713,6 +1713,39 @@
       proposed:proposal.records,records:trial.prepared.routing.region_follower_refinement?.records||[],
       before:clearanceMetrics(b),candidate:clearanceMetrics(q),
       scope:'One complete measured stage-view alternative follows actual expanded-region exits. Same frontier, canonical bindings, fulfilled goals and realized relations; shorter wires with no taller/wider bounds or added conflicts. No execution or module-family assertion.'}};
+    return chosen;
+  }
+  function prepareFigure(ir,state={}){
+    const baseline=prepareStageExitFigure(ir,state),g=baseline.graph,b=baseline.prepared.quality;
+    if(state.paperSourceHeadings!==undefined||b.medium!=='canvas'||g.publication.granularity!=='stages'||
+      Object.keys(state.offsets||{}).length||g.edges.length>128||!g.nodes.some(n=>n.paper.read_binding_rows))return baseline;
+    // Keep the already selected use-row recipe fixed. Otherwise a long source
+    // label could change the inner recipe selection before we compare it.
+    const trial=prepareStageExitFigure(ir,{...state,paperReadBindingRows:true,paperSourceHeadings:true}),h=trial.graph,q=trial.prepared.quality;
+    const headings=h.nodes.filter(n=>n.paper.source_heading);
+    if(!headings.length)return baseline;
+    for(const r of [baseline,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const fulfilled=(r,key)=>new Set(r.graph[key].filter(c=>c.status==='fulfilled').map(c=>c.goal));
+    const keep=(a,z)=>[...a].every(id=>z.has(id));
+    const facts=clearanceIdentity(g)===clearanceIdentity(h)&&JSON.stringify(g.publication)===JSON.stringify(h.publication)&&
+      JSON.stringify(g.expression_goals)===JSON.stringify(h.expression_goals)&&JSON.stringify(g.summary_goals)===JSON.stringify(h.summary_goals);
+    const goals=keep(fulfilled(baseline,'expression_coverage'),fulfilled(trial,'expression_coverage'))&&
+      keep(fulfilled(baseline,'summary_coverage'),fulfilled(trial,'summary_coverage'))&&
+      headings.every(n=>h.summary_coverage.some(c=>c.node===n.id&&c.status==='fulfilled'&&c.form==='summary'));
+    const before=realizedRelations(baseline),after=realizedRelations(trial);
+    const relations=keep(new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),
+      new Set(h.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)))&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const geometry=q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&q.wire_length<=b.wire_length&&
+      fontMetric(q)>=fontMetric(b)&&q.line_geometry.crossings<=b.line_geometry.crossings&&
+      q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(x=>b.issues.includes(x));
+    const accepted=facts&&goals&&relations&&geometry,chosen=accepted?trial:baseline;
+    chosen.prepared.routing={...chosen.prepared.routing,...(accepted&&baseline.prepared.routing.read_binding_rows?
+      {read_binding_rows:baseline.prepared.routing.read_binding_rows}:{}),source_summary_headings:{accepted,max_trials:1,nodes:headings.map(n=>n.id),
+      facts_preserved:facts,goals_preserved:goals,applied_relations_preserved:relations,geometry_preserved:geometry,
+      before:clearanceMetrics(b),candidate:clearanceMetrics(q),
+      scope:'Source-call labels identify folded DAGs without certifying semantics. Exact result, use rows, source reads, call identities and cuts remain printed. One complete measured alternative; no larger bounds, longer wires, smaller fonts or added conflicts.'}};
     return chosen;
   }
   function render(ir,state){

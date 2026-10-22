@@ -20,3 +20,15 @@ test('actual composed SVG has valid routes and can save and reopen with the same
  const ir=read('PairReads'),r=R.render(ir,state);
  assert.equal(r.prepared.quality.route_failures.length,0);assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
 });
+test('input docking uses the common receiving scope and keeps every canonical use and external source parent',()=>{
+ const ir=JSON.parse(fs.readFileSync('verification/helper-contracts/current/Transformer-current.json'));
+ const g=E.project(ir,{...state,paperSampleFrame:true}),r=C.compose(g,state),docks=r.publication.composition.input_docks;
+ assert.ok(docks.length>=4);assert.deepEqual(r.edges,g.edges);
+ for(const d of docks){
+  assert.equal(ir.nodes.find(n=>n.id===d.node).parent,d.source_parent);
+  assert.equal(r.idx.nodes.get(d.node).parent,d.drawing_parent);
+  assert.deepEqual(d.edges.map(e=>e.edge),g.edges.filter(e=>e.source===d.node).map(e=>e.id));
+  for(const e of d.edges){let at=e.target;while(at&&at!==d.drawing_parent)at=r.idx.nodes.get(at)?.parent;assert.equal(at,d.drawing_parent);}
+ }
+ const shared=g.nodes.find(n=>n.label==='src_key_padding_mask');assert.ok(!docks.some(d=>d.node===shared.id));
+});

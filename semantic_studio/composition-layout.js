@@ -13,7 +13,23 @@
       idx.nodes.set(n.id,{...source.nodes.get(n.id),parent,paper:n.paper});
       if(!idx.children.has(parent||null))idx.children.set(parent||null,[]);idx.children.get(parent||null).push(n.id);
     }
-    const positions=new Map(),records=[];
+    const positions=new Map(),records=[],docks=[];
+    const parents=id=>{const ids=[];while(id){ids.push(id);id=idx.nodes.get(id)?.parent;}return ids;};
+    const ordinary=e=>(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
+    for(const n of nodes){
+      const uses=graph.edges.filter(e=>e.source===n.id),oldParent=idx.nodes.get(n.id)?.parent;
+      if(n.kind!=='interface'||n.role!=='input'||!uses.length||uses.some(e=>!ordinary(e))||graph.edges.some(e=>e.target===n.id)||n.condition||n.mutable)continue;
+      const owners=uses.map(e=>parents(idx.nodes.get(e.target)?.parent));
+      const owner=owners[0].find(id=>owners.every(xs=>xs.includes(id)));
+      if(!owner||owner===oldParent||!parents(owner).includes(oldParent)||!old.get(owner)?.expanded||
+        parents(owner).some(id=>{const a=idx.nodes.get(id);return a?.condition||a?.mutable||['opaque','control'].includes(a?.kind);} ))continue;
+      idx.children.set(oldParent,(idx.children.get(oldParent)||[]).filter(id=>id!==n.id));
+      if(!idx.children.has(owner))idx.children.set(owner,[]);idx.children.get(owner).push(n.id);
+      idx.nodes.set(n.id,{...idx.nodes.get(n.id),parent:owner});n.parent=owner;
+      docks.push({node:n.id,source_parent:oldParent,drawing_parent:owner,kind:uses.length===1?'entry':'side',
+        edges:uses.map(e=>({edge:e.id,target:e.target,source_port:e.source_port,target_port:e.target_port})),
+        scope:'One existing external input moved into its receiving drawing scope. Canonical parent, identity, every use and source availability remain unchanged.'});
+    }
     const children=id=>(idx.children.get(id)||[]).filter(id=>old.has(id));
     function measure(id){
       const n=by.get(id),original=old.get(id),kids=children(id);
@@ -25,14 +41,15 @@
       const textHeight=22+n.paper.lines.length*20+captions.length*16;
       if(!original.expanded||!kids.length){p.w=w;p.h=original.symbol?original.h:Math.max(n.kind==='interface'?44:54,textHeight);n.paper.h=p.h;return p;}
       for(const child of kids)measure(child);
+      const side=kids.filter(child=>docks.some(d=>d.node===child&&d.kind==='side'));
       const rows=[];
-      for(const child of kids.slice().sort((a,b)=>old.get(a).y-old.get(b).y||old.get(a).x-old.get(b).x)){
+      for(const child of kids.filter(c=>!side.includes(c)).sort((a,b)=>old.get(a).y-old.get(b).y||old.get(a).x-old.get(b).x)){
         let row=rows.find(r=>Math.abs(r.y-old.get(child).y)<4);
         if(!row){row={y:old.get(child).y,ids:[]};rows.push(row);}row.ids.push(child);
       }
       const under=(child,scope)=>{let at=child;while(at){if(at===scope)return true;at=idx.nodes.get(at)?.parent;}return false;};
       const streams=kids.filter(child=>old.get(child).expanded&&graph.edges.some(e=>under(e.target,child)&&
-        kids.includes(e.source)&&by.get(e.source)?.kind==='interface'&&by.get(e.source)?.role==='input'&&!e.condition));
+        by.get(e.source)?.kind==='interface'&&by.get(e.source)?.role==='input'&&!e.condition));
       if(streams.length>1){
         const first=Math.min(...streams.map(c=>old.get(c).y));
         for(const row of rows)row.ids=row.ids.filter(c=>!streams.includes(c));
@@ -41,17 +58,21 @@
       }
       const gutter=original.design_gutter||0,pad=18,gap=32;
       p.w=Math.max(w,...rows.map(r=>r.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+Math.max(0,r.ids.length-1)*72+pad*2+gutter));
+      const bodyWidth=p.w;
+      if(side.length)p.w+=Math.max(...side.map(c=>positions.get(c).w))+32;
       n.paper.lines=P.wrap(n.paper.title,p.w-28,n.paper.font);
       n.paper.captions=P.wrap(n.paper.caption,p.w-28,13);
       p.header=22+n.paper.lines.length*20+n.paper.captions.length*16+12;
       let y=p.header;
       for(const row of rows){
         const width=row.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+(row.ids.length-1)*72;
-        let x=gutter+pad+(p.w-gutter-pad*2-width)/2;
+        let x=gutter+pad+(bodyWidth-gutter-pad*2-width)/2;
         for(const child of row.ids){const c=positions.get(child);Object.assign(c,{x,y});x+=c.w+72;}
         y+=Math.max(...row.ids.map(c=>positions.get(c).h))+gap;
       }
       p.h=y-gap+pad;
+      let sideY=p.header;for(const child of side){const c=positions.get(child);Object.assign(c,{x:bodyWidth+8,y:sideY});sideY+=c.h+24;}
+      p.h=Math.max(p.h,sideY+pad);
       records.push({node:id,children:kids,rows:rows.map(r=>r.ids),before:{w:original.w,h:original.h},after:{w:p.w,h:p.h},
         scope:'Measured sibling rows and wider cards; dependencies and source ownership unchanged. Row alignment does not assert parallel execution.'});
       return p;
@@ -65,7 +86,7 @@
       crossScopePorts:[],coincidentPorts:[],localBypassScopes:[],entryBandRouting:false};
     const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
     const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
-    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:1,records}}};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:2,records,input_docks:docks}}};
     return result;
   }
   const api={compose};root.SemanticCompositionLayout=api;if(typeof module!=='undefined')module.exports=api;

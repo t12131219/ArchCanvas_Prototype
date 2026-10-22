@@ -1,0 +1,674 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "MixedTuple",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+    "class": "MixedTuple",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+      "cell": null,
+      "sha256": "4b9989e066ec6c4b5aa4d9124993ee545b19bf13275ca22b41bea46d49af2f87",
+      "unit_sha256": "4b9989e066ec6c4b5aa4d9124993ee545b19bf13275ca22b41bea46d49af2f87"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/71:4:composite:1",
+      "kind": "composite",
+      "label": "MixedTuple",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 71,
+          "end_line": 75,
+          "column": 4,
+          "end_column": 41,
+          "symbol": "MixedTuple.forward",
+          "expression": "def forward(self, x: Tensor, state: Tensor, width):\n    branch = x.reshape((width, -1)).contiguous()\n    recurrent = self.cell(branch, state)\n    unknown = unfamiliar(recurrent)\n    return unknown * torch.sigmoid(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "MixedTuple"
+    },
+    {
+      "id": "model/71:4:composite:1/71:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 71,
+          "end_line": 71,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "MixedTuple.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/71:4:composite:1/71:33:interface:1",
+      "kind": "interface",
+      "label": "state",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 71,
+          "end_line": 71,
+          "column": 33,
+          "end_column": 46,
+          "symbol": "MixedTuple.forward",
+          "expression": "state: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "state",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/71:4:composite:1/71:48:interface:1",
+      "kind": "interface",
+      "label": "width",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 71,
+          "end_line": 71,
+          "column": 48,
+          "end_column": 53,
+          "symbol": "MixedTuple.forward",
+          "expression": "width"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "width"
+    },
+    {
+      "id": "model/71:4:composite:1/72:27:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 72,
+          "end_line": 72,
+          "column": 27,
+          "end_column": 38,
+          "symbol": "MixedTuple.forward",
+          "expression": "(width, -1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "literal_expression": "UnaryOp(op=USub(), operand=Constant(value=1))"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/71:4:composite:1/72:17:compute:1",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 72,
+          "end_line": 72,
+          "column": 17,
+          "end_column": 39,
+          "symbol": "MixedTuple.forward",
+          "expression": "x.reshape((width, -1))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "x.reshape",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "(width, -1)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/71:4:composite:1/72:17:compute:2",
+      "kind": "compute",
+      "label": "contiguous",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 72,
+          "end_line": 72,
+          "column": 17,
+          "end_column": 52,
+          "symbol": "MixedTuple.forward",
+          "expression": "x.reshape((width, -1)).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "copy",
+      "function_target": "x.reshape((width, -1)).contiguous",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/71:4:composite:1/72:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "branch",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 72,
+          "end_line": 72,
+          "column": 8,
+          "end_column": 14,
+          "symbol": "MixedTuple.forward",
+          "expression": "branch"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/71:4:composite:1/73:20:opaque:1",
+      "kind": "opaque",
+      "label": "cell \u00b7 GRUCell",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 73,
+          "end_line": 73,
+          "column": 20,
+          "end_column": 44,
+          "symbol": "MixedTuple.forward",
+          "expression": "self.cell(branch, state)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "torch.nn.GRUCell",
+      "module_path": "cell",
+      "framework_type": "torch.nn.GRUCell",
+      "constructor": {
+        "args": [
+          4,
+          4
+        ],
+        "kwargs": {}
+      },
+      "source_framework_module": "torch.nn.GRUCell"
+    },
+    {
+      "id": "model/71:4:composite:1/73:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "recurrent",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 73,
+          "end_line": 73,
+          "column": 8,
+          "end_column": 17,
+          "symbol": "MixedTuple.forward",
+          "expression": "recurrent"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/71:4:composite:1/74:18:opaque:1",
+      "kind": "opaque",
+      "label": "unfamiliar",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 74,
+          "end_line": 74,
+          "column": 18,
+          "end_column": 39,
+          "symbol": "MixedTuple.forward",
+          "expression": "unfamiliar(recurrent)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "unfamiliar",
+      "function_target": "unfamiliar",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "recurrent"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target"
+    },
+    {
+      "id": "model/71:4:composite:1/74:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "unknown",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 74,
+          "end_line": 74,
+          "column": 8,
+          "end_column": 15,
+          "symbol": "MixedTuple.forward",
+          "expression": "unknown"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/71:4:composite:1/75:15:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 75,
+          "end_line": 75,
+          "column": 15,
+          "end_column": 41,
+          "symbol": "MixedTuple.forward",
+          "expression": "unknown * torch.sigmoid(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/71:4:composite:1/75:25:compute:1",
+      "kind": "compute",
+      "label": "sigmoid",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 75,
+          "end_line": 75,
+          "column": 25,
+          "end_column": 41,
+          "symbol": "MixedTuple.forward",
+          "expression": "torch.sigmoid(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sigmoid"
+    },
+    {
+      "id": "model/71:4:composite:1/75:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/71:4:composite:1",
+      "source_parent": "model/71:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 75,
+          "end_line": 75,
+          "column": 8,
+          "end_column": 41,
+          "symbol": "MixedTuple.forward",
+          "expression": "return unknown * torch.sigmoid(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/71:4:composite:1/71:48:interface:1",
+      "target": "model/71:4:composite:1/72:27:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/71:4:composite:1/71:22:interface:1",
+      "target": "model/71:4:composite:1/72:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/71:4:composite:1/72:27:compute:1",
+      "target": "model/71:4:composite:1/72:17:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/71:4:composite:1/72:17:compute:1",
+      "target": "model/71:4:composite:1/72:17:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/71:4:composite:1/72:17:compute:2",
+      "target": "model/71:4:composite:1/72:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/71:4:composite:1/72:8:value-alias:1",
+      "target": "model/71:4:composite:1/73:20:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/71:4:composite:1/71:33:interface:1",
+      "target": "model/71:4:composite:1/73:20:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/71:4:composite:1/73:20:opaque:1",
+      "target": "model/71:4:composite:1/73:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/71:4:composite:1/73:8:value-alias:1",
+      "target": "model/71:4:composite:1/74:18:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/71:4:composite:1/74:18:opaque:1",
+      "target": "model/71:4:composite:1/74:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/71:4:composite:1/74:8:value-alias:1",
+      "target": "model/71:4:composite:1/75:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/71:4:composite:1/71:22:interface:1",
+      "target": "model/71:4:composite:1/75:25:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/71:4:composite:1/75:25:compute:1",
+      "target": "model/71:4:composite:1/75:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/71:4:composite:1/75:15:compute:1",
+      "target": "model/71:4:composite:1/75:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "03c1162b038c30376d66eac0bd5afc1b580237a3fa2c5719e127e96cedbc736c"
+}

@@ -1,0 +1,626 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ArithmeticTuple",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+    "class": "ArithmeticTuple",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "\u5728\u660e\u786e\u9650\u5b9a\u7684\u6a21\u578b\u3001\u8f93\u5165\u8303\u56f4\u548c\u8fd0\u884c\u6a21\u5f0f\u5185\uff0c\u5b8c\u6574\u8986\u76d6\u5e76\u9a8c\u8bc1\u6240\u6709\u5206\u652f\u3002\u4efb\u4f55\u4efb\u610f PyTorch \u6a21\u578b\u5747\u65e0 opaque \u65e0\u6cd5\u4fdd\u8bc1\uff1a\u672a\u77e5\u81ea\u5b9a\u4e49\u7b97\u5b50\u3001\u5916\u90e8\u4f9d\u8d56\u6216\u52a8\u6001 Python \u884c\u4e3a\u53ef\u80fd\u65e0\u6cd5\u4ece\u73b0\u6709\u8bc1\u636e\u4e2d\u8fd8\u539f\u3002",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+      "cell": null,
+      "sha256": "4b9989e066ec6c4b5aa4d9124993ee545b19bf13275ca22b41bea46d49af2f87",
+      "unit_sha256": "4b9989e066ec6c4b5aa4d9124993ee545b19bf13275ca22b41bea46d49af2f87"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/20:4:composite:1",
+      "kind": "composite",
+      "label": "ArithmeticTuple",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 20,
+          "end_line": 22,
+          "column": 4,
+          "end_column": 80,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "def forward(self, x: Tensor, factor):\n    batch, length, width = x.shape\n    return x.reshape((batch, length * factor, width // factor)).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "ArithmeticTuple"
+    },
+    {
+      "id": "model/20:4:composite:1/20:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 22,
+          "end_column": 31,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "x: Tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x",
+      "source_tensor_annotation": "torch.Tensor"
+    },
+    {
+      "id": "model/20:4:composite:1/20:33:interface:1",
+      "kind": "interface",
+      "label": "factor",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 33,
+          "end_column": 39,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "factor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "factor"
+    },
+    {
+      "id": "model/20:4:composite:1/21:31:compute:1",
+      "kind": "compute",
+      "label": "x.shape",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 31,
+          "end_column": 38,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "x.shape"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "shape",
+      "value": {
+        "unresolved": "x.shape"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "shape"
+        }
+      },
+      "symbolic_value": {
+        "rule_version": "source-symbolic-value/1",
+        "kind": "tensor-attribute",
+        "receiver": "model/20:4:composite:1/20:22:interface:1",
+        "edge": "e00000",
+        "attribute": "shape",
+        "scope": "source Tensor contract only; annotation is not runtime validation; actual value unresolved"
+      }
+    },
+    {
+      "id": "model/20:4:composite:1/21:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "batch",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "batch"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/20:4:composite:1/21:15:value-alias:1",
+      "kind": "value-alias",
+      "label": "length",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 15,
+          "end_column": 21,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "length"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/20:4:composite:1/21:23:value-alias:1",
+      "kind": "value-alias",
+      "label": "width",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 21,
+          "end_line": 21,
+          "column": 23,
+          "end_column": 28,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "width"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "2"
+    },
+    {
+      "id": "model/20:4:composite:1/22:25:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 25,
+          "end_column": 66,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "(batch, length * factor, width // factor)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            },
+            {
+              "operand": ".elts:2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/20:4:composite:1/22:33:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 33,
+          "end_column": 48,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "length * factor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/20:4:composite:1/22:50:compute:1",
+      "kind": "compute",
+      "label": "floordiv",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 50,
+          "end_column": 65,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "width // factor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "floordiv",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "FloorDiv",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/20:4:composite:1/22:15:compute:1",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 15,
+          "end_column": 67,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "x.reshape((batch, length * factor, width // factor))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "x.reshape",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "(batch, length * factor, width // factor)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/20:4:composite:1/22:15:compute:2",
+      "kind": "compute",
+      "label": "contiguous",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 15,
+          "end_column": 80,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "x.reshape((batch, length * factor, width // factor)).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "copy",
+      "function_target": "x.reshape((batch, length * factor, width // factor)).contiguous",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/20:4:composite:1/22:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/20:4:composite:1",
+      "source_parent": "model/20:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/transform_sequences.py",
+          "line": 22,
+          "end_line": 22,
+          "column": 8,
+          "end_column": 80,
+          "symbol": "ArithmeticTuple.forward",
+          "expression": "return x.reshape((batch, length * factor, width // factor)).contiguous()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/20:4:composite:1/20:22:interface:1",
+      "target": "model/20:4:composite:1/21:31:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/20:4:composite:1/21:31:compute:1",
+      "target": "model/20:4:composite:1/21:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/20:4:composite:1/21:31:compute:1",
+      "target": "model/20:4:composite:1/21:15:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/20:4:composite:1/21:31:compute:1",
+      "target": "model/20:4:composite:1/21:23:value-alias:1",
+      "kind": "alias",
+      "source_port": "2",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/20:4:composite:1/21:8:value-alias:1",
+      "target": "model/20:4:composite:1/22:25:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/20:4:composite:1/21:15:value-alias:1",
+      "target": "model/20:4:composite:1/22:33:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/20:4:composite:1/20:33:interface:1",
+      "target": "model/20:4:composite:1/22:33:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/20:4:composite:1/22:33:compute:1",
+      "target": "model/20:4:composite:1/22:25:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/20:4:composite:1/21:23:value-alias:1",
+      "target": "model/20:4:composite:1/22:50:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/20:4:composite:1/20:33:interface:1",
+      "target": "model/20:4:composite:1/22:50:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/20:4:composite:1/22:50:compute:1",
+      "target": "model/20:4:composite:1/22:25:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/20:4:composite:1/20:22:interface:1",
+      "target": "model/20:4:composite:1/22:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/20:4:composite:1/22:25:compute:1",
+      "target": "model/20:4:composite:1/22:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/20:4:composite:1/22:15:compute:1",
+      "target": "model/20:4:composite:1/22:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/20:4:composite:1/22:15:compute:2",
+      "target": "model/20:4:composite:1/22:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "7964925fad24d41fe9557d7a23946258358224b55443f81e4a61fc4b99fad76f"
+}

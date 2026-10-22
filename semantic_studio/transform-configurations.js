@@ -21,7 +21,7 @@
     }
     return undefined;
   }
-  function compile(ir,{operands=false}={}){
+  function compile(ir,{operands=false,sequences=true}={}){
     const by=new Map(ir.nodes.map(n=>[n.id,n])),incoming=new Map(),result=new Map();
     for(const e of ir.edges){if(!incoming.has(e.target))incoming.set(e.target,[]);incoming.get(e.target).push(e);}
     const safe=n=>{const seen=new Set();while(n){
@@ -34,8 +34,8 @@
     // These are source expressions, not dimension values. In particular a
     // constructor-resolved attribute value cannot replace its source read.
     const binary={Add:['add','+'],Sub:['sub','-'],Mult:['mult','*'],FloorDiv:['floordiv','//'],Mod:['mod','%']};
-    function expression(id,port='out',seen=new Set()){
-      if(seen.size>=24||seen.has(id)||port!=='out')return null;
+    function expression(id,port='out',seen=new Set(),budget={remaining:64}){
+      if(--budget.remaining<0||seen.size>=24||seen.has(id)||port!=='out')return null;
       const n=by.get(id),es=incoming.get(id)||[];if(!n||!safe(n)||!es.every(exact))return null;
       const visited=new Set([...seen,id]),source=n.source?.length===1?n.source[0].expression:null;
       const reference=typeof source==='string'&&/^([A-Za-z_]\w*)(?:\.[A-Za-z_]\w*)*$/.test(source)?source:
@@ -49,12 +49,33 @@
       }
       if(n.kind!=='compute')return null;
       const fields=n.syntax?.fields,op=binary[fields?.op?.type];
+      // Keep a directly constructed sequence as source syntax. Never inline
+      // a named list/tuple binding: it may escape or be mutated elsewhere.
+      // Each element keeps its exact construction slot and original edge.
+      if(sequences&&n.operator==='structure'&&['tuple','list'].includes(n.structure_kind)&&
+        n.syntax?.type===(n.structure_kind==='tuple'?'Tuple':'List')&&Array.isArray(fields?.elts)&&fields.elts.length<=16){
+        const elements=[],used=[];
+        for(let i=0;i<fields.elts.length;i++){
+          const syntax=fields.elts[i],edges=es.filter(e=>e.target_port===String(i)),value=literal(syntax);
+          if(Number.isSafeInteger(value)&&!edges.length){
+            if(--budget.remaining<0)return null;
+            elements.push({kind:'literal',value,text:String(value)});
+          }else if(syntax?.operand==='.elts:'+i&&edges.length===1){
+            const e=edges[0],child=expression(e.source,e.source_port??'out',visited,budget);
+            if(!child)return null;elements.push(child);used.push(e);
+          }else return null;
+        }
+        if(es.length!==used.length)return null;
+        const tuple=n.structure_kind==='tuple',body=elements.map(e=>e.text).join(', ')+(tuple&&elements.length===1?',':'');
+        return {kind:'source-sequence',node:id,port,sequence_kind:n.structure_kind,elements,
+          text:(tuple?'(':'[')+body+(tuple?')':']'),dependencies:used.map(e=>({...e}))};
+      }
       if(n.syntax?.type==='BinOp'&&op?.[0]===n.operator){
         const children=[],used=[];
         for(const [field,slot]of [['left','0'],['right','2']]){
           const syntax=fields[field],edges=es.filter(e=>e.target_port===slot),value=literal(syntax);
           if(value!==undefined&&!Array.isArray(value)&&!edges.length)children.push({kind:'literal',value,text:String(value)});
-          else if(syntax?.operand==='.'+field&&edges.length===1){const e=edges[0],child=expression(e.source,e.source_port??'out',visited);if(!child)return null;children.push(child);used.push(e);}
+          else if(syntax?.operand==='.'+field&&edges.length===1){const e=edges[0],child=expression(e.source,e.source_port??'out',visited,budget);if(!child)return null;children.push(child);used.push(e);}
           else return null;
         }
         if(es.length!==used.length)return null;
@@ -64,13 +85,13 @@
       // The extracted Subscript preserves the actual base edge and literal
       // selector. Display it without asserting a tensor rank or dimension role.
       if(n.operator==='getitem'&&n.syntax?.type==='Subscript'&&fields?.value?.operand==='.value'&&es.length===1&&es[0].target_port==='value'){
-        const value=literal(fields.slice),e=es[0],base=expression(e.source,e.source_port??'out',visited);
+        const value=literal(fields.slice),e=es[0],base=expression(e.source,e.source_port??'out',visited,budget);
         if(Number.isSafeInteger(value)&&base)return {kind:'source-subscript',node:id,port,base,index:value,
           text:base.text+'['+value+']',dependencies:[{...e}]};
       }
       if(n.operator==='attribute'&&n.syntax?.type==='Attribute'&&fields?.value?.operand==='.value'&&
         /^[A-Za-z_]\w*$/.test(fields.attr||'')&&fields.attr===n.attribute_name&&es.length===1&&es[0].target_port==='in'){
-        const e=es[0],base=expression(e.source,e.source_port??'out',visited);
+        const e=es[0],base=expression(e.source,e.source_port??'out',visited,budget);
         if(base)return {kind:'source-attribute',node:id,port,base,attribute:fields.attr,
           text:base.text+'.'+fields.attr,dependencies:[{...e}]};
       }

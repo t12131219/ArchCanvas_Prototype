@@ -66,6 +66,7 @@ COMMANDS = {
     'source-port-order': ['node', 'tests/source-port-order.test.cjs'],
     'transform-operands': ['node', 'tests/transform-operands.test.cjs'],
     'source-fork-widths': ['node', 'tests/source-fork-widths.test.cjs'],
+    'transform-sequences': ['node', 'tests/transform-sequences.test.cjs'],
     'residual-bands': ['node', 'tests/residual-bands.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],

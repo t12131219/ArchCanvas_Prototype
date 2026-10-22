@@ -1491,6 +1491,61 @@
     chosen=prepareSharedFanouts(ir,state,chosen);
     return chosen;
   }
+  function prepareRouteShortcuts(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(state.paperRouteShortcuts===false||b.medium!=='canvas'||g.publication.granularity!=='roles'||Object.keys(state.offsets||{}).length||
+      g.edges.length>128||!b.line_geometry.crossings||b.route_failures.length||b.unplaced_port_labels.length)return baseline;
+    const shared=new Set((baseline.prepared.routing?.shared_fanout_refinement?.selected||[]).flatMap(r=>r.edges));
+    const scored=baseline.prepared.routes.map(e=>({edge:e,score:baseline.prepared.routes.reduce((sum,f)=>sum+(e.id===f.id?0:lineGeometry([e,f]).crossings),0)}))
+      .filter(r=>r.score&&!shared.has(r.edge.id)).sort((a,c)=>c.score-a.score||a.edge.id.localeCompare(c.edge.id)).slice(0,12);
+    const identity=clearanceIdentity(g),goals=Goals.build(ir,g.architecture),relations=realizedRelations(baseline);
+    const covered=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id));
+    const record={max_edges:12,max_candidates_per_edge:64,max_path_points:24,max_generation_attempts:8192,attempts:[],selected:[],before:clearanceMetrics(b)};
+    let chosen=baseline;
+    for(const {edge}of scored){
+      const current=chosen.prepared.routes.find(e=>e.id===edge.id),old=chosen.prepared.quality;
+      const others=chosen.prepared.routes.filter(e=>e.id!==edge.id),previous=others.map(e=>lineGeometry([current,e]));
+      const labels=chosen.prepared.labeling.placed.map(l=>({x:l.x-4,y:l.y-4,w:l.w+8,h:l.h+8}));
+      const candidates=L.routeShortcuts(current,chosen.graph.positions,labels),promising=[];
+      for(const candidate of candidates){
+        const fresh={...current,route:{...current.route,points:candidate.points}},now=others.map(e=>lineGeometry([fresh,e]));
+        const crossingGain=previous.reduce((n,q)=>n+q.crossings,0)-now.reduce((n,q)=>n+q.crossings,0);
+        // Even same-value overlaps need an explicit junction policy; a shortcut
+        // cannot silently introduce a shared stem or a new visual contact.
+        if(crossingGain<=0||now.some((q,i)=>q.unrelated_contacts.length>previous[i].unrelated_contacts.length||
+          q.overlapping_paths.reduce((n,r)=>n+r.length,0)>previous[i].overlapping_paths.reduce((n,r)=>n+r.length,0)))continue;
+        promising.push({fresh,candidate,crossingGain});
+      }
+      promising.sort((a,c)=>c.crossingGain-a.crossingGain||a.candidate.wire-c.candidate.wire);
+      for(const proposal of promising.slice(0,4)){
+        const positions=new Map(chosen.graph.positions);positions.context={...chosen.graph.positions.context,routeCache:new Map(),reserved:[]};
+        const graph={...chosen.graph,positions,constraint_receipts:JSON.parse(JSON.stringify(chosen.graph.constraint_receipts))};
+        const routes=chosen.prepared.routes.map(e=>e.id===edge.id?proposal.fresh:e);
+        const prepared=evaluateRoutes(graph,routes,b.route_strategy,chosen.prepared.labeling),q=prepared.quality;
+        const geometry=q.line_geometry.crossings<old.line_geometry.crossings&&q.wire_length<old.wire_length&&
+          q.native_width_px<=old.native_width_px&&q.native_height_px<=old.native_height_px&&fontMetric(q)>=fontMetric(old)&&
+          q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(x=>old.issues.includes(x));
+        let accepted=false;
+        if(geometry){E.auditConstraintRoutes(graph,routes);const after=realizedRelations({graph,prepared});
+          const coverage=new Set(Goals.evaluate(goals,graph,prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+          accepted=clearanceIdentity(graph)===identity&&graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
+            Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)))&&[...covered].every(id=>coverage.has(id));
+        }
+        const row={edge:edge.id,removed_span:proposal.candidate.removed_span,accepted,before:clearanceMetrics(old),candidate:clearanceMetrics(q)};
+        record.attempts.push(row);
+        if(accepted){chosen={graph,prepared};record.selected.push(row);break;}
+      }
+    }
+    if(!record.attempts.length)return baseline;
+    if(record.selected.length){
+      chosen.graph.positions.context.routeCache=new Map(chosen.prepared.routes.map(e=>[e.id,e.route]));
+      chosen.graph.positions.context.reserved=chosen.prepared.routes.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
+    }
+    record.after=clearanceMetrics(chosen.prepared.quality);
+    record.scope='Bounded shortcuts of existing crossed polylines. Fixed nodes, sides, physical terminals, canonical slots and all distant paths. Strictly fewer crossings and shorter wire; no added shared stems, contacts, body/label intrusion or lost direct goals and realized relations. No semantic inference.';
+    chosen.prepared.routing={...baseline.prepared.routing,route_shortcuts:record};return chosen;
+  }
   function normalReturnPreference(before,after){
     const cost=areaMetric(after)/Math.max(1,areaMetric(before))*
       Math.max(1,after.wire_length)/Math.max(1,before.wire_length)*
@@ -1540,7 +1595,7 @@
       ['id','source','target','canonical_source','canonical_target','resolved_source','source_port','target_port','kind','evidence',
         'condition','iteration','originals','semantic_bindings'].every(k=>JSON.stringify(a[k])===JSON.stringify(b[k])));
   }
-  function prepareFigure(ir,state={}){
+  function prepareWidthFigure(ir,state={}){
     const candidate=prepareUngatedFigure(ir,state),groups=candidate.graph.positions.context.sourceForkWidths||[];
     if(!groups.length||state.paperSourceForkWidths===false)return candidate;
     // Width padding is only a proposal. Measure the complete final drawing
@@ -1578,6 +1633,11 @@
       before:clearanceMetrics(b),candidate:clearanceMetrics(q),max_dimension_ratio:1.05,max_area_ratio:1.05,max_wire_ratio:1.05,
       scope:'One complete measured comparison of small equal-width padding for exact external-source consumers. No additional crossings, contacts, ambiguous overlaps, routing or label failures; existing bindings, direct goals, applied constraints, entries and path columns survive. An optional context gutter may be replaced on the same exact use only with strictly fewer crossings and shorter paths, preserving explicit channel choices. At most 5% global footprint and wire growth. No execution or operation-equivalence assertion.'}};
     return selected;
+  }
+  function prepareFigure(ir,state={}){
+    // Hold the final semantic frontier and all prior layout choices fixed.
+    // Shortcuts cannot affect adaptive folding or earlier profile selection.
+    return attachExpressionEvidence(ir,prepareRouteShortcuts(ir,state,prepareWidthFigure(ir,state)));
   }
   function render(ir,state){
     E.validate(ir);state={...state,view:'publication'};return renderPrepared(ir,state,prepareFigure(ir,state));
@@ -1631,5 +1691,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={sourceForkContextBinding,normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={prepareRouteShortcuts,sourceForkContextBinding,normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

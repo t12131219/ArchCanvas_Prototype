@@ -1154,6 +1154,47 @@
     return {points,ok,reason:ok?null:'endpoint-stub-obstructed',feedback:e.source===e.target||context?.feedback.has(e.id)||false,
       source_side:ss,target_side:ts};
   }
+  // Shorten an existing orthogonal subpath without moving either terminal.
+  // This is a geometry proposal only; the renderer must measure conflicts,
+  // labels, exact uses and realized relations before accepting a shortcut.
+  function routeShortcuts(edge,positions,labelBoxes=[]){
+    const ctx=positions.context,ps=edge.route?.points;
+    if(!edge.route?.ok||!ps||ps.length<4||ps.length>24||edge.bundle_members||edge.design_route||edge.context_lane||edge.layout_after||edge.iteration||
+      ctx?.feedback?.has(edge.id)||!['data','alias','interface-binding','parameter-read','buffer-read'].includes(edge.kind))return [];
+    const length=points=>points.reduce((sum,p,i)=>sum+(i?Math.abs(p.x-points[i-1].x)+Math.abs(p.y-points[i-1].y):0),0),before=length(ps);
+    const boxes=[...routeObstacles(edge,positions),...labelBoxes],seen=new Set(),result=[];
+    const simplify=points=>{const out=[];for(const p of points){if(out.at(-1)?.x===p.x&&out.at(-1)?.y===p.y)continue;
+      while(out.length>1){const a=out.at(-2),b=out.at(-1);
+        if(a.x===b.x&&b.x===p.x&&b.y>=Math.min(a.y,p.y)&&b.y<=Math.max(a.y,p.y)||
+          a.y===b.y&&b.y===p.y&&b.x>=Math.min(a.x,p.x)&&b.x<=Math.max(a.x,p.x))out.pop();else break;}out.push({...p});}return out;};
+    const direction=(a,b)=>[Math.sign(b.x-a.x),Math.sign(b.y-a.y)].join(',');
+    const selfClear=points=>{
+      for(let i=1;i<points.length-1;i++){const a=points[i-1],b=points[i],c=points[i+1];
+        if(a.x===b.x&&b.x===c.x||a.y===b.y&&b.y===c.y)return false;
+      }
+      for(let i=1;i<points.length;i++)for(let j=i+2;j<points.length;j++){
+      const a=points[i-1],b=points[i],c=points[j-1],d=points[j];
+      if(Math.max(Math.min(a.x,b.x),Math.min(c.x,d.x))<=Math.min(Math.max(a.x,b.x),Math.max(c.x,d.x))&&
+        Math.max(Math.min(a.y,b.y),Math.min(c.y,d.y))<=Math.min(Math.max(a.y,b.y),Math.max(c.y,d.y)))return false;
+    }return true;};
+    const xs=[...new Set([...ps.flatMap(p=>[p.x-4,p.x+4,p.x-12,p.x+12]),...boxes.flatMap(r=>[r.x-2,r.x+r.w+2])])];
+    const ys=[...new Set([...ps.flatMap(p=>[p.y-4,p.y+4,p.y-12,p.y+12]),...boxes.flatMap(r=>[r.y-2,r.y+r.h+2])])];
+    // Wider removed spans first. Bound work independently of graph/source names.
+    let attempts=0;
+    outer:for(let span=ps.length-1;span>=2;span--)for(let i=0;i+span<ps.length;i++){
+      const j=i+span,a=ps[i],b=ps[j],middles=[[{x:a.x,y:b.y}],[{x:b.x,y:a.y}],
+        ...xs.map(x=>[{x,y:a.y},{x,y:b.y}]),...ys.map(y=>[{x:a.x,y},{x:b.x,y}])];
+      for(const middle of middles){if(++attempts>8192)break outer;
+        const points=simplify([...ps.slice(0,i+1),...middle,...ps.slice(j)]),wire=length(points);
+        if(wire>=before-.1||points.length<2||direction(ps[0],ps[1])!==direction(points[0],points[1])||
+          direction(ps.at(-2),ps.at(-1))!==direction(points.at(-2),points.at(-1)))continue;
+        const key=JSON.stringify(points);if(seen.has(key))continue;seen.add(key);
+        if(!selfClear(points)||points.some((p,k)=>k&&blocked(points[k-1],p,boxes)))continue;
+        result.push({points,wire,removed_span:[i,j]});
+      }
+    }
+    return result.sort((a,b)=>a.wire-b.wire||a.points.length-b.points.length).slice(0,64);
+  }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={routeShortcuts,layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

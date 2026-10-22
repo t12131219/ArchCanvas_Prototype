@@ -1086,12 +1086,13 @@
   }
   function prepareFinalSampleFrames(ir,state,baseline){
     const g=baseline.graph,b=baseline.prepared.quality;
-    if(b.medium!=='canvas'||g.publication.granularity!=='roles'||state.paperFinalSampleFrames===false||state.paperSampleFrame!==undefined||
+    if(b.medium!=='canvas'||!['stages','roles'].includes(g.publication.granularity)||state.paperFinalSampleFrames===false||state.paperSampleFrame!==undefined||
       state.paperFrameView==='source'||state.paperProtectFrameTitles===true||Object.keys(state.offsets||{}).length||g.edges.length>128)return baseline;
     const F=root.SemanticFrameOwnership||(typeof require==='function'?require('./frame-ownership.js'):null);
     const frames=[...F.select({ir,idx:g.idx,visible:new Set(g.positions.keys()),open:new Set(g.publication.open),
       roots:[g.publication.focus],flattenSequenceSamples:true}).values()].filter(r=>r.kind==='sequence-sample');
     if(!frames.length)return baseline;
+    E.auditConstraintRoutes(g,baseline.prepared.routes);
     const copy=x=>JSON.parse(JSON.stringify(x)),ids=new Set(frames.map(r=>r.node));
     if(g.edges.some(e=>ids.has(e.source)||ids.has(e.target))||g.positions.context.contextLanes.some(r=>ids.has(r.owner)))return baseline;
     const targets=new Map(frames.map(r=>[r.node,r.target])),destination=id=>targets.get(id)||id;
@@ -1137,14 +1138,19 @@
     const applied=new Set(g.constraint_receipts.filter(c=>c.status==='applied').map(c=>c.id)),goals=Goals.build(ir,g.architecture);
     const done=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
     const evaluated=Goals.evaluate(goals,graph,prepared,ir),covered=new Set(evaluated.filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const summaries=SummaryGoals.build(ir,g.architecture);
+    const summarized=new Set(SummaryGoals.evaluate(summaries,ir,g,baseline.prepared).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const summaryEvaluation=SummaryGoals.evaluate(summaries,ir,graph,prepared),summaryCovered=new Set(summaryEvaluation.filter(r=>r.status==='fulfilled').map(r=>r.goal));
     const accepted=areaMetric(q)<areaMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<b.native_height_px&&q.wire_length<=b.wire_length&&fontMetric(q)>=fontMetric(b)&&
       q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
       q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
       q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(issue=>b.issues.includes(issue))&&
-      graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...done].every(id=>covered.has(id));
+      graph.constraint_receipts.every(c=>!applied.has(c.id)||c.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)))&&[...done].every(id=>covered.has(id))&&[...summarized].every(id=>summaryCovered.has(id));
     const chosen=accepted?trial:baseline;
     chosen.prepared.routing={...baseline.prepared.routing,final_sample_frame_refinement:{accepted,frames,windows,bands,before:clearanceMetrics(b),candidate:clearanceMetrics(q),
       realized_before:before,realized_candidate:after,direct_goals_before:done.size,direct_goals_candidate:covered.size,
+      summary_goals_before:summarized.size,summary_goals_candidate:summaryCovered.size,
+      lost_summaries:summaryEvaluation.filter(r=>summarized.has(r.goal)&&r.status!=='fulfilled'),
       lost_goals:evaluated.filter(r=>done.has(r.goal)&&r.status!=='fulfilled'),
       scope:'One final ownership candidate, no rerouting. A common monotone map removes globally empty title bands, preserving concrete nodes, horizontal wires, labels, terminals and exact bindings; no call equivalence or execution claim.'}};
     return chosen;

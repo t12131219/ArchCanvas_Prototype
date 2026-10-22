@@ -84,9 +84,28 @@
     positions.context={...old.context,idx,edges:graph.edges,routeCache:new Map(),reserved:[],
       compoundAlignments:[],contextLanes:[],branchColumns:[],rankClearances:[],inputDocks:[],fixedInputs:[],sourceForkWidths:[],
       crossScopePorts:[],coincidentPorts:[],localBypassScopes:[],entryBandRouting:false};
+    const facing=[];
+    for(const e of graph.edges){
+      if(!ordinary(e)||e.design_route||e.context_lane||old.context.feedback?.has(e.id))continue;
+      const a=positions.get(e.source),b=positions.get(e.target),sp=parents(e.source),tp=parents(e.target);
+      const common=sp.find(id=>tp.includes(id));
+      const branch=(path)=>path[path.indexOf(common)-1];
+      const left=positions.get(branch(sp)),right=positions.get(branch(tp));
+      const dock=docks.find(d=>d.node===e.source&&d.kind==='side');
+      const separate=left&&right&&left!==right&&left.expanded&&right.expanded&&
+        (left.x+left.w<=right.x||right.x+right.w<=left.x);
+      const externalInput=by.get(e.source)?.kind==='interface'&&by.get(e.source)?.role==='input'&&tp.includes(idx.nodes.get(e.source)?.parent);
+      if(!dock&&!separate&&!externalInput)continue;
+      // A primary one-use entry remains on its local vertical main chain.
+      if(externalInput&&!dock&&graph.edges.filter(x=>x.source===e.source).length===1)continue;
+      const sourceSide=a.x+a.w/2<=b.x+b.w/2?'right':'left',targetSide=sourceSide==='right'?'left':'right';
+      facing.push({edge:e.id,source_side:sourceSide,target_side:targetSide,
+        scope:'Existing cross-region or side-input binding faces its consumer. Canonical source, result slot, target and operand remain distinct.'});
+    }
+    positions.context.crossScopePorts=facing;
     const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
     const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
-    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:2,records,input_docks:docks}}};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:3,records,input_docks:docks,facing}}};
     return result;
   }
   const api={compose};root.SemanticCompositionLayout=api;if(typeof module!=='undefined')module.exports=api;

@@ -32,3 +32,12 @@ test('input docking uses the common receiving scope and keeps every canonical us
  }
  const shared=g.nodes.find(n=>n.label==='src_key_padding_mask');assert.ok(!docks.some(d=>d.node===shared.id));
 });
+test('cross-region input terminals face the original consumers without changing operand identity',()=>{
+ const ir=JSON.parse(fs.readFileSync('verification/helper-contracts/current/Transformer-current.json'));
+ const a=E.project(ir,{...state,paperSampleFrame:true}),b=C.compose(a,state);
+ assert.ok(b.positions.context.crossScopePorts.length>=6);assert.deepEqual(a.edges,b.edges);
+ for(const row of b.positions.context.crossScopePorts){
+  const edge=b.edges.find(e=>e.id===row.edge);assert.ok(edge);
+  assert.ok(row.source_side!==row.target_side);assert.ok(!edge.condition&&!edge.design_route);
+ }
+});

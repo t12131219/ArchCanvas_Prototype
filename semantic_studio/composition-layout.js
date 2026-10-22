@@ -19,7 +19,7 @@
     for(const n of source.nodes.values())if(!by.has(n.id)){
       if(!idx.children.has(n.parent||null))idx.children.set(n.parent||null,[]);idx.children.get(n.parent||null).push(n.id);
     }
-    const positions=new Map(),records=[],docks=[],followers=[];
+    const positions=new Map(),records=[],docks=[],followers=[],streamAlignments=[];
     const parents=id=>{const ids=[];while(id){ids.push(id);id=idx.nodes.get(id)?.parent;}return ids;};
     const ordinary=e=>(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
     for(const n of nodes){
@@ -80,6 +80,40 @@
         for(const row of rows)row.ids=row.ids.filter(c=>!streams.includes(c));
         rows.push({y:first+.1,ids:streams.slice().sort((a,b)=>old.get(a).x-old.get(b).x)});
         rows.splice(0,rows.length,...rows.filter(r=>r.ids.length).sort((a,b)=>a.y-b.y));
+        // Keep independent entry chains on their shared entry baseline while
+        // aligning their exit-side expanded cores. Extra height belongs to
+        // the gap before the core, not above a shorter enclosing stream.
+        // This uses measured dependency rows, never module names or roles.
+        const height=Math.max(...streams.map(c=>positions.get(c).h));
+        for(const child of streams){
+          const p=positions.get(child),extra=height-p.h;
+          if(extra<=0)continue;
+          const record=records.find(r=>r.node===child);
+          if(!record)continue;
+          const expandedRows=record.rows.map((ids,i)=>({i,ids:ids.filter(id=>positions.get(id)?.expanded)})).filter(r=>r.ids.length);
+          const last=expandedRows.at(-1);
+          if(!last||last.i===0||last.ids.length!==1)continue;
+          const landmark=last.ids[0],members=record.rows.flat(),memberSet=new Set(members);
+          if(members.some(id=>{const n=by.get(id);return n.condition||n.mutable||['opaque','control'].includes(n.kind);} ))continue;
+          const branchOf=id=>{let at=id;while(at&&!memberSet.has(at))at=idx.nodes.get(at)?.parent;return at;};
+          const links=new Map(members.map(id=>[id,new Set()]));
+          let guarded=false;
+          for(const e of graph.edges){const a=branchOf(e.source),b=branchOf(e.target);if(!a||!b||a===b)continue;
+            if(!ordinary(e)||(e.design_route&&e.design_route.kind!=='bypass')||old.context.feedback?.has(e.id)){guarded=true;break;}links.get(a).add(b);
+          }
+          if(guarded)continue;
+          const reaches=(from,to)=>{const todo=[from],seen=new Set();for(let i=0;i<todo.length;i++){const at=todo[i];if(at===to)return true;if(seen.has(at))continue;seen.add(at);todo.push(...links.get(at)||[]);}return false;};
+          // Require a strictly ordered corridor at this sibling frontier.
+          // Parallel branches, cycles and disconnected islands keep their
+          // geometry. A certified forward bypass is still an ordinary use.
+          if(members.some((a,i)=>members.slice(i+1).some(b=>reaches(a,b)===reaches(b,a))))continue;
+          const boundary=Math.min(...record.rows[last.i].map(id=>positions.get(id).y));
+          const shifted=children(child).filter(id=>positions.get(id).y>=boundary);
+          for(const id of shifted)positions.get(id).y+=extra;
+          p.h=height;record.after.h=height;
+          streamAlignments.push({owner:id,stream:child,landmark,extra_height:extra,shifted,
+            scope:'Equal measured stream height; the dependency corridor receives slack before its exit-side expanded core. Entry identity, source ownership and every edge remain unchanged.'});
+        }
       }
       const gutter=original.design_gutter||0,pad=18,gap=32;
       p.w=Math.max(w,...rows.map(r=>r.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+Math.max(0,r.ids.length-1)*72+pad*2+gutter));
@@ -160,7 +194,7 @@
     positions.context.crossScopePorts=facing;
     const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
     const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
-    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:5,direction:state.paperDirection==='up'?'up':'down',records,input_docks:docks,facing,followers}}};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:6,direction:state.paperDirection==='up'?'up':'down',records,input_docks:docks,facing,followers,stream_alignments:streamAlignments}}};
     return result;
   }
   function frontier(state,action){

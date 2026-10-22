@@ -130,3 +130,51 @@ test('a composed drawing with unresolved labels retains a clean dependency drawi
   assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
  }
 });
+const sensor=()=>JSON.parse(fs.readFileSync('verification/stream-alignment/current/SensorFusion.json'));
+const sensorState=ir=>({...state,paperGranularity:'all',paperAuto:false,open:ir.nodes.filter(n=>n.kind==='composite').map(n=>n.id)});
+test('unequal convolution and dense streams align exit-side cores and entry baselines in either direction without changing facts',()=>{
+ for(const direction of ['up','down']){
+  const ir=sensor(),raw=JSON.stringify(ir),s={...sensorState(ir),paperDirection:direction},g=E.project(ir,s),c=C.compose(g,s);
+  assert.equal(JSON.stringify(ir),raw);assert.deepEqual(c.edges,g.edges);assert.deepEqual(c.node_accounting,g.node_accounting);assert.deepEqual(c.edge_accounting,g.edge_accounting);
+  assert.equal(c.publication.composition.stream_alignments.length,1);
+  const at=label=>c.positions.get(c.nodes.find(n=>n.label===label).id);
+  const a=at('self.image_core'),b=at('self.vector_core'),i=at('image'),v=at('vector');
+  assert.equal(direction==='up'?a.y:a.y+a.h,direction==='up'?b.y:b.y+b.h);
+  assert.equal(i.y,v.y);assert.equal(at('self.image_path').y,at('self.vector_path').y);
+  for(const n of c.nodes){const p=c.positions.get(n.id),parent=c.positions.get(c.idx.nodes.get(n.id).parent);if(parent){
+   assert.ok(p.y>=parent.y+parent.header);assert.ok(p.y+p.h<=parent.y+parent.h);
+  }}
+ }
+});
+test('stream geometry depends on dependency structure rather than model, module labels or source names',()=>{
+ const ir=sensor(),s=sensorState(ir),before=C.compose(E.project(ir,s),s);
+ for(const n of ir.nodes){n.label='unfamiliar '+n.id.length;n.source=[];delete n.source_class;delete n.module_path;}
+ const after=C.compose(E.project(ir,s),s);
+ assert.deepEqual(after.publication.composition.stream_alignments.map(r=>r.stream),before.publication.composition.stream_alignments.map(r=>r.stream));
+ assert.deepEqual(after.edges,before.edges);
+});
+test('stream stretching declines conditional, mutable, unknown, feedback and disconnected sibling corridors',()=>{
+ for(const variation of ['condition','mutable','opaque','control','guarded-edge','iteration','feedback','cycle','disconnect']){
+  const ir=sensor(),s=sensorState(ir),g=E.project(ir,s),member=g.nodes.find(n=>n.label==='lift · Linear');
+  const outgoing=g.edges.find(e=>e.source===member.id),core=g.nodes.find(n=>n.label==='self.vector_core');
+  if(['condition','mutable','opaque','control'].includes(variation)){
+   if(variation==='condition')member.condition='guard';else if(variation==='mutable')member.mutable=true;else member.kind=variation;
+  }else if(variation==='guarded-edge')outgoing.condition='guard';
+  else if(variation==='iteration')outgoing.iteration='next';
+  else if(variation==='feedback')outgoing.design_route={kind:'iteration-feedback'};
+  else if(variation==='cycle')g.edges.push({...outgoing,id:'cycle',source:outgoing.target,target:member.id});
+  else g.edges=g.edges.filter(e=>e!==outgoing);
+  assert.ok(core);assert.deepEqual(C.compose(g,s).publication.composition.stream_alignments,[],variation);
+ }
+});
+test('unordered parallel siblings are not stretched into a purported serial corridor',()=>{
+ const ir=sensor(),s=sensorState(ir),g=E.project(ir,s),seed=g.nodes.find(n=>n.label==='lift · Linear');
+ const edge=g.edges.find(e=>e.source===seed.id),target=edge.target;
+ g.edges=g.edges.filter(e=>e!==edge);
+ for(const suffix of ['one','two']){
+  const n={...seed,id:seed.id+':'+suffix,label:suffix};g.nodes.push(n);g.idx.nodes.set(n.id,n);
+  g.idx.children.get(n.parent).push(n.id);g.positions.set(n.id,{...g.positions.get(seed.id),id:n.id});
+  g.edges.push({...edge,id:suffix+'-in',source:seed.id,target:n.id},{...edge,id:suffix+'-out',source:n.id,target});
+ }
+ assert.deepEqual(C.compose(g,s).publication.composition.stream_alignments,[]);
+});

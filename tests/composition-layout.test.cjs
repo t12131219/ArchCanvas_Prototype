@@ -178,3 +178,50 @@ test('unordered parallel siblings are not stretched into a purported serial corr
  }
  assert.deepEqual(C.compose(g,s).publication.composition.stream_alignments,[]);
 });
+test('empty captions have no phantom line and saved text rows equal the actual rendered rows',()=>{
+ const ir=sensor(),s=sensorState(ir),r=R.render(ir,s);
+ for(const n of r.graph.nodes){const p=r.graph.positions.get(n.id);
+  assert.deepEqual(p.lines,n.paper.lines);assert.deepEqual(p.captions,n.paper.captions);
+  if(!n.paper.caption&&!n.paper.read_binding_rows)assert.deepEqual(p.captions,[]);
+ }
+ const input=r.graph.nodes.find(n=>n.label==='image');
+ assert.ok(!R.nodeBody(input,r.graph.positions.get(input.id)).includes('paper-caption'));
+ const before=JSON.parse(fs.readFileSync('verification/stream-alignment/current/SensorFusion-up.layout.json'));
+ const up=R.render(ir,{...s,paperDirection:'up'});
+ assert.ok(up.prepared.quality.native_width_px*up.prepared.quality.native_height_px<before.layout.bounds.w*before.layout.bounds.h);
+ assert.deepEqual(up.prepared.quality.issues,[]);
+ assert.equal(R.render(up.document.ir,up.document.state).svg,up.svg);
+});
+test('only redundant source-kind captions of expanded frames move to recoverable title evidence',()=>{
+ const ir=sensor(),s=sensorState(ir),g=E.project(ir,s),c=C.compose(g,s),notes=c.publication.composition.source_kind_notes;
+ assert.ok(notes.length);
+ for(const note of notes){
+  const n=c.nodes.find(n=>n.id===note.node);assert.equal(g.nodes.find(n=>n.id===note.node).paper.caption,note.caption);
+  assert.equal(n.paper.caption,'');assert.deepEqual(n.paper.captions,[]);
+  assert.ok(R.nodeTitle(n,c.idx).includes('Source kind: '+note.caption));
+  assert.ok(R.nodeTitle(n,c.idx).includes(note.scope));assert.deepEqual(c.positions.get(n.id).source_kind_note,note);
+ }
+ // Proof-specific convolution captions remain on the unfamiliar model.
+ const conv=c.nodes.find(n=>n.label==='self.image_core');assert.equal(conv.paper.caption,'convolutional network');
+ for(const variation of ['condition','mutable','identity','observed','unknown','role','opaque']){
+  const fresh=sensor(),g=E.project(fresh,sensorState(fresh)),n=g.nodes.find(n=>n.label==='self.vector_path');
+  if(variation==='identity')n.identity_display={};else if(variation==='observed')n.observed_calls={observations:[]};
+  else if(variation==='unknown')n.paper.unknown_count=1;else if(variation==='role')n.role_annotations=[{}];
+  else if(variation==='opaque')n.kind='opaque';else n[variation]=true;
+  assert.ok(!C.compose(g,s).publication.composition.source_kind_notes.some(r=>r.node===n.id),variation);
+ }
+});
+test('streams with different proof heading lengths preserve aligned cores and inputs in both flow directions',()=>{
+ const ir=sensor();
+ for(const direction of ['up','down']){
+  const s={...sensorState(ir),paperDirection:direction},g=E.project(ir,s),c=C.compose(g,s);
+  assert.ok(c.publication.composition.stream_headings.length);
+  const at=label=>c.positions.get(c.nodes.find(n=>n.label===label).id),a=at('self.image_core'),b=at('self.vector_core');
+  assert.equal(direction==='up'?a.y:a.y+a.h,direction==='up'?b.y:b.y+b.h);
+  assert.equal(at('image').y,at('vector').y);
+  for(const n of c.nodes){const p=c.positions.get(n.id),parent=c.positions.get(c.idx.nodes.get(n.id).parent);if(parent){
+   assert.ok(p.y>=parent.y+parent.header);assert.ok(p.y+p.h<=parent.y+parent.h);
+  }}
+  assert.deepEqual(c.edges,g.edges);
+ }
+});

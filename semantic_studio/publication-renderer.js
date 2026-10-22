@@ -21,7 +21,7 @@
     const contents=n.content_inventory;
     const pipeline=n.local_pipeline,labels=new Map(pipeline?.operations.map(o=>[o.node,o.label])||[]);
     const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
-    return [n.label,...(n.paper?.call_boundary?[n.paper.call_boundary.scope,'Expand to inspect the retained dependency DAG and exact operand bindings.']:[]),...(n.transform_configurations||[]).flatMap(r=>['Source literal configuration: '+r.text,r.scope,
+    return [n.label,...(n.paper?.source_kind_note?['Source kind: '+n.paper.source_kind_note.caption,n.paper.source_kind_note.scope]:[]),...(n.paper?.call_boundary?[n.paper.call_boundary.scope,'Expand to inspect the retained dependency DAG and exact operand bindings.']:[]),...(n.transform_configurations||[]).flatMap(r=>['Source literal configuration: '+r.text,r.scope,
       'Original operation: '+r.node+'; slots: '+JSON.stringify(r.slots)]),...(n.normal_return?[n.normal_return.scope,'Selected source return: '+n.normal_return.selected_return.node,
       'Fixed predicate: '+n.normal_return.predicate.slot+' = '+n.normal_return.predicate.value,
       'Retained source-alternative inputs: '+JSON.stringify(n.normal_return.alternative_inputs)]:[]),...(n.module_arguments||[]).flatMap(r=>[r.label,r.scope,'Reference: '+r.module_identity,JSON.stringify(r.edge),'Construction evidence: '+JSON.stringify(r.proof.construction_evidence)]),...(n.invocation_binding?['Fixed call argument: '+n.invocation_binding.label,n.invocation_binding.proof_scope,n.invocation_binding.claim,

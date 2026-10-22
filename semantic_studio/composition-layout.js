@@ -19,7 +19,11 @@
     for(const n of source.nodes.values())if(!by.has(n.id)){
       if(!idx.children.has(n.parent||null))idx.children.set(n.parent||null,[]);idx.children.get(n.parent||null).push(n.id);
     }
-    const positions=new Map(),records=[],docks=[],followers=[],streamAlignments=[];
+    const positions=new Map(),records=[],docks=[],followers=[],streamAlignments=[],sourceKindNotes=[],streamHeadings=[];
+    // Typographic sizes apply to every model. Evidence-heavy summaries keep
+    // their wider source size; a semantic role path uses the same narrow
+    // column regardless of which certificate established that path.
+    const metrics={card_min_width:240,card_max_width:320,title_fit:'bounded-natural-width',role_path_width:192,sibling_gap:48,sequence_gap:24};
     const parents=id=>{const ids=[];while(id){ids.push(id);id=idx.nodes.get(id)?.parent;}return ids;};
     const ordinary=e=>(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
     for(const n of nodes){
@@ -40,10 +44,19 @@
     function measure(id){
       const n=by.get(id),original=old.get(id),kids=children(id);
       const p={...original,x:0,y:0};positions.set(id,p);
-      const w=original.symbol?original.w:n.kind==='interface'?Math.max(154,original.w):n.role_path_stage?240:Math.max(320,Math.min(480,original.w));
+      const sourceKind=n.semantic_type==='source-function'?['Function']:n.semantic_type==='source-module'?['Module','Source module']:[];
+      if(n.kind==='composite'&&original.expanded&&kids.length&&sourceKind.includes(n.paper.caption)&&!n.paper.unknown_count&&!n.condition&&!n.mutable&&
+        !n.identity_display&&!n.observed_calls&&!n.role_annotations?.length){
+        const note={schema:'source-kind-note/1',node:id,semantic_type:n.semantic_type,caption:n.paper.caption,
+          scope:'Only the generic source-kind caption of an expanded frame is moved to its title and inspector. Algorithm, identity, configuration and boundary evidence remain printed.'};
+        n.paper.source_kind_note=note;p.source_kind_note=note;sourceKindNotes.push(note);n.paper.caption='';n.paper.captions=[];
+      }
+      const w=original.symbol?original.w:n.kind==='interface'?Math.max(154,original.w):n.role_path_stage?metrics.role_path_width:
+        Math.max(metrics.card_min_width,Math.min(metrics.card_max_width,Math.max(original.w,Math.ceil(P.width(n.paper.title,n.paper.font)+28))));
       const complex=n.paper.read_binding_rows||n.paper.call_boundary||n.local_pipeline;
-      const captions=complex?n.paper.captions.flatMap(s=>P.wrap(s,w-28,13)):P.wrap(n.paper.caption,w-28,13);
+      const captions=complex?n.paper.captions.flatMap(s=>P.wrap(s,w-28,13)):n.paper.caption?P.wrap(n.paper.caption,w-28,13):[];
       Object.assign(n.paper,{lines:P.wrap(n.paper.title,w-28,n.paper.font),captions,w});
+      Object.assign(p,{lines:n.paper.lines,caption:n.paper.caption,captions,font:n.paper.font});
       const textHeight=22+n.paper.lines.length*20+captions.length*16;
       if(!original.expanded||!kids.length){p.w=w;p.h=original.symbol?original.h:Math.max(n.kind==='interface'?44:54,textHeight);n.paper.h=p.h;return p;}
       for(const child of kids)measure(child);
@@ -76,6 +89,18 @@
         graph.edges.filter(v=>v.source===e.source).length===1&&!graph.edges.some(v=>v.target===e.source)&&
         !by.get(e.source)?.invocation_binding&&(()=>{let at=source.nodes.get(e.source)?.parent;while(at){if(at===child)return false;at=source.nodes.get(at)?.parent;}return true;})()));
       if(streams.length>1){
+        // Different proof captions may need different heading heights. Give
+        // aligned input regions the same heading band before stretching the
+        // body; otherwise shorter headings move a core above its peer.
+        const header=Math.max(...streams.map(c=>positions.get(c).header));
+        for(const child of streams){
+          const p=positions.get(child),extra=header-p.header;if(extra<=0)continue;
+          for(const id of children(child))positions.get(id).y+=extra;
+          p.header=header;p.h+=extra;
+          const record=records.find(r=>r.node===child);if(record)record.after.h=p.h;
+          streamHeadings.push({owner:id,stream:child,extra_height:extra,header,
+            scope:'A shared measured heading band preserves all proof captions and keeps entry and core alignment independent of caption length.'});
+        }
         const first=Math.min(...streams.map(c=>rank[unit.get(c)]));
         for(const row of rows)row.ids=row.ids.filter(c=>!streams.includes(c));
         rows.push({y:first+.1,ids:streams.slice().sort((a,b)=>old.get(a).x-old.get(b).x)});
@@ -115,8 +140,8 @@
             scope:'Equal measured stream height; the dependency corridor receives slack before its exit-side expanded core. Entry identity, source ownership and every edge remain unchanged.'});
         }
       }
-      const gutter=original.design_gutter||0,pad=18,gap=32;
-      p.w=Math.max(w,...rows.map(r=>r.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+Math.max(0,r.ids.length-1)*72+pad*2+gutter));
+      const gutter=original.design_gutter||0,pad=18,gap=metrics.sequence_gap;
+      p.w=Math.max(w,...rows.map(r=>r.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+Math.max(0,r.ids.length-1)*metrics.sibling_gap+pad*2+gutter));
       const bodyWidth=p.w;
       const sideInline=side.length&&side.every(child=>{
         const targets=graph.edges.filter(e=>e.source===child).map(e=>branch(e.target)).filter(Boolean);
@@ -125,13 +150,14 @@
       });
       if(side.length&&!sideInline)p.w+=Math.max(...side.map(c=>positions.get(c).w))+32;
       n.paper.lines=P.wrap(n.paper.title,p.w-28,n.paper.font);
-      n.paper.captions=P.wrap(n.paper.caption,p.w-28,13);
+      n.paper.captions=n.paper.caption?P.wrap(n.paper.caption,p.w-28,13):[];
+      Object.assign(p,{lines:n.paper.lines,captions:n.paper.captions});
       p.header=22+n.paper.lines.length*20+n.paper.captions.length*16+12;
       let y=p.header;
       for(const row of rows){
-        const width=row.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+(row.ids.length-1)*72;
+        const width=row.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+(row.ids.length-1)*metrics.sibling_gap;
         let x=gutter+pad+(bodyWidth-gutter-pad*2-width)/2;
-        for(const child of row.ids){const c=positions.get(child);Object.assign(c,{x,y});x+=c.w+72;}
+        for(const child of row.ids){const c=positions.get(child);Object.assign(c,{x,y});x+=c.w+metrics.sibling_gap;}
         y+=Math.max(...row.ids.map(c=>positions.get(c).h))+gap;
       }
       p.h=y-gap+pad;
@@ -161,7 +187,7 @@
       return p;
     }
     const roots=nodes.filter(n=>!by.has(idx.nodes.get(n.id)?.parent)).map(n=>n.id);
-    let x=32;for(const id of roots){const p=measure(id);p.x=x;p.y=30;x+=p.w+72;}
+    let x=32;for(const id of roots){const p=measure(id);p.x=x;p.y=30;x+=p.w+metrics.sibling_gap;}
     // Reverse body rows only. Headings remain above their own body and text
     // is never reflected. The router then recomputes actual upward paths.
     if(state.paperDirection==='up')for(const id of nodes.map(n=>n.id)){
@@ -194,7 +220,7 @@
     positions.context.crossScopePorts=facing;
     const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
     const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
-    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:6,direction:state.paperDirection==='up'?'up':'down',records,input_docks:docks,facing,followers,stream_alignments:streamAlignments}}};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:7,direction:state.paperDirection==='up'?'up':'down',metrics,records,input_docks:docks,facing,followers,stream_alignments:streamAlignments,stream_headings:streamHeadings,source_kind_notes:sourceKindNotes}}};
     return result;
   }
   function frontier(state,action){

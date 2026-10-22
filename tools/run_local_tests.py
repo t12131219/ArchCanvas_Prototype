@@ -64,6 +64,7 @@ COMMANDS = {
     'shared-fanouts': ['node', 'tests/shared-fanouts.test.cjs'],
     'transform-configurations': ['node', 'tests/transform-configurations.test.cjs'],
     'source-port-order': ['node', 'tests/source-port-order.test.cjs'],
+    'transform-operands': ['node', 'tests/transform-operands.test.cjs'],
     'residual-bands': ['node', 'tests/residual-bands.test.cjs'],
     'selected-contexts': ['node', 'tests/selected-contexts.test.cjs'],
     'detail-alternatives': ['node', 'tests/detail-alternatives.test.cjs'],

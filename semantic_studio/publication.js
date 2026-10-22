@@ -872,7 +872,7 @@
     // neither label alone proves tensor rank, valid shapes or axis meanings.
     const transformEngine=canvas&&granularity==='roles'&&state.paperTransformConfigurations!==false?
       (root.SemanticTransformConfigurations||(typeof require==='function'?require('./transform-configurations.js'):null)):null;
-    const transformConfigurations=transformEngine?.compile(ir);
+    const transformConfigurations=transformEngine?.compile(ir,{operands:state.paperTransformOperands!==false});
     if(transformConfigurations){
       focused.plan.nodes=focused.plan.nodes.map(n=>{
         const operations=n.role_path_stage?.operations||(!n.local_pipeline_expanded?n.local_pipeline?.operations:null)||[{node:n.id}];

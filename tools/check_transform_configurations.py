@@ -57,7 +57,7 @@ def check_literal(ir, row):
         n = nodes.get(n.get('parent'))
 
 
-def inspect(capture, name):
+def inspect(capture, name, operation_checker=check_literal):
     for key in ['svg', 'document']:
         assert sha(OUT / capture[key]) == capture[key + '_sha256']
     doc = read(OUT / capture['document'])
@@ -86,7 +86,7 @@ def inspect(capture, name):
         owner = next(n for n in doc['architecture']['nodes'] if n['id'] == row['node'])
         assert owner['transform_configurations'] == row['operations']
         for operation in row['operations']:
-            check_literal(doc['ir'], operation)
+            operation_checker(doc['ir'], operation)
             assert normalized(operation['display_text']) in printed
             count += 1
     for key, canonical in [('node_accounting', doc['ir']['nodes']), ('edge_accounting', doc['ir']['edges'])]:

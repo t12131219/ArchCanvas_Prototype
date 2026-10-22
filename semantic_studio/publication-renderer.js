@@ -1491,6 +1491,15 @@
     chosen=prepareSharedFanouts(ir,state,chosen);
     return chosen;
   }
+  function normalReturnPreference(before,after){
+    const cost=areaMetric(after)/Math.max(1,areaMetric(before))*
+      Math.max(1,after.wire_length)/Math.max(1,before.wire_length)*
+      (after.line_geometry.crossings+4)/(before.line_geometry.crossings+4);
+    return {cost_ratio:cost,footprint_preserved:after.native_width_px<=before.native_width_px*1.05&&
+      after.native_height_px<=before.native_height_px*1.05&&areaMetric(after)<=areaMetric(before)*1.05,
+      benefit:cost<1-1e-9,max_dimension_ratio:1.05,max_area_ratio:1.05,
+      scope:'Bounded aspect/area tradeoff for an already proved source-return presentation. Fewer crossings or shorter paths must outweigh any footprint growth; no extra semantic coverage is earned.'};
+  }
   function prepareFigure(ir,state={}){
     let chosen=selectFigure(ir,state);
     if(chosen.prepared.quality.medium!=='canvas')chosen=prepareFinalGeometry(ir,state,chosen);
@@ -1512,16 +1521,17 @@
     E.auditConstraintRoutes(old,baseline.prepared.routes);E.auditConstraintRoutes(newGraph,chosen.prepared.routes);
     const applied=new Set(old.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),relations=realizedRelations(baseline),after=realizedRelations(chosen);
     const constraints=newGraph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)));
-    const geometry=cq.native_width_px<=bq.native_width_px&&cq.native_height_px<=bq.native_height_px&&fontMetric(cq)>=fontMetric(bq)&&
+    const preference=normalReturnPreference(bq,cq);
+    const geometry=preference.footprint_preserved&&fontMetric(cq)>=fontMetric(bq)&&
       cq.wire_length<=bq.wire_length&&cq.line_geometry.crossings<=bq.line_geometry.crossings&&
       cq.line_geometry.unrelated_contacts.length<=bq.line_geometry.unrelated_contacts.length&&cq.line_geometry.overlapping_paths.length<=bq.line_geometry.overlapping_paths.length&&
       cq.route_failures.length<=bq.route_failures.length&&cq.unplaced_port_labels.length<=bq.unplaced_port_labels.length&&cq.issues.every(issue=>bq.issues.includes(issue));
-    const benefit=cq.wire_length<bq.wire_length||areaMetric(cq)<areaMetric(bq)||cq.line_geometry.crossings<bq.line_geometry.crossings;
+    const benefit=preference.benefit;
     const accepted=facts&&direct&&constraints&&geometry&&benefit,selected=accepted?chosen:baseline;
     selected.prepared.routing={...selected.prepared.routing,normal_return_refinement:{accepted,groups:normal.map(r=>r.group),max_trials:1,
       facts_preserved:facts,direct_goals_preserved:direct,applied_relations_preserved:constraints,geometry_preserved:geometry,
-      before:clearanceMetrics(bq),candidate:clearanceMetrics(cq),
-      scope:'One measured source-invocation return presentation. Source alternatives stay attached only if frontier, exact surviving uses, prior direct goals and applied relations survive with no geometry regression. Otherwise keep the ordinary return representation.'}};
+      before:clearanceMetrics(bq),candidate:clearanceMetrics(cq),preference,
+      scope:'One measured source-invocation return presentation. Source alternatives stay attached only if frontier, exact surviving uses, prior direct goals and applied relations survive, routes and labels do not regress, wire and crossings do not increase, and bounded footprint trades lower measured total cost. Otherwise keep the ordinary return representation.'}};
     return selected;
   }
   function render(ir,state){
@@ -1572,5 +1582,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

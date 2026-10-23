@@ -19,11 +19,13 @@
     for(const n of source.nodes.values())if(!by.has(n.id)){
       if(!idx.children.has(n.parent||null))idx.children.set(n.parent||null,[]);idx.children.get(n.parent||null).push(n.id);
     }
-    const positions=new Map(),records=[],docks=[],followers=[],streamAlignments=[],sourceKindNotes=[],streamHeadings=[];
+    const positions=new Map(),records=[],docks=[],followers=[],streamAlignments=[],sourceKindNotes=[],streamHeadings=[],moduleColumns=[];
     // Typographic sizes apply to every model. Evidence-heavy summaries keep
     // their wider source size; a semantic role path uses the same narrow
     // column regardless of which certificate established that path.
-    const metrics={card_min_width:240,card_max_width:320,title_fit:'bounded-natural-width',role_path_width:192,sibling_gap:48,sequence_gap:24};
+    const columns=state.paperArchitectureColumns!==false;
+    const metrics={card_min_width:240,card_max_width:320,title_fit:'bounded-natural-width',role_path_width:192,sibling_gap:48,sequence_gap:24,
+      overview_module_em:columns&&graph.publication.granularity==='stages'?32:0};
     const parents=id=>{const ids=[];while(id){ids.push(id);id=idx.nodes.get(id)?.parent;}return ids;};
     const ordinary=e=>(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
     for(const n of nodes){
@@ -41,6 +43,22 @@
         scope:'One existing external input moved into its receiving drawing scope. Canonical parent, identity, every use and source availability remain unchanged.'});
     }
     const children=id=>(idx.children.get(id)||[]).filter(id=>old.has(id));
+    // A column is a drawing correspondence, not common computation or shared
+    // parameters. Widen existing source/semantic frames only; keep their
+    // children, headers, source ownership and all exact edges independent.
+    function widen(id,width){
+      const p=positions.get(id),n=by.get(id),extra=width-p.w,header=p.header;
+      if(extra<=0)return;
+      for(const child of children(id))positions.get(child).x+=docks.some(d=>d.node===child&&d.kind==='side')||by.get(child)?.invocation_binding?extra:extra/2;
+      p.w=width;n.paper.w=width;n.paper.lines=P.wrap(n.paper.title,width-28,n.paper.font);
+      const complex=n.paper.read_binding_rows||n.paper.call_boundary||n.local_pipeline;
+      n.paper.captions=complex?n.paper.captions.flatMap(s=>P.wrap(s,width-28,13)):
+        n.paper.caption?P.wrap(n.paper.caption,width-28,13):[];
+      Object.assign(p,{lines:n.paper.lines,captions:n.paper.captions,header:22+n.paper.lines.length*20+n.paper.captions.length*16+12});
+      for(const child of children(id))positions.get(child).y+=p.header-header;
+      p.h+=p.header-header;n.paper.h=p.h;
+      const record=records.find(r=>r.node===id);if(record)Object.assign(record.after,{w:p.w,h:p.h});
+    }
     function measure(id){
       const n=by.get(id),original=old.get(id),kids=children(id);
       const p={...original,x:0,y:0};positions.set(id,p);
@@ -51,8 +69,9 @@
           scope:'Only the generic source-kind caption of an expanded frame is moved to its title and inspector. Algorithm, identity, configuration and boundary evidence remain printed.'};
         n.paper.source_kind_note=note;p.source_kind_note=note;sourceKindNotes.push(note);n.paper.caption='';n.paper.captions=[];
       }
+      const overviewWidth=!original.expanded&&(n.kind==='composite'||n.framework_type)?metrics.overview_module_em*n.paper.font:0;
       const w=original.symbol?original.w:n.kind==='interface'?Math.max(154,original.w):n.role_path_stage?metrics.role_path_width:
-        Math.max(metrics.card_min_width,Math.min(metrics.card_max_width,Math.max(original.w,Math.ceil(P.width(n.paper.title,n.paper.font)+28))));
+        Math.max(overviewWidth,metrics.card_min_width,Math.min(metrics.card_max_width,Math.max(original.w,Math.ceil(P.width(n.paper.title,n.paper.font)+28))));
       const complex=n.paper.read_binding_rows||n.paper.call_boundary||n.local_pipeline;
       const captions=complex?n.paper.captions.flatMap(s=>P.wrap(s,w-28,13)):n.paper.caption?P.wrap(n.paper.caption,w-28,13):[];
       Object.assign(n.paper,{lines:P.wrap(n.paper.title,w-28,n.paper.font),captions,w});
@@ -83,6 +102,31 @@
         const y=rank[unit.get(child)];let row=rows.find(r=>r.y===y);if(!row){row={y,ids:[]};rows.push(row);}row.ids.push(child);
       }
       rows.sort((a,b)=>a.y-b.y);
+      if(columns){
+        // Only singleton rows on a strictly ordered data path share width.
+        // Parallel modules, cyclic siblings and source helper functions keep
+        // their own widths. No child is folded, moved to another owner or
+        // substituted by another call to obtain the alignment.
+        const candidates=rows.filter(r=>r.ids.length===1).map(r=>r.ids[0]).filter(id=>{
+          const n=by.get(id);return !n.condition&&!n.mutable&&!['opaque','control','state','buffer'].includes(n.kind)&&
+            positions.get(id).expanded&&children(id).length&&groups[unit.get(id)].length===1&&
+            (n.semantic_contracts?.length||n.contract_stage||n.semantic_type==='source-module');
+        });
+        const flow=new Map(core.map(id=>[id,new Set()]));
+        for(const e of graph.edges){const a=branch(e.source),b=branch(e.target);
+          if(a&&b&&a!==b&&ordinary(e)&&!e.layout_after&&!old.context.feedback?.has(e.id)&&(!e.design_route||e.design_route.kind==='bypass'))flow.get(a).add(b);
+        }
+        const reaches=(from,to)=>{const todo=[from],seen=new Set();for(let i=0;i<todo.length;i++){
+          const at=todo[i];if(at===to)return true;if(seen.has(at))continue;seen.add(at);todo.push(...flow.get(at)||[]);
+        }return false;};
+        if(candidates.length>1&&candidates.every((a,i)=>candidates.slice(i+1).every(b=>reaches(a,b)!==reaches(b,a)))){
+          const width=Math.max(...candidates.map(id=>positions.get(id).w));
+          const changed=candidates.filter(id=>positions.get(id).w<width).map(id=>({node:id,before:{w:positions.get(id).w,h:positions.get(id).h}}));
+          for(const r of changed){widen(r.node,width);r.after={w:positions.get(r.node).w,h:positions.get(r.node).h};}
+          if(changed.length)moduleColumns.push({owner:id,width,members:candidates,changed,
+            scope:'Expanded source and certified module frames on one strictly ordered visible data path share measured width. Every computation, call, condition, source boundary, parameter identity and exact binding is retained. Equal width asserts no semantic equivalence.'});
+        }
+      }
       const under=(child,scope)=>{let at=child;while(at){if(at===scope)return true;at=idx.nodes.get(at)?.parent;}return false;};
       const streams=core.filter(child=>old.get(child).expanded&&graph.edges.some(e=>under(e.target,child)&&
         by.get(e.source)?.kind==='interface'&&by.get(e.source)?.role==='input'&&!e.condition&&
@@ -150,7 +194,8 @@
       });
       if(side.length&&!sideInline)p.w+=Math.max(...side.map(c=>positions.get(c).w))+32;
       n.paper.lines=P.wrap(n.paper.title,p.w-28,n.paper.font);
-      n.paper.captions=n.paper.caption?P.wrap(n.paper.caption,p.w-28,13):[];
+      n.paper.captions=complex?n.paper.captions.flatMap(s=>P.wrap(s,p.w-28,13)):
+        n.paper.caption?P.wrap(n.paper.caption,p.w-28,13):[];
       Object.assign(p,{lines:n.paper.lines,captions:n.paper.captions});
       p.header=22+n.paper.lines.length*20+n.paper.captions.length*16+12;
       let y=p.header;
@@ -220,7 +265,7 @@
     positions.context.crossScopePorts=facing;
     const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
     const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
-    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:7,direction:state.paperDirection==='up'?'up':'down',metrics,records,input_docks:docks,facing,followers,stream_alignments:streamAlignments,stream_headings:streamHeadings,source_kind_notes:sourceKindNotes}}};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:8,direction:state.paperDirection==='up'?'up':'down',metrics,records,input_docks:docks,facing,followers,stream_alignments:streamAlignments,stream_headings:streamHeadings,source_kind_notes:sourceKindNotes,module_columns:moduleColumns}}};
     return result;
   }
   function frontier(state,action){

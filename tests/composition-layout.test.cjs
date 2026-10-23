@@ -3,6 +3,86 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const R=require('../semantic_studio/publication-renderer'),E=require('../semantic_studio/semantic-engine'),C=require('../semantic_studio/composition-layout');
 const read=n=>JSON.parse(fs.readFileSync('verification/call-boundaries/current/'+n+'.json'));
 const state={view:'publication',mode:'source',paperMedium:'canvas',paperGranularity:'stages',paperComposition:'architecture'};
+const columnFixture=name=>JSON.parse(fs.readFileSync('verification/architecture-columns/current/'+name+'.json'));
+const columnState=ir=>({...state,paperGranularity:'all',paperAuto:false,open:ir.nodes.filter(n=>n.kind==='composite').map(n=>n.id)});
+test('unequal ordinary serial source modules share measured width in both directions while preserving ownership and every binding',()=>{
+ for(const direction of ['up','down']){
+  const ir=columnFixture('SerialModules'),raw=JSON.stringify(ir),s={...columnState(ir),paperDirection:direction},g=E.project(ir,s),c=C.compose(g,s);
+  const columns=c.publication.composition.module_columns;assert.equal(columns.length,1);assert.equal(columns[0].changed.length,1);
+  assert.deepEqual(c.edges,g.edges);assert.deepEqual(c.node_accounting,g.node_accounting);assert.deepEqual(c.edge_accounting,g.edge_accounting);
+  assert.deepEqual(c.nodes.filter(n=>n.kind==='composite').map(n=>[n.id,n.parent]),g.nodes.filter(n=>n.kind==='composite').map(n=>[n.id,n.parent]));assert.equal(JSON.stringify(ir),raw);
+  for(const id of columns[0].members)assert.equal(c.positions.get(id).w,columns[0].width);
+  for(const n of c.nodes){const p=c.positions.get(n.id),owner=c.positions.get(c.idx.nodes.get(n.id).parent);if(owner){
+   assert.ok(p.x>=owner.x&&p.x+p.w<=owner.x+owner.w);assert.ok(p.y>=owner.y+owner.header&&p.y+p.h<=owner.y+owner.h);
+  }}
+ }
+});
+test('module column alignment is independent of labels, paths, source hashes and case identity, and can be disabled',()=>{
+ const ir=columnFixture('SerialModules'),s=columnState(ir),before=C.compose(E.project(ir,s),s);
+ for(const n of ir.nodes){n.label='Renamed '+n.id.length;n.source=[];delete n.source_class;delete n.module_path;}
+ ir.title='Unfamiliar program';delete ir.source;
+ const after=C.compose(E.project(ir,s),s);
+ assert.deepEqual(after.publication.composition.module_columns.map(r=>r.members),before.publication.composition.module_columns.map(r=>r.members));
+ const off=C.compose(E.project(ir,s),{...s,paperArchitectureColumns:false});assert.deepEqual(off.publication.composition.module_columns,[]);
+ const widths=before.publication.composition.module_columns[0].members.map(id=>off.positions.get(id).w);assert.ok(new Set(widths).size>1);
+});
+test('parallel, cyclic, conditional, mutable, unknown and interrupted source paths do not acquire serial module columns',()=>{
+ const ir=columnFixture('ParallelModules'),s=columnState(ir);assert.deepEqual(C.compose(E.project(ir,s),s).publication.composition.module_columns,[]);
+ for(const variation of ['cycle','condition','mutable','opaque','control','guarded-edge','iteration','disconnect']){
+  const ir=columnFixture('SerialModules'),s=columnState(ir),g=E.project(ir,s),a=g.nodes.find(n=>n.label==='produce'),b=g.nodes.find(n=>n.label==='consume');
+  const under=(id,ancestor)=>{while(id){if(id===ancestor)return true;id=g.idx.nodes.get(id)?.parent;}return false;};
+  const e=g.edges.find(e=>under(e.source,a.id)&&under(e.target,b.id));assert.ok(e);
+  if(variation==='cycle')g.edges.push({...e,id:'reverse-cycle',source:e.target,target:e.source});
+  else if(variation==='condition'||variation==='mutable')b[variation]=true;
+  else if(variation==='opaque'||variation==='control')b.kind=variation;
+  else if(variation==='guarded-edge')e.condition='guard';else if(variation==='iteration')e.iteration='next';
+  else g.edges=g.edges.filter(x=>x!==e);
+  assert.deepEqual(C.compose(g,s).publication.composition.module_columns,[],variation);
+ }
+});
+test('widened module headers retain structured evidence rows and save/reopen preserves the exact SVG',()=>{
+ const ir=columnFixture('SerialModules'),s=columnState(ir),g=E.project(ir,s),n=g.nodes.find(n=>n.label==='consume');
+ n.paper.read_binding_rows=true;n.paper.captions=['Exact read: first parameter','Exact use: second argument'];
+ const c=C.compose(g,s),p=c.positions.get(n.id),drawn=c.nodes.find(x=>x.id===n.id);
+ assert.deepEqual(p.captions,['Exact read: first parameter','Exact use: second argument']);assert.deepEqual(drawn.paper.captions,p.captions);
+ const r=R.render(ir,s);assert.deepEqual(r.prepared.quality.issues,[]);assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
+});
+test('ordinary crossing wires may change physical sides only after preserving bindings, goals and measured quality',()=>{
+ const {fixture,state}=require('./cross-scope-fixtures.cjs'),ir=fixture({right:6,branches:3});
+ const b=R.prepareFigure(ir,{...state,paperCrossScopePorts:false,paperCoupledRoutes:false}),edges=JSON.stringify(b.graph.edges);
+ const a=R.prepareArchitectureTerminals(ir,{...state,paperComposition:'architecture'},b),rec=a.prepared.routing.architecture_terminal_refinement;
+ assert.ok(rec.attempts.some(t=>t.accepted));assert.ok(rec.attempts.length<=8);
+ assert.equal(JSON.stringify(a.graph.edges),edges);assert.deepEqual([...a.graph.positions], [...b.graph.positions]);
+ assert.ok(a.prepared.quality.line_geometry.crossings<b.prepared.quality.line_geometry.crossings);assert.ok(a.prepared.quality.wire_length<=b.prepared.quality.wire_length);
+ for(const t of rec.attempts.filter(t=>t.accepted))assert.ok(t.facts_preserved&&t.distinct_terminals&&t.relations_preserved&&t.direct_goals_preserved&&t.summary_goals_preserved);
+ assert.deepEqual(a.graph.architecture.semantic_contracts,b.graph.architecture.semantic_contracts);
+});
+test('terminal trials honor manual placement, print, resource limits, opt-out and protected channels',()=>{
+ const {fixture,state}=require('./cross-scope-fixtures.cjs'),ir=fixture({right:6,branches:3}),s={...state,paperComposition:'architecture'};
+ for(const extra of [{paperArchitectureTerminals:false},{offsets:{l0:{x:1,y:1}}},{paperComposition:'dependency'}]){
+  const b=R.prepareFigure(ir,{...state,paperCrossScopePorts:false});assert.equal(R.prepareArchitectureTerminals(ir,{...s,...extra},b),b);
+ }
+ for(const change of ['print','large','protected','guarded','feedback']){
+  const b=R.prepareFigure(ir,{...state,paperCrossScopePorts:false});
+  if(change==='print')b.prepared.quality.medium='print';else if(change==='large')b.graph.edges=Array(129).fill(b.graph.edges[0]);
+  else for(const e of b.prepared.routes){if(change==='protected')e.design_route={kind:'state-interface'};
+   else if(change==='guarded')e.condition={branch:'guard'};else b.graph.positions.context.feedback.add(e.id);}
+  assert.equal(R.prepareArchitectureTerminals(ir,s,b),b,change);
+ }
+});
+test('wider overview typography is declined on ordinary guarded source programs when it adds conflicts',()=>{
+ const ir=read('ConditionalRead'),s={...state,paperDirection:'up',paperAdaptive:false,paperCompact:true};
+ // A second independent conditional fixture exercises rejection, rather than
+ // the ordinary side-routing repair that succeeds on ConditionalRead.
+ const other=JSON.parse(fs.readFileSync('verification/semantic-generalization/current/ConditionalStack.json'));
+ for(const input of [ir,other]){
+  const a=R.render(input,s),b=R.render(input,{...s,paperArchitectureColumns:false});
+  assert.ok(a.prepared.quality.line_geometry.crossings<=b.prepared.quality.line_geometry.crossings);
+  assert.deepEqual(a.graph.edges,b.graph.edges);assert.deepEqual(a.graph.node_accounting,b.graph.node_accounting);
+  assert.equal(R.render(a.document.ir,a.document.state).svg,a.svg);
+ }
+ const r=R.render(other,s);assert.equal(r.prepared.routing.architecture_column_selection.wide_selected,false);
+});
 test('composition changes only drawing geometry, preserves exact calls, edges, accounting and source facts',()=>{
  const ir=read('ReadWorkshop'),raw=JSON.stringify(ir),g=E.project(ir,state),r=C.compose(g,state);
  assert.deepEqual(r.edges,g.edges);assert.deepEqual(r.node_accounting,g.node_accounting);assert.deepEqual(r.edge_accounting,g.edge_accounting);

@@ -330,6 +330,57 @@
         scope:'Repeated uses of one resolved output, with distinct original terminals and operand slots. Shared drawing paths do not merge computations, parameters or invocations.'});
     }return records;
   }
+  // Architecture views can run upward or enter another region from the side.
+  // Build shared drawing trunks from exact output identity and actual ports;
+  // no module role, label or source class participates in eligibility.
+  function architectureFanouts(positions,routes){
+    const ctx=positions.context,groups=new Map(),records=[],opposite={top:'bottom',bottom:'top',left:'right',right:'left'};
+    for(const e of routes){
+      const side=e.route?.source_side,p=positions.get(e.source),n=ctx.idx.nodes.get(e.source);
+      if(!e.route?.ok||!opposite[side]||e.route.target_side!==opposite[side]||e.bundle_members||e.design_route||e.context_lane||
+        e.condition||e.iteration||e.layout_after||ctx.feedback?.has(e.id)||!['data','alias','interface-binding'].includes(e.kind)||
+        !e.resolved_source||!e.source_port||e.paper_labels?.length||!p||p.expanded||p.cyclic||!n||n.mutable||n.condition||
+        n.evidence_status==='runtime-only'||['parameter','buffer','state','control','opaque'].includes(n.kind))continue;
+      const vertical=side==='top'||side==='bottom',end=e.route.points.at(-1);
+      // Vertical consumers share a measured terminal row. Side-facing users
+      // may lie at different heights; their common trunk uses the open gap.
+      const key=JSON.stringify([e.source,e.resolved_source,e.source_port,side,vertical?end.y:null]);
+      if(!groups.has(key))groups.set(key,[]);groups.get(key).push(e);
+    }
+    for(const edges of groups.values()){
+      if(edges.length<2||edges.length>6)continue;
+      const side=edges[0].route.source_side,vertical=side==='top'||side==='bottom',axis=vertical?'y':'x',tangent=vertical?'x':'y',sign=['bottom','right'].includes(side)?1:-1;
+      const starts=edges.map(e=>e.route.points[0]),ends=edges.map(e=>e.route.points.at(-1));
+      if(new Set(starts.map(p=>p[axis])).size!==1)continue;
+      const begin=starts[0][axis]+sign*16,limit=sign*Math.min(...ends.map(p=>sign*p[axis]))-sign*16;
+      if(sign*(limit-begin)<32)continue;
+      const hub=starts.map(p=>p[tangent]).sort((a,b)=>a-b)[Math.floor(starts.length/2)],at=(a,b)=>({[axis]:a,[tangent]:b});
+      // Keep each consumer's existing local detour. A cross-region trunk
+      // must not draw straight through a sibling operation on the target row.
+      const pivots=vertical?[]:edges.map(e=>{
+        const i=e.route.points.findIndex((p,i,ps)=>i&&p[axis]===ps[i-1][axis]&&
+          Math.abs(p[tangent]-ps[i-1][tangent])>=16&&sign*(p[axis]-begin)>=0&&sign*(limit-p[axis])>=0);
+        return i<1?e.route.points.length-1:i;
+      });
+      const rails=vertical?[limit]:[...edges.map((e,i)=>e.route.points[pivots[i]][axis]).filter(x=>sign*(x-begin)>=0&&sign*(limit-x)>=0),begin+sign*16,begin+(limit-begin)*.5,limit];
+      for(const rail of [...new Set(rails)]){
+        if(!vertical&&edges.some((e,i)=>sign*((e.route.points[pivots[i]+1]||e.route.points.at(-1))[axis]-rail)<16))continue;
+        const fresh=edges.map((e,i)=>{
+          const s=e.route.points[0],t=e.route.points.at(-1),pivot=vertical?t:e.route.points[pivots[i]],
+            tail=vertical||pivots[i]===e.route.points.length-1?[t]:e.route.points.slice(pivots[i]+1),raw=[s,at(begin,s[tangent]),at(begin,hub),at(rail,hub),at(rail,pivot[tangent]),...tail];
+          return {...e,route:{...e.route,points:simplify(raw)}};
+        });
+        if(fresh.some(e=>{const boxes=routeObstacles(e,positions);return e.route.points.some((b,i,ps)=>i&&blocked(ps[i-1],b,boxes));}))continue;
+        const junctions=fanoutJunctions(fresh);if(!junctions.length)continue;
+        records.push({source:edges[0].source,resolved_source:edges[0].resolved_source,source_port:edges[0].source_port,
+          edges:edges.map(e=>e.id),method:vertical?'vertical-output-trunk':'side-output-trunk',side,hub,join:begin,fork:rail,junctions,routes:fresh,
+          terminal_detour_budget:2*starts.reduce((sum,p)=>sum+Math.abs(p[tangent]-hub),0),
+          ink_before:fanoutInk(edges),ink_candidate:fanoutInk(fresh),
+          scope:'Exact uses of one resolved output share drawing ink only. Every original edge, source and consumer terminal, operand slot and source-call identity stays distinct.'});
+      }
+    }
+    return records.sort((a,b)=>(b.ink_before-b.ink_candidate)-(a.ink_before-a.ink_candidate)||a.source.localeCompare(b.source)||a.fork-b.fork);
+  }
   // Swap two existing source terminals when their outward leads cross. Only
   // the first normal segment and following tangent segment change; all later
   // bends and every consumer terminal remain fixed. No values are merged.
@@ -1196,5 +1247,5 @@
     return result.sort((a,b)=>a.wire-b.wire||a.points.length-b.points.length).slice(0,64);
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={routeShortcuts,layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={routeShortcuts,layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,architectureFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

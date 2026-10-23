@@ -1408,13 +1408,14 @@
     if(baseline.prepared.routing?.shared_fanout_refinement?.selected.length)return baseline;
     if(state.paperSharedFanouts===false||b.medium!=='canvas'||state.paperProtectFrameTitles===true||
       Object.keys(state.offsets||{}).length||g.edges.length>128||b.route_failures.length||b.unplaced_port_labels.length)return baseline;
-    const proposals=L.sharedFanouts(g.positions,baseline.prepared.routes).slice(0,8);
+    const architectural=state.paperComposition==='architecture';
+    const proposals=(architectural?L.architectureFanouts(g.positions,baseline.prepared.routes):L.sharedFanouts(g.positions,baseline.prepared.routes)).slice(0,architectural?24:8);
     if(!proposals.length)return baseline;
     // Two different values feeding the same row need different fork rails.
     // Measure them together; accepting one alone can create false contacts
     // with the other value's still-independent paths.
     const batches=[],byEdge=new Map(g.edges.map(e=>[e.id,e]));let pairs=0;
-    for(let i=0;i<proposals.length&&pairs<3;i++)for(let j=i+1;j<proposals.length&&pairs<3;j++){
+    for(let i=0;!architectural&&i<proposals.length&&pairs<3;i++)for(let j=i+1;j<proposals.length&&pairs<3;j++){
       const a=proposals[i],b=proposals[j],targets=new Set(a.edges.map(id=>byEdge.get(id).target));
       if(b.edges.filter(id=>targets.has(byEdge.get(id).target)).length<2)continue;
       pairs++;
@@ -1427,7 +1428,9 @@
     batches.push(...proposals.map(p=>[p]));
     const goals=Goals.build(ir,g.architecture),done=new Set(Goals.evaluate(goals,g,baseline.prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
     const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),relations=realizedRelations(baseline);
-    const record={max_groups:8,max_joint_pairs:3,min_group_ink_reduction:0.2,attempts:[],selected:[]};let chosen=baseline;
+    const summaries=SummaryGoals.build(ir,g.architecture),summarized=new Set(SummaryGoals.evaluate(summaries,ir,g,baseline.prepared).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+    const record={max_groups:architectural?24:8,max_joint_pairs:architectural?0:3,min_group_ink_reduction:0.2,
+      crossing_gain_alternative:architectural,attempts:[],selected:[]};let chosen=baseline;
     for(const batch of batches){
       if(batch.some(p=>record.selected.some(r=>r.edges.some(id=>p.edges.includes(id)))))continue;
       const rows=batch.map(({routes,...row})=>row),fresh=batch.flatMap(r=>r.routes),row={groups:rows,edges:rows.flatMap(r=>r.edges),terminal_detour_budget:rows.reduce((sum,r)=>sum+r.terminal_detour_budget,0)};
@@ -1443,22 +1446,26 @@
       const dotClear=rows.every(r=>r.junctions.every(p=>routes.every(e=>r.edges.includes(e.id)||
         !e.route.points.some((b,i,ps)=>i&&L.blocked(ps[i-1],b,[{x:p.x-4,y:p.y-4,w:8,h:8}])))));
       const labelsClear=fresh.every(e=>e.route.points.every((b,i,ps)=>!i||!L.blocked(ps[i-1],b,chosen.prepared.labeling.placed.map(p=>({x:p.x-4,y:p.y-4,w:p.w+8,h:p.h+8})))));
-      const geometry=physical&&dotClear&&labelsClear&&rows.every(r=>r.ink_candidate<=r.ink_before*(1-record.min_group_ink_reduction))&&
+      const inkGain=rows.every(r=>r.ink_candidate<=r.ink_before*(1-record.min_group_ink_reduction)),
+        crossingGain=architectural&&q.line_geometry.crossings<old.line_geometry.crossings&&rows.every(r=>r.ink_candidate<r.ink_before);
+      const geometry=physical&&dotClear&&labelsClear&&(inkGain||crossingGain)&&
         q.wire_length<=old.wire_length+row.terminal_detour_budget+0.11&&q.native_width_px<=old.native_width_px&&q.native_height_px<=old.native_height_px&&fontMetric(q)>=fontMetric(old)&&
         q.line_geometry.crossings<=old.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&
         q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
         q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(issue=>old.issues.includes(issue));
-      let accepted=false,after,coverage;
+      let accepted=false,after,coverage,summaryPreserved=null;
       if(geometry){
         E.auditConstraintRoutes(graph,routes);after=realizedRelations({graph,prepared});
         coverage=new Set(Goals.evaluate(goals,graph,prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+        const present=new Set(SummaryGoals.evaluate(summaries,ir,graph,prepared).filter(r=>r.status==='fulfilled').map(r=>r.goal));
+        summaryPreserved=[...summarized].every(id=>present.has(id));
         accepted=graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
-          Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)))&&[...done].every(id=>coverage.has(id));
+          Object.keys(relations).every(k=>relations[k].every(id=>after[k].includes(id)))&&[...done].every(id=>coverage.has(id))&&summaryPreserved;
       }
-      record.attempts.push({...row,accepted,physical_terminals_preserved:physical,junctions_clear:dotClear,existing_labels_clear:labelsClear,before:clearanceMetrics(old),candidate:clearanceMetrics(q)});
+      record.attempts.push({...row,accepted,physical_terminals_preserved:physical,junctions_clear:dotClear,existing_labels_clear:labelsClear,ink_gain:inkGain,crossing_gain:crossingGain,summary_goals_preserved:summaryPreserved,before:clearanceMetrics(old),candidate:clearanceMetrics(q)});
       if(accepted){chosen={graph,prepared};record.selected.push(...rows);}
     }
-    record.scope='Shared drawing stems for exact uses of the same resolved output. All canonical edges, distinct physical terminals and consumer slots retained. At least 20% less group ink; extra summed length bounded by twice the original source-terminal distances to the shared stem. No additional crossings or geometry issues.';
+    record.scope='Shared drawing stems for exact uses of the same resolved output. All canonical edges, distinct physical terminals and consumer slots retained. At least 20% less group ink, or in architecture composition strictly fewer crossings with less group ink. Extra summed length bounded by twice the original source-terminal distances to the shared stem. No additional crossings or geometry issues; fulfilled expression and summary goals retained.';
     chosen.prepared.routing={...baseline.prepared.routing,shared_fanout_refinement:record};return chosen;
   }
   function prepareFinalGeometry(ir,state,chosen){
@@ -1780,6 +1787,7 @@
           chosen=baseline;
         }
       }
+      chosen=prepareSharedFanouts(ir,state,chosen);
       return attachExpressionEvidence(ir,chosen);
     }
     // Stages run only after all summary recipes and complete layout choices

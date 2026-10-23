@@ -1813,6 +1813,36 @@
       scope:'Source-call labels identify folded DAGs without certifying semantics. Exact result, use rows, source reads, call identities and cuts remain printed. One complete measured alternative; no larger bounds, longer wires, smaller fonts or added conflicts.'}};
     return chosen;
   }
+  function selectArchitecturePathRows(ir,state,trial){
+    if(state.paperArchitecturePathRows!==undefined||Object.keys(state.offsets||{}).length||
+      trial.graph.edges.length>128||!trial.graph.publication.composition?.path_rows?.length)return trial;
+    const baseline=prepareFigure(ir,{...state,paperArchitecturePathRows:false}),b=baseline.prepared.quality;
+    const variants=[['left',trial],['right',prepareFigure(ir,{...state,paperArchitecturePathRows:'right'})]];
+    const fulfilled=(g,key)=>new Set(g[key].filter(r=>r.status==='fulfilled').map(r=>r.goal)),keep=(a,c)=>[...a].every(id=>c.has(id));
+    const direct=fulfilled(baseline.graph,'expression_coverage'),summary=fulfilled(baseline.graph,'summary_coverage');
+    E.auditConstraintRoutes(baseline.graph,baseline.prepared.routes);
+    const applied=new Set(baseline.graph.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),before=realizedRelations(baseline);
+    const record={max_trials:2,max_wire_ratio:1.02,attempts:[],before:clearanceMetrics(b)};let chosen=baseline,selected=false;
+    for(const [start,candidate]of variants){
+      const g=candidate.graph,q=candidate.prepared.quality;E.auditConstraintRoutes(g,candidate.prepared.routes);
+      const after=realizedRelations(candidate),facts=clearanceIdentity(g)===clearanceIdentity(baseline.graph);
+      const goals=keep(direct,fulfilled(g,'expression_coverage'))&&keep(summary,fulfilled(g,'summary_coverage'));
+      const relations=g.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+      const geometry=areaMetric(q)<areaMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&
+        q.wire_length<=b.wire_length*record.max_wire_ratio&&fontMetric(q)>=fontMetric(b)&&q.line_geometry.crossings<=b.line_geometry.crossings&&
+        q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+        q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+        q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(x=>b.issues.includes(x));
+      const accepted=facts&&goals&&relations&&geometry;
+      record.attempts.push({start,accepted,facts_preserved:facts,goals_preserved:goals,relations_preserved:relations,geometry_preserved:geometry,candidate:clearanceMetrics(q)});
+      const old=chosen.prepared.quality;
+      if(accepted&&(areaMetric(q)<areaMetric(old)||areaMetric(q)===areaMetric(old)&&
+        (q.line_geometry.crossings<old.line_geometry.crossings||q.line_geometry.crossings===old.line_geometry.crossings&&q.wire_length<old.wire_length))){chosen=candidate;selected=start;}
+    }
+    record.selected=selected;record.after=clearanceMetrics(chosen.prepared.quality);
+    record.scope='Two measured physical orientations of short serial computation paths within existing frame widths. Require smaller area, no larger dimensions or added conflicts, at most 2% extra wire; preserve canonical bindings, fulfilled direct/summary goals and realized constraints. Otherwise retain the original vertical paths.';
+    chosen.prepared.routing={...chosen.prepared.routing,architecture_path_rows:record};return chosen;
+  }
   function prepareFigure(ir,state={}){
     if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
       const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
@@ -1869,7 +1899,7 @@
         if(cleaner&&safe)chosen=standard;
         chosen.prepared.routing={...chosen.prepared.routing,architecture_column_selection:receipt};
       }
-      return attachExpressionEvidence(ir,chosen);
+      return selectArchitecturePathRows(ir,state,attachExpressionEvidence(ir,chosen));
     }
     // Stages run only after all summary recipes and complete layout choices
     // settle. Keep roles on their existing path, with identical serialization.

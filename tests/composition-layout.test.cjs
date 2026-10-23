@@ -5,6 +5,67 @@ const read=n=>JSON.parse(fs.readFileSync('verification/call-boundaries/current/'
 const state={view:'publication',mode:'source',paperMedium:'canvas',paperGranularity:'stages',paperComposition:'architecture'};
 const columnFixture=name=>JSON.parse(fs.readFileSync('verification/architecture-columns/current/'+name+'.json'));
 const columnState=ir=>({...state,paperGranularity:'all',paperAuto:false,open:ir.nodes.filter(n=>n.kind==='composite').map(n=>n.id)});
+const pathInput=name=>JSON.parse(fs.readFileSync('verification/path-rows/current/'+name+'.json'));
+test('ordinary convolution and dense serial paths use measured rows with exact operations, source order, bindings and fonts',()=>{
+ for(const direction of ['up','down'])for(const start of ['left','right']){
+  const ir=pathInput('SpatialPipeline'),raw=JSON.stringify(ir),s={...columnState(ir),paperDirection:direction,paperArchitecturePathRows:start},g=E.project(ir,s),c=C.compose(g,s);
+  assert.equal(c.publication.composition.path_rows.length,2);assert.deepEqual(c.edges,g.edges);
+  assert.deepEqual(c.node_accounting,g.node_accounting);assert.deepEqual(c.edge_accounting,g.edge_accounting);assert.equal(JSON.stringify(ir),raw);
+  const ns=new Map(c.nodes.map(n=>[n.id,n]));
+  for(const r of c.publication.composition.path_rows){
+   assert.equal(r.rows.length,2);assert.deepEqual(r.rows.flatMap(r=>r.ids),r.ordered);assert.ok(r.after.h<r.before.h);assert.equal(r.after.w,r.before.w);
+   for(let i=0;i<r.rows.length;i++){
+    const row=r.rows[i],ps=row.ids.map(id=>c.positions.get(id));assert.equal(new Set(ps.map(p=>p.y+p.h/2)).size,1);
+    const reverse=!!(i%2)!==(start==='right');assert.equal(ps[0].x>ps.at(-1).x,reverse);
+   }
+   for(const id of r.ordered){const p=c.positions.get(id),owner=c.positions.get(r.node),n=ns.get(id),original=g.nodes.find(n=>n.id===id);
+    assert.equal(n.paper.font,original.paper.font);assert.equal(n.paper.caption,original.paper.caption);assert.equal(n.paper.title,original.paper.title);
+    assert.ok(p.x>=owner.x&&p.x+p.w<=owner.x+owner.w&&p.y>=owner.y+owner.header&&p.y+p.h<=owner.y+owner.h);
+   }
+  }
+ }
+});
+test('short path rows select a bounded measured recipe on ordinary spatial code and retain exact save/reopen',()=>{
+ const ir=pathInput('SpatialPipeline'),s={...columnState(ir),paperDirection:'up'},a=R.render(ir,s),b=R.render(ir,{...s,paperArchitecturePathRows:false}),rec=a.prepared.routing.architecture_path_rows;
+ assert.equal(rec.selected,'left');assert.equal(rec.max_trials,2);assert.equal(rec.max_wire_ratio,1.02);
+ assert.ok(a.prepared.quality.native_height_px<b.prepared.quality.native_height_px);assert.ok(a.prepared.quality.wire_length<=b.prepared.quality.wire_length*1.02);
+ assert.equal(a.prepared.quality.line_geometry.crossings,b.prepared.quality.line_geometry.crossings);assert.deepEqual(a.graph.edges,b.graph.edges);
+ assert.deepEqual(a.prepared.quality.issues,[]);assert.equal(R.render(a.document.ir,a.document.state).svg,a.svg);
+});
+test('a topological order of parallel branches cannot become one claimed serial path',()=>{
+ const ir=pathInput('BranchedPipeline'),s=columnState(ir),g=E.project(ir,s),c=C.compose(g,s);
+ assert.deepEqual(c.publication.composition.path_rows,[]);assert.deepEqual(c.edges,g.edges);
+});
+test('short path packing declines control, unknown, state, mutable, shared identity, runtime-only, guarded and feedback evidence',()=>{
+ for(const variation of ['condition','mutable','opaque','control','state','identity','runtime-only','runtime-evidence','owner-runtime-evidence','owner-condition','owner-mutable','owner-identity','owner-runtime-only','guarded-edge','iteration','feedback','extra-link']){
+  const ir=pathInput('SpatialPipeline'),s=columnState(ir),g=E.project(ir,s),parent=g.nodes.find(n=>n.label==='spatial');
+  const member=g.nodes.find(n=>n.parent===parent.id&&n.kind==='compute'),e=g.edges.find(e=>e.source===member.id&&g.nodes.some(n=>n.id===e.target&&n.parent===parent.id));assert.ok(e);
+  if(variation==='condition'||variation==='mutable')member[variation]=true;
+  else if(['opaque','control','state'].includes(variation))member.kind=variation;
+  else if(variation==='identity')member.identity_display={kind:'same-object-calls'};
+  else if(variation==='runtime-only')member.evidence_status='runtime-only';
+  else if(variation==='runtime-evidence')member.runtime_evidence=[{call:'observed'}];
+  else if(variation==='owner-runtime-evidence')parent.runtime_evidence=[{call:'observed'}];
+  else if(variation==='owner-condition')parent.condition={branch:'guard'};
+  else if(variation==='owner-mutable')parent.mutable=true;
+  else if(variation==='owner-identity')parent.identity_display={kind:'same-object-calls'};
+  else if(variation==='owner-runtime-only')parent.evidence_status='runtime-only';
+  else if(variation==='guarded-edge')e.condition={branch:'guard'};else if(variation==='iteration')e.iteration={step:1};
+  else if(variation==='feedback')g.positions.context.feedback.add(e.id);
+  else g.edges.push({...e,id:'not-a-serial-path',source:e.target,target:e.source});
+  assert.ok(!C.compose(g,s).publication.composition.path_rows.some(r=>r.node===parent.id),variation);
+ }
+});
+test('path geometry uses source ownership and dependencies independent of family labels or source locations',()=>{
+ const ir=pathInput('SpatialPipeline'),s=columnState(ir),g=E.project(ir,s),a=C.compose(g,s);
+ for(const n of g.nodes){n.label='Foreign '+n.id.length;n.semantic_type=n.semantic_type==='convolutional network'?'Unclassified source':n.semantic_type;n.source=[];if(n.source_class)n.source_class='Renamed';}
+ const b=C.compose(g,s);assert.deepEqual(b.publication.composition.path_rows.map(r=>r.ordered),a.publication.composition.path_rows.map(r=>r.ordered));assert.deepEqual(b.edges,a.edges);
+});
+test('manual placement, explicit opt-out and resource limits retain vertical path geometry',()=>{
+ const ir=pathInput('SpatialPipeline'),s=columnState(ir),g=E.project(ir,s);
+ for(const extra of [{paperArchitecturePathRows:false},{offsets:{[ir.nodes[0].id]:{x:2,y:3}}}])assert.deepEqual(C.compose(g,{...s,...extra}).publication.composition.path_rows,[]);
+ g.edges=Array(129).fill(g.edges[0]);assert.deepEqual(C.compose(g,s).publication.composition.path_rows,[]);
+});
 test('unequal ordinary serial source modules share measured width in both directions while preserving ownership and every binding',()=>{
  for(const direction of ['up','down']){
   const ir=columnFixture('SerialModules'),raw=JSON.stringify(ir),s={...columnState(ir),paperDirection:direction},g=E.project(ir,s),c=C.compose(g,s);

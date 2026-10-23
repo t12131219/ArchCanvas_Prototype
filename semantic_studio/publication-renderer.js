@@ -1816,8 +1816,9 @@
   function selectArchitecturePathRows(ir,state,trial){
     if(state.paperArchitecturePathRows!==undefined||Object.keys(state.offsets||{}).length||
       trial.graph.edges.length>128||!trial.graph.publication.composition?.path_rows?.length)return trial;
-    const baseline=prepareFigure(ir,{...state,paperArchitecturePathRows:false}),b=baseline.prepared.quality;
-    const variants=[['left',trial],['right',prepareFigure(ir,{...state,paperArchitecturePathRows:'right'})]];
+    const streamPolicy=state.paperArchitectureStreams??'aligned';
+    const baseline=prepareFigure(ir,{...state,paperArchitectureStreams:streamPolicy,paperArchitecturePathRows:false}),b=baseline.prepared.quality;
+    const variants=[['left',trial],['right',prepareFigure(ir,{...state,paperArchitectureStreams:streamPolicy,paperArchitecturePathRows:'right'})]];
     const fulfilled=(g,key)=>new Set(g[key].filter(r=>r.status==='fulfilled').map(r=>r.goal)),keep=(a,c)=>[...a].every(id=>c.has(id));
     const direct=fulfilled(baseline.graph,'expression_coverage'),summary=fulfilled(baseline.graph,'summary_coverage');
     E.auditConstraintRoutes(baseline.graph,baseline.prepared.routes);
@@ -1842,6 +1843,31 @@
     record.selected=selected;record.after=clearanceMetrics(chosen.prepared.quality);
     record.scope='Two measured physical orientations of short serial computation paths within existing frame widths. Require smaller area, no larger dimensions or added conflicts, at most 2% extra wire; preserve canonical bindings, fulfilled direct/summary goals and realized constraints. Otherwise retain the original vertical paths.';
     chosen.prepared.routing={...chosen.prepared.routing,architecture_path_rows:record};return chosen;
+  }
+  function selectArchitectureStreams(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(state.paperArchitectureStreams!==undefined||Object.keys(state.offsets||{}).length||g.edges.length>128||
+      !g.publication.composition?.stream_alignments?.length)return baseline;
+    const candidate=prepareFigure(ir,{...state,paperArchitectureStreams:'compact'}),c=candidate.graph,q=candidate.prepared.quality;
+    const frames=r=>[...r.graph.positions.values()].filter(p=>p.expanded).reduce((sum,p)=>sum+p.w*p.h,0);
+    const fulfilled=(g,key)=>new Set(g[key].filter(r=>r.status==='fulfilled').map(r=>r.goal)),keep=(a,c)=>[...a].every(id=>c.has(id));
+    for(const r of [baseline,candidate])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+    const facts=clearanceIdentity(g)===clearanceIdentity(c),goals=keep(fulfilled(g,'expression_coverage'),fulfilled(c,'expression_coverage'))&&
+      keep(fulfilled(g,'summary_coverage'),fulfilled(c,'summary_coverage'));
+    const applied=new Set(g.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id)),before=realizedRelations(baseline),after=realizedRelations(candidate);
+    const relations=[...applied].every(id=>c.constraint_receipts.some(r=>r.id===id&&r.status==='applied'))&&
+      Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+    const geometry=frames(candidate)<frames(baseline)&&q.wire_length<=b.wire_length&&
+      q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px&&fontMetric(q)>=fontMetric(b)&&
+      q.line_geometry.crossings<=b.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=b.line_geometry.unrelated_contacts.length&&
+      q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=b.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+      q.route_failures.length<=b.route_failures.length&&q.unplaced_port_labels.length<=b.unplaced_port_labels.length&&q.issues.every(x=>b.issues.includes(x));
+    const accepted=facts&&goals&&relations&&geometry,chosen=accepted?candidate:baseline;
+    chosen.prepared.routing={...chosen.prepared.routing,architecture_stream_selection:{max_trials:1,accepted,
+      facts_preserved:facts,goals_preserved:goals,relations_preserved:relations,geometry_preserved:geometry,
+      before:{...clearanceMetrics(b),frame_area:frames(baseline)},candidate:{...clearanceMetrics(q),frame_area:frames(candidate)},
+      scope:'One measured alternative keeps independently entered regions at their natural height, aligned on the exit side. Require smaller enclosing-frame area, no longer wires, larger bounds, smaller fonts or added conflicts. Preserve canonical bindings, fulfilled expression/summary goals and realized constraints; otherwise retain equal-height input corridors.'}};
+    return chosen;
   }
   function prepareFigure(ir,state={}){
     if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
@@ -1881,7 +1907,7 @@
         // Wider overview typography is optional. Reject its extra crossings
         // at the same frontier, including on conditional or mutable programs.
         chosen=attachExpressionEvidence(ir,chosen);
-        const standard=prepareFigure(ir,{...state,paperArchitectureColumns:false}),q=chosen.prepared.quality,b=standard.prepared.quality;
+        const standard=prepareFigure(ir,{...state,paperArchitectureStreams:state.paperArchitectureStreams??'aligned',paperArchitectureColumns:false}),q=chosen.prepared.quality,b=standard.prepared.quality;
         const fulfilled=xs=>new Set(xs.filter(r=>r.status==='fulfilled').map(r=>r.goal));
         const covers=(a,c)=>[...fulfilled(a)].every(id=>fulfilled(c).has(id));
         const same=clearanceIdentity(chosen.graph)===clearanceIdentity(standard.graph);
@@ -1899,7 +1925,7 @@
         if(cleaner&&safe)chosen=standard;
         chosen.prepared.routing={...chosen.prepared.routing,architecture_column_selection:receipt};
       }
-      return selectArchitecturePathRows(ir,state,attachExpressionEvidence(ir,chosen));
+      return selectArchitectureStreams(ir,state,selectArchitecturePathRows(ir,state,attachExpressionEvidence(ir,chosen)));
     }
     // Stages run only after all summary recipes and complete layout choices
     // settle. Keep roles on their existing path, with identical serialization.

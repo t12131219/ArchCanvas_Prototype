@@ -397,3 +397,36 @@ test('streams with different proof heading lengths preserve aligned cores and in
   assert.deepEqual(c.edges,g.edges);
  }
 });
+test('independent input regions may retain natural height with exit-side alignment and exact internal geometry',()=>{
+ for(const direction of ['up','down']){
+  const ir=sensor(),raw=JSON.stringify(ir),s={...sensorState(ir),paperDirection:direction},g=E.project(ir,s),before=C.compose(g,s),after=C.compose(g,{...s,paperArchitectureStreams:'compact'});
+  assert.equal(JSON.stringify(ir),raw);assert.deepEqual(after.edges,before.edges);assert.deepEqual(after.node_accounting,before.node_accounting);assert.deepEqual(after.edge_accounting,before.edge_accounting);
+  const rec=after.publication.composition.stream_compactions;assert.equal(rec.length,1);assert.equal(after.publication.composition.stream_alignments.length,0);
+  const at=(c,label)=>c.positions.get(c.nodes.find(n=>n.label===label).id),a=at(after,'self.image_path'),b=at(after,'self.vector_path');
+  assert.equal(direction==='up'?a.y:a.y+a.h,direction==='up'?b.y:b.y+b.h);
+  assert.notEqual(a.h,b.h);assert.equal(rec[0].removed_slack,rec[0].aligned_height-rec[0].compact_height);
+  const frame=after.positions.get(rec[0].stream);assert.equal(frame.h,rec[0].compact_height);assert.ok(frame.h<before.positions.get(rec[0].stream).h);
+  for(const n of after.nodes){const p=after.positions.get(n.id),owner=after.positions.get(after.idx.nodes.get(n.id).parent);if(owner){assert.ok(p.x>=owner.x&&p.x+p.w<=owner.x+owner.w);assert.ok(p.y>=owner.y+owner.header&&p.y+p.h<=owner.y+owner.h);}}
+ }
+});
+test('natural input-region height is selected only after whole-figure measurement and retains save/reopen',()=>{
+ for(const direction of ['up','down']){
+  const ir=sensor(),s={...sensorState(ir),paperDirection:direction},r=R.render(ir,s),b=R.render(ir,{...s,paperArchitectureStreams:'aligned'}),receipt=r.prepared.routing.architecture_stream_selection;
+  assert.equal(receipt.max_trials,1);assert.ok(receipt.accepted);assert.ok(receipt.facts_preserved&&receipt.goals_preserved&&receipt.relations_preserved);
+  assert.ok(r.prepared.quality.wire_length<=b.prepared.quality.wire_length);assert.equal(r.prepared.quality.line_geometry.crossings,b.prepared.quality.line_geometry.crossings);
+  assert.deepEqual(r.graph.edges,b.graph.edges);assert.deepEqual(r.document.ir,ir);assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
+  assert.ok(receipt.candidate.frame_area<receipt.before.frame_area);assert.deepEqual(r.prepared.quality.issues,[]);
+ }
+});
+test('input-region compaction depends on geometry and entry provenance, not names or source family',()=>{
+ const ir=sensor(),s=sensorState(ir),a=C.compose(E.project(ir,s),{...s,paperArchitectureStreams:'compact'});
+ for(const n of ir.nodes){n.label='foreign';n.source=[];delete n.source_class;delete n.module_path;}ir.title='Other';
+ const b=C.compose(E.project(ir,s),{...s,paperArchitectureStreams:'compact'});
+ assert.deepEqual(b.publication.composition.stream_compactions.map(r=>r.stream),a.publication.composition.stream_compactions.map(r=>r.stream));assert.deepEqual(a.edges,b.edges);
+});
+test('manual placements and explicit aligned policy keep existing input-region choices',()=>{
+ const ir=sensor(),s=sensorState(ir),g=E.project(ir,s);
+ assert.deepEqual(C.compose(g,{...s,paperArchitectureStreams:'aligned'}).publication.composition.stream_compactions,[]);
+ assert.deepEqual(C.compose(g,{...s,paperArchitectureStreams:'compact',offsets:{[ir.nodes[0].id]:{x:1,y:2}}}).publication.composition.stream_compactions,[]);
+ const r=R.render(ir,{...s,paperArchitectureStreams:'aligned'});assert.equal(r.prepared.routing.architecture_stream_selection,undefined);
+});

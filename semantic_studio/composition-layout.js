@@ -19,7 +19,7 @@
     for(const n of source.nodes.values())if(!by.has(n.id)){
       if(!idx.children.has(n.parent||null))idx.children.set(n.parent||null,[]);idx.children.get(n.parent||null).push(n.id);
     }
-    const positions=new Map(),records=[],docks=[],followers=[],streamAlignments=[],sourceKindNotes=[],streamHeadings=[],moduleColumns=[],pathRows=[];
+    const positions=new Map(),records=[],docks=[],followers=[],streamAlignments=[],streamCompactions=[],sourceKindNotes=[],streamHeadings=[],moduleColumns=[],pathRows=[];
     // Typographic sizes apply to every model. Evidence-heavy summaries keep
     // their wider source size; a semantic role path uses the same narrow
     // column regardless of which certificate established that path.
@@ -234,6 +234,11 @@
           // Parallel branches, cycles and disconnected islands keep their
           // geometry. A certified forward bypass is still an ordinary use.
           if(members.some((a,i)=>members.slice(i+1).some(b=>reaches(a,b)===reaches(b,a))))continue;
+          if(state.paperArchitectureStreams==='compact'&&!Object.keys(state.offsets||{}).length){
+            streamCompactions.push({owner:id,stream:child,compact_height:p.h,aligned_height:height,removed_slack:extra,
+              scope:'Each independently entered region keeps its measured local height and exit-side alignment. Entry cards, source scope, computations and all cross-region dependencies remain present; alignment asserts no scheduling.'});
+            continue;
+          }
           const boundary=Math.min(...record.rows[last.i].map(id=>positions.get(id).y));
           const shifted=children(child).filter(id=>positions.get(id).y>=boundary);
           for(const id of shifted)positions.get(id).y+=extra;
@@ -260,7 +265,10 @@
       for(const row of rows){
         const width=row.ids.reduce((sum,c)=>sum+positions.get(c).w,0)+(row.ids.length-1)*metrics.sibling_gap;
         let x=gutter+pad+(bodyWidth-gutter-pad*2-width)/2;
-        for(const child of row.ids){const c=positions.get(child);Object.assign(c,{x,y});x+=c.w+metrics.sibling_gap;}
+        const rowHeight=Math.max(...row.ids.map(c=>positions.get(c).h));
+        for(const child of row.ids){const c=positions.get(child),exitAligned=state.paperArchitectureStreams==='compact'&&
+          !Object.keys(state.offsets||{}).length&&streamCompactions.some(r=>r.owner===id)&&row.ids.every(id=>streams.includes(id));
+          Object.assign(c,{x,y:y+(exitAligned?rowHeight-c.h:0)});x+=c.w+metrics.sibling_gap;}
         y+=Math.max(...row.ids.map(c=>positions.get(c).h))+gap;
       }
       p.h=y-gap+pad;
@@ -323,7 +331,7 @@
     positions.context.crossScopePorts=facing;
     const boxes=[...positions.values()],left=Math.min(...boxes.map(p=>p.x))-28,top=Math.min(...boxes.map(p=>p.y))-28;
     const bounds={x:left,y:top,w:Math.max(...boxes.map(p=>p.x+p.w))+28-left,h:Math.max(...boxes.map(p=>p.y+p.h))+28-top};
-    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:9,direction:state.paperDirection==='up'?'up':'down',metrics,records,input_docks:docks,facing,followers,stream_alignments:streamAlignments,stream_headings:streamHeadings,source_kind_notes:sourceKindNotes,module_columns:moduleColumns,path_rows:pathRows}}};
+    const result={...graph,nodes,idx,positions,bounds,publication:{...graph.publication,composition:{schema:'architecture-composition/1',round:10,direction:state.paperDirection==='up'?'up':'down',metrics,records,input_docks:docks,facing,followers,stream_alignments:streamAlignments,stream_compactions:streamCompactions,stream_headings:streamHeadings,source_kind_notes:sourceKindNotes,module_columns:moduleColumns,path_rows:pathRows}}};
     return result;
   }
   function frontier(state,action){

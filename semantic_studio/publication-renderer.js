@@ -1765,7 +1765,8 @@
   function prepareFigure(ir,state={}){
     if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
       const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
-      const source=E.project(ir,{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state,offsets:{},view:'publication'});
+      const frontierState={paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state};
+      const source=E.project(ir,{...frontierState,offsets:{},view:'publication'});
       const graph=composition.compose(source,state);
       let chosen={graph,prepared:prepare(graph)};
       if(state.paperSelectedRoutes!==false&&!Object.keys(state.offsets||{}).length&&graph.edges.length>64)chosen=polishRoutes(chosen);
@@ -1773,11 +1774,16 @@
       // of this exact frontier takes precedence over a composed drawing with
       // unresolved routes, labels or canvas limits. Manual placement is kept.
       if(!Object.keys(state.offsets||{}).length&&chosen.prepared.quality.issues.length){
-        const baseline=prepareFigure(ir,{...state,paperComposition:'dependency'});
+        const baseline=prepareFigure(ir,{...frontierState,paperComposition:'dependency'});
+        // Accounting buckets are sets of canonical IDs. Frame refinements
+        // may append an attached ID in a different order without changing
+        // its ownership. Sort only these sets, never calls or operand rows.
+        // Keep duplicates, so invalid multiplicity cannot compare equal.
+        const partition=buckets=>Object.fromEntries(Object.keys(buckets).sort().map(key=>[key,buckets[key].slice().sort()]));
         const identities=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id).sort(),
           edges:g.edges.map(e=>[e.id,e.source,e.target,e.source_port,e.target_port,e.kind,e.condition,e.originals,
             (e.bundle_members||[e]).map(m=>[m.id,m.canonical_source,m.canonical_target,m.resolved_source,m.source_port,m.target_port,m.kind,m.condition,m.originals])]).sort((a,b)=>a[0].localeCompare(b[0])),
-          nodes_accounted:g.node_accounting,edges_accounted:g.edge_accounting});
+          nodes_accounted:partition(g.node_accounting),edges_accounted:partition(g.edge_accounting)});
         if(!baseline.prepared.quality.issues.length&&identities(baseline.graph)===identities(source)){
           baseline.graph={...baseline.graph,publication:{...baseline.graph.publication,composition:{schema:'architecture-composition/1',round:5,
             status:'fallback',direction:'dependency',requested_direction:state.paperDirection==='up'?'up':'down',

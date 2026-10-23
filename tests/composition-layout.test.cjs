@@ -131,6 +131,37 @@ test('a composed drawing with unresolved labels retains a clean dependency drawi
  }
 });
 const sensor=()=>JSON.parse(fs.readFileSync('verification/stream-alignment/current/SensorFusion.json'));
+test('a repeat followed by a state cell may use the clean identical frontier despite attached-ID enumeration order',()=>{
+ const ir=JSON.parse(fs.readFileSync('verification/stage-sample-frames/current/StateStack.json'));
+ const s={...state,paperCompact:true,paperAdaptive:false},raw=JSON.stringify(ir);
+ const source=E.project(ir,{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...s,offsets:{}});
+ const oldPolicy=R.render(ir,{...s,paperComposition:'dependency'});
+ const dependency=R.render(ir,{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...s,paperComposition:'dependency'}),r=R.render(ir,s);
+ // This fixture exercises the real mismatch: same partition, other order.
+ assert.notDeepEqual(source.node_accounting.attached,oldPolicy.graph.node_accounting.attached);
+ const partition=b=>Object.fromEntries(Object.entries(b).map(([k,ids])=>[k,ids.slice().sort()]));
+ assert.deepEqual(partition(source.node_accounting),partition(dependency.graph.node_accounting));
+ assert.deepEqual(partition(source.node_accounting),partition(oldPolicy.graph.node_accounting));
+ assert.equal(r.graph.publication.composition.status,'fallback');
+ assert.ok(r.graph.publication.composition.rejected_quality.unplaced_port_labels.length);
+ assert.deepEqual(r.prepared.quality.issues,[]);assert.deepEqual(r.graph.edges,source.edges);
+ assert.deepEqual(partition(r.graph.node_accounting),partition(source.node_accounting));
+ assert.deepEqual(r.graph.edge_accounting,source.edge_accounting);
+ assert.deepEqual(r.graph.nodes.map(n=>[n.id,n.paper.title,n.paper.caption]),source.nodes.map(n=>[n.id,n.paper.title,n.paper.caption]));
+ assert.equal(r.svg,dependency.svg);assert.equal(JSON.stringify(ir),raw);
+ assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
+ const seq=r.graph.publication.inline_sequences.sequences[0],suffix=seq.remainders[0];
+ assert.ok(r.graph.positions.has(suffix.node));
+ const opened=R.render(ir,{...s,paperAuto:false,open:[...r.graph.publication.open,suffix.node]});
+ assert.ok(suffix.instances.every(id=>opened.graph.positions.has(id)));
+});
+test('fallback selection for a repeated state path does not depend on model or source labels',()=>{
+ const ir=JSON.parse(fs.readFileSync('verification/stage-sample-frames/current/StateStack.json'));
+ ir.title='Unfamiliar circuit';const root=ir.nodes.find(n=>n.parent==null);root.label='Unfamiliar circuit';root.source_class='Foreign';
+ const r=R.render(ir,{...state,paperCompact:true,paperAdaptive:false});
+ assert.equal(r.graph.publication.composition.status,'fallback');assert.deepEqual(r.prepared.quality.issues,[]);
+ assert.ok(r.svg.includes('Unfamiliar circuit'));assert.ok(r.graph.nodes.some(n=>n.framework_type==='torch.nn.GRUCell'));
+});
 const sensorState=ir=>({...state,paperGranularity:'all',paperAuto:false,open:ir.nodes.filter(n=>n.kind==='composite').map(n=>n.id)});
 test('unequal convolution and dense streams align exit-side cores and entry baselines in either direction without changing facts',()=>{
  for(const direction of ['up','down']){

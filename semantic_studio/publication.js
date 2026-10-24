@@ -1085,5 +1085,27 @@
     for(const notes of projected.annotations.values())for(const note of notes)if(proofs.has(note.resource?.id))note.configuration_proof=proofFor(note.resource.id);
     projected.architecture=focused.plan;return projected;
   }
-  const api={plan,project,relationPanel,wrap,width,decorate,configuration,category,palette};root.SemanticPublication=api;if(typeof module!=='undefined')module.exports=api;
+  function fullyExpanded(ir,state,E){
+    const next={...E.clone(state),paperCanonical:true,paperMedium:'canvas',paperGranularity:'detailed',paperAuto:false,paperAdaptive:false,details:true,
+      open:[...E.index(ir).children.keys()].filter(Boolean),offsets:{}};
+    for(const key of ['canvasPlacement','paperFocus','paperRelation','paperRepresentative','paperRepresentativeGroup','paperDiagramPlan','paperDiagramReturn'])delete next[key];
+    return next;
+  }
+  function projectCanonical(ir,state,E){
+    // Every source unit and binding gets its own expandable identity. The
+    // semantic certificates remain available, but no summary/alias/metadata
+    // policy may hide a canonical node in this explicit source-detail mode.
+    const semantic=plan(ir),raw={...semantic,nodes:copy(ir.nodes),edges:ir.edges},idx=index(raw);
+    for(const n of raw.nodes)decorate(n,idx);
+    const graph=E.project(ir,{...state,view:'source',details:true},raw,{layout:{foldSerial:false,gapX:28,gapY:44,framePadding:20,
+      nodeSize:n=>({...n.paper}),frameHeader:n=>Math.max(66,24+n.paper.lines.length*20+n.paper.captions.length*16),alignForks:true}});
+    graph.architecture=raw;
+    for(const e of graph.edges)e.paper_labels=e.condition?[{text:String(e.condition.outcome),evidence:'source branch condition'}]:[];
+    graph.publication={schema:'archcanvas-publication/1',canonical:true,focus:null,requested_focus:null,granularity:'detailed',auto:false,open:state.open,budget:null,boundary:[],wire_bundles:[],
+      paper_width_mm:180,fit_page:false,medium:'canvas',canvas_limits:{width_px:8192,height_px:16384,area_px2:16777216,nodes:512,edges:2048},
+      unknowns:graph.nodes.filter(n=>n.kind==='opaque').length,
+      scope:'Explicit canonical source detail; no value, parameter, call, condition or state is summarized.'};
+    return graph;
+  }
+  const api={plan,project,fullyExpanded,projectCanonical,relationPanel,wrap,width,decorate,configuration,category,palette};root.SemanticPublication=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

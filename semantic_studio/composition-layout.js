@@ -340,7 +340,7 @@
     const previous=copy.paperFrontierReturn;
     delete copy.paperFrontierReturn;
     for(const key of ['paperFocus','paperRelation','paperRepresentative','paperRepresentativeGroup','paperRoleDetails','paperRolePaths',
-      'paperFrontierRecipe','paperExpressionDetails','paperRolePathStageOwners','paperDiagramPlan','paperDiagramReturn'])delete copy[key];
+      'paperFrontierRecipe','paperExpressionDetails','paperRolePathStageOwners','paperDiagramPlan','paperDiagramReturn','paperCanonical'])delete copy[key];
     Object.assign(copy,{view:'publication',paperMedium:'canvas',paperComposition:'architecture',paperDirection:state.paperDirection||'up',
       paperAuto:true,paperAdaptive:false,paperCompact:true,open:[],offsets:{},paperGranularity:'stages'});
     if(action==='detail'){

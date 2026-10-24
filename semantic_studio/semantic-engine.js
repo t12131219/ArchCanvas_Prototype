@@ -16,7 +16,7 @@
     return nodes.slice().sort((a,b)=>depth(a.id)-depth(b.id));
   }
   const paper=()=>root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
-  function viewIndex(ir,state={}){return index(state.view==='publication'?paper().plan(ir):state.view==='architecture'?architecture(ir):ir);}
+  function viewIndex(ir,state={}){return index(state.view==='publication'&&!state.paperCanonical?paper().plan(ir):state.view==='architecture'?architecture(ir):ir);}
   function validate(ir){
     if(ir.schema!=='archcanvas-source-semantic/2'||!Array.isArray(ir.nodes)||!Array.isArray(ir.edges))throw Error('不是通用语义 IR v2');
     if(ir.nodes.length>16000||ir.edges.length>50000)throw Error('超过画布导入预算');
@@ -27,7 +27,7 @@
     return true;
   }
   function project(ir,state,derivedPlan=null,options={}){
-    if(state.view==='publication'&&!derivedPlan)return paper().project(ir,state,api);
+    if(state.view==='publication'&&!derivedPlan)return state.paperCanonical?paper().projectCanonical(ir,state,api):paper().project(ir,state,api);
     const plan=derivedPlan||(state.view==='architecture'?architecture(ir):ir),idx=index(plan),mode=state.mode||'source',open=new Set(state.open),visible=new Set();
     const roots=options.roots||(mode==='runtime'&&idx.nodes.has('runtime-observations')?['runtime-observations']:idx.children.get(null)||[]);
     const compact=state.view==='architecture'&&!state.details,bindings=new Map(),resources=new Set(),insBy=new Map(),usesBy=new Map();

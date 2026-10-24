@@ -5,6 +5,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 module.exports=function loadRenderer(directory,{engine=false,diagramSet=false}={}){
   const context=vm.createContext({});
+  const geometry=path.join(directory,'geometry-index.js');if(fs.existsSync(geometry))vm.runInContext(fs.readFileSync(geometry,'utf8'),context,{filename:geometry});
   for(const name of ['summary-goals.js','symbolic-values.js','structural-representatives.js','sequence-frontier.js','frame-ownership.js','role-frontier.js','contract-stages.js','role-path-stages.js','role-operation-stages.js','dimension-paths.js','local-pipelines.js','local-expressions.js','local-relations.js','relation-constraints.js','expression-goals.js','architecture.js','architecture-layout.js','semantic-engine.js','branch-regions.js','presentation-regions.js','invocation-inputs.js','publication.js','adaptive-frontier.js','publication-renderer.js']){
     if(name==='invocation-inputs.js'&&!fs.existsSync(path.join(directory,name)))continue;
     if(name==='summary-goals.js'&&!fs.existsSync(path.join(directory,name)))continue;

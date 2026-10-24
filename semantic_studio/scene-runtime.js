@@ -8,6 +8,7 @@
   const C=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
   const P=root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
   const D=root.SemanticDiagramSet||(typeof require==='function'?require('./diagram-set.js'):null);
+  const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
   // Map custom properties are NOT preserved by structured clone. Always send
   // the routing context as an explicit sidecar and reattach it at the receiver.
   const pack=figure=>({figure,context:figure.graph.positions.context});
@@ -49,7 +50,7 @@
         let restored;try{restored=I.restore(figure,state.canvasPlacement,ir);}catch(_){}
         if(restored)figure=restored;else delete state.canvasPlacement;
       }
-      if(!figure.prepared){const positions=figure.graph.positions;positions.context.routeCache=new Map();for(const e of figure.graph.edges)positions.context.routeCache.set(e.id,E.route(e,positions));}
+      if(!figure.prepared){const positions=figure.graph.positions;positions.context.routeCache=new Map();L.withRoutingIndex(positions,()=>{for(const e of figure.graph.edges)positions.context.routeCache.set(e.id,E.route(e,positions));});}
       if(incremental)state.canvasPlacement=I.placement(figure);
       const planned=state.view==='publication'&&state.paperMedium==='canvas'&&state.paperGranularity==='roles'?D.plan(ir,figure,state):null;
       return response(remember(state,figure,planned,focusOptions(state),incremental?requested:null),{cached:false,incremental,compute_ms:Date.now()-start});

@@ -50,7 +50,11 @@
   const overlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
   function lineGeometry(routes){
     const overlaps=[],contacts=[];let crossings=0;
-    for(let i=0;i<routes.length;i++)for(let j=i+1;j<routes.length;j++){
+    const Geometry=root.SemanticGeometryIndex||(typeof require==='function'?require('./geometry-index.js'):null);
+    const segments=routes.flatMap((e,owner)=>e.route.points.slice(1).map((p,i)=>{const a=e.route.points[i];return {owner,x:Math.min(a.x,p.x),y:Math.min(a.y,p.y),w:Math.abs(p.x-a.x),h:Math.abs(p.y-a.y)};}));
+    const spatial=routes.length>128?Geometry.boxes(segments):null,pairs=spatial?routes.map(()=>new Set()):null;
+    if(spatial)for(const segment of segments)for(const other of spatial.query(segment))if(other.owner>segment.owner)pairs[segment.owner].add(other.owner);
+    for(let i=0;i<routes.length;i++)for(const j of (pairs?[...pairs[i]].sort((a,b)=>a-b):Array.from({length:routes.length-i-1},(_,j)=>i+j+1))){
       const first=routes[i],second=routes[j],touches=new Set();let sharedLength=0;
       const sameValue=first.resolved_source===second.resolved_source&&first.source_port===second.source_port;
       for(let a=1;a<first.route.points.length;a++)for(let b=1;b<second.route.points.length;b++){
@@ -109,7 +113,9 @@
     context.crossingCost=strategy.includes('-clear-')?90:18;context.contactCost=0;context.stubLength=16;
     const distance=e=>{const a=graph.positions.get(e.source),b=graph.positions.get(e.target);return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);};
     const direction=strategy.endsWith('long')?-1:1;
-    for(const e of graph.edges.slice().sort((a,b)=>direction*(distance(a)-distance(b))||a.id.localeCompare(b.id))){const route=E.route(e,graph.positions);context.routeCache.set(e.id,route);for(let i=1;i<route.points.length;i++)context.reserved.push([route.points[i-1],route.points[i]]);}
+    L.withRoutingIndex(graph.positions,()=>{
+      for(const e of graph.edges.slice().sort((a,b)=>direction*(distance(a)-distance(b))||a.id.localeCompare(b.id))){const route=E.route(e,graph.positions);context.routeCache.set(e.id,route);for(let i=1;i<route.points.length;i++)context.reserved.push([route.points[i-1],route.points[i]]);}
+    });
     return evaluateRoutes(graph,graph.edges.map(e=>({...e,route:context.routeCache.get(e.id)})),strategy);
   }
   function evaluateRoutes(graph,routes,strategy,fixedLabeling){
@@ -2012,6 +2018,21 @@
       const interaction=root.SemanticCanvasInteraction||(typeof require==='function'?require('./canvas-interaction.js'):null);
       const baseline=prepareFigure(ir,{...state,...interaction?.placementLayout(state.canvasPlacement),canvasPlacement:undefined},{...options,ignorePlacement:true});
       try{return interaction?.restore(baseline,state.canvasPlacement,ir)||baseline;}catch(_){return baseline;}
+    }
+    if(state.paperCanonical){
+      let graph=E.project(ir,{...state,view:'publication'});
+      if(state.paperComposition==='architecture'){
+        const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
+        graph=composition.compose(graph,state);
+      }
+      // Full source detail is an interactive inspection surface. Measure all
+      // paths and report all issues, without six global publication trials.
+      // F0/F1 retain their complete quality selection and fallback.
+      const large=graph.nodes.length>512||graph.edges.length>512;
+      const chosen={graph,prepared:large?prepareTrial(graph,'canonical-short'):prepare(graph)};
+      chosen.prepared.routing={...chosen.prepared.routing,canonical_detail:{all_units_explicit:true,bounded_routing:large,strategies:large?1:null}};
+      E.auditConstraintRoutes(graph,chosen.prepared.routes);
+      return attachExpressionEvidence(ir,chosen);
     }
     if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
       const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);

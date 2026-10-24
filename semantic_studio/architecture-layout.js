@@ -2,6 +2,20 @@
  * model family names never determine topology or create connections. */
 (function(root){
   'use strict';
+  const Geometry=root.SemanticGeometryIndex||(typeof require==='function'?require('./geometry-index.js'):null),routingScopes=new WeakMap();
+  function withRoutingIndex(positions,run){
+    const previous=routingScopes.get(positions),idx=positions.context?.idx,ancestors=new Map(),incident=new Map(),covering=new Map();
+    for(const id of positions.keys()){
+      const chain=new Set([id]);let parent=idx?.nodes.get(id)?.parent;while(parent){chain.add(parent);parent=idx.nodes.get(parent)?.parent;}ancestors.set(id,chain);
+      const p=positions.get(id),covers=[];
+      for(const at of [...chain].slice(1)){const q=positions.get(at);if(!q)continue;const top=positions.context?.protectFrameTitles!==true&&q.expanded&&q.header?Math.min(q.h,q.header-10):0;
+        if(p.x>=q.x-8&&p.x+p.w<=q.x+q.w+8&&p.y>=q.y+top-(top?0:8)&&p.y+p.h<=q.y+q.h+8)covers.push(at);
+      }covering.set(id,covers);
+    }
+    for(const edge of positions.context?.edges||[])for(const source of [true,false]){const id=source?edge.source:edge.target;if(!incident.has(id))incident.set(id,[]);incident.get(id).push({edge,source});}
+    routingScopes.set(positions,{ancestors,incident,covering,reserved:null,count:0,segments:null});
+    try{return run();}finally{if(previous)routingScopes.set(positions,previous);else routingScopes.delete(positions);}
+  }
   function components(ids,adj){
     let sequence=0;const stack=[],active=new Set(),number=new Map(),low=new Map(),result=[];
     function visit(id){number.set(id,sequence);low.set(id,sequence++);stack.push(id);active.add(id);
@@ -465,7 +479,7 @@
     function arrange(kids,parent){
       const gapY=Math.max(options.gapY??76,options.gapYForParent?.(parent)??0);
       const rankColumns=options.rankColumnsFor?.(idx.nodes.get(parent))??options.rankColumns;
-      const kidSet=new Set(kids),owner=id=>{while(id!=null&&!kidSet.has(id)){if(id===parent)return null;id=idx.nodes.get(id)?.parent;}return id;};
+      const kidSet=new Set(kids),owners=new Map(),owner=id=>{const key=id;if(owners.has(key))return owners.get(key);while(id!=null&&!kidSet.has(id)){if(id===parent){id=null;break;}id=idx.nodes.get(id)?.parent;}owners.set(key,id);return id;};
       const adj=new Map(kids.map(id=>[id,new Set()])),pred=new Map(kids.map(id=>[id,new Set()]));
       for(const e of edges){const a=owner(e.source),b=owner(e.target);if(a&&b&&a!==b){
         // Only explicitly proved normal-completion backedges may be separated
@@ -964,7 +978,7 @@
   }
   function routeObstacles(e,positions){
     const a=positions.get(e.source),b=positions.get(e.target),context=positions.context,idx=context?.idx;
-    const ancestors=id=>{const set=new Set([id]);while(idx?.nodes.get(id)?.parent){id=idx.nodes.get(id).parent;set.add(id);}return set;};
+    const scope=routingScopes.get(positions),ancestors=id=>{if(scope?.ancestors.has(id))return scope.ancestors.get(id);const set=new Set([id]);while(idx?.nodes.get(id)?.parent){id=idx.nodes.get(id).parent;set.add(id);}return set;};
     const sourceAnc=ancestors(e.source),targetAnc=ancestors(e.target),boxes=[],protectTitles=context?.protectFrameTitles===true;
     const bodyBox=(p,pad=0)=>{
       const top=!protectTitles&&p.expanded&&p.header?Math.min(p.h,p.header-10):0;
@@ -973,6 +987,7 @@
     if(protectTitles)for(const [id,p]of positions)if(p.expanded&&p.header&&(sourceAnc.has(id)||targetAnc.has(id)))boxes.push({x:p.x,y:p.y,w:p.protected_header_width??p.w,h:p.protected_header_height??p.header-10});
     for(const [id,p]of positions){
       if(sourceAnc.has(id)||targetAnc.has(id))continue;
+      if(scope){if(!scope.covering.get(id).some(parent=>!sourceAnc.has(parent)&&!targetAnc.has(parent)))boxes.push(bodyBox(p,8));continue;}
       let parent=idx?.nodes.get(id)?.parent,covered=false;
       while(parent){if(positions.has(parent)&&!sourceAnc.has(parent)&&!targetAnc.has(parent)){
         const box=bodyBox(positions.get(parent),8);
@@ -987,7 +1002,7 @@
   function route(e,positions,{terminalsOnly=false}={}){
     const a=positions.get(e.source),b=positions.get(e.target);if(!a||!b)return {points:[],ok:false,reason:'missing-endpoint'};
     const context=positions.context,idx=context?.idx;
-    const ancestors=id=>{const set=new Set([id]);while(idx?.nodes.get(id)?.parent){id=idx.nodes.get(id).parent;set.add(id);}return set;};
+    const scope=routingScopes.get(positions),ancestors=id=>{if(scope?.ancestors.has(id))return scope.ancestors.get(id);const set=new Set([id]);while(idx?.nodes.get(id)?.parent){id=idx.nodes.get(id).parent;set.add(id);}return set;};
     const sourceAnc=ancestors(e.source),targetAnc=ancestors(e.target);
     const vertical=b.y>=a.y+a.h,up=a.y>=b.y+b.h,side=!vertical&&!up;
     let ss,ts;
@@ -1029,7 +1044,8 @@
       // Folded paths can enter and leave through the same side. Allocate all
       // incident terminals together so the outgoing stub cannot retrace an
       // incoming arrow at the very same physical point.
-      for(const edge of context?.edges||[e])for(const source of [true,false])if((source?edge.source:edge.target)===id&&sideFor(edge,source)===which)siblings.push({edge,source});
+      if(scope){for(const item of scope.incident.get(id)||[])if(sideFor(item.edge,item.source)===which)siblings.push(item);}
+      else for(const edge of context?.edges||[e])for(const source of [true,false])if((source?edge.source:edge.target)===id&&sideFor(edge,source)===which)siblings.push({edge,source});
       const near=context?.coincidentPorts?.some(c=>c.node===id&&c.side===which);
       if(context?.portOrder==='neighbors'||near){
         // Physical order follows the opposite endpoint on this side. It does
@@ -1057,6 +1073,8 @@
     // Expanded titles remain pass-through; real nodes, unrelated bodies
     // and endpoint interiors use the same obstacle policy as shared fanouts.
     const boxes=routeObstacles(e,positions);
+    const obstacleIndex=boxes.length>64?Geometry.boxes(boxes):null;
+    const routeBlocked=(a,b)=>blocked(a,b,obstacleIndex?obstacleIndex.query({x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.abs(a.x-b.x),h:Math.abs(a.y-b.y)}):boxes);
     const middle=(start.y+end.y)/2;
     const candidates=[
       [start,point(start.x,end.y),end],
@@ -1114,13 +1132,18 @@
     // Normalize the fixed reservation snapshot once. Keep its original order
     // so fractional overlap penalties are accumulated in exactly the same
     // sequence as before, including zero-length reserved segments.
-    const reservationBounds=reserved.map(([c,d])=>({vertical:c.x===d.x,x:c.x,y:c.y,
+    let reservationIndex=null;
+    if(scope){
+      if(scope.reserved!==reserved||scope.count>reserved.length){scope.reserved=reserved;scope.count=0;scope.segments=Geometry.segments();}
+      for(;scope.count<reserved.length;scope.count++)scope.segments.add(...reserved[scope.count]);reservationIndex=scope.segments;
+    }
+    const reservationBounds=reservationIndex?null:reserved.map(([c,d])=>({vertical:c.x===d.x,x:c.x,y:c.y,
       left:Math.min(c.x,d.x),right:Math.max(c.x,d.x),top:Math.min(c.y,d.y),bottom:Math.max(c.y,d.y)}));
     if(reserved.length)for(const delta of [-12,12,-24,24,-40,40]){
       candidates.push([start,point(start.x,middle+delta),point(end.x,middle+delta),end]);
       const x=(start.x+end.x)/2+delta;candidates.push([start,point(x,start.y),point(x,end.y),end]);
     }
-    const clear=ps=>ps.every((p,i)=>!i||!blocked(ps[i-1],p,boxes));
+    const clear=ps=>ps.every((p,i)=>!i||!routeBlocked(ps[i-1],p));
     const contextLow=contextLane?(e.context_lane.side==='left'?contextOwner.x+(contextOwner.design_gutter||0):contextOwner.x+contextOwner.w-contextOwner.context_gutter):null;
     const contextHigh=contextLane?(e.context_lane.side==='left'?contextLow+contextOwner.context_gutter:contextOwner.x+contextOwner.w):null;
     const inContext=ps=>contextLane&&ps.some((p,i)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>contextLow&&p.x<contextHigh);
@@ -1132,7 +1155,7 @@
       // covering its coordinate. Preserve the original accumulation order,
       // inclusive endpoints, zero-length segments and all penalty arithmetic.
       const rails=vertical?verticalReservations:horizontalReservations,coordinate=vertical?a.x:a.y;
-      let relevant=rails.get(coordinate);
+      let relevant=reservationIndex?reservationIndex.query(a,b):rails.get(coordinate);
       if(!relevant){relevant=reservationBounds.filter(r=>vertical?
         r.vertical?r.x===coordinate:r.left<=coordinate&&coordinate<=r.right:
         r.vertical?r.top<=coordinate&&coordinate<=r.bottom:r.y===coordinate);rails.set(coordinate,relevant);}
@@ -1199,7 +1222,7 @@
             const p=point(xs[x],ys[y]),from=point(xs[cur.x],ys[cur.y]);
             const segmentKey=(Math.min(y,cur.y)*xs.length+Math.min(x,cur.x))*2+(d==='v'?1:0);
             let segment=segments.get(segmentKey);
-            if(!segment){const hit=blocked(from,p,boxes);segment={blocked:hit,penalty:hit?0:congestion(from,p)};segments.set(segmentKey,segment);}
+            if(!segment){const hit=routeBlocked(from,p);segment={blocked:hit,penalty:hit?0:congestion(from,p)};segments.set(segmentKey,segment);}
             if(segment.blocked)continue;
             const lane=preserveContext&&(cur.lane||d==='v'&&p.x>contextLow&&p.x<contextHigh);
             const g=cur.g+Math.abs(p.x-from.x)+Math.abs(p.y-from.y)+segment.penalty+(cur.d!==d&&cur.d!=='s'?24:0),k=key(x,y,d,lane);
@@ -1260,5 +1283,5 @@
     return result.sort((a,b)=>a.wire-b.wire||a.points.length-b.points.length).slice(0,64);
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={routeShortcuts,layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,architectureFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={withRoutingIndex,routeShortcuts,layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,architectureFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

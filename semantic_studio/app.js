@@ -25,7 +25,8 @@
       message('操作已恢复：'+result.error);return;
     }
     state=result.state;sceneKey=result.key;Runtime.unpack(result);focusOptions=result.focus||[];
-    setBusy(false);result.geometryOnly=!!options.move;drawScene(result);syncPaperControls();checkpoint();
+    result.geometryOnly=!!options.move;await drawScene(result,()=>ticket===renderRevision);
+    if(ticket!==renderRevision)return;setBusy(false);syncPaperControls();checkpoint();
     svg.dataset.execution=result.execution;svg.dataset.sceneKey=String(sceneKey);svg.dataset.computeMs=String(result.metrics.compute_ms);svg.dataset.sceneMs=(performance.now()-start).toFixed(2);svg.dataset.cached=String(result.metrics.cached);
     svg.dataset.incremental=String(!!result.metrics.incremental);
     if(fitRequested){fitRequested=false;fit();}if(persistRequested){persistRequested=false;persist();}
@@ -189,8 +190,8 @@
       // A leftover explicit helper request would otherwise dissolve the stage.
       if(projection.idx.nodes.get(id)?.role_path_stage){const todo=[id];for(let i=0;i<todo.length;i++)for(const child of projection.idx.children.get(todo[i])||[]){open.delete(child);todo.push(child);}}
     }else open.add(id);state.open=[...open];delete state.canvasPlacement;render({frontier:id});if(state.view==='publication')fit();persist();}
-  function bindNode(g,n,p){
-      const kids=projection.idx.children.get(n.id)||[];
+  function bindNode(g,n,p,graph=projection){
+      const kids=graph.idx.children.get(n.id)||[];
       if(kids.length){const plus=el('text',{x:p.w-22,y:25,'font-size':18,fill:'#47618a'},p.expanded?'−':'+');plus.style.pointerEvents='auto';plus.style.cursor='pointer';plus.addEventListener('pointerdown',e=>e.stopPropagation());plus.addEventListener('click',e=>{e.stopPropagation();toggle(n.id);});g.append(plus);}
       g.addEventListener('dblclick',e=>{e.stopPropagation();toggle(n.id);});
       g.addEventListener('pointerdown',e=>{
@@ -198,7 +199,7 @@
         drag={kind:'node',id:n.id,start:world(e),session,moved:false,dx:0,dy:0,pointerId:e.pointerId,capture:g,beforeHistory:history.slice(),beforeFuture:future.slice(),beforeState:E.clone(state),samples:[]};setBusy(true);g.setPointerCapture(e.pointerId);svg.dataset.interactionPhase='dragging';
       });
   }
-  function drawScene(result){if(!ir)return;if(result.geometryOnly){patchGeometry(result.figure);return;}$('architectureReturn').hidden=!state.paperFrontierReturn;$('diagramSuggestions').hidden=true;$('diagramBack').hidden=!state.paperDiagramReturn;$('legend').innerHTML=state.view==='publication'?'<span>蓝灰实线：源码依赖</span><span>绿色：实际张量流</span><span>黄虚线：控制</span><span>虚框：未知操作</span><span>无节点交叉：跨越</span><span>粗线与数量：合绘的独立依赖，可单击查看</span>':'<span>蓝色虚线：源码依赖</span><span>绿色实线：实际张量流</span><span>紫色：参数</span><span>黄色：控制</span><span>红色虚框：未知边界</span>';svg.classList.toggle('publication',state.view==='publication');if(state.view!=='publication'){document.getElementById('paperLabels')?.remove();document.getElementById('paperJunctions')?.remove();}if(state.view==='publication'){renderPaper(result.figure,result.planned);return;}displayedFigure=result.figure;projection=result.figure.graph;renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
+  async function drawScene(result,isCurrent=()=>true){if(!ir)return;if(result.geometryOnly){patchGeometry(result.figure);return;}$('architectureReturn').hidden=!state.paperFrontierReturn;$('diagramSuggestions').hidden=true;$('diagramBack').hidden=!state.paperDiagramReturn;$('legend').innerHTML=state.view==='publication'?'<span>蓝灰实线：源码依赖</span><span>绿色：实际张量流</span><span>黄虚线：控制</span><span>虚框：未知操作</span><span>无节点交叉：跨越</span><span>粗线与数量：合绘的独立依赖，可单击查看</span>':'<span>蓝色虚线：源码依赖</span><span>绿色实线：实际张量流</span><span>紫色：参数</span><span>黄色：控制</span><span>红色虚框：未知边界</span>';svg.classList.toggle('publication',state.view==='publication');if(state.view!=='publication'){document.getElementById('paperLabels')?.remove();document.getElementById('paperJunctions')?.remove();}if(state.view==='publication'){await renderPaper(result.figure,result.planned,isCurrent);return;}displayedFigure=result.figure;projection=result.figure.graph;renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
     const frameFragment=document.createDocumentFragment(),nodeFragment=document.createDocumentFragment(),edgeFragment=document.createDocumentFragment();
     for(const n of E.drawingOrder(projection.nodes,projection.idx)){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});const fill=n.glyph?.fill||'#edf2fa',color=n.kind==='opaque'?'#bf6b6b':'#92a8c4';let shape;
       if(p.symbol){shape=el('circle',{cx:p.w/2,cy:p.h/2,r:p.w/2,fill,stroke:color});}
@@ -237,7 +238,7 @@
   }
   $('paperFocus').onchange=()=>{if($('paperFocus').value===':relation')return;snapshot();state.paperRelation=null;state.paperFocus=$('paperFocus').value||null;state.paperRepresentative=false;state.paperAuto=true;state.offsets={};delete state.canvasPlacement;render();fit();persist();syncPaperControls();};
   $('paperAuto').onchange=()=>{snapshot();state.open=projection.publication?.open||state.open;state.paperAuto=$('paperAuto').checked;state.offsets={};delete state.canvasPlacement;syncPaperControls();render();fit();persist();};
-  $('paperGranularity').onchange=()=>{snapshot();state.paperGranularity=$('paperGranularity').value;state.paperAuto=true;state.offsets={};delete state.canvasPlacement;syncPaperControls();render();fit();persist();};
+  $('paperGranularity').onchange=()=>{snapshot();state.paperGranularity=$('paperGranularity').value;delete state.paperCanonical;state.paperAuto=true;state.offsets={};delete state.canvasPlacement;syncPaperControls();render();fit();persist();};
   $('paperAdaptivePolicy').onchange=()=>{snapshot();state.paperAdaptivePolicy=$('paperAdaptivePolicy').value;state.offsets={};delete state.canvasPlacement;render();fit();persist();};
   $('paperAdaptive').onchange=()=>{snapshot();state.paperAdaptive=$('paperAdaptive').checked;state.offsets={};delete state.canvasPlacement;syncPaperControls();render();fit();persist();};
   $('paperWidth').onchange=()=>{snapshot();state.paperWidthMm=Math.max(80,Math.min(400,Number($('paperWidth').value)||180));render();fit();persist();};
@@ -289,12 +290,14 @@
     if(figure.prepared){const labels=document.getElementById('paperLabels');labels.innerHTML=figure.prepared.labeling.placed.map(R.labelBody).join('');renderMarkers(figure);canvasQuality=figure.prepared.quality.medium==='canvas'?figure.prepared.quality:null;showPaperQuality(figure.prepared.quality);}
     refreshBundleInspector();$('undo').disabled=!history.length;$('redo').disabled=!future.length;message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接 · 位置与连线已更新`);
   }
-  function renderPaper(figure,planned){
-    displayedFigure=figure;projection=figure.graph;const prepared=figure.prepared;projection.bounds=prepared.bounds;
-    renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
+  async function renderPaper(figure,planned,isCurrent=()=>true){
+    const graph=figure.graph,prepared=figure.prepared,nodeMap=new Map(),edgeMap=new Map(),frameFragment=document.createDocumentFragment(),nodeFragment=document.createDocumentFragment(),edgeFragment=document.createDocumentFragment();
+    const yieldFrame=()=>new Promise(resolve=>setTimeout(resolve,0));let built=0;
+    for(const n of E.drawingOrder(graph.nodes,graph.idx)){const p=graph.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});g.innerHTML=R.nodeBody(n,p);g.append(el('title',{},R.nodeTitle(n,graph.idx)));bindNode(g,n,p,graph);(p.expanded?frameFragment:nodeFragment).append(g);nodeMap.set(n.id,g);
+      if(++built%128===0){await yieldFrame();if(!isCurrent())return;}
+    }
     let style=document.getElementById('paperStyle');if(!style){style=el('style',{id:'paperStyle'},R.css);svg.prepend(style);svg.querySelector('defs').insertAdjacentHTML('beforeend',R.defs);}
-    document.getElementById('paperLabels')?.remove();const labels=el('g',{id:'paperLabels'});
-    for(const n of E.drawingOrder(projection.nodes,projection.idx)){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});g.innerHTML=R.nodeBody(n,p);g.append(el('title',{},R.nodeTitle(n,projection.idx)));bindNode(g,n,p);(p.expanded?$('frames'):$('nodes')).append(g);renderedNodes.set(n.id,g);}
+    const labels=el('g',{id:'paperLabels'});
     for(const edge of prepared.routes){
       const g=el('g');g.innerHTML=R.edgeBody(edge);
       if(edge.bundle_members){
@@ -309,8 +312,11 @@
         g.addEventListener('click',e=>{e.stopPropagation();inspectBundle(edge);});
         g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();inspectBundle(edge);}});
       }
-      $('edges').append(g);renderedEdges.set(edge.id,g);
+      edgeFragment.append(g);edgeMap.set(edge.id,g);if(++built%128===0){await yieldFrame();if(!isCurrent())return;}
     }
+    if(!isCurrent())return;displayedFigure=figure;projection=graph;projection.bounds=prepared.bounds;renderedNodes=nodeMap;renderedEdges=edgeMap;
+    $('frames').replaceChildren(frameFragment);$('nodes').replaceChildren(nodeFragment);$('edges').replaceChildren(edgeFragment);
+    document.getElementById('paperLabels')?.remove();
     labels.innerHTML=prepared.labeling.placed.map(R.labelBody).join('');svg.append(labels);renderMarkers(figure);refreshNavigation();refreshBundleInspector();
     const q=prepared.quality;canvasQuality=q.medium==='canvas'?q:null;showPaperQuality(q);
     $('paperAuto').checked=state.paperAuto!==false;$('paperGranularity').disabled=state.paperAuto===false;$('paperAdaptive').disabled=state.paperAuto===false;$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
@@ -385,7 +391,7 @@
   window.addEventListener('blur',cancelDrag);document.addEventListener('keydown',e=>{if(e.key==='Escape')cancelDrag();});
   svg.addEventListener('wheel',e=>{e.preventDefault();const at=world(e),f=Math.exp(Math.max(-.4,Math.min(.4,e.deltaY*.001)));const w=Math.max(200,Math.min(100000,camera.w*f)),ratio=w/camera.w;camera={x:at.x-(at.x-camera.x)*ratio,y:at.y-(at.y-camera.y)*ratio,w,h:camera.h*ratio};setCamera();},{passive:false});
   $('collapse').onclick=()=>{snapshot();if(state.view==='publication'){state.paperAuto=false;$('paperAuto').checked=false;}state.open=[];render();fit();persist();};
-  $('expand').onclick=()=>{snapshot();state.paperAuto=false;state.details=state.view!=='publication';$('detailsToggle').checked=state.details;$('paperAuto').checked=false;state.open=[...projection.idx.children.keys()].filter(Boolean);delete state.canvasPlacement;render();fit();persist();};
+  $('expand').onclick=()=>{snapshot();state.paperAuto=false;state.details=state.view!=='publication';$('detailsToggle').checked=state.details;$('paperAuto').checked=false;state=P.fullyExpanded(ir,state,E);syncPaperControls();render();fit();persist();};
   function optionalFold(){$('foldToggle').disabled=state.view==='source';$('detailsToggle').disabled=state.view==='publication';$('paperTools').hidden=state.view!=='publication';syncPaperControls();}
   $('foldToggle').onchange=()=>{snapshot();state.foldSerial=$('foldToggle').checked;state.offsets={};delete state.canvasPlacement;render();fit();persist();};
   $('detailsToggle').onchange=()=>{snapshot();state.details=$('detailsToggle').checked;render();fit();persist();};

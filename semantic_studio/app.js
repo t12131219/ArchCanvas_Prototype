@@ -5,6 +5,7 @@
   const el=(tag,attrs={},text)=>{const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;};
   let catalog=[],ir=null,state=null,presentation=null,projection=null,selected=null,history=[],future=[],camera={x:0,y:0,w:1000,h:700},drag=null,loadRevision=0;
   let renderedNodes=new Map(),renderedEdges=new Map(),pendingFrame=0,dragPoint=null,inspectedBundle=null,canvasQuality=null,displayedFigure=null;
+  const paperNodeStamps=new WeakMap(),paperEdgeStamps=new WeakMap();let paperSceneIR=null,renderInstance=0;
   let navigationIndex=[],focusOptions=[],sceneKey=null,busy=false,renderRevision=0,fitRequested=false,persistRequested=false,committed=null,persistTimer=0;
   const I=window.SemanticCanvasInteraction,scene=window.SemanticSceneClient.create(),Runtime=window.SemanticSceneRuntime;
   const disabledBefore=new Map(),storage=window.SemanticStateStorage.create();let pendingPersistence=null;
@@ -276,10 +277,11 @@
     $('edges').append(group);
   }
   function patchGeometry(figure){
+    const started=performance.now();
     displayedFigure=figure;projection=figure.graph;if(figure.prepared)projection.bounds=figure.prepared.bounds;
     for(const [id,g]of renderedNodes){const p=projection.positions.get(id);g.setAttribute('transform',`translate(${p.x},${p.y})`);}
     const routes=figure.prepared?.routes||projection.edges.map(e=>({...e,route:E.route(e,projection.positions)}));
-    for(const e of routes){const g=renderedEdges.get(e.id),d=I.path(e.route.points);g.removeAttribute('transform');
+    for(const e of routes){const g=renderedEdges.get(e.id),d=I.path(e.route.points);g.removeAttribute('transform');paperEdgeStamps.delete(g);
       if(g.tagName==='g'){
         g.querySelectorAll('path').forEach(p=>p.setAttribute('d',d));
         // Bundle hit areas follow the settled segments as well as the ink.
@@ -288,18 +290,27 @@
       }else g.setAttribute('d',d);
     }
     if(figure.prepared){const labels=document.getElementById('paperLabels');labels.innerHTML=figure.prepared.labeling.placed.map(R.labelBody).join('');renderMarkers(figure);canvasQuality=figure.prepared.quality.medium==='canvas'?figure.prepared.quality:null;showPaperQuality(figure.prepared.quality);}
+    Object.assign(svg.dataset,{domCreatedNodes:'0',domReusedNodes:String(renderedNodes.size),domCreatedEdges:'0',domReusedEdges:String(renderedEdges.size),domMs:(performance.now()-started).toFixed(2)});
     refreshBundleInspector();$('undo').disabled=!history.length;$('redo').disabled=!future.length;message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接 · 位置与连线已更新`);
   }
   async function renderPaper(figure,planned,isCurrent=()=>true){
-    const graph=figure.graph,prepared=figure.prepared,nodeMap=new Map(),edgeMap=new Map(),frameFragment=document.createDocumentFragment(),nodeFragment=document.createDocumentFragment(),edgeFragment=document.createDocumentFragment();
+    const started=performance.now(),graph=figure.graph,prepared=figure.prepared,nodeMap=new Map(),edgeMap=new Map(),frames=[],nodes=[],edges=[];
+    const retain=paperSceneIR===ir&&!!displayedFigure?.prepared,stats={createdNodes:0,reusedNodes:0,createdEdges:0,reusedEdges:0};
     const yieldFrame=()=>new Promise(resolve=>setTimeout(resolve,0));let built=0;
-    for(const n of E.drawingOrder(graph.nodes,graph.idx)){const p=graph.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});g.innerHTML=R.nodeBody(n,p);g.append(el('title',{},R.nodeTitle(n,graph.idx)));bindNode(g,n,p,graph);(p.expanded?frameFragment:nodeFragment).append(g);nodeMap.set(n.id,g);
+    for(const n of E.drawingOrder(graph.nodes,graph.idx)){const p=graph.positions.get(n.id),body=R.nodeBody(n,p),title=R.nodeTitle(n,graph.idx),kids=(graph.idx.children.get(n.id)||[]).length;
+      const stamp=JSON.stringify([body,title,!!kids,p.w,!!p.expanded]);let g=retain&&renderedNodes.get(n.id);
+      if(g&&paperNodeStamps.get(g)===stamp)stats.reusedNodes++;else{
+        g=el('g',{class:'node','data-id':n.id,'data-render-instance':++renderInstance});g.innerHTML=body;g.append(el('title',{},title));bindNode(g,n,p,graph);paperNodeStamps.set(g,stamp);stats.createdNodes++;
+      }
+      (p.expanded?frames:nodes).push(g);nodeMap.set(n.id,g);
       if(++built%128===0){await yieldFrame();if(!isCurrent())return;}
     }
     let style=document.getElementById('paperStyle');if(!style){style=el('style',{id:'paperStyle'},R.css);svg.prepend(style);svg.querySelector('defs').insertAdjacentHTML('beforeend',R.defs);}
     const labels=el('g',{id:'paperLabels'});
     for(const edge of prepared.routes){
-      const g=el('g');g.innerHTML=R.edgeBody(edge);
+      const body=R.edgeBody(edge);let g=retain&&renderedEdges.get(edge.id);
+      if(g&&paperEdgeStamps.get(g)===body)stats.reusedEdges++;else{
+      g=el('g',{'data-render-instance':++renderInstance});g.innerHTML=body;paperEdgeStamps.set(g,body);stats.createdEdges++;
       if(edge.bundle_members){
         g.style.cursor='pointer';g.setAttribute('role','button');g.setAttribute('tabindex','0');
         g.setAttribute('aria-label','查看 '+edge.bundle_members.length+' 条合绘依赖');
@@ -309,15 +320,22 @@
           const a=edge.route.points[i-1],b=edge.route.points[i];
           g.append(el('rect',{x:Math.min(a.x,b.x)-8,y:Math.min(a.y,b.y)-8,width:Math.abs(a.x-b.x)+16,height:Math.abs(a.y-b.y)+16,fill:'transparent','pointer-events':'all','aria-hidden':'true'}));
         }
-        g.addEventListener('click',e=>{e.stopPropagation();inspectBundle(edge);});
-        g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();inspectBundle(edge);}});
+        const inspectCurrent=()=>{const current=displayedFigure?.prepared.routes.find(e=>e.id===edge.id);if(current?.bundle_members)inspectBundle(current);};
+        g.addEventListener('click',e=>{e.stopPropagation();inspectCurrent();});
+        g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();inspectCurrent();}});
       }
-      edgeFragment.append(g);edgeMap.set(edge.id,g);if(++built%128===0){await yieldFrame();if(!isCurrent())return;}
+      }
+      edges.push(g);edgeMap.set(edge.id,g);if(++built%128===0){await yieldFrame();if(!isCurrent())return;}
     }
     if(!isCurrent())return;displayedFigure=figure;projection=graph;projection.bounds=prepared.bounds;renderedNodes=nodeMap;renderedEdges=edgeMap;
-    $('frames').replaceChildren(frameFragment);$('nodes').replaceChildren(nodeFragment);$('edges').replaceChildren(edgeFragment);
+    // Retained instances stay in the old committed scene throughout async
+    // preparation. Only this guarded commit changes live nodes or ordering.
+    for(const [id,g]of nodeMap){const p=graph.positions.get(id);g.setAttribute('transform',`translate(${p.x},${p.y})`);g.classList.toggle('selected',id===selected);}
+    const reconcile=(layer,items)=>{let at=layer.firstChild;for(const item of items){if(item===at)at=at.nextSibling;else layer.insertBefore(item,at);}while(at){const next=at.nextSibling;at.remove();at=next;}};
+    reconcile($('frames'),frames);reconcile($('nodes'),nodes);reconcile($('edges'),edges);paperSceneIR=ir;
     document.getElementById('paperLabels')?.remove();
     labels.innerHTML=prepared.labeling.placed.map(R.labelBody).join('');svg.append(labels);renderMarkers(figure);refreshNavigation();refreshBundleInspector();
+    for(const [key,value]of Object.entries(stats))svg.dataset['dom'+key[0].toUpperCase()+key.slice(1)]=String(value);svg.dataset.domMs=(performance.now()-started).toFixed(2);
     const q=prepared.quality;canvasQuality=q.medium==='canvas'?q:null;showPaperQuality(q);
     $('paperAuto').checked=state.paperAuto!==false;$('paperGranularity').disabled=state.paperAuto===false;$('paperAdaptive').disabled=state.paperAuto===false;$('paperAdaptivePolicy').disabled=state.paperAuto===false||state.paperAdaptive!==true;$('undo').disabled=!history.length;$('redo').disabled=!future.length;
     const limited=prepared.routing.granularity_refinement;

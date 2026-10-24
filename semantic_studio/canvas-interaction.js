@@ -6,9 +6,14 @@
   const E=root.SemanticEngine||(typeof require==='function'?require('./semantic-engine.js'):null);
   const L=root.SemanticLayout||(typeof require==='function'?require('./architecture-layout.js'):null);
   const R=root.SemanticPublicationRenderer||(typeof require==='function'?require('./publication-renderer.js'):null);
+  const Geometry=root.SemanticGeometryIndex||(typeof require==='function'?require('./geometry-index.js'):null);
   const overlap=(a,b)=>Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>1e-5&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>1e-5;
   const path=points=>points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
   const shift=(points,dx,dy)=>points.map(p=>({...p,x:p.x+dx,y:p.y+dy}));
+  // A translated circular terminal and the same terminal recomputed from its
+  // translated box can differ by a few floating-point units. Preserve saved
+  // geometry while allowing only arithmetic roundoff, never pixel tolerance.
+  const sameCoordinate=(a,b)=>Math.abs(a-b)<=8*Number.EPSILON*Math.max(1,Math.abs(a),Math.abs(b));
   function owner(graph,id){let at=graph.idx.nodes.get(id)?.parent;while(at&&!graph.positions.has(at))at=graph.idx.nodes.get(at)?.parent;return at||null;}
   function routes(figure){return figure.prepared?.routes||figure.graph.edges.map(e=>({...e,route:E.route(e,figure.graph.positions)}));}
   function session(figure,id){
@@ -16,9 +21,10 @@
     const ids=new Set([id]),todo=[id];
     for(let i=0;i<todo.length;i++)for(const child of g.idx.children.get(todo[i])||[]){todo.push(child);if(g.positions.has(child))ids.add(child);}
     const parent=owner(g,id),ancestors=new Set();let at=parent;while(at){ancestors.add(at);at=owner(g,at);}
+    const obstacles=g.nodes.filter(n=>!ids.has(n.id)&&!ancestors.has(n.id)).map(n=>g.positions.get(n.id));
     return {id,ids,origins:new Map([...ids].map(id=>[id,{...g.positions.get(id)}])),parent:parent&&g.positions.get(parent),
       bounds:figure.prepared?.bounds||g.bounds,
-      obstacles:g.nodes.filter(n=>!ids.has(n.id)&&!ancestors.has(n.id)).map(n=>g.positions.get(n.id)),
+      obstacles,obstacleIndex:obstacles.length>64?Geometry.boxes(obstacles):null,
       edges:routes(figure).filter(e=>ids.has(e.source)||ids.has(e.target)),dx:0,dy:0};
   }
   function constrain(s,dx,dy){
@@ -27,9 +33,10 @@
     const loX=b.x+pad-p.x,hiX=b.x+b.w-pad-p.x-p.w,loY=b.y+header+pad-p.y,hiY=b.y+b.h-pad-p.y-p.h;
     // A pre-existing tight frame must never cause a jump on pointerdown.
     dx=Math.max(Math.min(0,loX),Math.min(Math.max(0,hiX),dx));dy=Math.max(Math.min(0,loY),Math.min(Math.max(0,hiY),dy));
-    for(const original of s.origins.values())for(const obstacle of s.obstacles){
+    for(const original of s.origins.values()){
       const moved={...original,x:original.x+dx,y:original.y+dy};
-      if(overlap(moved,obstacle)&&!overlap(original,obstacle))return {ok:false,reason:'node overlap',dx:s.dx,dy:s.dy};
+      for(const obstacle of s.obstacleIndex?s.obstacleIndex.query(moved):s.obstacles)
+        if(overlap(moved,obstacle)&&!overlap(original,obstacle))return {ok:false,reason:'node overlap',dx:s.dx,dy:s.dy};
     }
     return {ok:true,dx,dy};
   }
@@ -62,6 +69,9 @@
       after.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=before.line_geometry.overlapping_paths.filter(p=>!p.same_value).length;
   }
   function reroute(figure,positions,changed,ir){
+    return L.withRoutingIndex(positions,()=>rerouteIndexed(figure,positions,changed,ir));
+  }
+  function rerouteIndexed(figure,positions,changed,ir){
     const old=routes(figure),candidate=copyFigure(figure),g=candidate.graph;g.positions=positions;
     const ctx=positions.context,selected=figure.prepared?.routing?.shared_fanout_refinement?.selected||[];
     const broken=new Set(selected.filter(r=>r.edges.some(id=>changed.has(id))).flatMap(r=>r.edges));
@@ -130,15 +140,19 @@
     // Validate final geometry, including moved parents, against its own scene.
     // Existing source layouts can contain intentional header intersections;
     // reject newly introduced collisions rather than deleting those facts.
+    const owners=new Map(g.nodes.map(n=>[n.id,owner(g,n.id)])),siblings=new Map();
+    for(const n of g.nodes){const parent=owners.get(n.id);if(!siblings.has(parent))siblings.set(parent,[]);siblings.get(parent).push({...g.positions.get(n.id),id:n.id});}
+    const siblingIndexes=new Map([...siblings].filter(([,ns])=>ns.length>64).map(([parent,ns])=>[parent,Geometry.boxes(ns)]));
     for(const n of g.nodes){
-      const p=g.positions.get(n.id),before=figure.graph.positions.get(n.id),parent=owner(g,n.id),frame=parent&&g.positions.get(parent),oldFrame=parent&&figure.graph.positions.get(parent);
+      const p=g.positions.get(n.id),before=figure.graph.positions.get(n.id),parent=owners.get(n.id),frame=parent&&g.positions.get(parent),oldFrame=parent&&figure.graph.positions.get(parent);
       const inside=(a,b)=>a.x>=b.x&&a.y>=b.y+(b.header||0)&&a.x+a.w<=b.x+b.w&&a.y+a.h<=b.y+b.h;
       if(frame&&inside(before,oldFrame)&&!inside(p,frame))return null;
       if(!frame&&!inside(p,figure.prepared?.bounds||g.bounds))return null;
-      for(const other of g.nodes){if(other.id===n.id||owner(g,other.id)!==parent)continue;
+      for(const other of siblingIndexes.has(parent)?siblingIndexes.get(parent).query(p):siblings.get(parent)){if(other.id===n.id)continue;
         if(overlap(p,g.positions.get(other.id))&&!overlap(before,figure.graph.positions.get(other.id)))return null;
       }
     }
+    return L.withRoutingIndex(g.positions,()=>{
     const by=new Map(saved.routes);if(by.size!==g.edges.length)return null;
     const fresh=g.edges.map(e=>({...e,route:by.get(e.id)}));if(fresh.some(e=>!e.route)||!fresh.every(e=>physical(e,g.positions)))return null;
     const ctx=g.positions.context;Object.assign(ctx,saved.policy||{});ctx.routeCache=new Map();ctx.reserved=[];
@@ -146,7 +160,8 @@
       // Physical paths were checked above. Terminal verification needs the
       // actual port allocation, not another visibility search per saved edge.
       const expected=L.route(e,g.positions,{terminalsOnly:true}),ps=e.route.points,es=expected.points;
-      if(!es.length||ps[0].x!==es[0].x||ps[0].y!==es[0].y||ps.at(-1).x!==es.at(-1).x||ps.at(-1).y!==es.at(-1).y)return null;
+      if(!es.length||!sameCoordinate(ps[0].x,es[0].x)||!sameCoordinate(ps[0].y,es[0].y)||
+        !sameCoordinate(ps.at(-1).x,es.at(-1).x)||!sameCoordinate(ps.at(-1).y,es.at(-1).y))return null;
     }
     E.auditConstraintRoutes(g,fresh);
     if((figure.graph.constraint_receipts||[]).some(r=>r.status==='applied'&&!g.constraint_receipts.some(c=>c.id===r.id&&c.status==='applied')))return null;
@@ -157,6 +172,7 @@
       candidate.prepared.routing={manual_move:{restored:true}};markers(candidate);
     }
     return candidate;
+    });
   }
   const api={session,constrain,previewRoute,path,move,placement,restore,physical,qualityOK,placementLayout};
   root.SemanticCanvasInteraction=api;if(typeof module!=='undefined')module.exports=api;

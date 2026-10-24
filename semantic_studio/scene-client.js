@@ -7,7 +7,7 @@
     function stop(error=Error('后台画布不可用')){if(worker)worker.terminate();worker=null;for(const {reject,timer}of pending.values()){clearTimeout(timer);reject(error);}pending.clear();}
     function ensure(){
       if(worker||unavailable)return worker;
-      try{worker=workerFactory?workerFactory():new Worker('scene-worker.js?v=full-source-1');
+      try{worker=workerFactory?workerFactory():new Worker('scene-worker.js?v=interaction-performance-2');
         worker.onmessage=event=>{const job=pending.get(event.data.requestId);if(job){pending.delete(event.data.requestId);clearTimeout(job.timer);job.resolve(event.data);}};
         worker.onerror=worker.onmessageerror=()=>{unavailable=true;stop();};
       }catch(_){unavailable=true;worker=null;}return worker;

@@ -1956,6 +1956,7 @@
     Object.assign(ctx,{portOrder:strategy.startsWith('neighbors')?'neighbors':'canonical',ancestorPorts:strategy.includes('-header-')?'header':'boundary',
       crossingCost:strategy.includes('-clear-')?90:18,contactCost:0,stubLength:16,routeCache:new Map(),reserved:[]});
     const old=new Map(before.prepared.routes.map(e=>[e.id,e])),routes=new Map(),pending=[];
+    return L.withRoutingIndex(positions,()=>{
     const physical=e=>{const ps=e.route.points,boxes=L.routeObstacles(e,positions);return e.route.ok&&ps.every((p,i)=>!i||
       Number.isFinite(p.x)&&Number.isFinite(p.y)&&(p.x===ps[i-1].x||p.y===ps[i-1].y)&&!L.blocked(ps[i-1],p,boxes));};
     const segments=e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]);
@@ -2012,6 +2013,7 @@
     chosen.prepared.routing={...chosen.prepared.routing,parent_frontier:{node:id,reused_routes:reused,rerouted:pending.length,quality_checked:true,
       stable_edge_crossings:[crossingsBefore,crossingsAfter]}};
     graph.positions.context.routeCache=new Map(chosen.prepared.routes.map(e=>[e.id,e.route]));return chosen;
+    });
   }
   function prepareFigure(ir,state={},options={}){
     if(state.canvasPlacement&&!options.ignorePlacement){

@@ -18,7 +18,10 @@
     if(textWidths.size>=8192)textWidths.delete(textWidths.keys().next().value);
     textWidths.set(key,value);return value;
   }
+  const wrappedTexts=new Map();
   function wrap(text,limit,font=16){
+    const key=JSON.stringify([String(text),String(limit),String(font)]);
+    if(wrappedTexts.has(key))return wrappedTexts.get(key).slice();
     const lines=[];let line='';
     // Use identifier word boundaries before falling back to character cuts.
     // Keep every character: this changes wrapping, never the source label.
@@ -26,7 +29,9 @@
       if(line&&width(line+token,font)>limit){lines.push(line.trim());line='';}
       for(const c of token){if(line&&width(line+c,font)>limit){lines.push(line.trim());line='';}line+=c;}
     }
-    if(line.trim())lines.push(line.trim());return lines.length?lines:[''];
+    if(line.trim())lines.push(line.trim());const result=lines.length?lines:[''];
+    if(wrappedTexts.size>=4096)wrappedTexts.delete(wrappedTexts.keys().next().value);
+    wrappedTexts.set(key,result);return result.slice();
   }
   function index(plan){const nodes=new Map(plan.nodes.map(n=>[n.id,n])),children=new Map();for(const n of plan.nodes){if(!children.has(n.parent||null))children.set(n.parent||null,[]);children.get(n.parent||null).push(n.id);}return {nodes,children};}
   function relations(ir){const ins=new Map(),uses=new Map();for(const e of ir.edges){if(!ins.has(e.target))ins.set(e.target,[]);ins.get(e.target).push(e);if(!uses.has(e.source))uses.set(e.source,[]);uses.get(e.source).push(e);}return {ins,uses};}

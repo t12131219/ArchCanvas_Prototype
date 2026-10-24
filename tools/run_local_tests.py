@@ -72,6 +72,7 @@ COMMANDS = {
     'semantic-canvas-interaction': ['node', 'tests/semantic-canvas-interaction.test.cjs'],
     'parent-expansion': ['node', 'tests/parent-expansion.test.cjs'],
     'full-source': ['node', 'tests/full-source.test.cjs'],
+    'interaction-performance': ['node', 'tests/interaction-performance.test.cjs'],
     'reviewed-presentation': ['node', 'tests/reviewed-presentation.test.cjs'],
     'call-boundaries': ['node', 'tests/call-boundaries.test.cjs'],
     'cell-interfaces': ['node', 'tests/cell-interfaces.test.cjs'],
@@ -128,7 +129,7 @@ def main():
     files = [*ROOT.glob('semantic_studio/*.js'), ROOT / 'semantic_studio/index.html', ROOT / 'semantic_studio/style.css', *ROOT.glob('semantic_adapter/*.py'),
              *ROOT.glob('tests/*.test.cjs'), *ROOT.glob('tests/*fixtures.cjs'), *ROOT.glob('tests/test_*.py'),
              *ROOT.glob('tests/semantic_fixtures/*.py'),
-             ROOT / 'verification/full-source/baseline/line-geometry.cjs', ROOT / 'tools/load_publication_renderer.cjs', ROOT / 'tools/export_publication.cjs', ROOT / 'tools/export_diagram_set.cjs', ROOT / 'tools/representative_atlas.cjs', ROOT / 'tools/symbolic_values.cjs', Path(__file__).resolve()]
+             ROOT / 'verification/interaction-performance/baseline/interaction-oracle.cjs', ROOT / 'verification/full-source/baseline/line-geometry.cjs', ROOT / 'tools/load_publication_renderer.cjs', ROOT / 'tools/export_publication.cjs', ROOT / 'tools/export_diagram_set.cjs', ROOT / 'tools/representative_atlas.cjs', ROOT / 'tools/symbolic_values.cjs', Path(__file__).resolve()]
     hashes = {str(file.relative_to(ROOT)): hashlib.sha256(file.read_bytes()).hexdigest() for file in sorted(files)}
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
         results = list(pool.map(run, COMMANDS.items()))

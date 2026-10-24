@@ -81,3 +81,7 @@
 - [完整测试结果](../verification/composition-rounds/current/full-tests.txt)
 
 在仓库根目录运行 `node tools/capture_composition_suite.cjs` 可重建正式 SVG 及未纳入 Git 的大型布局文档；新增四类的静态输入和提取清单已保存。`python3 tools/build_composition_pair_review.py` 重建审核页面，`python3 tools/check_composition_suite.py` 审核本地捕获和 UI 导出证据。UI 保存的完整大型 JSON 留在本地；重新执行 UI 审核需要实际完成上述交互。`python3 tools/run_local_tests.py` 重跑全部回归。
+
+## 当前产品交互
+
+已有审核结果发布为默认 F1 后，通用画布进一步迁入专用编辑器的后台计算、局部拖动、父框限制、碰撞保护、失败恢复与 IndexedDB 保存。该轮不增加语义或默认布局规则，F0/F1 和继续展开的正式 SVG 保持一致。实现、97 组/1105 项回归与真实重开证据见[通用画布交互](generic-canvas-interaction.md)。

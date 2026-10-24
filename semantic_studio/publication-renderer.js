@@ -1931,6 +1931,11 @@
     chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,architecture_input_placement:record};return attachExpressionEvidence(ir,chosen);
   }
   function prepareFigure(ir,state={},options={}){
+    if(state.canvasPlacement&&!options.ignorePlacement){
+      const interaction=root.SemanticCanvasInteraction||(typeof require==='function'?require('./canvas-interaction.js'):null);
+      const baseline=prepareFigure(ir,{...state,canvasPlacement:undefined},{...options,ignorePlacement:true});
+      try{return interaction?.restore(baseline,state.canvasPlacement,ir)||baseline;}catch(_){return baseline;}
+    }
     if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
       const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
       const frontierState={paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state};

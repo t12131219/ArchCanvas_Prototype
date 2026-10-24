@@ -17,11 +17,11 @@
     // newly published, reviewed frontier on first opening this presentation.
     return 'summary-semantic:architecture-v2:'+ir.ir_digest+':'+(profile?.revision||'certified-details-1');
   }
-  function initialState(ir,profile,saved,stored){
+  function initialState(ir,profile,saved,stored,{deferDetails=false}={}){
     validate(ir,profile);
     const roots=ir.nodes.filter(n=>!n.parent).map(n=>n.id);
     const selected=object(saved)?saved:object(stored)?stored:profile?.default_state;
-    if(!selected)return C.certifiedDetails(ir,C.frontier({mode:'source'},'detail'));
+    if(!selected){const frontier=C.frontier({mode:'source'},'detail');return deferDetails?frontier:C.certifiedDetails(ir,frontier);}
     const state=E.clone(selected);
     return {view:'publication',mode:'source',...state,
       open:Array.isArray(state.open)?state.open:roots,

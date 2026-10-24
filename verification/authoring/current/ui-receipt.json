@@ -1,0 +1,132 @@
+{
+  "schema": "semantic-authoring-browser-receipt/1",
+  "date": "2026-10-25",
+  "method": "Manual actions through CUA in the in-app browser; DOM and actual browser screenshots. No application state mutated by evaluate.",
+  "entry": "http://127.0.0.1:8767/semantic_studio/index.html",
+  "checks": [
+    {
+      "scenario": "existing model edit",
+      "model": "MultilayerPerceptron",
+      "change": "Linear output_features 128 -> 96",
+      "observed_view": "784 -> 96",
+      "return_to_edit": true
+    },
+    {
+      "scenario": "empty assembly",
+      "modules": [
+        "Linear",
+        "Add"
+      ],
+      "source_recompiled_parameter": "Linear out_features 64 -> 32",
+      "connection": "Linear.return -> Add.x",
+      "observed_counts": [
+        10,
+        7
+      ]
+    },
+    {
+      "scenario": "custom source",
+      "entry": "SkipMLP",
+      "constructor": {
+        "width": 32
+      },
+      "source": "return x + self.proj(x)",
+      "observed_source_units": 6,
+      "observed_internal_edges": 5,
+      "saved_to_user_library": true
+    },
+    {
+      "scenario": "nested composition",
+      "selection": "Shift select Linear + Add",
+      "group": "ProjectionAdd",
+      "saved_preset": "ProjectionAdd 组合",
+      "connected_custom": "ProjectionAdd.Add.return -> SkipMLP.x",
+      "observed_counts": [
+        17,
+        13
+      ]
+    },
+    {
+      "scenario": "delete and undo",
+      "removed": "SkipMLP",
+      "after_delete": [
+        11,
+        7
+      ],
+      "after_undo": [
+        17,
+        13
+      ]
+    },
+    {
+      "scenario": "persistence",
+      "standalone_reload": [
+        17,
+        13
+      ],
+      "user_library": [
+        "自定义 SkipMLP",
+        "ProjectionAdd 组合"
+      ],
+      "save_dialog_checked": true,
+      "reimport_save_text": [
+        17,
+        13
+      ]
+    },
+    {
+      "scenario": "new model preview",
+      "standalone_editor_navigates_to_main_preview": true,
+      "observed_dimensions": [
+        "64 -> 32",
+        "32 -> 32"
+      ],
+      "observed_visible_counts": [
+        13,
+        7
+      ],
+      "observed_evidence_scope": "user-authored-assembly",
+      "observed_contract_scope": "local operand structure of the declared user assembly; not equivalence to original source or execution coverage"
+    },
+    {
+      "scenario": "return and local navigation",
+      "returned_raw_counts": [
+        17,
+        13
+      ],
+      "returned_library": true,
+      "scope_before_preview": "Linear",
+      "scope_after_return": "Linear",
+      "repeated_mode_switch": true
+    },
+    {
+      "scenario": "final implementation reload",
+      "draft_recovered": [
+        17,
+        13
+      ],
+      "title": "源码组合示例 · 示例",
+      "scope": "Linear",
+      "preview_and_return": true
+    }
+  ],
+  "limitations": [
+    "All 43 reconstruction recipes are checked programmatically, not manually clicked end-to-end.",
+    "The native download automation wait timed out; file download landing is not claimed as verified. Save text, reimport, and IndexedDB restoration succeeded.",
+    "No execution, tensor-shape compatibility, arbitrary source equivalence or large editor graph performance guarantee."
+  ],
+  "final_screenshot": "editor.jpeg",
+  "saved_before_rename_document": "ui-built-document.json",
+  "final_browser_title": "源码组合示例 · 示例",
+  "tests": {
+    "groups": 102,
+    "checks": 1138,
+    "all_exit_codes_zero": true,
+    "frozen_hashes_match": true
+  },
+  "final_implementation_sha256": {
+    "semantic_studio/authoring-app.js": "2dd918ad0e5d26d29d45e20954a3bae78f3f1d5e61569de488e5d382da993b72",
+    "semantic_studio/authoring-model.js": "0ab3147537682e14251f34559fa7c32093390f0bd5aa08ed1983d7314a526e78",
+    "semantic_adapter/authoring.py": "3206570c102acf3a704eff341718c96d7bcadeea051405fe99b84f768304445c"
+  }
+}

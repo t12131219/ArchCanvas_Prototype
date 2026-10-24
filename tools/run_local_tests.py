@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Reproduce the local-relations test evidence; never reuse passing counts."""
+import argparse
 import concurrent.futures
 import hashlib
 import json
@@ -72,6 +73,7 @@ COMMANDS = {
     'semantic-canvas-interaction': ['node', 'tests/semantic-canvas-interaction.test.cjs'],
     'parent-expansion': ['node', 'tests/parent-expansion.test.cjs'],
     'full-source': ['node', 'tests/full-source.test.cjs'],
+    'authoring': ['node', 'tests/authoring.test.cjs'],
     'attention-expansion': ['node', 'tests/attention-expansion.test.cjs'],
     'interaction-performance': ['node', 'tests/interaction-performance.test.cjs'],
     'reviewed-presentation': ['node', 'tests/reviewed-presentation.test.cjs'],
@@ -126,8 +128,10 @@ def run(item):
 
 
 def main():
+    global OUT
+    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=OUT);args=parser.parse_args();OUT=args.out.resolve()
     (OUT / 'test-logs').mkdir(parents=True, exist_ok=True)
-    files = [*ROOT.glob('semantic_studio/*.js'), ROOT / 'semantic_studio/index.html', ROOT / 'semantic_studio/style.css', *ROOT.glob('semantic_adapter/*.py'),
+    files = [*ROOT.glob('semantic_studio/*.js'), ROOT / 'semantic_studio/index.html', ROOT / 'semantic_studio/style.css', ROOT / 'semantic_studio/authoring.html', ROOT / 'semantic_studio/authoring.css', ROOT / 'tools/serve_semantic_studio.py', ROOT / 'data/semantic/authoring-presets.json', *ROOT.glob('semantic_adapter/*.py'),
              *ROOT.glob('tests/*.test.cjs'), *ROOT.glob('tests/*fixtures.cjs'), *ROOT.glob('tests/test_*.py'),
              *ROOT.glob('tests/semantic_fixtures/*.py'),
              ROOT / 'verification/interaction-performance/baseline/interaction-oracle.cjs', ROOT / 'verification/full-source/baseline/line-geometry.cjs', ROOT / 'tools/load_publication_renderer.cjs', ROOT / 'tools/export_publication.cjs', ROOT / 'tools/export_diagram_set.cjs', ROOT / 'tools/representative_atlas.cjs', ROOT / 'tools/symbolic_values.cjs', Path(__file__).resolve()]

@@ -1,0 +1,950 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "未命名模型",
+  "entry": {
+    "class": "未命名模型",
+    "constructor": {}
+  },
+  "nodes": [
+    {
+      "id": "edit:model",
+      "parent": null,
+      "kind": "composite",
+      "label": "未命名模型",
+      "source": [],
+      "runtime_evidence": [],
+      "evidence_status": "user-authored"
+    },
+    {
+      "id": "edit:4:model/8:4:composite:1",
+      "kind": "composite",
+      "label": "Linear",
+      "parent": "edit:group:11",
+      "source_parent": null,
+      "source": [
+        {
+          "file": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+          "line": 8,
+          "end_line": 9,
+          "column": 4,
+          "end_column": 27,
+          "symbol": "Linear.forward",
+          "expression": "def forward(self, x):\n    return self.proj(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {
+        "in_features": 64,
+        "out_features": 32,
+        "bias": true
+      },
+      "source_class": "Linear",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:4:model/8:4:composite:1/8:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "edit:4:model/8:4:composite:1",
+      "source_parent": "edit:4:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "Linear.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "role": "input",
+      "slot": "x",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:4:model/8:4:composite:1/9:15:compute:1",
+      "kind": "compute",
+      "label": "proj · Linear",
+      "parent": "edit:4:model/8:4:composite:1",
+      "source_parent": "edit:4:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 15,
+          "end_column": 27,
+          "symbol": "Linear.forward",
+          "expression": "self.proj(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "operator": "linear",
+      "module_path": "proj",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          64,
+          32
+        ],
+        "kwargs": {
+          "bias": true
+        }
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "source_provenance": {
+        "original_facts": {
+          "module_identity": "entry|proj@authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py:7:20",
+          "module_binding": {
+            "reference": "entry|proj@authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py:7:20",
+            "selection": "self.proj",
+            "construction_evidence": [
+              {
+                "file": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+                "line": 7,
+                "end_line": 7,
+                "column": 20,
+                "end_column": 67,
+                "symbol": "constructor",
+                "expression": "nn.Linear(in_features, out_features, bias=bias)"
+              }
+            ],
+            "allocation": "fresh-framework-construction",
+            "rule_version": "source-module-binding/1",
+            "invocation": "edit:4:model/8:4:composite:1/9:15:compute:1",
+            "status": "proved",
+            "scope": "constructor binding selected in a modeled effect-free source prefix",
+            "parameter_identity": "unresolved",
+            "allocation_distinctness": "not-asserted"
+          },
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:4:model/8:4:composite:1/7:20:parameter:1",
+      "kind": "parameter",
+      "label": "proj.parameters",
+      "parent": "edit:4:model/8:4:composite:1",
+      "source_parent": "edit:4:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 20,
+          "end_column": 67,
+          "symbol": "Linear.forward",
+          "expression": "nn.Linear(in_features, out_features, bias=bias)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "parameter_scope": "proj",
+      "identity_status": "declared-scope; sharing-unresolved",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:4:model/8:4:composite:1/9:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "edit:4:model/8:4:composite:1",
+      "source_parent": "edit:4:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "Linear.forward",
+          "expression": "return self.proj(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "role": "output",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:6:model/8:4:composite:1",
+      "kind": "composite",
+      "label": "Add",
+      "parent": "edit:group:11",
+      "source_parent": null,
+      "source": [
+        {
+          "file": "authoring://module/d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e/custom_module.py",
+          "line": 8,
+          "end_line": 9,
+          "column": 4,
+          "end_column": 23,
+          "symbol": "Add.forward",
+          "expression": "def forward(self, x, skip):\n    return x + skip"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "Add",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:6:model/8:4:composite:1/8:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "edit:6:model/8:4:composite:1",
+      "source_parent": "edit:6:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e/custom_module.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "Add.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "role": "input",
+      "slot": "x",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:6:model/8:4:composite:1/8:25:interface:1",
+      "kind": "interface",
+      "label": "skip",
+      "parent": "edit:6:model/8:4:composite:1",
+      "source_parent": "edit:6:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e/custom_module.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 25,
+          "end_column": 29,
+          "symbol": "Add.forward",
+          "expression": "skip"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "role": "input",
+      "slot": "skip",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:6:model/8:4:composite:1/9:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "edit:6:model/8:4:composite:1",
+      "source_parent": "edit:6:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e/custom_module.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 15,
+          "end_column": 23,
+          "symbol": "Add.forward",
+          "expression": "x + skip"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      },
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:6:model/8:4:composite:1/9:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "edit:6:model/8:4:composite:1",
+      "source_parent": "edit:6:model/8:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e/custom_module.py",
+          "line": 9,
+          "end_line": 9,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Add.forward",
+          "expression": "return x + skip"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "role": "output",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:group:11",
+      "parent": "edit:model",
+      "source_parent": null,
+      "kind": "composite",
+      "label": "ProjectionAdd",
+      "source": [],
+      "evidence_status": "user-authored",
+      "authoring": {
+        "status": "user-authored"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:14:model/7:4:composite:1",
+      "kind": "composite",
+      "label": "SkipMLP",
+      "parent": "edit:model",
+      "source_parent": null,
+      "source": [
+        {
+          "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+          "line": 7,
+          "end_line": 8,
+          "column": 4,
+          "end_column": 31,
+          "symbol": "SkipMLP.forward",
+          "expression": "def forward(self, x):\n    return x + self.proj(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {
+        "width": 32
+      },
+      "source_class": "SkipMLP",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:14:model/7:4:composite:1/7:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "edit:14:model/7:4:composite:1",
+      "source_parent": "edit:14:model/7:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+          "line": 7,
+          "end_line": 7,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "SkipMLP.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "role": "input",
+      "slot": "x",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:14:model/7:4:composite:1/8:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "edit:14:model/7:4:composite:1",
+      "source_parent": "edit:14:model/7:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 15,
+          "end_column": 31,
+          "symbol": "SkipMLP.forward",
+          "expression": "x + self.proj(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      },
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:14:model/7:4:composite:1/8:19:compute:1",
+      "kind": "compute",
+      "label": "proj · Linear",
+      "parent": "edit:14:model/7:4:composite:1",
+      "source_parent": "edit:14:model/7:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 19,
+          "end_column": 31,
+          "symbol": "SkipMLP.forward",
+          "expression": "self.proj(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "operator": "linear",
+      "module_path": "proj",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          32,
+          32
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "source_provenance": {
+        "original_facts": {
+          "module_identity": "entry|proj@authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py:6:20",
+          "module_binding": {
+            "reference": "entry|proj@authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py:6:20",
+            "selection": "self.proj",
+            "construction_evidence": [
+              {
+                "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+                "line": 6,
+                "end_line": 6,
+                "column": 20,
+                "end_column": 43,
+                "symbol": "constructor",
+                "expression": "nn.Linear(width, width)"
+              }
+            ],
+            "allocation": "fresh-framework-construction",
+            "rule_version": "source-module-binding/1",
+            "invocation": "edit:14:model/7:4:composite:1/8:19:compute:1",
+            "status": "proved",
+            "scope": "constructor binding selected in a modeled effect-free source prefix",
+            "parameter_identity": "unresolved",
+            "allocation_distinctness": "not-asserted"
+          },
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:14:model/7:4:composite:1/6:20:parameter:1",
+      "kind": "parameter",
+      "label": "proj.parameters",
+      "parent": "edit:14:model/7:4:composite:1",
+      "source_parent": "edit:14:model/7:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+          "line": 6,
+          "end_line": 6,
+          "column": 20,
+          "end_column": 43,
+          "symbol": "SkipMLP.forward",
+          "expression": "nn.Linear(width, width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "parameter_scope": "proj",
+      "identity_status": "declared-scope; sharing-unresolved",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    },
+    {
+      "id": "edit:14:model/7:4:composite:1/8:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "edit:14:model/7:4:composite:1",
+      "source_parent": "edit:14:model/7:4:composite:1",
+      "source": [
+        {
+          "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 8,
+          "end_column": 31,
+          "symbol": "SkipMLP.forward",
+          "expression": "return x + self.proj(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "role": "output",
+      "source_provenance": {
+        "original_facts": {
+          "runtime_evidence": []
+        },
+        "scope": "Before user assembly; not a certificate of the edited program"
+      },
+      "runtime_evidence": []
+    }
+  ],
+  "edges": [
+    {
+      "source": "edit:4:model/8:4:composite:1/7:20:parameter:1",
+      "target": "edit:4:model/8:4:composite:1/9:15:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "edit:4:e00000"
+    },
+    {
+      "source": "edit:4:model/8:4:composite:1/8:22:interface:1",
+      "target": "edit:4:model/8:4:composite:1/9:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "edit:4:e00001"
+    },
+    {
+      "source": "edit:4:model/8:4:composite:1/9:15:compute:1",
+      "target": "edit:4:model/8:4:composite:1/9:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "edit:4:e00002"
+    },
+    {
+      "source": "edit:6:model/8:4:composite:1/8:22:interface:1",
+      "target": "edit:6:model/8:4:composite:1/9:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "edit:6:e00000"
+    },
+    {
+      "source": "edit:6:model/8:4:composite:1/8:25:interface:1",
+      "target": "edit:6:model/8:4:composite:1/9:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "edit:6:e00001"
+    },
+    {
+      "source": "edit:6:model/8:4:composite:1/9:15:compute:1",
+      "target": "edit:6:model/8:4:composite:1/9:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "edit:6:e00002"
+    },
+    {
+      "id": "edit:edge:8",
+      "source": "edit:4:model/8:4:composite:1/9:8:interface:1",
+      "target": "edit:6:model/8:4:composite:1/8:22:interface:1",
+      "source_port": "out",
+      "target_port": "in",
+      "kind": "data",
+      "evidence": "authored-dependency",
+      "condition": null,
+      "authoring": {
+        "status": "user-authored",
+        "validated_execution": false
+      }
+    },
+    {
+      "source": "edit:14:model/7:4:composite:1/7:22:interface:1",
+      "target": "edit:14:model/7:4:composite:1/8:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "edit:14:e00000"
+    },
+    {
+      "source": "edit:14:model/7:4:composite:1/6:20:parameter:1",
+      "target": "edit:14:model/7:4:composite:1/8:19:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "edit:14:e00001"
+    },
+    {
+      "source": "edit:14:model/7:4:composite:1/7:22:interface:1",
+      "target": "edit:14:model/7:4:composite:1/8:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "edit:14:e00002"
+    },
+    {
+      "source": "edit:14:model/7:4:composite:1/8:19:compute:1",
+      "target": "edit:14:model/7:4:composite:1/8:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "edit:14:e00003"
+    },
+    {
+      "source": "edit:14:model/7:4:composite:1/8:15:compute:1",
+      "target": "edit:14:model/7:4:composite:1/8:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "edit:14:e00004"
+    },
+    {
+      "id": "edit:edge:16",
+      "source": "edit:6:model/8:4:composite:1/9:8:interface:1",
+      "target": "edit:14:model/7:4:composite:1/7:22:interface:1",
+      "source_port": "out",
+      "target_port": "in",
+      "kind": "data",
+      "evidence": "authored-dependency",
+      "condition": null,
+      "authoring": {
+        "status": "user-authored",
+        "validated_execution": false
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+      "physical": "authoring://module/2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b/custom_module.py",
+      "cell": null,
+      "sha256": "2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b",
+      "unit_sha256": "2cfbc0874f73189f9c488a6f194c3d42fa28976a6d3b57393d0df68435998b9b"
+    },
+    {
+      "path": "authoring://module/d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e/custom_module.py",
+      "physical": "authoring://module/d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e/custom_module.py",
+      "cell": null,
+      "sha256": "d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e",
+      "unit_sha256": "d4317ab8f5b7d0ff29efc65d03857c5cf2fe93ee733f4c6bb36b504cefbf1d5e"
+    },
+    {
+      "path": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+      "physical": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+      "cell": null,
+      "sha256": "7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6",
+      "unit_sha256": "7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6"
+    }
+  ],
+  "motifs": [],
+  "branches": [],
+  "semantic_contracts": [
+    {
+      "id": "contract:residual-plain:4036ce2b39b7",
+      "rule": "residual-plain",
+      "rule_version": "source-contracts/1",
+      "node": "edit:14:model/7:4:composite:1/8:15:compute:1",
+      "members": [
+        "edit:14:model/7:4:composite:1/8:19:compute:1",
+        "edit:14:model/7:4:composite:1/8:15:compute:1"
+      ],
+      "roles": {
+        "skip": "edit:6:model/8:4:composite:1/9:15:compute:1",
+        "skip_slot": "out",
+        "branch": "edit:14:model/7:4:composite:1/8:19:compute:1",
+        "branch_slot": "out",
+        "add": "edit:14:model/7:4:composite:1/8:15:compute:1",
+        "output": "edit:14:model/7:4:composite:1/8:15:compute:1",
+        "order": "plain",
+        "normalization": null,
+        "normalization_type": null,
+        "branch_path": [
+          "edit:14:model/7:4:composite:1/8:19:compute:1"
+        ]
+      },
+      "proof": [
+        "the same producer and result slot feed both branch computation and a distinct addition operand",
+        "normalization position is determined by exact operand binding; normalization type remains explicit"
+      ],
+      "source": [
+        {
+          "file": "authoring://module/7d46d672d804903cee7538bb6103d9645d52e763c385876108c7217bb660bfd6/custom_module.py",
+          "line": 8,
+          "end_line": 8,
+          "column": 15,
+          "end_column": 31,
+          "symbol": "SkipMLP.forward",
+          "expression": "x + self.proj(x)"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "edit:14:e00000",
+        "edit:14:e00001",
+        "edit:14:e00002",
+        "edit:14:e00003",
+        "edit:14:e00004"
+      ],
+      "scope": "local operand structure of the declared user assembly; not equivalence to original source or execution coverage",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "identity branch computation",
+        "in-place alias equivalence",
+        "assembled-program execution",
+        "shape compatibility",
+        "unchanged original source"
+      ]
+    }
+  ],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "user-authored-assembly",
+    "complete": false,
+    "reason": "编辑连接尚未由执行或完整程序验证；原始事实见来源。"
+  },
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "limitations": [
+    "用户编辑文档；保留模块源码及原始绑定。组合后的全程序执行与形状兼容尚未验证。"
+  ],
+  "authoring": {
+    "schema": "semantic-authoring/1",
+    "modules": {
+      "edit:4:model/8:4:composite:1": {
+        "title": "Linear",
+        "source": "import torch\nfrom torch import nn\n\nclass Linear(nn.Module):\n    def __init__(self, in_features=64, out_features=64, bias=True):\n        super().__init__()\n        self.proj = nn.Linear(in_features, out_features, bias=bias)\n    def forward(self, x):\n        return self.proj(x)\n",
+        "entry": "Linear",
+        "constructor": {
+          "in_features": 64,
+          "out_features": 32,
+          "bias": true
+        },
+        "origin": "2aa9e5488d1ff96dd5a21e0b8f4bc77e33f4b8fc8e1346d4b5127be24dd96ee1"
+      },
+      "edit:6:model/8:4:composite:1": {
+        "title": "Add",
+        "source": "import torch\nfrom torch import nn\n\nclass Add(nn.Module):\n    def __init__(self):\n        super().__init__()\n        pass\n    def forward(self, x, skip):\n        return x + skip\n",
+        "entry": "Add",
+        "constructor": {},
+        "origin": "6aa69b14d957d9acd4539aca42da1c17abd331fb09ff00e570e16571fe70c041"
+      },
+      "edit:group:11": {
+        "title": "ProjectionAdd",
+        "composition": true
+      },
+      "edit:14:model/7:4:composite:1": {
+        "title": "自定义 SkipMLP",
+        "source": "from torch import nn\n\nclass SkipMLP(nn.Module):\n    def __init__(self, width=32):\n        super().__init__()\n        self.proj = nn.Linear(width, width)\n    def forward(self, x):\n        return x + self.proj(x)\n",
+        "entry": "SkipMLP",
+        "constructor": {
+          "width": 32
+        },
+        "origin": "f73a7fdb5901e88ff7e823f1e7d9fa20dc4deeac463d14dec2bb94f5b0039505"
+      }
+    },
+    "edited": true,
+    "local_contracts_recomputed": true
+  },
+  "semantic_contract_basis": "e778bc1aeed001efd9f4a8ba5363bd1c89bbff81c8b58dc471455a98b7b35ee5",
+  "ir_digest": "ce791df0b97aafa7c9b53e9d99691af922e7107768030b0d6f65f333ad0b254d"
+}

@@ -2,6 +2,8 @@
 
 当前默认展示已接入最近正式审核的通用源码语义结果：项目首页和通用画布默认打开 **Transformer 的 F1 语义详图**，支持返回 F0 架构概览，并继续局部展开到调用和源码细节。此轮将已有优化发布为当前产品基线，没有增加新的模型特判或布局规则。
 
+通用画布现提供 **视图 / 编辑双模式**：源码预设、原子构件组合、参数、端口连接、保存及往返预览。使用 `python3 tools/serve_semantic_studio.py --port 8767` 启动完整功能，打开 <http://127.0.0.1:8767/semantic_studio/index.html>。操作、43 案例重建验收和当前限制见 [通用语义编辑模式](docs/generic-authoring.md)。
+
 ```bash
 python3 -m http.server 8766 --bind 127.0.0.1 --directory .
 ```

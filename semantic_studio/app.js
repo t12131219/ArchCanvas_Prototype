@@ -84,11 +84,11 @@
     const [value,profile]=await Promise.all([read(m.ir),m.presentation?read(m.presentation):null]);
     if(ticket!==loadRevision)return;await open(value,undefined,profile);if(ticket!==loadRevision)return;$('irLink').href='../data/semantic/'+m.ir;$('irLink').hidden=false;
   }catch(error){if(ticket===loadRevision)message(error.message);}}
-  async function open(value,saved,profile=null){
+  async function open(value,saved,profile=null,editDocument=null){
     E.validate(value);profiles.validate(value,profile);const ticket=loadRevision;
     const stored=saved?null:await storage.read(profiles.storageKey(value,profile));if(ticket!==loadRevision)return;
     flushPersistence();cancelDrag();++renderRevision;setBusy(false);committed=null;sceneKey=null;focusOptions=[];fitRequested=false;persistRequested=false;
-    ir=value;presentation=profile;history=[];future=[];selected=null;inspectedBundle=null;
+    ir=value;presentation=profile;authoringDocument=editDocument;history=[];future=[];selected=null;inspectedBundle=null;
     state=profiles.initialState(ir,presentation,saved,stored,{deferDetails:true});scene.init(ir);
     state.view=state.view||'publication';$('view').value=state.view;$('detailsToggle').checked=!!state.details;$('foldToggle').checked=state.foldSerial!==false;optionalFold();$('mode').value=state.mode;$('mode').options[1].disabled=!ir.nodes.some(n=>n.id==='runtime-observations');
     if(state.mode==='runtime'&&$('mode').options[1].disabled)state.mode='source';$('mode').value=state.mode;$('nodeTitle').textContent='选择图元';$('details').textContent='单击节点查看源码与运行证据。';
@@ -425,8 +425,22 @@
   let exportUrl=null;
   function download(content,name,type){if(exportUrl)URL.revokeObjectURL(exportUrl);exportUrl=URL.createObjectURL(new Blob([content],{type}));$('exportTitle').textContent=name;$('exportDownload').href=exportUrl;$('exportDownload').download=name;$('exportText').value=content;$('exportDialog').showModal();}
   $('exportClose').onclick=()=>$('exportDialog').close();
-  $('save').onclick=()=>download(JSON.stringify({schema:'semantic-canvas/1',ir,state},null,2),ir.title+'-semantic.json','application/json');
+  $('save').onclick=()=>download(JSON.stringify({schema:'semantic-canvas/1',ir,state,...(authoringDocument?{authoring:authoringDocument}:{})},null,2),ir.title+'-semantic.json','application/json');
   $('export').onclick=()=>{if(state.view==='publication'){download(R.renderPrepared(ir,state,displayedFigure).svg,ir.title+'-figure.svg','image/svg+xml');return;}const copy=svg.cloneNode(true);copy.setAttribute('xmlns',NS);copy.setAttribute('viewBox',`${projection.bounds.x} ${projection.bounds.y} ${projection.bounds.w} ${projection.bounds.h}`);copy.setAttribute('width',projection.bounds.w);copy.setAttribute('height',projection.bounds.h);const style=el('style',{},'.edge{fill:none;stroke-width:1.8}.edge.source{stroke:#6b89b8;stroke-dasharray:5 4}.edge.runtime{stroke:#288765}.edge.resource{stroke:#ac72a0}.edge.route-failed{stroke:#cf7930;stroke-dasharray:3 3}text{font-family:Arial,sans-serif}');copy.prepend(style);download(new XMLSerializer().serializeToString(copy),ir.title+'.svg','image/svg+xml');};
-  $('import').onclick=()=>$('file').click();$('file').onchange=async()=>{const file=$('file').files[0];if(!file)return;const ticket=++loadRevision;try{if(file.size>20_000_000)throw Error('文件超过 20MB');const value=JSON.parse(await file.text());if(ticket!==loadRevision)return;await open(['semantic-canvas/1','archcanvas-architecture-document/1'].includes(value.schema)?value.ir:value,value.state);if(ticket===loadRevision)$('irLink').hidden=true;}catch(error){message(error.message);}finally{$('file').value='';}};
-  Promise.all([fetch('../data/semantic/catalog.json',{cache:'no-store'}).then(r=>r.json()),fetch('../data/semantic/source-inventory.json',{cache:'no-store'}).then(r=>r.json())]).then(([data,inventory])=>{catalog=data.models;$('inventory').textContent=`已只读扫描 ${inventory.files.length} 个文件，发现 ${inventory.models.length} 个模型候选。Awesome 列表登记 ${inventory.github_links.length} 个 GitHub 来源链接，尚未下载。Notebook 仅静态解析。`;library();const id=new URLSearchParams(location.search).get('model');loadModel(profiles.defaultModel(data,id));}).catch(error=>message('读取失败：'+error.message));
+  $('import').onclick=()=>$('file').click();$('file').onchange=async()=>{const file=$('file').files[0];if(!file)return;const ticket=++loadRevision;try{if(file.size>20_000_000)throw Error('文件超过 20MB');const value=JSON.parse(await file.text());if(ticket!==loadRevision)return;if(value.schema==='semantic-authoring/1'){window.SemanticAuthoring.validate(value);await open(window.SemanticAuthoring.sourceIR(value),undefined,null,value);}else await open(['semantic-canvas/1','archcanvas-architecture-document/1'].includes(value.schema)?value.ir:value,value.state,null,value.authoring||null);if(ticket===loadRevision)$('irLink').hidden=true;}catch(error){message(error.message);}finally{$('file').value='';}};
+  let authoringDocument=null,authoringReady=false,authoringPending=false;
+  const authoringFrame=$('authoringFrame');
+  function showMode(edit){document.body.classList.toggle('authoring-mode',edit);authoringFrame.hidden=!edit;$('viewMode').setAttribute('aria-pressed',String(!edit));$('editMode').setAttribute('aria-pressed',String(edit));}
+  function sendAuthoring(){if(!authoringReady||!ir)return;authoringFrame.contentWindow.postMessage({type:'semantic-authoring-open',ir,state,document:authoringDocument},location.origin);authoringPending=false;}
+  $('editMode').onclick=async()=>{if(busy||!ir)return;const digest=ir.ir_digest;if(!authoringDocument){const storedEdit=await storage.read('semantic-authoring-document:'+digest);if(ir.ir_digest!==digest)return;if(storedEdit){try{window.SemanticAuthoring.validate(storedEdit);authoringDocument=storedEdit;}catch(_){}}}showMode(true);authoringPending=true;if(!authoringFrame.src)authoringFrame.src='authoring.html';else if(authoringReady)sendAuthoring();};
+  $('viewMode').onclick=()=>{if(document.body.classList.contains('authoring-mode')&&authoringReady)authoringFrame.contentWindow.postMessage({type:'semantic-authoring-request-preview'},location.origin);else showMode(false);};
+  window.addEventListener('message',async event=>{
+    if(event.origin!==location.origin||event.source!==authoringFrame.contentWindow)return;
+    if(event.data.type==='semantic-authoring-ready'){authoringReady=true;if(authoringPending)sendAuthoring();}
+    if(event.data.type==='semantic-authoring-preview'){
+      try{const value=event.data;window.SemanticAuthoring.validate(value.document);E.validate(value.ir);const sourceDigest=ir.ir_digest;await Promise.all([storage.write('semantic-authoring-document:'+sourceDigest,JSON.stringify(value.document)),storage.write('semantic-authoring-document:'+value.ir.ir_digest,JSON.stringify(value.document))]).catch(()=>message('编辑草稿自动保存失败，请保存文档到文件。'));showMode(false);++loadRevision;await open(value.ir,value.state,null,value.document);$('irLink').hidden=true;}
+      catch(error){showMode(true);message('编辑文档无法预览：'+error.message);}
+    }
+  });
+  Promise.all([fetch('../data/semantic/catalog.json',{cache:'no-store'}).then(r=>r.json()),fetch('../data/semantic/source-inventory.json',{cache:'no-store'}).then(r=>r.json())]).then(async([data,inventory])=>{catalog=data.models;$('inventory').textContent=`已只读扫描 ${inventory.files.length} 个文件，发现 ${inventory.models.length} 个模型候选。Awesome 列表登记 ${inventory.github_links.length} 个 GitHub 来源链接，尚未下载。Notebook 仅静态解析。`;library();const query=new URLSearchParams(location.search);if(query.get('authoring')==='preview'){const preview=await storage.read('semantic-authoring-preview-pending');if(preview){await open(preview.ir,preview.state,null,preview.document);$('irLink').hidden=true;return;}}const id=query.get('model');loadModel(profiles.defaultModel(data,id));}).catch(error=>message('读取失败：'+error.message));
 })();

@@ -1217,7 +1217,8 @@
         const initial=key(sx,sy,'s');cost.set(initial,0);push({x:sx,y:sy,d:'s',g:0,f:0,k:initial});let final=null,visits=0;
         while(heap.length&&visits++<24000){const cur=pop();if(cur.g!==cost.get(cur.k))continue;
           if(cur.x===tx&&cur.y===ty&&(!preserveContext||cur.lane)){final=cur.k;break;}
-          for(const [dx,dy,d]of [[-1,0,'h'],[1,0,'h'],[0,-1,'v'],[0,1,'v']]){
+          for(let direction=0;direction<4;direction++){
+            const dx=direction===0?-1:direction===1?1:0,dy=direction===2?-1:direction===3?1:0,d=direction<2?'h':'v';
             const x=cur.x+dx,y=cur.y+dy;if(x<0||y<0||x>=xs.length||y>=ys.length)continue;
             const p=point(xs[x],ys[y]),from=point(xs[cur.x],ys[cur.y]);
             const segmentKey=(Math.min(y,cur.y)*xs.length+Math.min(x,cur.x))*2+(d==='v'?1:0);

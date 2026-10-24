@@ -7,6 +7,31 @@
   const P=root.SemanticPublication||(typeof require==='function'?require('./publication.js'):null);
   const Goals=root.SemanticExpressionGoals||(typeof require==='function'?require('./expression-goals.js'):null);
   const SummaryGoals=root.SemanticSummaryGoals||(typeof require==='function'?require('./summary-goals.js'):null);
+  // Candidate searches often project different policies to the exact same
+  // measured geometry. Share only routing work inside one synchronous search;
+  // never reuse a previous scene or trust a semantic/policy name as its key.
+  let preparationCache=null,requiredFrontier=null;
+  // Exactly the identity check used to admit a dependency-layout fallback.
+  // Sort accounting buckets as sets, preserving invalid duplicate entries.
+  const partition=buckets=>Object.fromEntries(Object.keys(buckets).sort().map(key=>[key,buckets[key].slice().sort()]));
+  const frontierIdentity=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id).sort(),
+    edges:g.edges.map(e=>[e.id,e.source,e.target,e.source_port,e.target_port,e.kind,e.condition,e.originals,
+      (e.bundle_members||[e]).map(m=>[m.id,m.canonical_source,m.canonical_target,m.resolved_source,m.source_port,m.target_port,m.kind,m.condition,m.originals])]).sort((a,b)=>a[0].localeCompare(b[0])),
+    nodes_accounted:partition(g.node_accounting),edges_accounted:partition(g.edge_accounting)});
+  function withPreparationCache(run){
+    if(preparationCache)return run();
+    preparationCache=new Map();try{return run();}finally{preparationCache=null;}
+  }
+  function preparationKey(graph,parallelRepairs){
+    const {idx,routeCache,reserved,...context}=graph.positions.context;
+    // Local bypass verification reads canonical facts beyond the parent tree.
+    // Such trials retain their ordinary path, rather than an incomplete key.
+    if(context.localBypassTrial||context.localBypassFacts)return null;
+    return JSON.stringify([parallelRepairs,graph.nodes.map(n=>[n.id,n.paper.font,n.paper.captions,graph.idx.nodes.get(n.id)?.label]),
+      graph.edges,graph.bounds,[...graph.positions],
+      [graph.publication.fit_page,graph.publication.paper_width_mm,graph.publication.medium,graph.publication.canvas_limits],
+      [...idx?.nodes||[]].map(([id,n])=>[id,n.parent,n.label]),context],(_,v)=>v instanceof Map?{map:[...v]}:v instanceof Set?{set:[...v]}:v);
+  }
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
   const css=`.publication text{font-family:Arial,'Noto Sans SC',sans-serif;fill:#293746} .paper-edge{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:1;stroke-dasharray:none}.paper-edge-halo{fill:none;stroke:white;stroke-width:5;stroke-linejoin:round;pointer-events:none}.paper-edge.control{stroke-dasharray:5 4}.paper-port-label{font-size:13px;font-weight:500;fill:#526170}.paper-title{font-weight:600}.paper-caption{fill:#66717f;font-size:13px}`;
   const defs=`<marker id="paper-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto"><path d="M1 1 L9 5 L1 9Z" fill="#5d6b7a" stroke="none"/></marker>`;
@@ -51,8 +76,8 @@
   function lineGeometry(routes){
     const overlaps=[],contacts=[];let crossings=0;
     const Geometry=root.SemanticGeometryIndex||(typeof require==='function'?require('./geometry-index.js'):null);
-    const segments=routes.flatMap((e,owner)=>e.route.points.slice(1).map((p,i)=>{const a=e.route.points[i];return {owner,x:Math.min(a.x,p.x),y:Math.min(a.y,p.y),w:Math.abs(p.x-a.x),h:Math.abs(p.y-a.y)};}));
-    const spatial=routes.length>128?Geometry.boxes(segments):null,pairs=spatial?routes.map(()=>new Set()):null;
+    const segments=routes.length>128?routes.flatMap((e,owner)=>e.route.points.slice(1).map((p,i)=>{const a=e.route.points[i];return {owner,x:Math.min(a.x,p.x),y:Math.min(a.y,p.y),w:Math.abs(p.x-a.x),h:Math.abs(p.y-a.y)};})):null;
+    const spatial=segments?Geometry.boxes(segments):null,pairs=spatial?routes.map(()=>new Set()):null;
     if(spatial)for(const segment of segments)for(const other of spatial.query(segment))if(other.owner>segment.owner)pairs[segment.owner].add(other.owner);
     for(let i=0;i<routes.length;i++)for(const j of (pairs?[...pairs[i]].sort((a,b)=>a-b):Array.from({length:routes.length-i-1},(_,j)=>i+j+1))){
       const first=routes[i],second=routes[j],touches=new Set();let sharedLength=0;
@@ -154,6 +179,23 @@
     return {routes,bounds:b,labeling,quality,notes,noteLines,totalH};
   }
   function prepare(graph,{parallelRepairs=false,initial=null,localOnly=false}={}){
+    if(!preparationCache||initial||localOnly)return prepareUncached(graph,{parallelRepairs,initial,localOnly});
+    const key=preparationKey(graph,parallelRepairs),saved=key&&preparationCache.get(key),context=graph.positions.context;
+    if(saved){
+      const prepared=E.clone(saved.prepared);Object.assign(context,saved.context);
+      context.routeCache=new Map(prepared.routes.map(e=>[e.id,e.route]));
+      context.reserved=prepared.routes.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
+      return prepared;
+    }
+    const prepared=prepareUncached(graph,{parallelRepairs,initial,localOnly});
+    if(key){
+      if(preparationCache.size>=32)preparationCache.delete(preparationCache.keys().next().value);
+      preparationCache.set(key,{prepared:E.clone(prepared),context:Object.fromEntries(
+        ['portOrder','ancestorPorts','crossingCost','contactCost','stubLength','repairRoute'].filter(k=>Object.hasOwn(context,k)).map(k=>[k,context[k]]))});
+    }
+    return prepared;
+  }
+  function prepareUncached(graph,{parallelRepairs=false,initial=null,localOnly=false}={}){
     const baseline=initial||prepareTrial(graph,'canonical-short'),trials=[baseline];let best=baseline;
     if(!localOnly&&(baseline.quality.line_geometry.crossings||baseline.quality.issues.length)){
       const strategies=['neighbors-short','neighbors-long','canonical-long','neighbors-clear-short','neighbors-clear-long'];
@@ -171,6 +213,7 @@
     // crossed edges with all other selected routes reserved. Keep each trial
     // local: rejected routes must not leak into the cache or reservations.
     const refinement={attempts:0,accepted:[],before_crossings:best.quality.line_geometry.crossings,before_contacts:best.quality.line_geometry.unrelated_contacts.length};
+    const scoredPairs=new WeakMap();
     const segments=routes=>routes.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
     if((best.quality.line_geometry.crossings||best.quality.line_geometry.unrelated_contacts.length)&&graph.edges.length<=128){
       const context=graph.positions.context,strategy=best.quality.route_strategy;
@@ -189,7 +232,17 @@
       for(let pass=0;pass<(localOnly?2:separation?1:2);pass++){
         let improved=false;
         const score=geometry=>phase==='crossings'?geometry.crossings:geometry.unrelated_contacts.length;
-        const scored=best.routes.map(e=>({id:e.id,score:best.routes.reduce((s,other)=>s+(other.id===e.id?0:score(lineGeometry([e,other]))),0)}))
+        const scores=new Map(best.routes.map(e=>[e.id,0]));
+        // Selected route objects are immutable inside this repair. Replacing
+        // one edge invalidates only its pairs; keep symmetric integer scores
+        // for all unchanged pairs across contact/crossing passes.
+        for(let i=0;i<best.routes.length;i++)for(let j=i+1;j<best.routes.length;j++){
+          const a=best.routes[i],b=best.routes[j];let row=scoredPairs.get(a);
+          if(!row)scoredPairs.set(a,row=new WeakMap());
+          let geometry=row.get(b);if(!geometry){geometry=lineGeometry([a,b]);row.set(b,geometry);}
+          const value=score(geometry);scores.set(a.id,scores.get(a.id)+value);scores.set(b.id,scores.get(b.id)+value);
+        }
+        const scored=best.routes.map(e=>({id:e.id,score:scores.get(e.id)}))
           .filter(e=>e.score).sort((a,b)=>b.score-a.score||a.id.localeCompare(b.id)).slice(0,localOnly?4:separation?4:8);
         for(const edge of scored){
           if(!score(best.quality.line_geometry))break;
@@ -890,10 +943,12 @@
         portOrder:b.route_strategy.startsWith('neighbors')?'neighbors':'canonical',ancestorPorts:b.route_strategy.includes('-header-')?'header':'boundary',
         crossingCost:cost,contactCost:cost*2,stubLength:16,repairRoute:null,
         reserved:base.prepared.routes.filter(e=>!pair.edges.includes(e.id)).flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]))};
-      const graph={...base.graph,positions,constraint_receipts:copy(base.graph.constraint_receipts)},fresh=new Map();
+      const graph={...base.graph,positions},fresh=new Map();
       const order=reverse?pair.edges.slice().reverse():pair.edges;
-      for(const id of order){const e=previous.get(id),route=L.route(e,positions);fresh.set(id,{...e,route});
-        ctx.reserved.push(...route.points.slice(1).map((p,i)=>[route.points[i],p]));}
+      L.withRoutingIndex(positions,()=>{
+        for(const id of order){const e=previous.get(id),route=L.route(e,positions);fresh.set(id,{...e,route});
+          ctx.reserved.push(...route.points.slice(1).map((p,i)=>[route.points[i],p]));}
+      });
       const prepared=evaluateRoutes(graph,base.prepared.routes.map(e=>fresh.get(e.id)||e),b.route_strategy),q=prepared.quality;
       const physical=[...fresh.values()].every(e=>{const was=previous.get(e.id);return e.route.ok&&
         e.route.source_side===was.route.source_side&&e.route.target_side===was.route.target_side&&
@@ -908,6 +963,9 @@
         fontMetric(q)>=fontMetric(b)&&q.native_width_px<=b.native_width_px&&q.native_height_px<=b.native_height_px;
       let accepted=false,after,coverage;
       if(geometry){
+        // Only an otherwise admissible route trial can audit/mutate receipts.
+        // Rejected geometry does not need a deep copy of all source evidence.
+        graph.constraint_receipts=copy(base.graph.constraint_receipts);
         E.auditConstraintRoutes(graph,prepared.routes);after=realizedRelations({graph,prepared});
         coverage=new Set(Goals.evaluate(goals,graph,prepared,ir).filter(r=>r.status==='fulfilled').map(r=>r.goal));
         accepted=graph.constraint_receipts.every(r=>!applied.has(r.id)||r.status==='applied')&&
@@ -1640,6 +1698,14 @@
     chosen=attachExpressionEvidence(ir,chosen);
     const normal=chosen.graph.publication.normal_returns?.rows.filter(r=>r.attached_edges.length);
     if(!normal?.length||state.paperNormalReturns===false)return chosen;
+    if(requiredFrontier&&frontierIdentity(E.project(ir,{...state,view:'publication',paperNormalReturns:false}))!==requiredFrontier){
+      // This fallback may change geometry only. A different canonical cut is
+      // already ineligible at the final identity gate: prove that before its
+      // expensive layout search, rather than fully drawing and discarding it.
+      chosen.prepared.routing={...chosen.prepared.routing,frontier_preflight:{
+        alternative:'ordinary-source-return',eligible:false,reason:'different-canonical-frontier'}};
+      return chosen;
+    }
     // Source evidence licenses a summary, not its layout. Compare one complete
     // measured presentation against the ordinary source-return representation.
     // Do not let a shorter cut silently buy a different logical frontier.
@@ -2016,6 +2082,10 @@
     });
   }
   function prepareFigure(ir,state={},options={}){
+    const prior=requiredFrontier;if(options.requiredFrontier)requiredFrontier=options.requiredFrontier;
+    try{return withPreparationCache(()=>prepareFigureUncached(ir,state,options));}finally{requiredFrontier=prior;}
+  }
+  function prepareFigureUncached(ir,state={},options={}){
     if(state.canvasPlacement&&!options.ignorePlacement){
       const interaction=root.SemanticCanvasInteraction||(typeof require==='function'?require('./canvas-interaction.js'):null);
       const baseline=prepareFigure(ir,{...state,...interaction?.placementLayout(state.canvasPlacement),canvasPlacement:undefined},{...options,ignorePlacement:true});
@@ -2047,17 +2117,12 @@
       // of this exact frontier takes precedence over a composed drawing with
       // unresolved routes, labels or canvas limits. Manual placement is kept.
       if(!Object.keys(state.offsets||{}).length&&chosen.prepared.quality.issues.length){
-        const baseline=prepareFigure(ir,{...frontierState,paperComposition:'dependency'});
+        const baseline=prepareFigure(ir,{...frontierState,paperComposition:'dependency'},{requiredFrontier:frontierIdentity(source)});
         // Accounting buckets are sets of canonical IDs. Frame refinements
         // may append an attached ID in a different order without changing
         // its ownership. Sort only these sets, never calls or operand rows.
         // Keep duplicates, so invalid multiplicity cannot compare equal.
-        const partition=buckets=>Object.fromEntries(Object.keys(buckets).sort().map(key=>[key,buckets[key].slice().sort()]));
-        const identities=g=>JSON.stringify({nodes:g.nodes.map(n=>n.id).sort(),
-          edges:g.edges.map(e=>[e.id,e.source,e.target,e.source_port,e.target_port,e.kind,e.condition,e.originals,
-            (e.bundle_members||[e]).map(m=>[m.id,m.canonical_source,m.canonical_target,m.resolved_source,m.source_port,m.target_port,m.kind,m.condition,m.originals])]).sort((a,b)=>a[0].localeCompare(b[0])),
-          nodes_accounted:partition(g.node_accounting),edges_accounted:partition(g.edge_accounting)});
-        if(!baseline.prepared.quality.issues.length&&identities(baseline.graph)===identities(source)){
+        if(!baseline.prepared.quality.issues.length&&frontierIdentity(baseline.graph)===frontierIdentity(source)){
           baseline.graph={...baseline.graph,publication:{...baseline.graph.publication,composition:{schema:'architecture-composition/1',round:5,
             status:'fallback',direction:'dependency',requested_direction:state.paperDirection==='up'?'up':'down',
             records:[],input_docks:[],facing:[],followers:[],
@@ -2153,5 +2218,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={prepareFrontier,prepareArchitectureTerminals,prepareRouteShortcuts,sourceForkContextBinding,normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={withPreparationCache,prepareFrontier,prepareArchitectureTerminals,prepareRouteShortcuts,sourceForkContextBinding,normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

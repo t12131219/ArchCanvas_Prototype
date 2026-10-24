@@ -3,10 +3,11 @@
   const $=id=>document.getElementById(id),E=window.SemanticEngine,P=window.SemanticPublication,R=window.SemanticPublicationRenderer,svg=$('canvas'),NS='http://www.w3.org/2000/svg';
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const el=(tag,attrs={},text)=>{const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;};
-  let catalog=[],ir=null,state=null,projection=null,selected=null,history=[],future=[],camera={x:0,y:0,w:1000,h:700},drag=null,loadRevision=0;
+  let catalog=[],ir=null,state=null,presentation=null,projection=null,selected=null,history=[],future=[],camera={x:0,y:0,w:1000,h:700},drag=null,loadRevision=0;
   let renderedNodes=new Map(),renderedEdges=new Map(),pendingFrame=0,dragPoint=null,inspectedBundle=null,canvasQuality=null,displayedFigure=null;
   let navigationIndex=[];
-  const storeKey=()=> 'summary-semantic:architecture-v1:'+ir.ir_digest;
+  const profiles=window.SemanticPresentationProfile;
+  const storeKey=()=>profiles.storageKey(ir,presentation);
   const message=x=>$('status').textContent=x;
   function snapshot(){history.push(E.clone(state));if(history.length>40)history.shift();future=[];}
   function persist(){try{localStorage.setItem(storeKey(),JSON.stringify(state));}catch(_){message('浏览器存储已满；可保存图文档到文件。');}}
@@ -43,10 +44,14 @@
     }
   }
   function library(){const q=$('search').value.toLowerCase();$('catalog').replaceChildren();for(const m of catalog.filter(m=>m.title.toLowerCase().includes(q))){const b=document.createElement('button');b.className='case'+(ir?.ir_digest===m.digest?' active':'');b.innerHTML=`<strong>${esc(m.title)}</strong><small>${m.nodes} 节点 · ${esc(m.runtime==='passed'?'CPU 已观测':'静态源码')}</small>`;b.onclick=()=>loadModel(m);$('catalog').append(b);}}
-  async function loadModel(m){const ticket=++loadRevision;try{const response=await fetch('../data/semantic/'+m.ir,{cache:'no-store'});if(!response.ok)throw Error('IR 文件读取失败');const value=await response.json();if(ticket!==loadRevision)return;open(value);$('irLink').href='../data/semantic/'+m.ir;$('irLink').hidden=false;}catch(error){message(error.message);}}
-  function open(value,saved){E.validate(value);ir=value;history=[];future=[];selected=null;inspectedBundle=null;
-    const roots=ir.nodes.filter(n=>!n.parent).map(n=>n.id);state={open:roots,offsets:{},mode:'source',view:'publication'};
-    try{const disk=saved||JSON.parse(localStorage.getItem(storeKey()));if(disk&&typeof disk==='object'&&!Array.isArray(disk))state={...state,...disk,open:Array.isArray(disk.open)?disk.open:roots,offsets:disk.offsets&&typeof disk.offsets==='object'&&!Array.isArray(disk.offsets)?disk.offsets:{}};}catch(_){}
+  async function loadModel(m){const ticket=++loadRevision;try{
+    const read=async path=>{const response=await fetch('../data/semantic/'+path,{cache:'no-store'});if(!response.ok)throw Error('模型或展示配置读取失败');return response.json();};
+    const [value,profile]=await Promise.all([read(m.ir),m.presentation?read(m.presentation):null]);
+    if(ticket!==loadRevision)return;open(value,undefined,profile);$('irLink').href='../data/semantic/'+m.ir;$('irLink').hidden=false;
+  }catch(error){if(ticket===loadRevision)message(error.message);}}
+  function open(value,saved,profile=null){E.validate(value);profiles.validate(value,profile);ir=value;presentation=profile;history=[];future=[];selected=null;inspectedBundle=null;
+    let stored;try{stored=JSON.parse(localStorage.getItem(storeKey()));}catch(_){}
+    state=profiles.initialState(ir,presentation,saved,stored);
     state.view=state.view||'publication';$('view').value=state.view;$('detailsToggle').checked=!!state.details;$('foldToggle').checked=state.foldSerial!==false;optionalFold();$('mode').value=state.mode;$('mode').options[1].disabled=!ir.nodes.some(n=>n.id==='runtime-observations');
     if(state.mode==='runtime'&&$('mode').options[1].disabled)state.mode='source';$('mode').value=state.mode;$('nodeTitle').textContent='选择图元';$('details').textContent='单击节点查看源码与运行证据。';
     $('title').textContent=ir.title;$('summary').textContent=`${ir.nodes.length} 个语义单位 · ${ir.edges.length} 个关系 · ${(ir.motifs||[]).length} 个组合模式`;
@@ -313,5 +318,5 @@
   $('save').onclick=()=>download(JSON.stringify({schema:'semantic-canvas/1',ir,state},null,2),ir.title+'-semantic.json','application/json');
   $('export').onclick=()=>{if(state.view==='publication'){download(R.render(ir,state).svg,ir.title+'-figure.svg','image/svg+xml');return;}const copy=svg.cloneNode(true);copy.setAttribute('xmlns',NS);copy.setAttribute('viewBox',`${projection.bounds.x} ${projection.bounds.y} ${projection.bounds.w} ${projection.bounds.h}`);copy.setAttribute('width',projection.bounds.w);copy.setAttribute('height',projection.bounds.h);const style=el('style',{},'.edge{fill:none;stroke-width:1.8}.edge.source{stroke:#6b89b8;stroke-dasharray:5 4}.edge.runtime{stroke:#288765}.edge.resource{stroke:#ac72a0}.edge.route-failed{stroke:#cf7930;stroke-dasharray:3 3}text{font-family:Arial,sans-serif}');copy.prepend(style);download(new XMLSerializer().serializeToString(copy),ir.title+'.svg','image/svg+xml');};
   $('import').onclick=()=>$('file').click();$('file').onchange=async()=>{const file=$('file').files[0];if(!file)return;const ticket=++loadRevision;try{if(file.size>20_000_000)throw Error('文件超过 20MB');const value=JSON.parse(await file.text());if(ticket!==loadRevision)return;open(['semantic-canvas/1','archcanvas-architecture-document/1'].includes(value.schema)?value.ir:value,value.state);$('irLink').hidden=true;}catch(error){message(error.message);}finally{$('file').value='';}};
-  Promise.all([fetch('../data/semantic/catalog.json',{cache:'no-store'}).then(r=>r.json()),fetch('../data/semantic/source-inventory.json',{cache:'no-store'}).then(r=>r.json())]).then(([data,inventory])=>{catalog=data.models;$('inventory').textContent=`已只读扫描 ${inventory.files.length} 个文件，发现 ${inventory.models.length} 个模型候选。Awesome 列表登记 ${inventory.github_links.length} 个 GitHub 来源链接，尚未下载。Notebook 仅静态解析。`;library();const id=new URLSearchParams(location.search).get('model');loadModel(catalog.find(m=>m.id===id)||catalog[0]);}).catch(error=>message('读取失败：'+error.message));
+  Promise.all([fetch('../data/semantic/catalog.json',{cache:'no-store'}).then(r=>r.json()),fetch('../data/semantic/source-inventory.json',{cache:'no-store'}).then(r=>r.json())]).then(([data,inventory])=>{catalog=data.models;$('inventory').textContent=`已只读扫描 ${inventory.files.length} 个文件，发现 ${inventory.models.length} 个模型候选。Awesome 列表登记 ${inventory.github_links.length} 个 GitHub 来源链接，尚未下载。Notebook 仅静态解析。`;library();const id=new URLSearchParams(location.search).get('model');loadModel(profiles.defaultModel(data,id));}).catch(error=>message('读取失败：'+error.message));
 })();

@@ -1,10 +1,32 @@
-# Summary_Merge · Transformer 与通用源码语义适配
+# Summary_Merge · 通用语义架构
 
-当前工作区保留教育版 **Transformer** 及其源码原子粒度副本：原案例 ID 为 `01093cc06a87b35a`，副本 ID 为 `01093cc06a87b35b`。原案例保留概览、模块操作和算子详细三份基线视图；副本只暴露 `source-atomic` 一份 authority 图，由递归展开控制源码颗粒度。
+当前默认展示已接入最近正式审核的通用源码语义结果：项目首页和通用画布默认打开 **Transformer 的 F1 语义详图**，支持返回 F0 架构概览，并继续局部展开到调用和源码细节。此轮将已有优化发布为当前产品基线，没有增加新的模型特判或布局规则。
 
-新增独立的实验性通用 PyTorch 语义链路：只读 AST 抽取 → 统一 IR → 隔离 CPU 证据 → 原子关系 → 数据流模式组合 → 递归图。入口为 <http://127.0.0.1:8766/semantic_studio/index.html>，完整范围、命令与限制见 [通用适配层说明](docs/semantic-adapter.md)。已读取两个参考集合并生成 7 个外部模型静态图，保留未知边界；外部 Notebook 未执行、未复制模型实现。CPU 端到端验证使用用户允许的 conda `ArchCanvas` 环境。
+```bash
+python3 -m http.server 8766 --bind 127.0.0.1 --directory .
+```
 
-源码原子粒度标准（`source-atomic-v1`）把一个源码函数调用/表达式、参数或 buffer、控制量（mask/causal/循环）和明确的张量值别名作为最小可解释单位。端口绑定只表达关系，界面标签和说明框不计为算子。每个原子节点记录 `source_evidence`、源码行号/表达式、`semantic_kind` 和 `atomicity`，展开只改变可见投影，不改变源码、IR 或 canonical binding。
+- 当前默认入口：<http://127.0.0.1:8766/>
+- 通用语义画布：<http://127.0.0.1:8766/semantic_studio/index.html>
+- 明确打开当前 Transformer：<http://127.0.0.1:8766/semantic_studio/index.html?model=0216717d966327f4>
+- 专用参照编辑器：<http://127.0.0.1:8766/yworks_edge_router_lab/index.html>
+
+侧栏的“Transformer · 语义架构”与正式审核输入 `verification/helper-contracts/current/Transformer-current.json` 逐字节相同，完整保留 **3371 个节点、3663 条边**。默认 F1 为 80/80、2098 × 3028；F0 为 28/37、1610 × 1386。它们是同一份 IR 的展示状态，F1 下方继续保留更细展开。
+
+`data/semantic/catalog.json` 指定默认模型及其展示配置；`data/semantic/presentations/transformer.json` 固定审核过的 F1 初始状态与概览返回快照。其他源码模型默认使用相同的通用认证详图机制。新展示采用独立浏览器存储版本，旧展示状态仍保留在原键中；明确导入的图文档继续优先恢复自己的状态。重新构建模型目录或运行历史发布脚本后，也会保留当前审核过的输入和展示配置。
+
+重新发布当前审核输入和展示配置：
+
+```bash
+python3 tools/publish_reviewed_presentation.py
+node tests/reviewed-presentation.test.cjs
+```
+
+详细的数据、状态和文件关系见 [当前展示发布说明](docs/reviewed-presentation.md)。[最近布局优化证据](docs/generic-input-placement.md)保留原有审核结论；本次接入没有声称进一步改善图面，也未新增数千节点同时可见的性能验证。
+
+专用 Transformer 三个历史案例继续保留：`01093cc06a87b35a` 为三份专用基线图，`…35b` 为源码原子副本，`…35c` 为 CPU 轨迹细化副本。其专用生成器、数据和编辑器独立于当前通用展示，仍可用来比较和回归。带 `?case=…` 的旧首页链接继续进入专用编辑器。
+
+以下为此前阶段的累计记录，其中测试计数、默认入口与阶段限制以各自记录时点为准；当前默认行为以本文开头和发布说明为准。
 
 ## 可组合架构表达
 

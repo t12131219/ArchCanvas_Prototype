@@ -21,14 +21,17 @@ def main():
         save(target, ir); publish(target, catalog)
     # Refresh the existing generic comparison entries. The dedicated adapter
     # and its original assets stay outside this publication path.
-    for name, target, title in [('comparison-default', '0216717d966327f4.json', 'Transformer · source'),
-                                ('comparison-small-runtime', 'transformer-runtime.json', 'Transformer')]:
+    for name, target, title in [('comparison-small-runtime', 'transformer-runtime.json', 'Transformer')]:
         ir = json.loads((source / (name + '.json')).read_text())
         ir['title'] = title
         seal(ir)
         assert validate_ir(ir)['ok']
         file = ROOT / 'data/semantic' / target
         save(file, ir); publish(file, catalog)
+    # Source publication now follows the latest accepted dual-frontier audit,
+    # rather than rolling the product back to this historical stage's IR.
+    from tools.publish_reviewed_presentation import main as publish_reviewed
+    publish_reviewed()
     print(json.dumps({'catalog': str(catalog), 'generic_examples': 10, 'comparison_entries_refreshed': 2}))
 
 

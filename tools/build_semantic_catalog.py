@@ -50,12 +50,17 @@ def main():
     known = {m['id'] for m in models}
     models += [m for m in existing['models'] if m['id'] not in known]
     save(catalog_path, {'schema': 'semantic-studio/1', 'models': models})
+    # Catalog regeneration must keep the accepted product presentation, not
+    # replace it with a fresh unreviewed extraction and discard its profile.
+    from tools.publish_reviewed_presentation import publish_reviewed
+    presentation = publish_reviewed(ROOT)
     after = inventory(roots)
     unchanged = before['files'] == after['files']
     report = {'schema': 'semantic-collection-check/1', 'sources_read_only': unchanged, 'source_files': len(before['files']),
               'candidates': len(before['models']), 'github_links': len(before['github_links']),
               'link_only_repositories': True, 'downloaded_models': [], 'model_code_copied': False,
-              'model_executed': False, 'results': results, 'passed': unchanged and all(r['status'] == 'passed' for r in results)}
+              'model_executed': False, 'results': results, 'presentation': presentation,
+              'passed': unchanged and all(r['status'] == 'passed' for r in results)}
     save(ROOT / 'verification/semantic-collections.json', report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report['passed']: raise SystemExit(2)

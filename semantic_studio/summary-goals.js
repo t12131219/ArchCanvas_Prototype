@@ -20,12 +20,17 @@
   }
   function build(ir,plan){
     const index=sourceIndex(ir),{by,resolve,label}=index,planned=new Map(plan.nodes.map(n=>[n.id,n])),goals=[];
+    // A source/plan pair is fixed for this proof pass. Build its two ownership
+    // indexes once, rather than once per summarized helper in the full IR.
+    const children=new Map(),displayChildren=new Map();
+    for(const n of ir.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
+    for(const n of plan.nodes){if(!displayChildren.has(n.parent))displayChildren.set(n.parent,[]);displayChildren.get(n.parent).push(n.id);}
+    const displayClosure=id=>{const ids=[id];for(let i=0;i<ids.length;i++)ids.push(...displayChildren.get(ids[i])||[]);return ids;};
     const guarded=n=>!n||['opaque','control'].includes(n.kind)||n.mutable||n.condition||n.identity_display||n.observed_calls||n.evidence_status==='runtime-only'||n.runtime_evidence?.length||n.semantic_contracts?.length||n.repeat_contract||n.iteration;
     for(const owner of plan.nodes){
       const p=owner.local_pipeline;if(!p)continue;
       const errors=[],operations=p.operations||[],ids=operations.map(o=>o.node),active=new Set(ids);
       const inside=new Set([owner.id]),todo=[owner.id];
-      const children=new Map();for(const n of ir.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n.id);}
       for(let i=0;i<todo.length;i++)for(const id of children.get(todo[i])||[]){inside.add(id);todo.push(id);}
       const identity=p.source_reads?.length&&p.rule_version==='local-pipelines/6'&&p.owner_identity?.kind==='same-object-calls'&&
         JSON.stringify(p.owner_identity)===JSON.stringify(owner.identity_display);
@@ -36,8 +41,6 @@
       if(inside.size!==p.canonical_members?.length||new Set(p.canonical_members).size!==inside.size||p.canonical_members?.some(id=>!inside.has(id)))errors.push('incomplete-source-membership');
       // Source ownership proves membership; a display frame may only repartition
       // that same set. Independently check every transparent frame's real cuts.
-      const displayChildren=new Map();for(const n of plan.nodes){if(!displayChildren.has(n.parent))displayChildren.set(n.parent,[]);displayChildren.get(n.parent).push(n.id);}
-      const displayClosure=id=>{const ids=[id];for(let i=0;i<ids.length;i++)ids.push(...displayChildren.get(ids[i])||[]);return ids;};
       const displayed=displayClosure(owner.id),canonicalDisplayed=displayed.filter(id=>by.has(id)),partitions=displayed.filter(id=>!by.has(id));
       if(canonicalDisplayed.length!==inside.size||canonicalDisplayed.some(id=>!inside.has(id)))errors.push('changed-display-membership');
       if(partitions.length!==(p.display_partitions||[]).length||partitions.some(id=>{

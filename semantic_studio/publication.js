@@ -10,7 +10,14 @@
   const flow=e=>['data','alias','interface-binding'].includes(e.kind);
   const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0).toString(16);};
   function unique(base,used){let id=base;for(let i=1;used.has(id);i++)id=base+':'+i;return id;}
-  const width=(s,font=16)=>Array.from(String(s)).reduce((a,c)=>a+font*(/[^\u0000-\u024f]/u.test(c)?1:/[ilI.,:;'!|]/.test(c)?.29:/[MW@#%]/.test(c)?.85:.57),0);
+  const textWidths=new Map();
+  function width(s,font=16){
+    const text=String(s),key=JSON.stringify([text,font]);
+    if(textWidths.has(key))return textWidths.get(key);
+    const value=Array.from(text).reduce((a,c)=>a+font*(/[^\u0000-\u024f]/u.test(c)?1:/[ilI.,:;'!|]/.test(c)?.29:/[MW@#%]/.test(c)?.85:.57),0);
+    if(textWidths.size>=8192)textWidths.delete(textWidths.keys().next().value);
+    textWidths.set(key,value);return value;
+  }
   function wrap(text,limit,font=16){
     const lines=[];let line='';
     // Use identifier word boundaries before falling back to character cuts.

@@ -70,6 +70,7 @@ COMMANDS = {
     'stage-routes': ['node', 'tests/stage-routes.test.cjs'],
     'composition-layout': ['node', 'tests/composition-layout.test.cjs'],
     'semantic-canvas-interaction': ['node', 'tests/semantic-canvas-interaction.test.cjs'],
+    'parent-expansion': ['node', 'tests/parent-expansion.test.cjs'],
     'reviewed-presentation': ['node', 'tests/reviewed-presentation.test.cjs'],
     'call-boundaries': ['node', 'tests/call-boundaries.test.cjs'],
     'cell-interfaces': ['node', 'tests/cell-interfaces.test.cjs'],

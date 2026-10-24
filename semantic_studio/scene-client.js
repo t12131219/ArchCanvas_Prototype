@@ -1,20 +1,20 @@
 /* Request identity and model epochs prevent stale background commits. */
 (function(root){
   'use strict';
-  function create({workerFactory,fallback}={}){
+  function create({workerFactory,fallback,timeoutMs=120000}={}){
     let worker=null,unavailable=false,serial=0,epoch=0,value=null,ready=Promise.resolve(),fallbackRuntime=null;
     const pending=new Map();
-    function stop(){if(worker)worker.terminate();worker=null;for(const {reject,timer}of pending.values()){clearTimeout(timer);reject(Error('后台画布不可用'));}pending.clear();}
+    function stop(error=Error('后台画布不可用')){if(worker)worker.terminate();worker=null;for(const {reject,timer}of pending.values()){clearTimeout(timer);reject(error);}pending.clear();}
     function ensure(){
       if(worker||unavailable)return worker;
-      try{worker=workerFactory?workerFactory():new Worker('scene-worker.js?v=canvas-interaction-1');
+      try{worker=workerFactory?workerFactory():new Worker('scene-worker.js?v=parent-expansion-1');
         worker.onmessage=event=>{const job=pending.get(event.data.requestId);if(job){pending.delete(event.data.requestId);clearTimeout(job.timer);job.resolve(event.data);}};
         worker.onerror=worker.onmessageerror=()=>{unavailable=true;stop();};
       }catch(_){unavailable=true;worker=null;}return worker;
     }
     function send(task){return new Promise((resolve,reject)=>{
       const active=ensure();if(!active){reject(Error('后台画布不可用'));return;}
-      const requestId=++serial,timer=setTimeout(()=>{unavailable=true;stop();reject(Error('后台画布超时'));},120000);
+      const requestId=++serial,timer=setTimeout(()=>stop(Object.assign(Error('后台画布超时，已取消本次操作'),{code:'SCENE_TIMEOUT'})),timeoutMs);
       pending.set(requestId,{resolve,reject,timer});try{active.postMessage({...task,requestId});}catch(error){pending.delete(requestId);clearTimeout(timer);reject(error);}
     });}
     async function local(task){
@@ -29,7 +29,15 @@
       stop();ready=send({task:'init',epoch:current,ir}).catch(()=>{if(current===epoch){unavailable=true;stop();}return null;});return current;
     }
     async function request(task){const current=epoch;await ready;if(current!==epoch)return {ok:false,stale:true};
-      let result;try{result=await send({...task,epoch:current});result.execution='worker';}catch(_){result=await local({...task,epoch:current});}
+      let result;try{result=await send({...task,epoch:current});result.execution='worker';}catch(error){
+        if(error.code==='SCENE_TIMEOUT'){
+          // Repeating a timed-out calculation on the UI thread freezes input.
+          // Restore the committed scene; start a fresh resident worker for the
+          // next action. Capability failures still use the explicit fallback.
+          ready=send({task:'init',epoch:current,ir:value}).catch(()=>null);
+          result={ok:false,error:error.message,execution:'worker-timeout'};
+        }else result=await local({...task,epoch:current});
+      }
       if(current!==epoch)return {ok:false,stale:true};return result;
     }
     return {init,request,dispose(){epoch++;stop();}};

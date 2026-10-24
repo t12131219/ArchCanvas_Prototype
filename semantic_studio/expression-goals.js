@@ -51,7 +51,8 @@
     return {exact,paths,incoming};
   }
   function build(ir,plan){
-    const by=new Map(ir.nodes.map(n=>[n.id,n])),goals=[],covered=new Set();
+    const by=new Map(ir.nodes.map(n=>[n.id,n])),goals=[],covered=new Set(),incoming=new Map(),outgoing=new Set();
+    for(const e of ir.edges){if(!incoming.has(e.target))incoming.set(e.target,[]);incoming.get(e.target).push(e);outgoing.add(e.source);}
     for(const r of plan.relation_graph?.relations||[]){
       const core=[r.node];
       // Reusing one result is an independently expressible relationship even
@@ -68,18 +69,21 @@
       covered.add(r.node);
     }
     for(const n of ir.nodes){
-      const externalInput=n.kind==='interface'&&n.role==='input'&&!ir.edges.some(e=>e.target===n.id);
-      const externalOutput=n.kind==='interface'&&n.role==='output'&&!ir.edges.some(e=>e.source===n.id);
+      const externalInput=n.kind==='interface'&&n.role==='input'&&!incoming.has(n.id);
+      const externalOutput=n.kind==='interface'&&n.role==='output'&&!outgoing.has(n.id);
       if((!covered.has(n.id)&&['compute','opaque','control'].includes(n.kind))||externalInput||externalOutput)
         goals.push({id:'goal:node:'+n.id,kind:n.kind==='interface'?'external-interface':'computation',focus_node:n.id,core:[n.id],
-          edges:externalOutput?ir.edges.filter(e=>e.target===n.id&&['data','alias','interface-binding'].includes(e.kind)).map(e=>e.id):[],
+          edges:externalOutput?(incoming.get(n.id)||[]).filter(e=>['data','alias','interface-binding'].includes(e.kind)).map(e=>e.id):[],
           direction:externalInput?'input':externalOutput?'output':null,priority:n.kind==='opaque'?3:1,expression:n.kind==='opaque'?'boundary-summary':'computation-structure'});
     }
     return {schema:VERSION,goals};
   }
   function evaluate(goalSet,graph,prepared,ir){
     const proof=canonicalPaths(ir,prepared.routes);
-    const routed=new Map(prepared.routes.map(e=>[e.id,e])),edges=new Map();
+    const routed=new Map(prepared.routes.map(e=>[e.id,e])),edges=new Map(),receiptsByRelation=new Map(),nodes=new Map(graph.nodes.map(n=>[n.id,n]));
+    // Index this evaluation's receipts, including the undefined relation key.
+    // Never cache mutable route/constraint evidence across frontier trials.
+    for(const c of graph.constraint_receipts||[]){const key=c.evidence.relation;if(!receiptsByRelation.has(key))receiptsByRelation.set(key,[]);receiptsByRelation.get(key).push(c);}
     for(const e of prepared.routes)for(const m of e.bundle_members||[e])for(const id of new Set([m.id,...m.originals||[]])){
       if(!edges.has(id))edges.set(id,[]);edges.get(id).push(e);
     }
@@ -90,13 +94,13 @@
       const required=[...new Set([...goal.edges,...(goal.kind==='computation'?(proof.incoming.get(goal.focus_node)||[])
         .filter(e=>['data','alias','interface-binding'].includes(e.kind)).map(e=>e.id):[])])];
       const missingBindings=required.filter(id=>!proof.exact(id));
-      const receipts=graph.constraint_receipts?.filter(c=>c.evidence.relation===goal.relation)||[];
+      const receipts=receiptsByRelation.get(goal.relation)||[];
       const conflicts=receipts.filter(c=>c.status==='conflict').map(c=>c.id);
       const printed=n=>(n?.paper?.captions||[]).join('').replace(/\s/g,'');
       const missingIdentity=goal.identity?goal.kind==='same-object-calls'?goal.identity.calls.filter(id=>{
-        const n=graph.nodes.find(n=>n.id===id),d=n?.identity_display;return d?.reference!==goal.identity.reference||d.relation!==goal.relation||!printed(n).includes(d.label.replace(/\s/g,''))||!printed(n).includes(`sourcecall${d.invocation}/${d.count}`);
+        const n=nodes.get(id),d=n?.identity_display;return d?.reference!==goal.identity.reference||d.relation!==goal.relation||!printed(n).includes(d.label.replace(/\s/g,''))||!printed(n).includes(`sourcecall${d.invocation}/${d.count}`);
       }):[goal.identity.node].filter(id=>{
-        const n=graph.nodes.find(n=>n.id===id);return n?.identity_display?.relation!==goal.relation||!goal.identity.aliases.every(a=>printed(n).includes(a.replace(/\s/g,'')));
+        const n=nodes.get(id);return n?.identity_display?.relation!==goal.relation||!goal.identity.aliases.every(a=>printed(n).includes(a.replace(/\s/g,'')));
       }):[];
       // Every relation edge has to reach a physical path; hidden internal edges
       // and merely attached evidence cannot count as an expressed relationship.

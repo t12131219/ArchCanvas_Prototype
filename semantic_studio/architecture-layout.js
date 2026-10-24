@@ -984,7 +984,7 @@
     if(!(e.source!==e.target&&b.expanded&&sourceAnc.has(e.target)))boxes.push(bodyBox(b));
     return boxes;
   }
-  function route(e,positions){
+  function route(e,positions,{terminalsOnly=false}={}){
     const a=positions.get(e.source),b=positions.get(e.target);if(!a||!b)return {points:[],ok:false,reason:'missing-endpoint'};
     const context=positions.context,idx=context?.idx;
     const ancestors=id=>{const set=new Set([id]);while(idx?.nodes.get(id)?.parent){id=idx.nodes.get(id).parent;set.add(id);}return set;};
@@ -1050,6 +1050,7 @@
       return point(which==='left'?p.x+delta:p.x+p.w-delta,y);
     }
     const s=port(e.source,e.target,true,ss),t=port(e.target,e.source,false,ts),normals={top:[0,-1],bottom:[0,1],left:[-1,0],right:[1,0]};
+    if(terminalsOnly)return {points:[s,t],source_side:ss,target_side:ts};
     const sn=normals[ss],tn=normals[ts],stub=headerControl&&(startInward||endInward)?1:(context?.stubLength??16);
     const start=point(s.x+sn[0]*stub*(startInward?-1:1),s.y+sn[1]*stub*(startInward?-1:1));
     const end=point(t.x+tn[0]*stub*(endInward?-1:1),t.y+tn[1]*stub*(endInward?-1:1));
@@ -1123,9 +1124,19 @@
     const contextLow=contextLane?(e.context_lane.side==='left'?contextOwner.x+(contextOwner.design_gutter||0):contextOwner.x+contextOwner.w-contextOwner.context_gutter):null;
     const contextHigh=contextLane?(e.context_lane.side==='left'?contextLow+contextOwner.context_gutter:contextOwner.x+contextOwner.w):null;
     const inContext=ps=>contextLane&&ps.some((p,i)=>i&&p.x===ps[i-1].x&&p.y!==ps[i-1].y&&p.x>contextLow&&p.x<contextHigh);
+    const verticalReservations=new Map(),horizontalReservations=new Map();
     function congestion(a,b){let penalty=0;
       const vertical=a.x===b.x,left=Math.min(a.x,b.x),right=Math.max(a.x,b.x),top=Math.min(a.y,b.y),bottom=Math.max(a.y,b.y);
-      for(const r of reservationBounds){
+      // The reservation snapshot is immutable for this route. A fixed rail
+      // can only meet parallel segments on that rail or perpendicular spans
+      // covering its coordinate. Preserve the original accumulation order,
+      // inclusive endpoints, zero-length segments and all penalty arithmetic.
+      const rails=vertical?verticalReservations:horizontalReservations,coordinate=vertical?a.x:a.y;
+      let relevant=rails.get(coordinate);
+      if(!relevant){relevant=reservationBounds.filter(r=>vertical?
+        r.vertical?r.x===coordinate:r.left<=coordinate&&coordinate<=r.right:
+        r.vertical?r.top<=coordinate&&coordinate<=r.bottom:r.y===coordinate);rails.set(coordinate,relevant);}
+      for(const r of relevant){
       if(vertical===r.vertical){
         if(vertical?a.x!==r.x:a.y!==r.y)continue;
         const overlap=vertical?Math.min(bottom,r.bottom)-Math.max(top,r.top):Math.min(right,r.right)-Math.max(left,r.left);
@@ -1175,7 +1186,9 @@
         // turn penalties, heap order and the visit budget remain unchanged.
         // This cache belongs to this grid and route, never to another trial.
         const segments=new Map();
-        const key=(x,y,d,lane=false)=>`${x},${y},${d}`+(preserveContext?`,${Number(lane)}`:''),cost=new Map(),prev=new Map(),heap=[];
+        // Numeric identities encode the exact same (cell,direction,lane)
+        // state. Heap insertion/tie order and the visit budget stay intact.
+        const key=(x,y,d,lane=false)=>((y*xs.length+x)*3+(d==='h'?0:d==='v'?1:2))*2+Number(!!lane),cost=new Map(),prev=new Map(),heap=[];
         function push(item){heap.push(item);let i=heap.length-1;while(i){const p=(i-1)>>1;if(heap[p].f<=item.f)break;heap[i]=heap[p];i=p;}heap[i]=item;}
         function pop(){const top=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let j=i*2+1;if(j+1<heap.length&&heap[j+1].f<heap[j].f)j++;if(heap[j].f>=last.f)break;heap[i]=heap[j];i=j;}heap[i]=last;}return top;}
         const initial=key(sx,sy,'s');cost.set(initial,0);push({x:sx,y:sy,d:'s',g:0,f:0,k:initial});let final=null,visits=0;
@@ -1194,7 +1207,7 @@
             push({x,y,d,lane,g,k,f:g+Math.abs(p.x-end.x)+Math.abs(p.y-end.y)});
           }
         }
-        if(final){const found=[];for(let k=final;k;k=prev.get(k)){const [x,y]=k.split(',').map(Number);found.push(point(xs[x],ys[y]));}found.reverse();
+        if(final!==null){const found=[];for(let k=final;k!==undefined;k=prev.get(k)){const cell=Math.floor(k/6),x=cell%xs.length,y=Math.floor(cell/xs.length);found.push(point(xs[x],ys[y]));}found.reverse();
           if((!semanticBypass||!best||found.some(p=>p.x>laneOwner.x&&p.x<laneOwner.x+laneOwner.design_gutter))&&
             (!preserveContext||inContext(found))&&(!best||length(found)<length(best)))best=found;break;}
       }

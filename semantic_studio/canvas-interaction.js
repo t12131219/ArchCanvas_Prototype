@@ -48,7 +48,7 @@
   function copyFigure(figure){
     const g=figure.graph,positions=new Map([...g.positions].map(([id,p])=>[id,{...p}]));
     positions.context={...g.positions.context,routeCache:new Map(),reserved:[]};
-    return {graph:{...g,positions,constraint_receipts:E.clone(g.constraint_receipts||[])},prepared:figure.prepared};
+    return {graph:{...g,positions,constraint_receipts:E.clone(g.constraint_receipts||[])},prepared:figure.prepared,frontierLayout:figure.frontierLayout};
   }
   function physical(edge,positions){
     const ps=edge.route.points;if(!edge.route.ok||ps.length<2||ps.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))return false;
@@ -86,6 +86,7 @@
       candidate.prepared.routing={...candidate.prepared.routing,manual_move:{rerouted:affected.size},shared_fanout_refinement:{selected:[]}};
       // Rebuild shared stems from the settled terminals, retaining every use.
       const chosen=ir?R.prepareSharedFanouts(ir,{paperComposition:g.publication.composition?'architecture':'dependency'},candidate):candidate;
+      if(candidate.frontierLayout)chosen.frontierLayout=candidate.frontierLayout;
       E.auditConstraintRoutes(chosen.graph,chosen.prepared.routes);
       if(chosen.graph.constraint_receipts.some(r=>applied.has(r.id)&&r.status!=='applied')||!chosen.prepared.routes.every(e=>physical(e,chosen.graph.positions)))throw Error('移动后的连接约束未通过校验');
       ctx.routeCache=new Map(chosen.prepared.routes.map(e=>[e.id,e.route]));
@@ -111,10 +112,19 @@
   }
   function placement(figure){return {schema:'semantic-canvas-placement/1',identity:identity(figure.graph),
     positions:[...figure.graph.positions].map(([id,p])=>[id,p.x,p.y,p.w,p.h]),routes:routes(figure).map(e=>[e.id,e.route]),
-    policy:Object.fromEntries(['portOrder','ancestorPorts','stubLength'].map(k=>[k,figure.graph.positions.context[k]]))};}
+    policy:Object.fromEntries(['portOrder','ancestorPorts','stubLength'].map(k=>[k,figure.graph.positions.context[k]])),
+    ...(figure.frontierLayout?{layout:figure.frontierLayout}:{})};}
+  function placementLayout(saved){
+    // Saved layout hints can only choose these existing geometry policies.
+    // They cannot replace a focus, frontier, role request or source binding.
+    const result={};if([false,'left','right'].includes(saved?.layout?.paperArchitecturePathRows))result.paperArchitecturePathRows=saved.layout.paperArchitecturePathRows;
+    if(['aligned','compact'].includes(saved?.layout?.paperArchitectureStreams))result.paperArchitectureStreams=saved.layout.paperArchitectureStreams;
+    for(const key of ['paperArchitectureTerminals','paperArchitectureInputs'])if(saved?.layout?.[key]===false)result[key]=false;
+    return result;
+  }
   function restore(figure,saved,ir){
     if(!saved||saved.schema!=='semantic-canvas-placement/1'||saved.identity!==identity(figure.graph))return null;
-    const candidate=copyFigure(figure),g=candidate.graph,seen=new Set();
+    const candidate=copyFigure(figure),g=candidate.graph,seen=new Set();if(saved.layout)candidate.frontierLayout=placementLayout(saved);
     if(saved.positions.length!==g.positions.size)return null;
     for(const [id,x,y,w,h]of saved.positions){const p=g.positions.get(id);if(!p||seen.has(id)||![x,y,w,h].every(Number.isFinite)||p.w!==w||p.h!==h)return null;seen.add(id);p.x=x;p.y=y;}
     // Validate final geometry, including moved parents, against its own scene.
@@ -133,7 +143,9 @@
     const fresh=g.edges.map(e=>({...e,route:by.get(e.id)}));if(fresh.some(e=>!e.route)||!fresh.every(e=>physical(e,g.positions)))return null;
     const ctx=g.positions.context;Object.assign(ctx,saved.policy||{});ctx.routeCache=new Map();ctx.reserved=[];
     for(const e of fresh){
-      const expected=E.route(e,g.positions),ps=e.route.points,es=expected.points;
+      // Physical paths were checked above. Terminal verification needs the
+      // actual port allocation, not another visibility search per saved edge.
+      const expected=L.route(e,g.positions,{terminalsOnly:true}),ps=e.route.points,es=expected.points;
       if(!es.length||ps[0].x!==es[0].x||ps[0].y!==es[0].y||ps.at(-1).x!==es.at(-1).x||ps.at(-1).y!==es.at(-1).y)return null;
     }
     E.auditConstraintRoutes(g,fresh);
@@ -146,6 +158,6 @@
     }
     return candidate;
   }
-  const api={session,constrain,previewRoute,path,move,placement,restore,physical,qualityOK};
+  const api={session,constrain,previewRoute,path,move,placement,restore,physical,qualityOK,placementLayout};
   root.SemanticCanvasInteraction=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

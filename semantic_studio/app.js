@@ -17,7 +17,7 @@
   function checkpoint(){committed={state:E.clone(state),history:history.map(E.clone),future:future.map(E.clone)};}
   async function render(options={}){
     if(!ir)return;const ticket=++renderRevision,start=performance.now();setBusy(true);delete svg.dataset.moveBlocked;message(options.move?'正在整理连线…':'正在更新语义画布…');
-    const result=await scene.request(options.move?{task:'move',baseKey:sceneKey,...options.move}:{task:'render',state:E.clone(state),certify:options.certify,diagramPlan:options.diagramPlan,baseKey:sceneKey}).catch(error=>({ok:false,error:error.message}));
+    const result=await scene.request(options.move?{task:'move',baseKey:sceneKey,...options.move}:{task:'render',state:E.clone(state),certify:options.certify,diagramPlan:options.diagramPlan,frontier:options.frontier,baseKey:sceneKey}).catch(error=>({ok:false,error:error.message}));
     if(ticket!==renderRevision||result.stale)return;
     if(!result.ok){
       if(committed){state=E.clone(committed.state);history=committed.history.map(E.clone);future=committed.future.map(E.clone);}
@@ -27,6 +27,7 @@
     state=result.state;sceneKey=result.key;Runtime.unpack(result);focusOptions=result.focus||[];
     setBusy(false);result.geometryOnly=!!options.move;drawScene(result);syncPaperControls();checkpoint();
     svg.dataset.execution=result.execution;svg.dataset.sceneKey=String(sceneKey);svg.dataset.computeMs=String(result.metrics.compute_ms);svg.dataset.sceneMs=(performance.now()-start).toFixed(2);svg.dataset.cached=String(result.metrics.cached);
+    svg.dataset.incremental=String(!!result.metrics.incremental);
     if(fitRequested){fitRequested=false;fit();}if(persistRequested){persistRequested=false;persist();}
   }
   // Geometry edits and expansion are mutually exclusive. Model loading remains
@@ -187,7 +188,7 @@
       // Closing this two-level presentation resets its helper expansion too.
       // A leftover explicit helper request would otherwise dissolve the stage.
       if(projection.idx.nodes.get(id)?.role_path_stage){const todo=[id];for(let i=0;i<todo.length;i++)for(const child of projection.idx.children.get(todo[i])||[]){open.delete(child);todo.push(child);}}
-    }else open.add(id);state.open=[...open];delete state.canvasPlacement;render();if(state.view==='publication')fit();persist();}
+    }else open.add(id);state.open=[...open];delete state.canvasPlacement;render({frontier:id});if(state.view==='publication')fit();persist();}
   function bindNode(g,n,p){
       const kids=projection.idx.children.get(n.id)||[];
       if(kids.length){const plus=el('text',{x:p.w-22,y:25,'font-size':18,fill:'#47618a'},p.expanded?'−':'+');plus.style.pointerEvents='auto';plus.style.cursor='pointer';plus.addEventListener('pointerdown',e=>e.stopPropagation());plus.addEventListener('click',e=>{e.stopPropagation();toggle(n.id);});g.append(plus);}

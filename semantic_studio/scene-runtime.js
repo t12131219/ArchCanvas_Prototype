@@ -12,25 +12,47 @@
   // the routing context as an explicit sidecar and reattach it at the receiver.
   const pack=figure=>({figure,context:figure.graph.positions.context});
   const unpack=payload=>{payload.figure.graph.positions.context=payload.context;return payload.figure;};
+  function frontierKey(state){
+    // These two fields are navigation/evidence receipts, never projection or
+    // routing inputs. Keep them in the response and saved document, but do
+    // not recompute the same frontier because its return snapshot changed.
+    const copy={...state};delete copy.paperFrontierReturn;delete copy.paperFrontierRecipe;
+    if(Array.isArray(copy.open))copy.open=[...new Set(copy.open)].sort();
+    const ordered=value=>Array.isArray(value)?value.map(ordered):value&&typeof value==='object'?
+      Object.fromEntries(Object.keys(value).sort().map(k=>[k,ordered(value[k])])):value;
+    return JSON.stringify(ordered(copy));
+  }
   function create(){
     let ir=null,epoch=null,serial=0;const cache=new Map(),keys=new Map();
-    function remember(state,figure,planned,focus){
-      const key=++serial,entry={key,state:E.clone(state),figure,planned,focus};cache.set(key,entry);keys.set(JSON.stringify(state),key);
-      if(cache.size>6){const first=cache.keys().next().value;keys.delete(JSON.stringify(cache.get(first).state));cache.delete(first);}return entry;
+    function remember(state,figure,planned,focus,alias){
+      const key=++serial,entry={key,state:E.clone(state),figure,planned,focus,signatures:[...new Set([frontierKey(state),alias].filter(Boolean))]};cache.set(key,entry);for(const signature of entry.signatures)keys.set(signature,key);
+      if(cache.size>6){const first=cache.keys().next().value,old=cache.get(first);for(const signature of old.signatures)if(keys.get(signature)===first)keys.delete(signature);cache.delete(first);}return entry;
     }
     function focusOptions(state){const plan=P.plan(ir),idx=E.index(plan),source=id=>{while(id){if(id==='runtime-observations'||id.startsWith('runtime:'))return false;id=idx.nodes.get(id)?.parent;}return true;};
       return plan.nodes.filter(n=>n.parent&&(idx.children.get(n.id)||[]).length&&(state.mode==='source'?source(n.id):state.mode==='runtime'?!source(n.id):true)).map(n=>({id:n.id,label:(n.module_path||n.label)+(n.paper.unknown_count?' · '+n.paper.unknown_count+' 未知边界':'')}));}
-    function response(entry,metrics){return {ok:true,epoch,key:entry.key,state:E.clone(entry.state),...pack(entry.figure),planned:entry.planned,focus:entry.focus,metrics};}
-    function render(state){
-      const cached=cache.get(keys.get(JSON.stringify(state)));if(cached)return response(cached,{cached:true,compute_ms:0});
-      const start=Date.now();let figure=state.view==='publication'?R.prepareFigure(ir,{...state,canvasPlacement:undefined}):{graph:E.project(ir,state),prepared:null};
+    function response(entry,metrics,state=entry.state){return {ok:true,epoch,key:entry.key,state:E.clone(state),...pack(entry.figure),planned:entry.planned,focus:entry.focus,metrics};}
+    function render(state,task={}){
+      const requested=frontierKey(state),cached=cache.get(keys.get(requested));if(cached){
+        // Refresh recency so an actively revisited parent survives unrelated
+        // local expansions. Retain the caller's complete navigation state.
+        if(cached.figure.frontierLayout&&!state.canvasPlacement)state.canvasPlacement=I.placement(cached.figure);
+        cache.delete(cached.key);cache.set(cached.key,cached);cached.state=E.clone(state);
+        return response(cached,{cached:true,compute_ms:0},state);
+      }
+      const start=Date.now();let figure;
+      const base=cache.get(task.baseKey);
+      const samePolicy=base&&frontierKey({...base.state,open:state.open,canvasPlacement:undefined})===frontierKey({...state,canvasPlacement:undefined});
+      if(task.frontier&&samePolicy&&!state.canvasPlacement){try{figure=R.prepareFrontier(ir,state,base.figure,task.frontier);}catch(_){}}
+      const incremental=!!figure;
+      if(!figure)figure=state.view==='publication'?R.prepareFigure(ir,{...state,...I.placementLayout(state.canvasPlacement),canvasPlacement:undefined}):{graph:E.project(ir,state),prepared:null};
       if(state.canvasPlacement){
         let restored;try{restored=I.restore(figure,state.canvasPlacement,ir);}catch(_){}
         if(restored)figure=restored;else delete state.canvasPlacement;
       }
       if(!figure.prepared){const positions=figure.graph.positions;positions.context.routeCache=new Map();for(const e of figure.graph.edges)positions.context.routeCache.set(e.id,E.route(e,positions));}
+      if(incremental)state.canvasPlacement=I.placement(figure);
       const planned=state.view==='publication'&&state.paperMedium==='canvas'&&state.paperGranularity==='roles'?D.plan(ir,figure,state):null;
-      return response(remember(state,figure,planned,focusOptions(state)),{cached:false,compute_ms:Date.now()-start});
+      return response(remember(state,figure,planned,focusOptions(state),incremental?requested:null),{cached:false,incremental,compute_ms:Date.now()-start});
     }
     function run(task){
       try{
@@ -48,7 +70,7 @@
               policy:set.policy,summary_deferred:set.summary_deferred,attempts:set.attempts,preflights:set.preflights,preflight_deferred:set.preflight_deferred,
               projected_trials:set.projected_trials,limits:set.limits,complete:set.complete}});
           }
-          return render(state);
+          return render(state,task);
         }
         if(task.task==='move'){
           const entry=cache.get(task.baseKey);if(!entry)throw Error('移动基准已过期');
@@ -62,5 +84,5 @@
     }
     return {run};
   }
-  const api={create,pack,unpack};root.SemanticSceneRuntime=api;if(typeof module!=='undefined')module.exports=api;
+  const api={create,pack,unpack,frontierKey};root.SemanticSceneRuntime=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

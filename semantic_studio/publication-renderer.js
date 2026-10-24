@@ -1817,8 +1817,8 @@
     if(state.paperArchitecturePathRows!==undefined||Object.keys(state.offsets||{}).length||
       trial.graph.edges.length>128||!trial.graph.publication.composition?.path_rows?.length)return trial;
     const streamPolicy=state.paperArchitectureStreams??'aligned';
-    const baseline=prepareFigure(ir,{...state,paperArchitectureStreams:streamPolicy,paperArchitecturePathRows:false}),b=baseline.prepared.quality;
-    const variants=[['left',trial],['right',prepareFigure(ir,{...state,paperArchitectureStreams:streamPolicy,paperArchitecturePathRows:'right'})]];
+    const baseline=prepareFigure(ir,{...state,paperArchitectureStreams:streamPolicy,paperArchitecturePathRows:false},{inputPlacement:false}),b=baseline.prepared.quality;
+    const variants=[['left',trial],['right',prepareFigure(ir,{...state,paperArchitectureStreams:streamPolicy,paperArchitecturePathRows:'right'},{inputPlacement:false})]];
     const fulfilled=(g,key)=>new Set(g[key].filter(r=>r.status==='fulfilled').map(r=>r.goal)),keep=(a,c)=>[...a].every(id=>c.has(id));
     const direct=fulfilled(baseline.graph,'expression_coverage'),summary=fulfilled(baseline.graph,'summary_coverage');
     E.auditConstraintRoutes(baseline.graph,baseline.prepared.routes);
@@ -1848,7 +1848,7 @@
     const g=baseline.graph,b=baseline.prepared.quality;
     if(state.paperArchitectureStreams!==undefined||Object.keys(state.offsets||{}).length||g.edges.length>128||
       !g.publication.composition?.stream_alignments?.length)return baseline;
-    const candidate=prepareFigure(ir,{...state,paperArchitectureStreams:'compact'}),c=candidate.graph,q=candidate.prepared.quality;
+    const candidate=prepareFigure(ir,{...state,paperArchitectureStreams:'compact'},{inputPlacement:false}),c=candidate.graph,q=candidate.prepared.quality;
     const frames=r=>[...r.graph.positions.values()].filter(p=>p.expanded).reduce((sum,p)=>sum+p.w*p.h,0);
     const fulfilled=(g,key)=>new Set(g[key].filter(r=>r.status==='fulfilled').map(r=>r.goal)),keep=(a,c)=>[...a].every(id=>c.has(id));
     for(const r of [baseline,candidate])E.auditConstraintRoutes(r.graph,r.prepared.routes);
@@ -1869,7 +1869,68 @@
       scope:'One measured alternative keeps independently entered regions at their natural height, aligned on the exit side. Require smaller enclosing-frame area, no longer wires, larger bounds, smaller fonts or added conflicts. Preserve canonical bindings, fulfilled expression/summary goals and realized constraints; otherwise retain equal-height input corridors.'}};
     return chosen;
   }
-  function prepareFigure(ir,state={}){
+  function prepareArchitectureInputs(ir,state,baseline){
+    const g=baseline.graph,b=baseline.prepared.quality;
+    if(state.paperArchitectureInputs===false||Object.keys(state.offsets||{}).length||g.edges.length>128||
+      b.route_failures.length||b.unplaced_port_labels.length)return baseline;
+    const idx=g.positions.context.idx,parents=id=>{const ids=[];while(id){ids.push(id);id=idx.nodes.get(id)?.parent;}return ids;};
+    const ordinary=e=>!e.condition&&!e.iteration&&!e.layout_after&&!e.design_route&&!e.context_lane&&
+      !g.positions.context.feedback?.has(e.id)&&(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration);
+    const protectedNode=n=>!n||n.condition||n.mutable||n.identity_display||n.observed_calls||n.runtime_evidence?.length||
+      n.evidence_status==='runtime-only'||['opaque','control','state','buffer'].includes(n.kind);
+    const inputs=g.nodes.filter(n=>{
+      const uses=g.edges.filter(e=>e.source===n.id),p=g.positions.get(n.id),owner=idx.nodes.get(n.id)?.parent;
+      return n.kind==='interface'&&n.role==='input'&&!n.invocation_binding&&!protectedNode(n)&&p&&!p.expanded&&
+        owner&&uses.length>=2&&uses.every(ordinary)&&!g.edges.some(e=>e.target===n.id)&&
+        parents(owner).every(id=>!protectedNode(idx.nodes.get(id)))&&uses.every(e=>!protectedNode(idx.nodes.get(e.target)));
+    }).sort((a,c)=>a.id.localeCompare(c.id)).slice(0,3);
+    if(!inputs.length)return baseline;
+    const goals=Goals.build(ir,g.architecture),summaries=SummaryGoals.build(ir,g.architecture),done=(rows)=>new Set(rows.filter(r=>r.status==='fulfilled').map(r=>r.goal)),keep=(a,c)=>[...a].every(id=>c.has(id));
+    let chosen=baseline;const record={max_inputs:3,max_positions_per_input:3,attempts:[],selected:[],before:clearanceMetrics(b)};
+    for(const n of inputs){
+      const base=chosen,p=base.graph.positions.get(n.id),owner=idx.nodes.get(n.id).parent,frame=base.graph.positions.get(owner),ancestors=new Set(parents(n.id));
+      const uses=g.edges.filter(e=>e.source===n.id),targets=uses.map(e=>base.graph.positions.get(e.target)),regions=[...base.graph.positions.values()].filter(c=>c.expanded&&idx.nodes.get(c.id)?.parent===owner);
+      const obstacles=[...base.graph.positions.values()].filter(c=>!ancestors.has(c.id));
+      const points=[{x:p.x,y:targets.map(t=>t.y+t.h/2).sort((a,b)=>a-b)[Math.floor(targets.length/2)]-p.h/2}];
+      for(const r of regions)for(const y of [r.y-p.h-18,r.y+r.h+18])for(const x of [p.x,r.x+(r.w-p.w)/2])points.push({x,y});
+      for(const point of points.slice())for(const o of obstacles){
+        if(point.y+p.h+8<=o.y||o.y+o.h+8<=point.y)continue;
+        for(const x of [o.x-p.w-8,o.x+o.w+8])if(Math.abs(x-point.x)<=p.w)points.push({x,y:point.y});
+      }
+      const cost=c=>targets.reduce((s,t)=>s+Math.abs(c.x+p.w/2-t.x-t.w/2)+Math.abs(c.y+p.h/2-t.y-t.h/2),0);
+      const candidates=[...new Map(points.map(p=>[p.x+':'+p.y,p])).values()].filter(c=>Math.abs(c.x-p.x)+Math.abs(c.y-p.y)>1&&c.x>=frame.x+18&&c.x+p.w<=frame.x+frame.w-18&&
+        c.y>=frame.y+frame.header&&c.y+p.h<=frame.y+frame.h-18&&obstacles.every(o=>c.x+p.w+8<=o.x||o.x+o.w+8<=c.x||c.y+p.h+8<=o.y||o.y+o.h+8<=c.y))
+        .sort((a,c)=>cost(a)-cost(c)||a.x-c.x||a.y-c.y).slice(0,3);
+      for(const point of candidates){
+        const positions=new Map([...base.graph.positions].map(([id,p])=>[id,{...p}]));Object.assign(positions.get(n.id),point);
+        const touched=new Set(uses.map(e=>e.id)),moved=positions.get(n.id);
+        const ports=uses.map(e=>{const t=positions.get(e.target),dx=t.x+t.w/2-moved.x-moved.w/2,dy=t.y+t.h/2-moved.y-moved.h/2;
+          return {edge:e.id,source_side:Math.abs(dy)>Math.abs(dx)?dy>0?'bottom':'top':dx>0?'right':'left',
+            target_side:Math.abs(dy)>Math.abs(dx)?dy>0?'top':'bottom':dx>0?'left':'right'};});
+        positions.context={...base.graph.positions.context,crossScopePorts:[...(base.graph.positions.context.crossScopePorts||[]).filter(p=>!touched.has(p.edge)),...ports],routeCache:new Map(),reserved:[]};
+        const graph={...base.graph,positions,constraint_receipts:JSON.parse(JSON.stringify(base.graph.constraint_receipts))};
+        let trial={graph,prepared:prepare(graph)};
+        trial=prepareSharedFanouts(ir,state,trial);
+        const q=trial.prepared.quality,old=chosen.prepared.quality;
+        for(const r of [base,trial])E.auditConstraintRoutes(r.graph,r.prepared.routes);
+        const facts=clearanceIdentity(base.graph)===clearanceIdentity(trial.graph),direct=keep(done(Goals.evaluate(goals,base.graph,base.prepared,ir)),done(Goals.evaluate(goals,trial.graph,trial.prepared,ir))),
+          summary=keep(done(SummaryGoals.evaluate(summaries,ir,base.graph,base.prepared)),done(SummaryGoals.evaluate(summaries,ir,trial.graph,trial.prepared)));
+        const applied=base.graph.constraint_receipts.filter(r=>r.status==='applied').map(r=>r.id),before=realizedRelations(base),after=realizedRelations(trial);
+        const relations=applied.every(id=>trial.graph.constraint_receipts.some(r=>r.id===id&&r.status==='applied'))&&Object.keys(before).every(k=>before[k].every(id=>after[k].includes(id)));
+        const physical=trial.prepared.routes.every(e=>{const boxes=L.routeObstacles(e,positions);return e.route.points.every((p,i,ps)=>!i||!L.blocked(ps[i-1],p,boxes));});
+        const geometry=physical&&q.wire_length<old.wire_length&&q.native_width_px<=old.native_width_px&&q.native_height_px<=old.native_height_px&&fontMetric(q)>=fontMetric(old)&&
+          q.line_geometry.crossings<=old.line_geometry.crossings&&q.line_geometry.unrelated_contacts.length<=old.line_geometry.unrelated_contacts.length&&
+          q.line_geometry.overlapping_paths.filter(p=>!p.same_value).length<=old.line_geometry.overlapping_paths.filter(p=>!p.same_value).length&&
+          q.route_failures.length<=old.route_failures.length&&q.unplaced_port_labels.length<=old.unplaced_port_labels.length&&q.issues.every(x=>old.issues.includes(x));
+        const accepted=facts&&direct&&summary&&relations&&geometry;
+        const receipt={node:n.id,owner,from:{x:p.x,y:p.y},to:point,uses:uses.map(e=>e.id),accepted,facts_preserved:facts,direct_goals_preserved:direct,summary_goals_preserved:summary,relations_preserved:relations,geometry_preserved:geometry,before:clearanceMetrics(base.prepared.quality),candidate:clearanceMetrics(q)};
+        record.attempts.push(receipt);if(accepted){chosen=trial;record.selected=record.selected.filter(r=>r.node!==n.id);record.selected.push(receipt);}
+      }
+    }
+    record.after=clearanceMetrics(chosen.prepared.quality);record.scope='At most three multiply used source inputs and three vacant measured positions each. Move only an existing input within its original drawing owner; preserve every use, canonical slot, parent, call, fulfilled goal and realized constraint. Require shorter total wire and no added bounds, conflicts or smaller fonts. No input-role or algorithm inference.';
+    chosen.prepared.routing={...baseline.prepared.routing,...chosen.prepared.routing,architecture_input_placement:record};return attachExpressionEvidence(ir,chosen);
+  }
+  function prepareFigure(ir,state={},options={}){
     if(state.paperComposition==='architecture'&&state.paperMedium==='canvas'){
       const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
       const frontierState={paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state};
@@ -1907,7 +1968,7 @@
         // Wider overview typography is optional. Reject its extra crossings
         // at the same frontier, including on conditional or mutable programs.
         chosen=attachExpressionEvidence(ir,chosen);
-        const standard=prepareFigure(ir,{...state,paperArchitectureStreams:state.paperArchitectureStreams??'aligned',paperArchitectureColumns:false}),q=chosen.prepared.quality,b=standard.prepared.quality;
+        const standard=prepareFigure(ir,{...state,paperArchitectureStreams:state.paperArchitectureStreams??'aligned',paperArchitectureColumns:false},{inputPlacement:false}),q=chosen.prepared.quality,b=standard.prepared.quality;
         const fulfilled=xs=>new Set(xs.filter(r=>r.status==='fulfilled').map(r=>r.goal));
         const covers=(a,c)=>[...fulfilled(a)].every(id=>fulfilled(c).has(id));
         const same=clearanceIdentity(chosen.graph)===clearanceIdentity(standard.graph);
@@ -1925,7 +1986,8 @@
         if(cleaner&&safe)chosen=standard;
         chosen.prepared.routing={...chosen.prepared.routing,architecture_column_selection:receipt};
       }
-      return selectArchitectureStreams(ir,state,selectArchitecturePathRows(ir,state,attachExpressionEvidence(ir,chosen)));
+      const arranged=selectArchitectureStreams(ir,state,selectArchitecturePathRows(ir,state,attachExpressionEvidence(ir,chosen)));
+      return options.inputPlacement===false?arranged:prepareArchitectureInputs(ir,state,arranged);
     }
     // Stages run only after all summary recipes and complete layout choices
     // settle. Keep roles on their existing path, with identical serialization.

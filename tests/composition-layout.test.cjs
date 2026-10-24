@@ -430,3 +430,41 @@ test('manual placements and explicit aligned policy keep existing input-region c
  assert.deepEqual(C.compose(g,{...s,paperArchitectureStreams:'compact',offsets:{[ir.nodes[0].id]:{x:1,y:2}}}).publication.composition.stream_compactions,[]);
  const r=R.render(ir,{...s,paperArchitectureStreams:'aligned'});assert.equal(r.prepared.routing.architecture_stream_selection,undefined);
 });
+const sharedInput=()=>JSON.parse(fs.readFileSync('verification/input-placement/current/SharedInputPaths.json'));
+test('multiply used ordinary source input moves only inside its existing vacant owner with shorter measured wire',()=>{
+ const ir=sharedInput(),s={...columnState(ir),paperDirection:'down'},raw=JSON.stringify(ir),r=R.render(ir,s),b=R.render(ir,{...s,paperArchitectureInputs:false}),rec=r.prepared.routing.architecture_input_placement;
+ assert.equal(JSON.stringify(ir),raw);assert.equal(rec.max_inputs,3);assert.equal(rec.max_positions_per_input,3);assert.equal(rec.selected.length,1);assert.ok(rec.attempts.length<=9);
+ assert.deepEqual(r.graph.edges,b.graph.edges);assert.deepEqual(r.graph.node_accounting,b.graph.node_accounting);assert.deepEqual(r.graph.edge_accounting,b.graph.edge_accounting);assert.deepEqual(r.document.architecture,b.document.architecture);
+ assert.ok(r.prepared.quality.wire_length<b.prepared.quality.wire_length*.6);assert.equal(r.prepared.quality.line_geometry.crossings,0);assert.deepEqual(r.prepared.quality.issues,[]);
+ const moved=new Set(rec.selected.map(x=>x.node));
+ for(const n of r.graph.nodes){const a=r.graph.positions.get(n.id),old=b.graph.positions.get(n.id);assert.equal(a.font,old.font);assert.equal(a.w,old.w);assert.equal(a.h,old.h);
+  if(!moved.has(n.id))assert.deepEqual(a,old);
+ }
+ for(const x of rec.selected){const p=r.graph.positions.get(x.node),owner=r.graph.positions.get(x.owner);
+  assert.ok(x.facts_preserved&&x.direct_goals_preserved&&x.summary_goals_preserved&&x.relations_preserved);assert.equal(r.graph.idx.nodes.get(x.node).parent,x.owner);
+  assert.ok(p.x>=owner.x+18&&p.x+p.w<=owner.x+owner.w-18&&p.y>=owner.y+owner.header&&p.y+p.h<=owner.y+owner.h-18);
+  assert.deepEqual(x.uses,r.graph.edges.filter(e=>e.source===x.node).map(e=>e.id));
+ }
+ assert.equal(R.render(r.document.ir,r.document.state).svg,r.svg);
+});
+test('shorter input placement with added crossings is rejected and the prior SVG is retained exactly',()=>{
+ const ir=sharedInput(),s={...columnState(ir),paperDirection:'up'},r=R.render(ir,s),b=R.render(ir,{...s,paperArchitectureInputs:false}),rec=r.prepared.routing.architecture_input_placement;
+ assert.equal(rec.selected.length,0);assert.ok(rec.attempts.some(x=>x.candidate.wire_length<x.before.wire_length&&x.candidate.crossings>x.before.crossings));assert.equal(r.svg,b.svg);
+});
+test('shared input geometry uses identity and real uses independently of names and family annotations',()=>{
+ const ir=sharedInput(),s={...columnState(ir),paperDirection:'down'},a=R.render(ir,s);
+ for(const n of ir.nodes){n.label='Foreign';n.source=[];delete n.source_class;delete n.module_path;}ir.title='Other';
+ const b=R.render(ir,s);assert.deepEqual(b.prepared.routing.architecture_input_placement.selected.map(x=>x.node),a.prepared.routing.architecture_input_placement.selected.map(x=>x.node));assert.deepEqual(b.graph.edges,a.graph.edges);
+});
+test('guarded, mutable, identity-bearing and runtime evidence inputs retain their existing placement policy',()=>{
+ for(const variant of ['condition','mutable','identity_display','runtime_evidence','evidence_status']){
+  const ir=sharedInput(),input=ir.nodes.find(n=>n.kind==='interface'&&n.label==='context');assert.ok(input);
+  input[variant]=variant==='evidence_status'?'runtime-only':variant==='runtime_evidence'?[{call:'observed'}]:variant==='identity_display'?{kind:'same-object-calls',label:'shared',invocation:1,count:2}:true;
+  const s={...columnState(ir),paperDirection:'down'},r=R.render(ir,s);assert.ok(!r.prepared.routing.architecture_input_placement?.attempts.some(x=>x.node===input.id),variant);
+ }
+});
+test('manual positions, explicit input opt-out and one-use inputs do not enter the shared input search',()=>{
+ const ir=sharedInput(),s={...columnState(ir),paperDirection:'down'};
+ for(const extra of [{paperArchitectureInputs:false},{offsets:{[ir.nodes[0].id]:{x:2,y:3}}}])assert.equal(R.render(ir,{...s,...extra}).prepared.routing.architecture_input_placement,undefined);
+ const r=R.render(ir,s),nodes=new Map(r.graph.nodes.map(n=>[n.id,n]));for(const x of r.prepared.routing.architecture_input_placement.attempts){assert.equal(nodes.get(x.node).label,'context');assert.ok(x.uses.length>=2);}
+});

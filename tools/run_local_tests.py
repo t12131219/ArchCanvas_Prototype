@@ -11,6 +11,9 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'verification/local-relations/current'
 COMMANDS = {
+    'native-semantic-host': ['node', 'tests/native-semantic-host.test.cjs'],
+    'recursive-expansion': ['node', 'tests/recursive-expansion.test.cjs'],
+    'interaction-mode': ['node', 'tests/interaction-mode.test.cjs'],
     'dedicated-interaction-transfer': ['node', 'tests/dedicated-interaction-transfer.test.cjs'],
     'python': ['python3', '-m', 'unittest', 'discover', '-s', 'tests', '-p', 'test_*.py'],
     'architecture': ['node', 'tests/architecture.test.cjs'],
@@ -131,14 +134,14 @@ def run(item):
 
 def main():
     global OUT
-    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=OUT);args=parser.parse_args();OUT=args.out.resolve()
+    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=OUT);parser.add_argument('--jobs',type=int,default=2);args=parser.parse_args();OUT=args.out.resolve()
     (OUT / 'test-logs').mkdir(parents=True, exist_ok=True)
-    files = [*ROOT.glob('semantic_studio/*.js'), ROOT / 'semantic_studio/index.html', ROOT / 'semantic_studio/style.css', ROOT / 'semantic_studio/authoring.html', ROOT / 'semantic_studio/authoring.css', ROOT / 'tools/serve_semantic_studio.py', ROOT / 'data/semantic/authoring-presets.json', *ROOT.glob('semantic_adapter/*.py'),
+    files = [ROOT / 'index.html', *ROOT.glob('yworks_edge_router_lab/*.js'), ROOT / 'yworks_edge_router_lab/index.html', ROOT / 'yworks_edge_router_lab/styles.css', *ROOT.glob('semantic_studio/*.js'), ROOT / 'semantic_studio/index.html', ROOT / 'semantic_studio/style.css', ROOT / 'semantic_studio/authoring.html', ROOT / 'semantic_studio/authoring.css', ROOT / 'tools/serve_semantic_studio.py', ROOT / 'data/semantic/authoring-presets.json', *ROOT.glob('semantic_adapter/*.py'),
              *ROOT.glob('tests/*.test.cjs'), *ROOT.glob('tests/*fixtures.cjs'), ROOT / 'tests/diagram-structure.cjs', ROOT / 'tools/audit_node_style.cjs', *ROOT.glob('tests/test_*.py'),
              *ROOT.glob('tests/semantic_fixtures/*.py'),
              ROOT / 'verification/interaction-performance/baseline/interaction-oracle.cjs', ROOT / 'verification/full-source/baseline/line-geometry.cjs', ROOT / 'tools/load_publication_renderer.cjs', ROOT / 'tools/export_publication.cjs', ROOT / 'tools/export_diagram_set.cjs', ROOT / 'tools/representative_atlas.cjs', ROOT / 'tools/symbolic_values.cjs', Path(__file__).resolve()]
     hashes = {str(file.relative_to(ROOT)): hashlib.sha256(file.read_bytes()).hexdigest() for file in sorted(files)}
-    with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1,args.jobs)) as pool:
         results = list(pool.map(run, COMMANDS.items()))
     for file, digest in hashes.items():
         assert hashlib.sha256((ROOT / file).read_bytes()).hexdigest() == digest, ('implementation changed during tests', file)

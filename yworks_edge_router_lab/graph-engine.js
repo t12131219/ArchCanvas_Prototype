@@ -145,10 +145,11 @@
   function layoutConflicts(graph){
     const nodes=[],wires=[];
     for(const [i,a] of graph.nodes.entries())for(const b of graph.nodes.slice(i+1)){
-      if(a.junction||b.junction||a.parent!==b.parent)continue;
+      if(a.junction||b.junction||a.modelHeading||b.modelHeading||a.parent!==b.parent)continue;
       if(Math.min(a.x+a.w,b.x+b.w)-Math.max(a.x,b.x)>1e-5&&Math.min(a.y+a.h,b.y+b.h)-Math.max(a.y,b.y)>1e-5)nodes.push([a.id,b.id]);
     }
-    for(const [i,a] of graph.edges.entries())for(const b of graph.edges.slice(i+1)){
+    const settled=graph.edges.filter(e=>!e.pendingRouting);
+    for(const [i,a] of settled.entries())for(const b of settled.slice(i+1)){
       if(a.contract?.wire===b.contract?.wire||sharesPresentation(graph,a,b))continue;
       if(a.route.slice(1).some((p,j)=>b.route.slice(1).some((q,k)=>R.overlap(a.route[j],p,b.route[k],q)>1e-5)))wires.push([a.id,b.id]);
     }
@@ -160,7 +161,7 @@
     const violations=[...conflicts.nodes.map(ids=>'sibling glyph overlap '+ids.join(' / ')),...conflicts.wires.map(ids=>'unrelated tensor lane overlap '+ids.join(' / ')),...junctions.violations];
     const affected=new Map();for(const ids of conflicts.wires)for(const id of ids){const errors=affected.get(id)||[];errors.push('unrelated tensor lane overlap '+ids.join(' / '));affected.set(id,errors);}
     const constrained=graph.edges.filter(e=>e.boundaryLane?.constrainedAt===C.geometryKey(graph)).map(e=>e.id);
-    return {source:C.validateSource(graph),layout:{ok:!violations.length,violations,...conflicts,junctions},routing:{constrained,contacts:graph.edges.flatMap(e=>C.laneContacts(graph,e,e.route,context).map(hit=>({edge:e.id,...hit})))},edges:graph.edges.map(e=>{const check=C.validate(graph,e,e.route,context),extra=affected.get(e.id)||[];return [e.id,{ok:check.ok&&!extra.length,violations:[...check.violations,...extra]}];})};
+    return {certification:context.certification||null,source:context.sourceCheck||C.validateSource(graph),layout:{ok:!violations.length,violations,...conflicts,junctions},routing:{constrained,pending:graph.edges.filter(e=>e.pendingRouting).map(e=>e.id),contacts:graph.edges.filter(e=>!e.pendingRouting).flatMap(e=>C.laneContacts(graph,e,e.route,context).map(hit=>({edge:e.id,...hit})))},edges:graph.edges.map(e=>{const check=e.pendingRouting?{ok:false,violations:['native route pending; not geometrically certified']}:C.validate(graph,e,e.route,context),extra=affected.get(e.id)||[];return [e.id,{ok:check.ok&&!extra.length,violations:[...check.violations,...extra]}];})};
   }
   function repairCandidates(graph,e,old){
     const s=endpoint(graph,e,'source'),t=endpoint(graph,e,'target'),out=[];
@@ -190,7 +191,7 @@
     const moving=graph.nodes.filter(n=>ids.has(n.id)),selected=moving.find(n=>n.id===id);
     if(!selected)return new Set();
     const owner=graph.nodes.find(n=>n.id===selected.parent);
-    if(owner){const pad=2;for(const glyph of moving){const n=footprint(glyph);dx=Math.max(owner.x+pad-n.x,Math.min(owner.x+owner.w-pad-n.x-n.w,dx));dy=Math.max(owner.y+pad-n.y,Math.min(owner.y+owner.h-pad-n.y-n.h,dy));}}
+    if(owner&&!owner.modelHeading){const pad=2;for(const glyph of moving){const n=footprint(glyph);dx=Math.max(owner.x+pad-n.x,Math.min(owner.x+owner.w-pad-n.x-n.w,dx));dy=Math.max(owner.y+pad-n.y,Math.min(owner.y+owner.h-pad-n.y-n.h,dy));}}
     const siblings=graph.nodes.filter(n=>!ids.has(n.id)&&n.parent===moving.find(n=>n.id===id)?.parent&&!n.junction);
     const wouldOverlap=(node,other)=>{const n=footprint(node),b=footprint(other);return Math.min(n.x+dx+n.w,b.x+b.w)-Math.max(n.x+dx,b.x)>1e-5&&Math.min(n.y+dy+n.h,b.y+b.h)-Math.max(n.y+dy,b.y)>1e-5;};
     graph.lastMove={blocked:false,rerouted:0};
@@ -199,6 +200,8 @@
     const rollback=reason=>{for(const [n,x,y]of savedNodes){n.x=x;n.y=y;}for(const [e,old]of savedEdges){for(const k of Object.keys(e))delete e[k];Object.assign(e,old);}graph.lastMove={blocked:true,reason};return new Set();};
     for(const n of graph.nodes)if(ids.has(n.id)){n.x+=dx;n.y+=dy;}
     const context=C.validationContext(graph);
+    const laneRepair=e=>options.boundaryLanes!==false&&C.needsLaneRepair(graph,e,context);
+    const laneClear=(e,ps)=>options.boundaryLanes===false||!C.laneContacts(graph,e,ps,context).length;
     const affected=[];
     for(const e of graph.edges){
       if(ids.has(e.source)&&ids.has(e.target)){e.route=e.route.map(p=>({x:p.x+dx,y:p.y+dy}));e.waypoints=(e.waypoints||[]).map(p=>({x:p.x+dx,y:p.y+dy}));}
@@ -206,7 +209,7 @@
         if(ids.has(e.source))e.route[0]=endpoint(graph,e,'source');
         if(ids.has(e.target))e.route[e.route.length-1]=endpoint(graph,e,'target');
       }
-      if(ids.has(e.source)||ids.has(e.target)||!C.validate(graph,e,e.route,context).ok||C.needsLaneRepair(graph,e,context))affected.push(e);
+      if(ids.has(e.source)||ids.has(e.target)||!C.validate(graph,e,e.route,context).ok||laneRepair(e))affected.push(e);
     }
     const opts={margin:6,stub:16,bendCost:40,crossingCost:180,overlapCost:2,edgeSpacing:12,sides:'any',preserve:true,...options};
     const legal=(e,ps)=>C.validate(graph,e,ps,context).ok&&!overlapsWire(graph,e,ps);
@@ -217,15 +220,15 @@
         // must change its physical side without changing the PE input field.
         const prior=graph.edges.filter(v=>v!==e).map(v=>Object.assign(v.route.slice(),{wire:v.contract.wire}));
         const old=savedEdges.find(([v])=>v===e)[1].route;
-        const shared=(e.portPolicy?.source.sharedStem||e.contract.sharedStem)&&repairCandidates(graph,e,old).find(ps=>legal(e,ps)&&!C.laneContacts(graph,e,ps,context).length);
+        const shared=(e.portPolicy?.source.sharedStem||e.contract.sharedStem)&&repairCandidates(graph,e,old).find(ps=>legal(e,ps)&&laneClear(e,ps));
         if(shared){e.route=shared;graph.lastMove.rerouted++;continue;}
         const result=routeOne(graph,e,prior,{...opts,style:e.style,preserve:false},context);
         if(result.ok&&legal(e,e.route)){graph.lastMove.rerouted++;continue;}
       }
-      if(legal(e,e.route)&&!C.needsLaneRepair(graph,e,context)){e.failed=false;delete e.reason;continue;}
+      if(legal(e,e.route)&&!laneRepair(e)){e.failed=false;delete e.reason;continue;}
       if(e.contract.bus)return rollback('explicit branch skeleton cannot be disconnected');
       const old=savedEdges.find(([v])=>v===e)[1].route;
-      const candidate=repairCandidates(graph,e,old).find(ps=>legal(e,ps)&&!C.laneContacts(graph,e,ps,context).length);
+      const candidate=repairCandidates(graph,e,old).find(ps=>legal(e,ps)&&laneClear(e,ps));
       if(candidate)e.route=candidate;
       else{
         const prior=graph.edges.filter(v=>v!==e&&!affected.includes(v)).map(v=>Object.assign(v.route.slice(),{wire:v.contract.wire}));
@@ -237,6 +240,7 @@
     // Later repairs must not invalidate an earlier wire, gate or terminal.
     if(affected.some(e=>!legal(e,e.route)))return rollback('local routes conflict');
     if(!C.validateJunctions(graph).ok)return rollback('source tensor fork disconnected');
+    if(graph.generic)root.SummaryNativeSemantic.refineJoins(graph,{...opts,joinTargets:new Set(affected.map(e=>e.target))},context,options.joinBudgetMs??100);
     return ids;
   }
   // Pointer motion updates only presentation geometry. The authoritative
@@ -248,7 +252,7 @@
     const bounds=footprint(selected);
     if(graph.canvas){dx=Math.max(3-bounds.x,Math.min(graph.canvas[0]-3-bounds.x-bounds.w,dx));dy=Math.max(3-bounds.y,Math.min(graph.canvas[1]-3-bounds.y-bounds.h,dy));}
     const owner=graph.nodes.find(n=>n.id===selected.parent);
-    if(owner){const pad=2;
+    if(owner&&!owner.modelHeading){const pad=2;
       dx=Math.max(owner.x+pad-bounds.x,Math.min(owner.x+owner.w-pad-bounds.x-bounds.w,dx));
       dy=Math.max(owner.y+pad-bounds.y,Math.min(owner.y+owner.h-pad-bounds.y-bounds.h,dy));
     }
@@ -264,6 +268,7 @@
     graph.lastMove={blocked:false,preview:true};return ids;
   }
   function reconnect(graph,edge,side,nodeId,fixed) {
+    P.invalidate(graph);
     delete edge[side==='source'?'physicalSource':'physicalTarget'];
     edge[side]=nodeId;edge[side==='source'?'fixedSource':'fixedTarget']=fixed;
     edge.route[side==='source'?0:edge.route.length-1]=endpoint(graph,edge,side);
@@ -317,7 +322,7 @@
     const s=graph.nodes.find(n=>n.id===e.source),t=graph.nodes.find(n=>n.id===e.target);
     let gap=Infinity;
     for(const a of [s,t])for(const b of graph.nodes){
-      if(a===b||b.routingObstacle===false&&!b.expanded||a.expanded||a.junction)continue;
+      if(a===b||b.modelHeading||b.routingObstacle===false&&!b.expanded||a.expanded||a.junction)continue;
       const gx=Math.max(a.x,b.x)-Math.min(a.x+a.w,b.x+b.w),gy=Math.max(a.y,b.y)-Math.min(a.y+a.h,b.y+b.h);
       if(gx>=0&&gy<=0)gap=Math.min(gap,gx);if(gy>=0&&gx<=0)gap=Math.min(gap,gy);
     }
@@ -394,6 +399,10 @@
     // pair first instead of searching every perimeter pair for a marginally
     // shorter path. Failure still falls back to the complete port search.
     let result=options.preferCurrentPorts&&flexible?R.routeEdge(routedEdge,graph.nodes,compatible,{...routeSettings,sourceCandidates:[P.active(e,'source')],targetCandidates:[P.active(e,'target')]}):null;
+    if(options.tryDirectPorts&&flexible&&graph.nodes.length<=300){
+      const quick=R.routeEdge({...routedEdge,route:result?.ok?result.points:routedEdge.route},graph.nodes,compatible,{...routeSettings,quickCandidatesOnly:true});
+      if(quick.ok&&(!result?.ok||quick.cost<result.cost-1e-6))result=quick;
+    }
     if(!result?.ok)result=R.routeEdge(routedEdge,graph.nodes,compatible,routeSettings);
     if(!result.ok&&options.boundaryLanes!==false){
       // Aesthetic lane width cannot make a previously legal narrow source
@@ -435,6 +444,7 @@
       for(const [e,saved]of before){for(const k of Object.keys(e))delete e[k];Object.assign(e,saved);}
       return {graph,routed:0,failed:ids.length,retained:0,reason:junctionCheck.violations.join('; ')};
     }
+    if(graph.generic&&!failed)root.SummaryNativeSemantic.refineJoins(graph,{...options,joinEdges:set},context,options.joinBudgetMs??100);
     return {graph,routed,failed,retained};
   }
   function labelPath(graph,a){const e=graph.edges.find(v=>v.id===a.edge);if(!e)return [];

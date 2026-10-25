@@ -948,14 +948,16 @@
       idx=index(focused.plan);for(const n of focused.plan.nodes)decorate(n,idx);
     }
     let projected=E.project(ir,{...state,view:'architecture',details:false,open},focused.plan,options);
+    let labelGapY=0,baseLabelGapY=0,clearanceRegions=[],rankClearance=false,localClearance=false;
+    if(!E.semanticOnly){
     const edgePairs=new Map(),labeledPairs=new Set();
     for(const e of projected.edges){const key=JSON.stringify([e.source,e.target]);edgePairs.set(key,(edgePairs.get(key)||0)+1);if(e.condition||e.bundle_members)labeledPairs.add(key);}
     const requestedLabelGap=Number(state.paperLabelGapY)||0;
-    const labelGapY=Math.max(Math.min(160,Math.max(0,requestedLabelGap)),...[...labeledPairs].map(key=>edgePairs.get(key)>1?32+28*edgePairs.get(key):0));
-    const baseLabelGapY=Math.max(options.layout.gapY,Math.min(160,Math.max(0,requestedLabelGap)));
-    const clearanceRegions=L.labelClearances(projected.positions.context.idx,projected.edges);
-    const rankClearance=canvas&&state.paperLabelSpacing==='rank'&&!Object.keys(state.offsets||{}).length;
-    const localClearance=canvas&&(state.paperLabelSpacing==='local'||rankClearance)&&!Object.keys(state.offsets||{}).length;
+    labelGapY=Math.max(Math.min(160,Math.max(0,requestedLabelGap)),...[...labeledPairs].map(key=>edgePairs.get(key)>1?32+28*edgePairs.get(key):0));
+    baseLabelGapY=Math.max(options.layout.gapY,Math.min(160,Math.max(0,requestedLabelGap)));
+    clearanceRegions=L.labelClearances(projected.positions.context.idx,projected.edges);
+    rankClearance=canvas&&state.paperLabelSpacing==='rank'&&!Object.keys(state.offsets||{}).length;
+    localClearance=canvas&&(state.paperLabelSpacing==='local'||rankClearance)&&!Object.keys(state.offsets||{}).length;
     const globalRankFallback=rankClearance&&state.paperLabelRankFallback==='global';
     if(localClearance){
       const gaps=new Map(clearanceRegions.map(r=>[r.parent,r.gap_y]));
@@ -986,6 +988,7 @@
         if(score>best*1.01){projected=candidate;best=score;}
       }
     }
+    } // Native host consumes the same semantic cut without old geometry trials.
     const ps=[...projected.positions.values()];
     if(ps.length){const x=Math.min(...ps.map(p=>p.x))-28,y=Math.min(...ps.map(p=>p.y))-28;projected.bounds={x,y,w:Math.max(...ps.map(p=>p.x+p.w))+28-x,h:Math.max(...ps.map(p=>p.y+p.h))+28-y};}
     projected.publication={schema:'archcanvas-publication/1',focus,requested_focus:requestedFocus,relation:local?state.paperRelation:null,representative,granularity,auto:state.paperAuto!==false,open,budget,boundary:focused.boundary,
@@ -1102,7 +1105,7 @@
     // policy may hide a canonical node in this explicit source-detail mode.
     const semantic=plan(ir),raw={...semantic,nodes:copy(ir.nodes),edges:ir.edges},idx=index(raw);
     for(const n of raw.nodes)decorate(n,idx);
-    const graph=E.project(ir,{...state,view:'source',details:true},raw,{layout:{foldSerial:false,gapX:28,gapY:44,framePadding:20,
+    const graph=E.project(ir,{...state,view:'source',details:true},raw,{...(E.semanticOnly&&state.nativeSourceFocus&&idx.nodes.has(state.nativeSourceFocus)?{roots:[state.nativeSourceFocus]}:{}),layout:{foldSerial:false,gapX:28,gapY:44,framePadding:20,
       nodeSize:n=>({...n.paper}),frameHeader:n=>Math.max(66,24+n.paper.lines.length*20+n.paper.captions.length*16),alignForks:true}});
     graph.architecture=raw;
     for(const e of graph.edges)e.paper_labels=e.condition?[{text:String(e.condition.outcome),evidence:'source branch condition'}]:[];

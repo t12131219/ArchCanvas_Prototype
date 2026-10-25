@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tools/run_local_tests.py", line 156, in <module>
+    main()
+  File "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tools/run_local_tests.py", line 145, in main
+    results = list(pool.map(run, COMMANDS.items()))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fzg/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fzg/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/fzg/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/fzg/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/fzg/anaconda3/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tools/run_local_tests.py", line 131, in run
+    assert count, ('missing actual test count', name, output[-1000:])
+AssertionError: ('missing actual test count', 'role-operation-stages', "semantic_studio/publication-renderer.js:45\n  const nodeTitle=Evidence.nodeTitle;\n                           ^\n\nTypeError: Cannot read properties of null (reading 'nodeTitle')\n    at semantic_studio/publication-renderer.js:45:28\n    at semantic_studio/publication-renderer.js:2234:3\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at loadRenderer (/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tools/load_publication_renderer.cjs:12:465)\n    at Object.<anonymous> (/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/role-operation-stages.test.cjs:3:64)\n    at Module._compile (node:internal/modules/cjs/loader:1872:14)\n    at Object..js (node:internal/modules/cjs/loader:2003:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n\nNode.js v24.19.0\n")

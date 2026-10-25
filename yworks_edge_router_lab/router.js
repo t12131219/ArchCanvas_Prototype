@@ -63,10 +63,25 @@
   // Signed headings let the search account for the port stubs at both ends.
   const heading = (a, b) => Math.abs(a.x - b.x) < EPS ? (b.y > a.y ? 2 : 4) : (b.x > a.x ? 1 : 3);
   const reverses = (a, b) => a !== 0 && b !== 0 && Math.abs(a - b) === 2;
+  function segmentIndex(paths,cell=128){
+    const buckets=new Map();
+    for(const path of paths)for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],row={a,b,path,i};
+      for(let x=Math.floor(Math.min(a.x,b.x)/cell);x<=Math.floor(Math.max(a.x,b.x)/cell);x++)for(let y=Math.floor(Math.min(a.y,b.y)/cell);y<=Math.floor(Math.max(a.y,b.y)/cell);y++){const key=x+':'+y,list=buckets.get(key)||[];list.push(row);buckets.set(key,list);}}
+    return (a,b)=>{const found=new Set();for(let x=Math.floor(Math.min(a.x,b.x)/cell);x<=Math.floor(Math.max(a.x,b.x)/cell);x++)for(let y=Math.floor(Math.min(a.y,b.y)/cell);y<=Math.floor(Math.max(a.y,b.y)/cell);y++)for(const row of buckets.get(x+':'+y)||[])if(Math.max(row.a.x,row.b.x)>=Math.min(a.x,b.x)-EPS&&Math.min(row.a.x,row.b.x)<=Math.max(a.x,b.x)+EPS&&Math.max(row.a.y,row.b.y)>=Math.min(a.y,b.y)-EPS&&Math.min(row.a.y,row.b.y)<=Math.max(a.y,b.y)+EPS)found.add(row);return found;};
+  }
+  function segmentsNear(paths,a,b,settings){return settings.nearSegments?settings.nearSegments(a,b):(settings.allPriorSegments||(settings.allPriorSegments=paths.flatMap(path=>path.slice(1).map((p,i)=>({a:path[i],b:p,path,i:i+1})))));}
   function search(start, end, obstacles, priorPaths, settings, boundary, incoming = 0, outgoing = 0) {
+    // Opt-in bounded corridor for generated graphs. Candidate acceptance still
+    // checks the complete obstacle set; callers can widen and retry safely.
+    if(settings.searchPadding){const pad=settings.searchPadding,x=Math.max(boundary.x,Math.min(start.x,end.x)-pad),y=Math.max(boundary.y,Math.min(start.y,end.y)-pad);
+      boundary={x,y,w:Math.min(boundary.x+boundary.w,Math.max(start.x,end.x)+pad)-x,h:Math.min(boundary.y+boundary.h,Math.max(start.y,end.y)+pad)-y};
+      obstacles=obstacles.filter(r=>r.x<=boundary.x+boundary.w&&r.x+r.w>=boundary.x&&r.y<=boundary.y+boundary.h&&r.y+r.h>=boundary.y);
+    }
+    if(settings.pruneContainedObstacles)obstacles=obstacles.filter((a,i)=>!obstacles.some((b,j)=>i!==j&&b.x<=a.x&&b.y<=a.y&&b.x+b.w>=a.x+a.w&&b.y+b.h>=a.y+a.h&&(b.w*b.h>a.w*a.h||j<i)));
     if (inside(start, boundary) === false || inside(end, boundary) === false || obstacles.some(r => inside(start, r) || inside(end, r))) return null;
     let xs = [start.x, end.x, boundary.x, boundary.x + boundary.w], ys = [start.y, end.y, boundary.y, boundary.y + boundary.h];
     for (const r of obstacles) { xs.push(r.x, r.x + r.w); ys.push(r.y, r.y + r.h); }
+    xs.push(...(settings.extraCoordinates?.xs||[]));ys.push(...(settings.extraCoordinates?.ys||[]));
     // Give overlapping edges a parallel lane, rather than pricing a conflict
     // on a graph that contains only the same obstacle-boundary coordinates.
     if (settings.edgeSpacing > 0) {
@@ -114,18 +129,19 @@
     }
     function link(u, v) {
       if (u === undefined || v === undefined) return;
-      if (!obstacles.some(r => intersectsRect(pts[u], pts[v], r))) { neighbors[u].push(v); neighbors[v].push(u); }
+      if ((!settings.segmentAllowed||settings.segmentAllowed(pts[u],pts[v]))&&!obstacles.some(r => intersectsRect(pts[u], pts[v], r))) { neighbors[u].push(v); neighbors[v].push(u); }
     }
     for (let y = 0; y < ys.length; y++) { let last; for (let x = 0; x < xs.length; x++) { const id = ids.get(x + ':' + y); if (id !== undefined) { if (last !== undefined) link(last, id); last = id; } } }
     for (let x = 0; x < xs.length; x++) { let last; for (let y = 0; y < ys.length; y++) { const id = ids.get(x + ':' + y); if (id !== undefined) { if (last !== undefined) link(last, id); last = id; } } }
     const s = ids.get(xs.indexOf(start.x) + ':' + ys.indexOf(start.y)), t = ids.get(xs.indexOf(end.x) + ':' + ys.indexOf(end.y));
     if (s === undefined || t === undefined) return null;
     const startKey = s * 5 + incoming;
-    const costs = new Map([[startKey, 0]]), parent = new Map(), heap = new Heap(); heap.push({ key: startKey, cost: 0 });
+    const estimate=id=>settings.aStar?Math.abs(pts[id].x-end.x)+Math.abs(pts[id].y-end.y):0;
+    const costs = new Map([[startKey, 0]]), parent = new Map(), heap = new Heap(); heap.push({ key: startKey, cost: estimate(s), pathCost:0 });
     let finalKey = null, finalCost = Infinity, expanded = 0;
     while (heap.length) {
       const current = heap.pop(), base = costs.get(current.key);
-      if (current.cost > base + EPS) continue;
+      if ((current.pathCost??current.cost) > base + EPS) continue;
       if (current.cost >= finalCost - EPS) break;
       const u = Math.floor(current.key / 5), direction = current.key % 5; expanded++;
       if (u === t && !reverses(direction, outgoing)) {
@@ -137,9 +153,9 @@
         if (reverses(direction, nextDirection)) continue;
         let penalty = (direction && direction !== nextDirection) ? settings.bendCost : 0;
         let blocked = false;
-        for (const path of priorPaths) for (let i = 1; i < path.length; i++) {
-          if (wireContact(a, b, path[i - 1], path[i])) penalty += settings.crossingCost;
-          const shared = overlap(a, b, path[i - 1], path[i]);
+        for (const {a:c,b:d,path,i} of segmentsNear(priorPaths,a,b,settings)) {
+          if (wireContact(a, b, c, d)) penalty += settings.crossingCost;
+          const shared = overlap(a, b, c, d);
           // Recorded semantic fan-outs can have the exact same physical port.
           // Their terminal stem is shared; unrelated intermediate wires are not.
           const commonTerminal = shared > EPS && (settings.terminalStems || []).some(stem => {
@@ -154,7 +170,7 @@
         }
         if (blocked) continue;
         const key = v * 5 + nextDirection, cost = base + dist(a, b) + penalty;
-        if (cost < (costs.get(key) ?? Infinity) - EPS) { costs.set(key, cost); parent.set(key, current.key); heap.push({ key, cost }); }
+        if (cost < (costs.get(key) ?? Infinity) - EPS) { costs.set(key, cost); parent.set(key, current.key); heap.push({ key, cost:cost+estimate(v),pathCost:cost }); }
       }
     }
     if (finalKey === null) return null;
@@ -190,6 +206,7 @@
   }
   function routeEdge(edge, nodes, priorPaths = [], options = {}) {
     const settings = { margin: 14, stub: 26, bendCost: 36, crossingCost: 0, overlapCost: 2, edgeSpacing: 0, grid: 0, sides: 'any', preserve: false, ...options };
+    if(settings.spatialPrior)settings.nearSegments=segmentIndex(priorPaths);
     const s = nodes.find(n => n.id === edge.source), t = nodes.find(n => n.id === edge.target);
     if (!s || !t) return { ok: false, reason: 'missing endpoint node' };
     // Expanded containers are traversable only at their registered gates. The
@@ -198,7 +215,7 @@
     // external-to-nested route impossible (and leaves the old diagonal SVG
     // corridor in place). Unrelated expanded frames remain obstacles.
     const gateFrames = new Set((edge.contract?.gates||[]).map(g=>g.frame));
-    const solid = nodes.filter(n => n.routingObstacle !== false && !(n.expanded && gateFrames.has(n.id)));
+    const solid = nodes.filter(n => !settings.excludedObstacleIds?.has(n.id) && n.routingObstacle !== false && !(n.expanded && gateFrames.has(n.id)));
     const obstacles = [...solid.map(n => expand(n, settings.margin)),...(options.extraObstacles||[])], boundary = { x: 1, y: 1, w: options.width ? options.width - 2 : 1098, h: options.height ? options.height - 2 : 718 };
     const candidates=(node,other,fixed,fraction)=>candidateSides(node,other,settings.sides,fixed).map(side=>fixed||{side,fraction:fraction??.5});
     const portsS=options.sourceCandidates||candidates(s,t,edge.fixedSource,options.sourceFraction),portsT=options.targetCandidates||candidates(t,s,edge.fixedTarget,options.targetFraction);
@@ -222,7 +239,7 @@
       const {sp,tp,fs,ft,extra}=pair;ps=simplify(ps);
       if(ps.length<2||ps.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y))||ps.slice(1).some((p,i)=>Math.abs(p.x-ps[i].x)>EPS&&Math.abs(p.y-ps[i].y)>EPS))return false;
       for(let i=1;i<ps.length;i++){
-        const a=ps[i-1],b=ps[i];if(i>1&&reverses(heading(ps[i-2],a),heading(a,b)))return false;
+        const a=ps[i-1],b=ps[i];if(settings.segmentAllowed&&!settings.segmentAllowed(a,b))return false;if(i>1&&reverses(heading(ps[i-2],a),heading(a,b)))return false;
         if(solid.some(n=>intersectsRect(a,b,(i===1&&n.id===s.id||i===ps.length-1&&n.id===t.id)?n:expand(n,settings.margin)))||extra.some(n=>intersectsRect(a,b,n)))return false;
       }
       if(ps.some(p=>!inside(p,boundary)))return false;
@@ -250,6 +267,9 @@
     for(const trial of trials)if(acceptable(trial.points,trial.pair)){
       best={ok:true,points:trial.points,cost:trial.cost,expanded:0,sourcePort:trial.pair.sp,targetPort:trial.pair.tp,physicalSource:trial.pair.fs,physicalTarget:trial.pair.ft};break;
     }
+    // Optional bounded port exploration: return only fully validated simple
+    // candidates; the caller can retain its settled visibility-search result.
+    if(options.quickCandidatesOnly)return best||{ok:false,reason:'No legal simple port candidate'};
     // A Manhattan route with at most one bend has reached the unobstructed
     // lower bound. Complex corridors use the visibility graph below.
     if(best&&best.cost<=Math.min(...pairs.map(p=>p.lower))+EPS)return best;

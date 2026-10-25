@@ -1,0 +1,155 @@
+{
+  "schema": "native-host-acceptance/1",
+  "date": "2026-10-25",
+  "base_head": "a3c57d4cf9c8904e3f24ad56076a28efa3ef2aa9",
+  "backup": "/tmp/archcanvas-before-host-migration-20261025-183551/snapshot",
+  "entry": "http://127.0.0.1:8766/yworks_edge_router_lab/index.html?model=0216717d966327f4",
+  "regression": {
+    "groups": 107,
+    "tests": 1170,
+    "all_commands_exit_zero": true,
+    "report": "regression/test-report.json",
+    "scope": "Before final canonical focus correction; final 12 native migration tests rerun afterwards."
+  },
+  "followup": {
+    "groups": 4,
+    "tests": 29,
+    "passed": 29,
+    "report": "followup-report.json",
+    "changes": [
+      "Canonical local focus retains expanded source descendants.",
+      "Generic frontier/focus/back/all navigation fits the new graph.",
+      "Frontier commit reuses worker validation instead of immediately repeating full main-thread validation."
+    ]
+  },
+  "route_audit": {
+    "models": 43,
+    "states": 86,
+    "valid": 86,
+    "report": "route-audit.json"
+  },
+  "browser_observations": [
+    {
+      "model": "MLP",
+      "actions": [
+        "F0",
+        "F1",
+        "all source",
+        "return",
+        "edit/view",
+        "compile module",
+        "undo",
+        "move parent"
+      ],
+      "source_units": 19,
+      "source_edges": 18,
+      "parent_move_ms": 35.8
+    },
+    {
+      "model": "dedicated Transformer",
+      "nodes": 83,
+      "edges": 85,
+      "source_valid": true,
+      "layout_valid": true,
+      "invalid_edges": 0,
+      "note": "Opened existing saved dedicated state, did not reset user draft."
+    },
+    {
+      "model": "generic Transformer",
+      "frontier": "F0",
+      "nodes": 30,
+      "edges": 37,
+      "source_valid": true,
+      "layout_valid": true,
+      "invalid_edges": 0,
+      "ui_compute_ms": 4293
+    },
+    {
+      "model": "generic Transformer",
+      "frontier": "F1",
+      "nodes": 82,
+      "edges": 80,
+      "source_valid": true,
+      "layout_valid": true,
+      "invalid_edges": 0,
+      "canvas": [
+        2132,
+        6639
+      ],
+      "length": 78235,
+      "crossings": 26,
+      "first_ui_compute_ms": 5909,
+      "cached_return_compute_ms": 3669
+    },
+    {
+      "model": "generic Transformer",
+      "frontier": "full-source",
+      "nodes": 3371,
+      "edges": 3663,
+      "source_valid": true,
+      "layout_valid_for_nodes_and_settled_routes": true,
+      "invalid_edges": 3504,
+      "pending": 3501,
+      "attempted_failed": 3,
+      "ui_compute_ms": 16416,
+      "canvas": [
+        7469,
+        107068
+      ]
+    },
+    {
+      "model": "generic Transformer",
+      "frontier": "continue batch",
+      "pending": 3323,
+      "ui_compute_ms": 15478,
+      "source_valid": true
+    },
+    {
+      "model": "generic Transformer",
+      "action": "reload after full-source return",
+      "nodes": 3371,
+      "edges": 3663,
+      "pending": 3508,
+      "source_valid": true,
+      "storage_status": "saved",
+      "note": "Full cut exceeded bounded cache; return recomputed routes, so pending count differs."
+    },
+    {
+      "model": "generic Transformer",
+      "frontier": "corrected canonical local ffn",
+      "nodes": 9,
+      "edges": 7,
+      "source_valid": true,
+      "layout_valid": true,
+      "invalid_edges": 0,
+      "ui_compute_ms": 3169
+    },
+    {
+      "model": "generic Transformer",
+      "frontier": "final F1 navigation",
+      "nodes": 82,
+      "edges": 80,
+      "source_valid": true,
+      "layout_valid": true,
+      "invalid_edges": 0,
+      "validation_origin": "worker",
+      "main_thread_validation_ms": 0,
+      "viewBox": "-4259.03125 0 10650.0625 6639",
+      "screenshot": "native-f1.png",
+      "console_errors": []
+    }
+  ],
+  "limitations": [
+    "Native F1 layout taller and longer than previous generic renderer; migration is not visual convergence.",
+    "Full-source routes remain incomplete; layout validity alone does not certify all edges.",
+    "Pending routes excluded from length/bend/crossing metrics.",
+    "Invalid full-source graphs may reject native move transactions.",
+    "Browser export download capture timed out; document serialization/restore covered by tests, browser full-state IndexedDB reload verified."
+  ],
+  "pushed": false,
+  "final_source_sha256": {
+    "yworks_edge_router_lab/generic-semantic.js": "275884cdfc8786d42860f6d8b09a425e3a217473eaee0020b9ee3894df53ca8b",
+    "tests/native-semantic-host.test.cjs": "3fb42388bf625e9158a0ca7d295d4e8f2c4ce5fbf7da89050cc4005ed412b0dd",
+    "yworks_edge_router_lab/app.js": "7cfa7b06066b4963bdf5af89e83ca35d238eb7a2e8df094feb10bbe9b58f8f87"
+  }
+}

@@ -453,7 +453,7 @@
     return [...regions.values()];
   }
   function layout(idx,roots,visible,edges,offsets={},options={}){
-    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[],inputDocks=[],fixedInputs=[],sourceForkWidths=[];
+    const positions=new Map(),feedback=new Set(),compoundAlignments=[],branchColumns=[],rankClearances=[],inputDocks=[],fixedInputs=[],sourceForkWidths=[],moduleColumns=[],localPathRows=[];
     const laneOwners=new Map(),contextOwners=new Map(),contextLanes=[];
     const ancestry=id=>{const result=[];while(id!=null){result.push(id);id=idx.nodes.get(id)?.parent;}return result;};
     const laneKinds=['bypass','state-interface','iteration-feedback'];
@@ -468,6 +468,34 @@
       contextOwners.set(entry.owner,(contextOwners.get(entry.owner)||0)+1);contextLanes.push(entry);
     }
     const gapX=options.gapX??40,gapY=options.gapY??76;
+    const guarded=n=>!n||n.condition||n.mutable||n.identity_display||n.observed_calls||n.iteration||n.runtime_evidence?.length||n.evidence_status==='runtime-only'||
+      ['opaque','control','state','buffer'].includes(n.kind)||['conditional-region','conditional-collection','loop-template','iteration-region','observed-variant'].includes(n.semantic_type);
+    // Pack only an actual short leaf path into the width already available in
+    // its parent. A topological ordering alone cannot establish a serial path.
+    // This is geometry: all operands, owners and calls stay in the same cut.
+    function packLocalPath(id){
+      if(!options.localPathRows)return;
+      const p=positions.get(id),n=idx.nodes.get(id),kids=(idx.children.get(id)||[]).filter(c=>visible.has(c));
+      if(guarded(n)||kids.length<2||kids.length>6||kids.some(c=>guarded(idx.nodes.get(c))||idx.nodes.get(c).kind!=='compute'||positions.get(c).expanded))return;
+      const inside=new Set(kids),links=new Map(kids.map(c=>[c,new Set()])),pred=new Map(kids.map(c=>[c,new Set()]));
+      for(const e of edges){if(!inside.has(e.source)&&!inside.has(e.target))continue;
+        if(e.layout_after||e.design_route&&e.design_route.kind!=='bypass'||(e.bundle_members||[e]).some(m=>!['data','alias','interface-binding'].includes(m.kind)||m.condition||m.iteration))return;
+        if(inside.has(e.source)&&inside.has(e.target)){links.get(e.source).add(e.target);pred.get(e.target).add(e.source);}}
+      const starts=kids.filter(c=>!pred.get(c).size);if(starts.length!==1||kids.some(c=>links.get(c).size>1||pred.get(c).size>1))return;
+      const ordered=[],seen=new Set();let at=starts[0];while(at&&!seen.has(at)){seen.add(at);ordered.push(at);at=[...links.get(at)][0];}
+      if(ordered.length!==kids.length||at)return;
+      const pad=options.framePaddingFor?.(n)??options.framePadding??32,gap=options.localPathGap??28,available=p.w-pad*2,rows=[];
+      for(const child of ordered){const w=positions.get(child).w;if(w>available)return;const row=rows.at(-1);
+        if(!row||row.w+gap+w>available)rows.push({ids:[child],w});else{row.ids.push(child);row.w+=gap+w;}}
+      if(rows.length>=kids.length)return;
+      const height=p.header+rows.reduce((h,r)=>h+Math.max(...r.ids.map(c=>positions.get(c).h)),0)+(rows.length-1)*gap+pad;
+      if(height>=p.h)return;
+      const before=p.h;let y=p.header;
+      for(const [i,row]of rows.entries()){const h=Math.max(...row.ids.map(c=>positions.get(c).h));let x=(p.w-row.w)/2;
+        for(const child of i%2?row.ids.slice().reverse():row.ids){const c=positions.get(child);c.x=x;c.y=y+(h-c.h)/2;c.arrangement='local-path-row';x+=c.w+gap;}y+=h+gap;}
+      if(options.direction==='up')for(const child of kids){const c=positions.get(child);c.y=p.header+height-pad-c.y-c.h;}
+      p.h=height;localPathRows.push({parent:id,ordered,rows:rows.map(r=>r.ids),before,after:height});
+    }
     function size(n){
       if(options.nodeSize)return options.nodeSize(n);
       if(n.kind==='compute'&&(['add','mult','mul'].includes(n.operator)||/^aten\.(add|mul)\./.test(n.operator||'')))return {w:64,h:64,symbol:n.operator==='add'||n.operator.startsWith('aten.add.')?'+':'×'};
@@ -672,6 +700,22 @@
           scope:'visible serial paths into distinct consumer operands; scheduling and stage equivalence not asserted'};
         branchGroups.push(group);for(const c of chains)for(const id of c.nodes)claimed.add(id);branchColumns.push(group);
       }
+      if(options.regularModuleColumns&&scc.every(g=>g.length===1)){
+        const candidates=sorted.filter(r=>rows.get(r).length===1).map(r=>rows.get(r)[0]).filter(id=>{
+          const n=idx.nodes.get(id);return positions.get(id).expanded&&!guarded(n)&&n.kind==='composite'&&
+            (n.semantic_contracts?.length||n.contract_stage||n.semantic_type==='source-module');});
+        const flow=new Map(kids.map(id=>[id,new Set()]));
+        for(const e of edges){const a=owner(e.source),b=owner(e.target);if(a&&b&&a!==b&&!e.layout_after&&(!e.design_route||e.design_route.kind==='bypass')&&
+          (e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition&&!m.iteration))flow.get(a).add(b);}
+        const reaches=(a,b)=>{const todo=[a],seen=new Set();for(let i=0;i<todo.length;i++){const at=todo[i];if(at===b)return true;if(seen.has(at))continue;seen.add(at);todo.push(...flow.get(at));}return false;};
+        if(candidates.length>1&&candidates.every((a,i)=>candidates.slice(i+1).every(b=>reaches(a,b)!==reaches(b,a)))){
+          const width=Math.max(...candidates.map(id=>positions.get(id).w));
+          for(const id of candidates){const p=positions.get(id),extra=width-p.w;
+            for(const child of idx.children.get(id)||[])if(positions.has(child))positions.get(child).x+=extra/2;
+            p.w=width;packLocalPath(id);}
+          moduleColumns.push({parent,members:candidates,width});
+        }
+      }
       const grids=sorted.map(r=>{const ids=rows.get(r),cols=Math.min(rankColumns||ids.length,ids.length),widths=Array(cols).fill(0),heights=Array(Math.ceil(ids.length/cols)).fill(0);
         ids.forEach((id,i)=>{const p=positions.get(id);widths[i%cols]=Math.max(widths[i%cols],p.w);heights[Math.floor(i/cols)]=Math.max(heights[Math.floor(i/cols)],p.h);});
         return {cols,widths,heights,w:widths.reduce((s,w)=>s+w,0)+(cols-1)*gapX,h:heights.reduce((s,h)=>s+h,0)+(heights.length-1)*rowGapY};});
@@ -706,7 +750,7 @@
       // frame to start below its producer's frame. Use actual visible ports
       // to align independently entered compound flows in adjacent columns.
       // Source ownership, endpoints and the full compound hierarchy survive.
-      if(options.compoundPorts&&scc.every(group=>group.length===1)&&kids.filter(id=>positions.get(id).expanded).length>1){
+      if(options.compoundPorts&&!moduleColumns.some(r=>r.parent===parent)&&scc.every(group=>group.length===1)&&kids.filter(id=>positions.get(id).expanded).length>1){
         const relative=(id,ancestor)=>{let y=0,at=id;while(at&&at!==ancestor){y+=positions.get(at)?.y||0;at=idx.nodes.get(at)?.parent;}return at===ancestor?y:null;};
         const weights=new Map(kids.map(id=>[id,new Map()])),entryBindings=[];let late=false;
         const reaches=(from,to)=>{const todo=[from],seen=new Set();for(let i=0;i<todo.length;i++){const at=todo[i];if(at===to)return true;if(seen.has(at))continue;seen.add(at);todo.push(...adj.get(at)||[]);}return false;};
@@ -749,6 +793,12 @@
           for(const id of kids.slice().sort((a,b)=>tops.get(a)-tops.get(b)||ordinal.get(a)-ordinal.get(b))){
             const p=positions.get(id),top=tops.get(id),overlap=placed.filter(q=>top<q.y+q.h+gapY/2&&top+p.h+gapY/2>q.y);
             const xs=[0,...overlap.map(q=>q.x+q.w+gapX)].sort((a,b)=>a-b);
+            if(options.followOutputSources&&!p.expanded&&pred.get(id).size){
+              const sources=edges.filter(e=>owner(e.target)===id&&candidate.has(owner(e.source))&&(e.bundle_members||[e]).every(m=>['data','alias','interface-binding'].includes(m.kind)&&!m.condition));
+              const centers=sources.map(e=>{const source=owner(e.source);let dx=0,at=e.source;while(at&&at!==source){dx+=positions.get(at).x;at=idx.nodes.get(at)?.parent;}
+                return candidate.get(source).x+dx+positions.get(e.source).w/2;});
+              if(centers.length)xs.unshift(Math.max(0,centers.reduce((a,b)=>a+b,0)/centers.length-p.w/2));
+            }
             const x=xs.find(x=>overlap.every(q=>x+p.w+gapX<=q.x||x>=q.x+q.w+gapX));
             const box={id,x,y:top,w:p.w,h:p.h};candidate.set(id,box);placed.push(box);
           }
@@ -772,6 +822,27 @@
             }
             const shift=top-floor;for(const id of band.regions)candidate.get(id).y+=shift;
           }
+          // In upward flow, align independent regions at their output side.
+          // Keep each natural height and move only exclusive external inputs
+          // with its entry. Shared/context/control inputs are never duplicated.
+          if(band&&options.compoundOutputAlignment&&options.direction==='up'){
+            const entries=new Map();
+            for(const input of inputs){
+              const n=idx.nodes.get(input),uses=edges.filter(e=>e.source===input),targets=new Set(uses.map(e=>owner(e.target)));
+              if(guarded(input)||n.invocation_binding||targets.size!==1||!uses.length||uses.some(e=>e.design_route||e.layout_after||(e.bundle_members||[e]).some(m=>!['data','alias','interface-binding'].includes(m.kind)||m.condition||m.iteration)))continue;
+              const target=[...targets][0];if(!candidate.has(target)||!positions.get(target).expanded||guarded(target))continue;
+              if(!entries.has(target))entries.set(target,[]);entries.get(target).push(input);
+            }
+            const streams=[...entries.keys()];
+            if(streams.length>1&&streams.length<=6){
+              const bottom=Math.max(...streams.map(id=>candidate.get(id).y+candidate.get(id).h)),saved=new Map();
+              for(const stream of streams){const p=candidate.get(stream),dy=bottom-p.y-p.h;
+                for(const id of [stream,...entries.get(stream)]){const q=candidate.get(id);saved.set(id,q.y);q.y+=dy;}}
+              const boxes=[...candidate.values()],overlap=boxes.some((a,i)=>boxes.slice(i+1).some(b=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h));
+              if(overlap)for(const [id,y]of saved)candidate.get(id).y=y;
+              else band.output_alignment=streams.map(id=>({region:id,inputs:entries.get(id),shift:candidate.get(id).y-saved.get(id)}));
+            }
+          }
           const box={w:Math.max(...placed.map(p=>p.x+p.w)),h:Math.max(...placed.map(p=>p.y+p.h))};
           const score=b=>Math.max(b.w/1.6,b.h);
           const accepted=box.h<vertical.h*.9&&score(box)<score(vertical)*.9&&box.w*box.h<=vertical.w*vertical.h*2;
@@ -791,7 +862,7 @@
       const suffix=options.foldBoundaryRanks&&rows.get(sorted.at(-1))?.length>1?1:0;
       const foldedRanks=sorted.slice(prefix,sorted.length-suffix||undefined);
       const bypassFlow=options.semanticLanes&&edges.some(e=>laneKinds.includes(e.design_route?.kind)&&owner(e.target));
-      if(options.foldSerial&&!bypassFlow&&sorted.length>=(options.foldMinRanks??5)&&scc.every(group=>group.length===1)&&foldedRanks.every(r=>rows.get(r).length<=(options.foldMaxParallel??2)&&rows.get(r).length<=(rankColumns||Infinity))){
+      if(options.foldSerial&&!moduleColumns.some(r=>r.parent===parent)&&!bypassFlow&&sorted.length>=(options.foldMinRanks??5)&&scc.every(group=>group.length===1)&&foldedRanks.every(r=>rows.get(r).length<=(options.foldMaxParallel??2)&&rows.get(r).length<=(rankColumns||Infinity))){
         const foldGapX=options.foldGapX??gapY;
         const cells=foldedRanks.map(r=>({ids:rows.get(r),w:rowWidths[sorted.indexOf(r)],h:Math.max(...rows.get(r).map(id=>positions.get(id).h))}));
         const topH=prefix?grids[0].h+gapY:0,bottomH=suffix?grids.at(-1).h+gapY:0;
@@ -822,7 +893,7 @@
       if(kids.length){
         kids.forEach(place);
         const fixed=kids.filter(c=>options.fixedInputIds?.has(c)&&!edges.some(e=>e.target===c)),body=kids.filter(c=>!fixed.includes(c));
-        const box=body.length?arrange(body,id):{w:0,h:0},pad=options.framePadding??32;
+        const box=body.length?arrange(body,id):{w:0,h:0},pad=options.framePaddingFor?.(n)??options.framePadding??32;
         let title=typeof options.frameHeader==='function'?options.frameHeader(n):options.frameHeader??74;
         const titleWidth=Math.max(212,p.w),railGap=28,railRows=[];let row=[],used=0;
         // These are the original canonical terminals, moved beside the source
@@ -832,26 +903,27 @@
         const railHeight=railRows.reduce((h,row)=>h+Math.max(...row.map(c=>positions.get(c).h)),0)+Math.max(0,railRows.length-1)*28;
         // Leave room for the normal 16px terminal stub and 8px obstacle pad,
         // including between rows and above the first body node.
-        if(fixed.length)title=Math.max(title,railHeight+32);
+        if(fixed.length)title=options.compactArgumentBand?title+railHeight+24:Math.max(title,railHeight+32);
         const header=title+(options.headerClearance??20),gutter=laneOwners.has(id)?28+Math.min(3,laneOwners.get(id))*20:0;
         p.header=header;p.protected_header_height=title-10;p.design_gutter=gutter;
         const railWidth=Math.max(0,...railRows.map(row=>row.reduce((w,c)=>w+positions.get(c).w,0)+(row.length-1)*railGap));
-        p.w=Math.max(options.nodeSize?212:300,box.w+pad*2+gutter+(contextOwners.has(id)?32+contextOwners.get(id)*16:0),fixed.length?titleWidth+pad+railWidth+pad:0);
+        p.w=Math.max(options.frameMinWidthFor?.(n)||0,options.nodeSize?212:300,box.w+pad*2+gutter+(contextOwners.has(id)?32+contextOwners.get(id)*16:0),fixed.length?(options.compactArgumentBand?railWidth+pad*2:titleWidth+pad+railWidth+pad):0);
         if(contextOwners.has(id))p.context_gutter=32+contextOwners.get(id)*16;
         p.h=box.h+header+pad;
-        for(const child of body){positions.get(child).x+=pad+gutter+(options.contextLanes==='left'?(p.context_gutter||0):0);positions.get(child).y+=header;}
+        for(const child of body){const c=positions.get(child);c.x+=(options.frameCenterBodyFor?.(n)?Math.max(0,(p.w-box.w-pad*2-gutter)/2):0)+pad+gutter+(options.contextLanes==='left'?(p.context_gutter||0):0);c.y=header+(options.direction==='up'?box.h-c.y-c.h:c.y);}
         if(fixed.length){
           p.protected_header_width=titleWidth;
-          let top=10;for(const row of railRows){let left=titleWidth+pad;for(const child of row){const at=positions.get(child);Object.assign(at,{x:left,y:top,arrangement:'fixed-call-argument'});left+=at.w+railGap;}top+=Math.max(...row.map(c=>positions.get(c).h))+28;}
+          let top=options.compactArgumentBand?title-railHeight-12:10;for(const row of railRows){let left=options.compactArgumentBand?(p.w-row.reduce((sum,c)=>sum+positions.get(c).w,0)-(row.length-1)*railGap)/2:titleWidth+pad;for(const child of row){const at=positions.get(child);Object.assign(at,{x:left,y:top,arrangement:'fixed-call-argument'});left+=at.w+railGap;}top+=Math.max(...row.map(c=>positions.get(c).h))+28;}
           fixedInputs.push({parent:id,nodes:fixed,title_width:titleWidth,scope:'Existing invocation-bound literal terminals; identity, containment and all dependencies retained. Geometry only.'});
         }
       }
     }
     roots.filter(id=>visible.has(id)).forEach(place);
-    arrange(roots.filter(id=>visible.has(id)),null);
+    const rootBox=arrange(roots.filter(id=>visible.has(id)),null);
+    if(options.direction==='up')for(const id of roots.filter(id=>visible.has(id))){const p=positions.get(id);p.y=rootBox.h-p.y-p.h;}
     function absolute(id,dx,dy){const p=positions.get(id),off=offsets[id]||{x:0,y:0};p.x+=dx+off.x;p.y+=dy+off.y;for(const c of idx.children.get(id)||[])if(positions.has(c))absolute(c,p.x,p.y);}
     for(const id of roots)if(positions.has(id))absolute(id,32,30);
-    positions.context={protectFrameTitles:options.protectFrameTitles===true,preserveContextEdges:options.contextEdges,contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,sourceForkWidths,
+    positions.context={protectFrameTitles:options.protectFrameTitles===true,preserveContextEdges:options.contextEdges,contextSourceFacing:options.contextSourceFacing,idx,edges,feedback,compoundAlignments,contextLanes,branchColumns,rankClearances,inputDocks,fixedInputs,sourceForkWidths,moduleColumns,localPathRows,
       entryBandRouting:compoundAlignments.some(r=>entryBandGeometry(r,positions))};return positions;
   }
   function branchGeometry(group,positions){

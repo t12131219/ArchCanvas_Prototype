@@ -27,7 +27,10 @@
     return true;
   }
   function project(ir,state,derivedPlan=null,options={}){
-    if(state.view==='publication'&&!derivedPlan)return state.paperCanonical?paper().projectCanonical(ir,state,api):paper().project(ir,state,api);
+    if(state.view==='publication'&&!derivedPlan){
+      const engine=options.semanticOnly?{...api,semanticOnly:true,project:(value,view,plan,inner={})=>api.project(value,view,plan,{...inner,semanticOnly:true})}:api;
+      return state.paperCanonical?paper().projectCanonical(ir,state,engine):paper().project(ir,state,engine);
+    }
     const plan=derivedPlan||(state.view==='architecture'?architecture(ir):ir),idx=index(plan),mode=state.mode||'source',open=new Set(state.open),visible=new Set();
     const roots=options.roots||(mode==='runtime'&&idx.nodes.has('runtime-observations')?['runtime-observations']:idx.children.get(null)||[]);
     const compact=state.view==='architecture'&&!state.details,bindings=new Map(),resources=new Set(),insBy=new Map(),usesBy=new Map();
@@ -94,8 +97,10 @@
     C.project(plan,projected,rep,edgeAccounting);
     const presented=options.presentEdges?options.presentEdges(projected,idx):projected;
     const constraintReceipts=C.project(plan,presented,rep,edgeAccounting);
-    const positions=L.layout(drawingIdx,roots,visible,presented,state.offsets||{},{foldSerial:state.view==='architecture'&&state.foldSerial!==false,...options.layout}),ps=[...positions.values()];
-    C.evaluate(constraintReceipts,positions,presented);
+    const positions=options.semanticOnly?new Map([...visible].map(id=>[id,{x:0,y:0,w:1,h:1,expanded:open.has(id)&&!!drawingIdx.children.get(id)?.some(child=>visible.has(child))}])):
+      L.layout(drawingIdx,roots,visible,presented,state.offsets||{},{foldSerial:state.view==='architecture'&&state.foldSerial!==false,...options.layout});
+    if(options.semanticOnly)positions.context={idx:drawingIdx,fixedInputs:[]};else C.evaluate(constraintReceipts,positions,presented);
+    const ps=[...positions.values()];
     const left=Math.min(0,...ps.map(p=>p.x-60)),top=Math.min(0,...ps.map(p=>p.y-60));
     const nodeAccounting={visible:[],collapsed:[],contracted:[],attached:[],excluded:[]},representatives={};
     for(const n of ir.nodes){const representative=rep(n.id);let bucket;

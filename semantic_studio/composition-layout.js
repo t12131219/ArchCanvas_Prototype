@@ -350,9 +350,10 @@
     }
     return copy;
   }
-  function certifiedDetails(ir,state){
+  function certifiedDetails(ir,state,options={}){
+    const project=(ir,state)=>E.project(ir,state,null,options);
     const defaults={paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true};
-    const first=E.project(ir,{...defaults,...state});
+    const first=project(ir,{...defaults,...state});
     const requests=first.nodes.filter(n=>n.kind==='composite'&&n.semantic_contracts?.length&&!first.positions.get(n.id).expanded&&
       !n.condition&&!n.mutable&&n.evidence_status!=='runtime-only'&&!n.runtime_evidence?.length).map(n=>n.id);
     const RF=root.SemanticRoleFrontier||(typeof require==='function'?require('./role-frontier.js'):null);
@@ -371,7 +372,7 @@
       }
     }
     const selected={...state,paperRolePaths:[...(state.paperRolePaths||[]),...paths]};
-    const second=paths.length?E.project(ir,{...defaults,...selected}):first;
+    const second=paths.length?project(ir,{...defaults,...selected}):first;
     const stages=second.nodes.filter(n=>n.contract_stage&&!second.positions.get(n.id).expanded).map(n=>n.id);
     return {...selected,paperAuto:false,open:[...new Set([...second.publication.open,...stages])],
       paperFrontierRecipe:{schema:'certified-detail-frontier/1',nested_candidates:requests,role_paths:paths,nested_deferred:deferred,stage_requests:stages,

@@ -6,8 +6,9 @@
   const P=root.SummaryPhysicalPorts || (typeof require==='function'?require('./physical-ports.js'):null);
   const inside=(p,n)=>p.x>n.x+EPS&&p.x<n.x+n.w-EPS&&p.y>n.y+EPS&&p.y<n.y+n.h-EPS;
   const pointIn=(p,n)=>p.x>=n.x-EPS&&p.x<=n.x+n.w+EPS&&p.y>=n.y-EPS&&p.y<=n.y+n.h+EPS;
-  function ancestors(graph,id){const map=new Map(graph.nodes.map(n=>[n.id,n])),ids=[];let n=map.get(id),seen=new Set();while(n&&!seen.has(n.id)){seen.add(n.id);if(n.expanded)ids.push(n.id);n=map.get(n.parent);}return ids;}
+  function ancestors(graph,id){const map=new Map(graph.nodes.map(n=>[n.id,n])),ids=[];let n=map.get(id),seen=new Set();while(n&&!seen.has(n.id)){seen.add(n.id);if(n.expanded&&!n.modelHeading)ids.push(n.id);n=map.get(n.parent);}return ids;}
   function crossings(points,n){
+    if(n.modelHeading)return [];
     const events=[];
     for(let i=1;i<points.length;i++){
       const a=points[i-1],b=points[i],dx=b.x-a.x,dy=b.y-a.y;
@@ -120,7 +121,7 @@
       const vertical=side==='left'||side==='right',axis=vertical?'x':'y',along=vertical?'y':'x',size=vertical?'w':'h',span=vertical?'h':'w',sign=['right','bottom'].includes(side)?1:-1,value=n[axis]+(sign>0?n[size]:0);
       const gap={inside:Infinity,outside:Infinity};
       const consider=(coordinate)=>{const distance=(coordinate-value)*sign,key=distance<0?'inside':'outside';if(Math.abs(distance)>EPS)gap[key]=Math.min(gap[key],Math.abs(distance));};
-      for(const b of graph.nodes){if(b===n||b.junction)continue;
+      for(const b of graph.nodes){if(b===n||b.junction||b.modelHeading)continue;
         if(Math.min(n[along]+n[span],b[along]+b[span])-Math.max(n[along],b[along])<=EPS)continue;
         if(b.expanded){consider(b[axis]);consider(b[axis]+b[size]);}
         else if(b[axis]>=value-EPS||b[axis]+b[size]<=value+EPS){consider(b[axis]);consider(b[axis]+b[size]);}
@@ -138,9 +139,9 @@
     return out;
   }
   const geometryKey=graph=>{const text=JSON.stringify(graph.nodes.map(n=>[n.id,n.x,n.y,n.w,n.h]));let hash=2166136261;for(let i=0;i<text.length;i++)hash=Math.imul(hash^text.charCodeAt(i),16777619);return graph.nodes.length+':'+(hash>>>0).toString(16);};
-  function laneContacts(graph,e,points=e.route,context){return graph.nodes.filter(n=>n.expanded).flatMap(n=>borderContacts(e,n,points,laneClearances(graph,e,n,context)));}
+  function laneContacts(graph,e,points=e.route,context){return graph.nodes.filter(n=>n.expanded&&!n.modelHeading).flatMap(n=>borderContacts(e,n,points,laneClearances(graph,e,n,context)));}
   function needsLaneRepair(graph,e,context){return e.boundaryLane?.constrainedAt!==(context?.geometryKey||geometryKey(graph))&&laneContacts(graph,e,e.route,context).length>0;}
-  function borderContacts(e,n,points,padding=borderClearance(e,n)){const hits=[];
+  function borderContacts(e,n,points,padding=borderClearance(e,n)){const hits=[];if(n.modelHeading)return hits;
     for(const side of ['left','right','top','bottom']){
       const vertical=side==='left'||side==='right',axis=vertical?'x':'y',along=vertical?'y':'x';
       const value=n[axis]+(['right','bottom'].includes(side)?n[vertical?'w':'h']:0),low=n[along],high=low+n[vertical?'h':'w'];
@@ -156,7 +157,7 @@
     }return hits;
   }
   function walls(n,gates,padding=2){
-    const result=[];
+    const result=[];if(n.modelHeading)return result;
     for(const side of ['left','right','top','bottom']){
       const pad=typeof padding==='number'?{inside:padding,outside:padding}:padding[side],extent=Math.max(pad.inside,pad.outside),thickness=pad.inside+pad.outside;
       const vertical=side==='left'||side==='right',low=vertical?n.y:n.x,high=low+(vertical?n.h:n.w),coordinate=side==='left'?n.x:side==='right'?n.x+n.w:side==='top'?n.y:n.y+n.h;
@@ -168,6 +169,7 @@
   }
   function constraints(graph,e,opts,context){
     initialize(graph);
+    if(graph.generic&&root.SummaryNativeSemantic)return root.SummaryNativeSemantic.constraints(graph,e,opts,context,api);
     const frames=graph.nodes.filter(n=>n.expanded),related=new Set([...ancestors(graph,e.source),...ancestors(graph,e.target)]),extra=[];
     for(const n of frames){
       const gates=e.draft?[]:activeGates(graph,e).filter(g=>g.frame===n.id);
@@ -185,9 +187,9 @@
   }
   // This context is scoped to one geometry operation, never cached across
   // edits. Node/source metadata is invariant during a routing transaction.
-  function validationContext(graph){return {nodeErrors:S?S.nodeErrors(graph):[],geometryKey:geometryKey(graph),frameGaps:new Map(graph.nodes.filter(n=>n.expanded).map(n=>[n.id,frameGaps(graph,n)]))};}
+  function validationContext(graph){return {...(graph.generic&&root.SummaryNativeSemantic?root.SummaryNativeSemantic.certifiedContext(graph):{nodeErrors:S?S.nodeErrors(graph):[]}),geometryKey:geometryKey(graph),frameGaps:new Map(graph.nodes.filter(n=>n.expanded&&!n.modelHeading).map(n=>[n.id,frameGaps(graph,n)]))};}
   function validate(graph,e,points,context){
-    const violations=S?[...(context?.nodeErrors||S.nodeErrors(graph)),...S.edgeErrors(graph,e,points)]:[];
+    const violations=S?[...(context?.nodeErrors||S.nodeErrors(graph)),...(context?.semanticEdges?[...(context.semanticEdges.get(e.id)||['unregistered semantic connection']),...(!e.draft?P.errors(graph,e,points):[])]:S.edgeErrors(graph,e,points))]:[];
     if(!e.contract)violations.push('missing routing/source contract');
     if(!e.contract)return {ok:false,violations};
     if(points.length<2||points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))violations.push('invalid route geometry');
@@ -210,9 +212,10 @@
     if(e.style!=='octilinear'&&e.arrow!=='none'&&clean.length>=2&&R.dist(clean.at(-1),clean.at(-2))+EPS<(e.contract.minimumTerminal||0))violations.push('insufficient arrow terminal');
     for(const n of graph.nodes){
       if(n.junction)continue;
-      if(n.glyphPresentation)for(const box of n.labelObstacles||[]){const caption={x:n.x+box.x,y:n.y+box.y,w:box.w,h:box.h};
+      if(n.glyphPresentation||graph.generic&&n.expanded)for(const box of n.labelObstacles||[]){const caption={x:n.x+box.x,y:n.y+box.y,w:box.w,h:box.h};
         if(points.slice(1).some((p,i)=>R.intersectsRect(points[i],p,caption)))violations.push('route enters glyph caption '+n.id);
       }
+      if(n.modelHeading)continue;
       if(!n.expanded){
         for(let i=1;i<points.length;i++)if(n.id!==e.source&&n.id!==e.target&&R.intersectsRect(points[i-1],points[i],n))violations.push('unrelated leaf '+n.id);
         if(e.contract.enforcePortApproach&&(n.id===e.source||n.id===e.target)&&points.slice(1).some((p,i)=>R.intersectsRect(points[i],p,n)))violations.push('route enters endpoint body '+n.id);
@@ -220,13 +223,14 @@
       }
       if(!related.has(n.id)&&points.slice(1).some((p,i)=>R.intersectsRect(points[i],p,n)))violations.push('unrelated container '+n.id);
       const actual=crossings(points,n),allowed=activeGates(graph,e).filter(g=>g.frame===n.id);
-      for(const g of actual)if(!allowed.some(v=>v.side===g.side&&v.direction===g.direction&&R.dist(gatePoint(n,g),gatePoint(n,v))<3.01))violations.push('undeclared boundary '+n.id);
+      for(const g of actual)if(!graph.generic&&!allowed.some(v=>v.side===g.side&&v.direction===g.direction&&R.dist(gatePoint(n,g),gatePoint(n,v))<3.01))violations.push('undeclared boundary '+n.id);
       for(const hit of borderContacts(e,n,points))violations.push('border stroke clearance '+n.id+':'+hit.side);
     }
     // A route may remove an unnecessary exit/re-entry detour in the original
     // SVG. Its remaining crossings must still follow the recorded order; a
     // repeated gate is not a license to bounce across a container indefinitely.
     const actual=graph.nodes.filter(n=>n.expanded).flatMap(n=>crossings(points,n)).sort((a,b)=>a.order-b.order);
+    if(graph.generic){violations.push(...root.SummaryNativeSemantic.boundaryErrors(graph,e,actual,points,context));return {ok:!violations.length,violations:[...new Set(violations)]};}
     const allowed=activeGates(graph,e).sort((a,b)=>a.order-b.order);let cursor=0;
     for(const g of actual){let found=false;while(cursor<allowed.length){const v=allowed[cursor++],n=graph.nodes.find(n=>n.id===g.frame);if(v.frame===g.frame&&v.side===g.side&&v.direction===g.direction&&R.dist(gatePoint(n,g),gatePoint(n,v))<3.01){found=true;break;}}if(!found){violations.push('boundary crossing order changed');break;}}
     return {ok:violations.length===0,violations:[...new Set(violations)]};

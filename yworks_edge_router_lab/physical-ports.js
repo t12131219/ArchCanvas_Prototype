@@ -8,10 +8,13 @@
   function slot(e,side){if(e.projection?.presentationSlots?.[side])return e.projection.presentationSlots[side];const b=e.binding||{},c=b.endpoint_binding?.canonical,which=side==='source'?'src':'dst';
     return b['canonical_'+which]||(c?.[which]?c[which]+':'+c[which+'_port']:null)||
       (b['semantic_'+which]?b['semantic_'+which]+':'+b['semantic_'+which+'_port']:null)||b[which]||e.id+':'+side;}
-  function peers(graph,e,side){return graph.edges.flatMap(v=>['source','target'].filter(s=>v!==e&&v[s]===e[side]).map(s=>({edge:v,side:s})));}
+  const portIndexes=new WeakMap();
+  function invalidate(graph){portIndexes.delete(graph);}
+  function portIndex(graph){let value=portIndexes.get(graph);if(!graph.generic||!value||value.nodes!==graph.nodes||value.edges!==graph.edges||value.count!==graph.edges.length){value={nodes:graph.nodes,edges:graph.edges,count:graph.edges.length,byNode:new Map(graph.nodes.map(n=>[n.id,n])),peers:new Map()};for(const edge of graph.edges)for(const side of ['source','target']){const rows=value.peers.get(edge[side])||[];rows.push({edge,side});value.peers.set(edge[side],rows);}portIndexes.set(graph,value);}return value;}
+  function peers(graph,e,side){return (portIndex(graph).peers.get(e[side])||[]).filter(row=>row.edge!==e);}
   function policy(graph,e,side){return e.portPolicy?.[side]||{mode:'fixed',reason:'unregistered source interface'};}
   function permitted(graph,e,side,f){
-    const n=graph.nodes.find(n=>n.id===e[side]),p=policy(graph,e,side),original=e['fixed'+key(side)];
+    const n=portIndex(graph).byNode.get(e[side]),p=policy(graph,e,side),original=e['fixed'+key(side)];
     if(!n||!f||!R.SIDE[f.side]||!Number.isFinite(f.fraction)||f.fraction<0||f.fraction>1)return false;
     if(JSON.stringify(f)===JSON.stringify(original))return true;
     if(p.mode==='fixed')return JSON.stringify(f)===JSON.stringify(original);
@@ -33,7 +36,7 @@
       R.dist(xy,point(n,active(v,s)))<(p.spacing||12)-EPS);
   }
   function candidates(graph,e,side,rule='any'){
-    const n=graph.nodes.find(n=>n.id===e[side]),other=graph.nodes.find(n=>n.id===e[side==='source'?'target':'source']),p=policy(graph,e,side),original=e['fixed'+key(side)],out=[];
+    const n=portIndex(graph).byNode.get(e[side]),other=portIndex(graph).byNode.get(e[side==='source'?'target':'source']),p=policy(graph,e,side),original=e['fixed'+key(side)],out=[];
     const add=f=>{if(f&&permitted(graph,e,side,f)&&!out.some(v=>R.dist(point(n,v),point(n,f))<EPS&&v.side===f.side))out.push(f);};
     add(active(e,side));add(original);if(p.mode==='fixed')return out;
     if(n.junction){for(const s of p.mode==='side'?[original.side]:R.candidateSides(n,other,rule))add({side:s,fraction:.5,inward:original.inward});return out;}
@@ -51,13 +54,13 @@
   function errors(graph,e,points=e.route){
     const result=[];
     for(const [side,index]of [['source',0],['target',-1]]){
-      const f=e['physical'+key(side)],n=graph.nodes.find(n=>n.id===e[side]);
+      const f=e['physical'+key(side)],n=portIndex(graph).byNode.get(e[side]);
       if(f&&!permitted(graph,e,side,f))result.push('unregistered or colliding physical '+side+' port');
       const a=active(e,side),p=points?.at(index);
       if(n&&a&&p&&R.dist(point(n,a),p)>EPS)result.push('physical endpoint differs from registered '+side+' port');
     }
     return result;
   }
-  const api={active,point,slot,policy,permitted,candidates,errors};
+  const api={active,point,slot,policy,permitted,candidates,errors,invalidate};
   root.SummaryPhysicalPorts=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

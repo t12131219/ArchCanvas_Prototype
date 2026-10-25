@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const F=require('../semantic_studio/role-frontier.js'),P=require('../semantic_studio/publication.js'),E=require('../semantic_studio/semantic-engine.js'),R=require('../semantic_studio/publication-renderer.js');
 const state={paperMedium:'canvas',paperGranularity:'roles'},read=file=>JSON.parse(fs.readFileSync(file));
@@ -69,6 +70,6 @@ test('explicit title avoidance recovers frozen role frontiers on mixed, broken a
  for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry']){
   // Freeze the historical content policy too; title avoidance alone must not
   // disable new, independently source-backed configuration annotations.
-  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(R.render(ir,{...state,paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false}).svg,old.render(ir,state).svg);
+  const ir=read('verification/local-relations/current/'+name+'.json');assert.equal(structure(R.render(ir,{...state,paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false}).svg),structure(old.render(ir,state).svg));
  }
 });

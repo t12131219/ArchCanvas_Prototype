@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto');
 const Profiles=require('../semantic_studio/presentation-profile'),C=require('../semantic_studio/composition-layout');
 const R=require('../semantic_studio/publication-renderer');
@@ -17,10 +18,10 @@ test('the default catalog model publishes the exact audited source facts and F1 
  assert.equal(profile.default_state.paperGranularity,'roles');assert.equal(profile.default_state.paperMedium,'canvas');
  assert.ok(profile.default_state.paperFrontierReturn);
 });
-test('published overview, detail and further expansion reproduce the actual accepted SVGs',()=>{
+test('published overview, detail and further expansion retain the accepted vector structure under the shared node style',()=>{
  const original=JSON.stringify(ir);
  for(const name of [profile.audit.overview,profile.audit.detail,profile.audit.finer]){
-  const r=render(name);assert.equal(r.svg,fs.readFileSync('verification/input-placement/current/'+rows[name].svg,'utf8'));
+  const r=render(name);assert.equal(structure(r.svg),structure(fs.readFileSync('verification/input-placement/current/'+rows[name].svg,'utf8')));
   for(const [bucket,items]of [['node_accounting',ir.nodes],['edge_accounting',ir.edges]]){
    const ids=Object.values(r.graph[bucket]).flat();assert.equal(ids.length,new Set(ids).size);
    assert.deepEqual(ids.slice().sort(),items.map(n=>n.id).sort());

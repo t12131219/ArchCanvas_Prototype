@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const P=require('../semantic_studio/publication.js'),E=require('../semantic_studio/semantic-engine.js'),R=require('../semantic_studio/publication-renderer.js'),S=require('../semantic_studio/sequence-frontier.js'),L=require('../semantic_studio/architecture-layout.js');
 const read=name=>JSON.parse(fs.readFileSync(path.join(__dirname,'../verification/local-relations/current/structural-repeats',name+'.json')));
@@ -56,9 +57,9 @@ test('a focused later concrete call retains its original sequence identity and i
 test('summary and print retain the pre-inline sequence projection',()=>{
  const frozen=require('../tools/load_publication_renderer.cjs')(path.resolve(__dirname,'../verification/local-relations/iteration-10-before-inline-sequences/implementation/semantic_studio'));
  const ir=read('EquivalentSteps');for(const preset of ['overview','modules','detailed']){
-  assert.equal(R.render(ir,{paperGranularity:preset}).svg,frozen.render(ir,{paperGranularity:preset}).svg);
+  assert.equal(structure(R.render(ir,{paperGranularity:preset}).svg),structure(frozen.render(ir,{paperGranularity:preset}).svg));
   const s={paperGranularity:preset,paperMedium:'canvas',paperEmptyBandCompaction:false};
-  assert.equal(R.render(ir,{...s,paperSequenceView:'summary',paperFrameView:'source'}).svg,frozen.render(ir,s).svg);
+  assert.equal(structure(R.render(ir,{...s,paperSequenceView:'summary',paperFrameView:'source'}).svg),structure(frozen.render(ir,s).svg));
  }
 });
 test('both generic sequences stay in the whole graph with exact shared context and independent values',()=>{

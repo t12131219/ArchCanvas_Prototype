@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const R=require('../semantic_studio/publication-renderer.js');
 const frozen=require('../tools/load_publication_renderer.cjs')(path.resolve(__dirname,'../verification/local-relations/iteration-09-before-canvas-medium/implementation/semantic_studio'));
@@ -17,7 +18,7 @@ test('canvas retains a requested mixed semantic frontier that single-page print 
 test('explicit title avoidance keeps the frozen default and explicit print vector output',()=>{
  for(const name of ['BrokenCell','MixedCircuit']){
   const ir=read(name),state={paperGranularity:'detailed',paperProtectFrameTitles:true},before=frozen.render(ir,state);
-  assert.equal(render(name,state).svg,before.svg);assert.equal(render(name,{...state,paperMedium:'print'}).svg,before.svg);
+  assert.equal(structure(render(name,state).svg),structure(before.svg));assert.equal(structure(render(name,{...state,paperMedium:'print'}).svg),structure(before.svg));
  }
 });
 test('canvas native dimensions match viewBox units and print width/fit cannot change routes or frontier',()=>{

@@ -39,20 +39,29 @@
     return {roots,ids:Object.fromEntries(ids)};
   }
   function erase(doc,ids){const gone=closure(doc,ids);doc.nodes=doc.nodes.filter(n=>!gone.has(n.id));doc.edges=doc.edges.filter(e=>!gone.has(e.source)&&!gone.has(e.target));doc.open=doc.open.filter(id=>!gone.has(id));for(const id of gone){delete doc.modules[id];delete doc.offsets[id];}return gone;}
-  function ports(doc,id){
-    const n=doc.nodes.find(n=>n.id===id);if(!n)throw Error('模块不存在');const inside=closure(doc,[id]),children=doc.nodes.filter(n=>n.parent===id),inputs=[],outputs=[];
+  function portIndex(doc){
+    const nodes=new Map(doc.nodes.map(n=>[n.id,n])),children=new Map(),incoming=new Map(),outgoing=new Map(),order=new Map(),cache=new Map();
+    for(const n of doc.nodes){if(!children.has(n.parent))children.set(n.parent,[]);children.get(n.parent).push(n);}
+    doc.edges.forEach((e,i)=>{order.set(e,i);for(const [map,id]of [[incoming,e.target],[outgoing,e.source]]){if(!map.has(id))map.set(id,[]);map.get(id).push(e);}});
+    return {nodes,children,incoming,outgoing,order,cache};
+  }
+  function ports(doc,id,index=portIndex(doc)){
+    if(index.cache.has(id))return index.cache.get(id);
+    const n=index.nodes.get(id);if(!n)throw Error('模块不存在');const children=index.children.get(id)||[],inputs=[],outputs=[];
     function put(list,node,port,label){if(!list.some(p=>p.node===node&&p.port===String(port)))list.push({node,port:String(port),label:label||String(port)});}
     if(n.kind!=='composite'){
-      const ins=doc.edges.filter(e=>e.target===id);for(const e of ins)put(inputs,id,e.target_port,e.target_port);
+      const ins=index.incoming.get(id)||[];for(const e of ins)put(inputs,id,e.target_port,e.target_port);
       if(!inputs.length&&!['parameter','state','buffer'].includes(n.kind))put(inputs,id,'in','输入');
-      const out=doc.edges.filter(e=>e.source===id);for(const e of out)put(outputs,id,e.source_port,e.source_port);
-      if(!outputs.length)put(outputs,id,'out','输出');return {inputs,outputs};
+      const out=index.outgoing.get(id)||[];for(const e of out)put(outputs,id,e.source_port,e.source_port);
+      if(!outputs.length)put(outputs,id,'out','输出');const result={inputs,outputs};index.cache.set(id,result);return result;
     }
     for(const c of children){if(c.kind==='interface'&&c.role==='input')put(inputs,c.id,'in',c.label);if(c.kind==='interface'&&c.role==='output')put(outputs,c.id,'out',c.label);}
-    const boundaryLabel=(node,port)=>{const child=doc.nodes.find(n=>n.id===node),owner=doc.nodes.find(n=>n.id===child?.parent);return (owner&&owner.id!==id?owner.label+' · ':'')+(child?.kind==='interface'?child.label:String(port));};
-    for(const e of doc.edges){if(!inside.has(e.source)&&inside.has(e.target))put(inputs,e.target,e.target_port,boundaryLabel(e.target,e.target_port));if(inside.has(e.source)&&!inside.has(e.target))put(outputs,e.source,e.source_port,boundaryLabel(e.source,e.source_port));}
-    const needInputs=!inputs.length,needOutputs=!outputs.length;if(needInputs||needOutputs)for(const child of children.filter(n=>n.kind==='composite')){const p=ports(doc,child.id);if(needInputs)for(const v of p.inputs)if(!doc.edges.some(e=>e.target===v.node&&String(e.target_port)===v.port))put(inputs,v.node,v.port,child.label+' · '+v.label);if(needOutputs)for(const v of p.outputs)if(!doc.edges.some(e=>e.source===v.node&&inside.has(e.target)))put(outputs,v.node,v.port,child.label+' · '+v.label);}
-    return {inputs,outputs};
+    const inside=new Set([id]),todo=[id];for(let i=0;i<todo.length;i++)for(const c of index.children.get(todo[i])||[])if(!inside.has(c.id)){inside.add(c.id);todo.push(c.id);}
+    const boundaryLabel=(node,port)=>{const child=index.nodes.get(node),owner=index.nodes.get(child?.parent);return (owner&&owner.id!==id?owner.label+' · ':'')+(child?.kind==='interface'?child.label:String(port));};
+    const incident=new Set();for(const child of inside)for(const e of [...index.incoming.get(child)||[],...index.outgoing.get(child)||[]])incident.add(e);
+    for(const e of [...incident].sort((a,b)=>index.order.get(a)-index.order.get(b))){if(!inside.has(e.source)&&inside.has(e.target))put(inputs,e.target,e.target_port,boundaryLabel(e.target,e.target_port));if(inside.has(e.source)&&!inside.has(e.target))put(outputs,e.source,e.source_port,boundaryLabel(e.source,e.source_port));}
+    const needInputs=!inputs.length,needOutputs=!outputs.length;if(needInputs||needOutputs)for(const child of children.filter(n=>n.kind==='composite')){const p=ports(doc,child.id,index);if(needInputs)for(const v of p.inputs)if(!(index.incoming.get(v.node)||[]).some(e=>String(e.target_port)===v.port))put(inputs,v.node,v.port,child.label+' · '+v.label);if(needOutputs)for(const v of p.outputs)if(!(index.outgoing.get(v.node)||[]).some(e=>inside.has(e.target)))put(outputs,v.node,v.port,child.label+' · '+v.label);}
+    const result={inputs,outputs};index.cache.set(id,result);return result;
   }
   function connect(doc,source,target,{kind='data',condition=null,id=null,replace=false}={}){
     if(!doc.nodes.some(n=>n.id===source.node)||!doc.nodes.some(n=>n.id===target.node))throw Error('连接端点不存在');
@@ -131,5 +140,5 @@
   }
   function template(doc,ids,title){const m=fragment({nodes:doc.nodes,edges:doc.edges,sources:doc.sources},ids,title);m.components=copy(Object.fromEntries(Object.entries(doc.modules).filter(([id])=>m.ir.nodes.some(n=>n.id===id))));return m;}
   function parameterValue(value,previous){if(typeof previous==='boolean')return !!value;if(typeof previous==='number'){if(!String(value).trim()||!Number.isFinite(Number(value)))throw Error('数值参数必须是有限数字');return Number(value);}return typeof previous==='object'?JSON.parse(value):String(value);}
-  const api={schema,empty,validate,fromIR,closure,fragment,add,erase,ports,connect,group,replaceModule,recipe,restoreConnection,sourceIR,addInterface,editNode,template,parameterValue,copy};root.SemanticAuthoring=api;if(typeof module!=='undefined')module.exports=api;
+  const api={schema,empty,validate,fromIR,closure,fragment,add,erase,ports,portIndex,connect,group,replaceModule,recipe,restoreConnection,sourceIR,addInterface,editNode,template,parameterValue,copy};root.SemanticAuthoring=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

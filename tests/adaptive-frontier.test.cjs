@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),path=require('path');
 const A=require('../semantic_studio/adaptive-frontier.js'),F=require('../semantic_studio/local-expressions.js'),R=require('../semantic_studio/publication-renderer.js');
 const state={paperMedium:'canvas',paperGranularity:'roles'},load=name=>JSON.parse(fs.readFileSync(name==='SameSource'?'verification/semantic-design/current/after/SameSource.json':'verification/local-relations/current/'+name+'.json'));
@@ -79,8 +80,8 @@ test('bounded selection preserves local budget deferral and previous independent
  }
  const small=render('SameSource',{paperAdaptive:true,paperBudget:4});assert.equal(small.graph.publication.adaptive_frontier.attempts.length,0);
 });
-test('explicit title avoidance recovers frozen SVG states and disabled-summary source detail',()=>{
+test('explicit title avoidance recovers frozen vector structure and disabled-summary source detail',()=>{
  const old=require('../tools/load_publication_renderer.cjs')(path.resolve('verification/local-relations/iteration-25-before-adaptive-frontier/implementation/semantic_studio'));
- for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry'])assert.equal(render(name,{paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false}).svg,old.render(load(name),state).svg);
- const disabled={...state,paperPipelineSummaries:false,paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false};assert.equal(render('SameSource',disabled).svg,old.render(load('SameSource'),disabled).svg);
+ for(const name of ['MixedCircuit','UnknownFusion','BrokenCell','ConditionalCarry'])assert.equal(structure(render(name,{paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false}).svg),structure(old.render(load(name),state).svg));
+ const disabled={...state,paperPipelineSummaries:false,paperProtectFrameTitles:true,paperTransformConfigurations:false,paperSourcePortOrder:false};assert.equal(structure(render('SameSource',disabled).svg),structure(old.render(load('SameSource'),disabled).svg));
 });

@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const F=require('../semantic_studio/frame-ownership.js'),E=require('../semantic_studio/semantic-engine.js'),R=require('../semantic_studio/publication-renderer.js');
 const read=name=>JSON.parse(fs.readFileSync(path.join(__dirname,'../verification/local-relations/current/structural-repeats',name+'.json')));
@@ -56,10 +57,10 @@ test('renaming source and class labels never selects a frame reduction',()=>{
  const ir=fixture(),a=[...select(ir)].map(([id,r])=>[id,r.target,r.kind]);for(const n of ir.nodes){n.label='Unfamiliar';n.class_name='Other';}
  assert.deepEqual([...select(ir)].map(([id,r])=>[id,r.target,r.kind]),a);
 });
-test('restoring source frames reproduces frozen SVG and compact documents save and unfold deterministically',()=>{
+test('restoring source frames reproduces frozen vector structure and compact documents save and unfold deterministically',()=>{
  const ir=read('EquivalentSteps'),state={paperMedium:'canvas',paperGranularity:'semantic'},before=JSON.stringify(ir);
  const frozen=require('../tools/load_publication_renderer.cjs')(path.resolve(__dirname,'../verification/local-relations/iteration-11-before-frame-ownership/implementation/semantic_studio'));
- assert.equal(R.render(ir,{...state,paperFrameView:'source',paperProtectFrameTitles:true}).svg,frozen.render(ir,state).svg);
+ assert.equal(structure(R.render(ir,{...state,paperFrameView:'source',paperProtectFrameTitles:true}).svg),structure(frozen.render(ir,state).svg));
  const a=R.render(ir,state);assert.ok(a.graph.frame_ownership.length);assert.deepEqual(a.document.layout.frame_ownership,a.graph.frame_ownership);
  const saved=JSON.parse(JSON.stringify(a.document));assert.equal(R.render(saved.ir,saved.state).svg,a.svg);
  const suffix=a.graph.publication.inline_sequences.sequences[0].remainders[0];

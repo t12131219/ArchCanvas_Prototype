@@ -22,20 +22,34 @@
     for(let i=0;i<todo.length;i++)for(const child of g.idx.children.get(todo[i])||[]){todo.push(child);if(g.positions.has(child))ids.add(child);}
     const parent=owner(g,id),ancestors=new Set();let at=parent;while(at){ancestors.add(at);at=owner(g,at);}
     const obstacles=g.nodes.filter(n=>!ids.has(n.id)&&!ancestors.has(n.id)).map(n=>g.positions.get(n.id));
-    return {id,ids,origins:new Map([...ids].map(id=>[id,{...g.positions.get(id)}])),parent:parent&&g.positions.get(parent),
+    const origins=new Map([...ids].map(id=>[id,{...g.positions.get(id)}]));
+    // If the root encloses its visible descendants, its swept destination
+    // bounds are a sufficient broad phase. Only pre-existing intersections
+    // require a per-descendant check; no new collision can be hidden inside it.
+    const enclosed=[...origins.values()].every(q=>q.x>=p.x&&q.y>=p.y&&q.x+q.w<=p.x+p.w&&q.y+q.h<=p.y+p.h);
+    const existing=enclosed?obstacles.filter(q=>overlap(p,q)):null;
+    return {id,ids,origins,parent:parent&&g.positions.get(parent),enclosed,existing,
       bounds:figure.prepared?.bounds||g.bounds,
       obstacles,obstacleIndex:obstacles.length>64?Geometry.boxes(obstacles):null,
       edges:routes(figure).filter(e=>ids.has(e.source)||ids.has(e.target)),dx:0,dy:0};
   }
   function constrain(s,dx,dy){
     if(!s||!Number.isFinite(dx)||!Number.isFinite(dy))return {ok:false,reason:'invalid displacement'};
-    const p=s.origins.get(s.id),b=s.parent||s.bounds,pad=s.parent?2:0,header=s.parent?(s.parent.header||0):0;
-    const loX=b.x+pad-p.x,hiX=b.x+b.w-pad-p.x-p.w,loY=b.y+header+pad-p.y,hiY=b.y+b.h-pad-p.y-p.h;
+    const p=s.origins.get(s.id),b=s.parent||s.bounds,pad=s.parent?2:0;
+    // Titles are ink, not a full-width reserved band. Match the dedicated
+    // canvas: manually placed children may share/cover the title's row.
+    const loX=b.x+pad-p.x,hiX=b.x+b.w-pad-p.x-p.w,loY=b.y+pad-p.y,hiY=b.y+b.h-pad-p.y-p.h;
     // A pre-existing tight frame must never cause a jump on pointerdown.
     dx=Math.max(Math.min(0,loX),Math.min(Math.max(0,hiX),dx));dy=Math.max(Math.min(0,loY),Math.min(Math.max(0,hiY),dy));
+    const movedRoot={...p,x:p.x+dx,y:p.y+dy};
+    if(s.enclosed){
+      for(const obstacle of s.obstacleIndex?s.obstacleIndex.query(movedRoot):s.obstacles)
+        if(overlap(movedRoot,obstacle)&&!overlap(p,obstacle))return {ok:false,reason:'node overlap',dx:s.dx,dy:s.dy};
+      if(!s.existing.length)return {ok:true,dx,dy};
+    }
     for(const original of s.origins.values()){
       const moved={...original,x:original.x+dx,y:original.y+dy};
-      for(const obstacle of s.obstacleIndex?s.obstacleIndex.query(moved):s.obstacles)
+      for(const obstacle of s.enclosed?s.existing:s.obstacleIndex?s.obstacleIndex.query(moved):s.obstacles)
         if(overlap(moved,obstacle)&&!overlap(original,obstacle))return {ok:false,reason:'node overlap',dx:s.dx,dy:s.dy};
     }
     return {ok:true,dx,dy};
@@ -47,6 +61,15 @@
     if(a&&b)return shift(ps,dx,dy);
     if(!a&&!b)return ps;
     const ordered=b?ps.slice().reverse():ps.slice(),start=ordered[0],next=ordered[1]||start;
+    if(ordered.length===2){
+      // A straight route has no untouched interior join. Keep its fixed
+      // endpoint AND the final arrow direction while previewing a dogleg.
+      const horizontal=start.y===next.y,direction=horizontal?Math.sign(next.x-start.x):Math.sign(next.y-start.y),stub=16;
+      const moved={x:start.x+dx,y:start.y+dy},lead={x:moved.x+(horizontal?direction*stub:0),y:moved.y+(horizontal?0:direction*stub)},tail={x:next.x-(horizontal?direction*stub:0),y:next.y-(horizontal?0:direction*stub)};
+      const mid=horizontal?(lead.x+tail.x)/2:(lead.y+tail.y)/2;
+      const result=horizontal?[moved,lead,{x:mid,y:lead.y},{x:mid,y:tail.y},tail,next]:[moved,lead,{x:lead.x,y:mid},{x:tail.x,y:mid},tail,next];
+      return b?result.reverse():result;
+    }
     const moved={x:start.x+dx,y:start.y+dy},lead={x:next.x+dx,y:next.y+dy};
     const join=ordered[2]||next;
     const bridge=start.x===next.x?{x:join.x,y:lead.y}:{x:lead.x,y:join.y};
@@ -62,6 +85,31 @@
     const boxes=L.routeObstacles(edge,positions);
     return ps.every((p,i)=>!i||((p.x===ps[i-1].x||p.y===ps[i-1].y)&&!L.blocked(ps[i-1],p,boxes)));
   }
+  function terminals(edge,positions){
+    const ps=edge.route.points,es=L.route(edge,positions,{terminalsOnly:true}).points;
+    return ps.length>=2&&es.length===2&&sameCoordinate(ps[0].x,es[0].x)&&sameCoordinate(ps[0].y,es[0].y)&&
+      sameCoordinate(ps.at(-1).x,es[1].x)&&sameCoordinate(ps.at(-1).y,es[1].y);
+  }
+  function optimizePorts(edges,positions,changed){
+    const ctx=positions.context,sides=['top','bottom','left','right'],normals={top:[0,-1],bottom:[0,1],left:[-1,0],right:[1,0]},score=r=>r.points.reduce((sum,p,i)=>sum+(i?Math.abs(p.x-r.points[i-1].x)+Math.abs(p.y-r.points[i-1].y):0),Math.max(0,r.points.length-2)*24);
+    ctx.physicalPortSides={...ctx.physicalPortSides};
+    for(const edge of edges){if(!changed.has(edge.id)||changed.get(edge.id).ok||!L.allowsPhysicalSides(edge,positions))continue;
+      const original=ctx.physicalPortSides[edge.id],baseline=L.route(edge,positions),trials=[];
+      for(const source of sides)for(const target of sides){
+        ctx.physicalPortSides[edge.id]=[source,target];const [s,t]=L.route(edge,positions,{terminalsOnly:true}).points,stub=ctx.stubLength??16;
+        const a={x:s.x+normals[source][0]*stub,y:s.y+normals[source][1]*stub},b={x:t.x+normals[target][0]*stub,y:t.y+normals[target][1]*stub};
+        trials.push({sides:[source,target],bound:2*stub+Math.abs(a.x-b.x)+Math.abs(a.y-b.y)});
+      }
+      let best=baseline.ok?score(baseline):Infinity,choice=original;
+      // Bounded side search runs only on release, never in a pointer frame.
+      // Ordinary default layouts are unaffected by manual port optimization.
+      for(const trial of trials.sort((a,b)=>a.bound-b.bound).slice(0,4)){
+        if(trial.bound>=best)continue;ctx.physicalPortSides[edge.id]=trial.sides;
+        const candidate=L.route(edge,positions);if(candidate.ok&&score(candidate)<best){choice=trial.sides;best=score(candidate);}
+      }
+      if(choice)ctx.physicalPortSides[edge.id]=choice;else delete ctx.physicalPortSides[edge.id];
+    }
+  }
   function qualityOK(before,after){
     return after.issues.every(x=>before.issues.includes(x))&&after.route_failures.length<=before.route_failures.length&&
       after.unplaced_port_labels.length<=before.unplaced_port_labels.length&&
@@ -75,12 +123,15 @@
     const old=routes(figure),candidate=copyFigure(figure),g=candidate.graph;g.positions=positions;
     const ctx=positions.context,selected=figure.prepared?.routing?.shared_fanout_refinement?.selected||[];
     const broken=new Set(selected.filter(r=>r.edges.some(id=>changed.has(id))).flatMap(r=>r.edges));
+    if(ctx.optimizePhysicalPorts)optimizePorts(old,positions,changed);
     let fresh=old.map(e=>({...e,route:changed.get(e.id)||e.route}));
-    const affected=new Set(fresh.filter(e=>broken.has(e.id)||changed.has(e.id)&&!physical(e,positions)||!physical(e,positions)).map(e=>e.id));
+    // Reallocating one physical side can change adjacent slots on that node.
+    // Validate every incident terminal, including otherwise untouched wires.
+    const affected=new Set(fresh.filter(e=>broken.has(e.id)||!physical(e,positions)||!terminals(e,positions)).map(e=>e.id));
     const segments=es=>es.flatMap(e=>e.route.points.slice(1).map((p,i)=>[e.route.points[i],p]));
     ctx.routeCache=new Map();ctx.reserved=segments(fresh.filter(e=>!affected.has(e.id)));
     fresh=fresh.map(e=>{if(!affected.has(e.id))return e;const route=E.route(e,positions);ctx.routeCache.set(e.id,route);ctx.reserved.push(...segments([{route}]));return {...e,route};});
-    if(!fresh.every(e=>physical(e,positions)))throw Error('此位置无法保留避障连线');
+    if(!fresh.every(e=>physical(e,positions)&&terminals(e,positions)))throw Error('此位置无法保留避障连线');
     E.auditConstraintRoutes(g,fresh);
     const applied=new Set((figure.graph.constraint_receipts||[]).filter(r=>r.status==='applied').map(r=>r.id));
     if(g.constraint_receipts.some(r=>applied.has(r.id)&&r.status!=='applied'))throw Error('此位置无法保留已认证的连接约束');
@@ -98,6 +149,8 @@
       const chosen=ir?R.prepareSharedFanouts(ir,{paperComposition:g.publication.composition?'architecture':'dependency'},candidate):candidate;
       if(candidate.frontierLayout)chosen.frontierLayout=candidate.frontierLayout;
       E.auditConstraintRoutes(chosen.graph,chosen.prepared.routes);
+      // Shared stems explicitly replace some physical terminals. Their exact
+      // canonical members remain governed by the fanout certificate.
       if(chosen.graph.constraint_receipts.some(r=>applied.has(r.id)&&r.status!=='applied')||!chosen.prepared.routes.every(e=>physical(e,chosen.graph.positions)))throw Error('移动后的连接约束未通过校验');
       ctx.routeCache=new Map(chosen.prepared.routes.map(e=>[e.id,e.route]));
       markers(chosen);return chosen;
@@ -112,7 +165,15 @@
     for(const e of s.edges)changed.set(e.id,{...e.route,points:previewRoute(e,s,c.dx,c.dy)});
     // Boundary routes must be solved against their actual canonical ports.
     for(const e of s.edges)if(s.ids.has(e.source)!==s.ids.has(e.target))changed.set(e.id,{...changed.get(e.id),ok:false});
-    return {figure:reroute(figure,positions,changed,ir),moved:true,dx:c.dx,dy:c.dy};
+    positions.context.optimizePhysicalPorts=true;
+    let settled;try{settled=reroute(figure,positions,changed,ir);}catch(error){
+      // A side proposal must pass the same fact/quality gate. Retry the
+      // established policy before rejecting an otherwise legal move.
+      positions.context.physicalPortSides=figure.graph.positions.context.physicalPortSides;
+      positions.context.optimizePhysicalPorts=false;settled=reroute(figure,positions,changed,ir);
+    }
+    delete settled.graph.positions.context.optimizePhysicalPorts;
+    return {figure:settled,moved:true,dx:c.dx,dy:c.dy};
   }
   function identity(g){return JSON.stringify([g.nodes.map(n=>[n.id,n.parent]).sort(),g.edges.map(e=>[e.id,e.source,e.target,e.source_port,e.target_port,e.originals]).sort()]);}
   function markers(figure){
@@ -122,7 +183,7 @@
   }
   function placement(figure){return {schema:'semantic-canvas-placement/1',identity:identity(figure.graph),
     positions:[...figure.graph.positions].map(([id,p])=>[id,p.x,p.y,p.w,p.h]),routes:routes(figure).map(e=>[e.id,e.route]),
-    policy:Object.fromEntries(['portOrder','ancestorPorts','stubLength'].map(k=>[k,figure.graph.positions.context[k]])),
+    policy:Object.fromEntries(['portOrder','ancestorPorts','stubLength','physicalPortSides'].map(k=>[k,figure.graph.positions.context[k]])),
     ...(figure.frontierLayout?{layout:figure.frontierLayout}:{})};}
   function placementLayout(saved){
     // Saved layout hints can only choose these existing geometry policies.
@@ -145,7 +206,7 @@
     const siblingIndexes=new Map([...siblings].filter(([,ns])=>ns.length>64).map(([parent,ns])=>[parent,Geometry.boxes(ns)]));
     for(const n of g.nodes){
       const p=g.positions.get(n.id),before=figure.graph.positions.get(n.id),parent=owners.get(n.id),frame=parent&&g.positions.get(parent),oldFrame=parent&&figure.graph.positions.get(parent);
-      const inside=(a,b)=>a.x>=b.x&&a.y>=b.y+(b.header||0)&&a.x+a.w<=b.x+b.w&&a.y+a.h<=b.y+b.h;
+      const inside=(a,b)=>a.x>=b.x&&a.y>=b.y&&a.x+a.w<=b.x+b.w&&a.y+a.h<=b.y+b.h;
       if(frame&&inside(before,oldFrame)&&!inside(p,frame))return null;
       if(!frame&&!inside(p,figure.prepared?.bounds||g.bounds))return null;
       for(const other of siblingIndexes.has(parent)?siblingIndexes.get(parent).query(p):siblings.get(parent)){if(other.id===n.id)continue;
@@ -155,7 +216,13 @@
     return L.withRoutingIndex(g.positions,()=>{
     const by=new Map(saved.routes);if(by.size!==g.edges.length)return null;
     const fresh=g.edges.map(e=>({...e,route:by.get(e.id)}));if(fresh.some(e=>!e.route)||!fresh.every(e=>physical(e,g.positions)))return null;
-    const ctx=g.positions.context;Object.assign(ctx,saved.policy||{});ctx.routeCache=new Map();ctx.reserved=[];
+    const ctx=g.positions.context,policy=saved.policy||{};
+    if(policy.physicalPortSides){
+      const edges=new Map(g.edges.map(e=>[e.id,e]));
+      for(const [id,sides]of Object.entries(policy.physicalPortSides))if(!edges.has(id)||!L.allowsPhysicalSides(edges.get(id),g.positions)||!Array.isArray(sides)||sides.length!==2||sides.some(s=>!['top','bottom','left','right'].includes(s)))return null;
+    }
+    for(const key of ['portOrder','ancestorPorts','stubLength','physicalPortSides'])if(Object.hasOwn(policy,key))ctx[key]=policy[key];
+    ctx.routeCache=new Map();ctx.reserved=[];
     for(const e of fresh){
       // Physical paths were checked above. Terminal verification needs the
       // actual port allocation, not another visibility search per saved edge.

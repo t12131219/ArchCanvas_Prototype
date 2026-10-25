@@ -18,9 +18,9 @@ function someMove(runtime,base){
  assert.fail('fixture must permit a verified module move');
 }
 
-test('nested subtree movement clamps to parent body and canvas, and rejects sibling collisions',()=>{
+test('nested subtree movement clamps to parent boundary and canvas, and rejects sibling collisions',()=>{
  const f=geometry(),s=I.session(f,'a');assert.deepEqual([...s.ids],['a','aa']);
- assert.equal(I.constrain(s,0,-1000).dy,-28);assert.equal(I.constrain(s,-1000,0).dx,-38);
+ assert.equal(I.constrain(s,0,-1000).dy,-68);assert.equal(I.constrain(s,-1000,0).dx,-38);
  assert.equal(I.constrain(s,200,0).ok,false);assert.equal(I.constrain(s,20,20).ok,true);
  assert.equal(I.constrain(I.session(f,'root'),-1000,0).dx,-20);
  const moved=I.move(f,'a',20,20);assert.equal(moved.figure.graph.positions.get('aa').x,80);assert.equal(moved.figure.graph.positions.get('aa').y,140);

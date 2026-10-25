@@ -4,6 +4,6 @@ importScripts(...['symbolic-values.js','structural-representatives.js','role-pat
   'local-pipelines.js','local-expressions.js','role-frontier.js','frame-ownership.js','sequence-frontier.js','local-relations.js','relation-constraints.js',
   'expression-goals.js','geometry-index.js','architecture.js','architecture-layout.js','semantic-engine.js','branch-regions.js','presentation-regions.js','invocation-inputs.js',
   'module-arguments.js','transform-configurations.js','publication.js','summary-goals.js','adaptive-frontier.js','composition-layout.js',
-  'publication-renderer.js','compact-diagrams.js','diagram-set.js','canvas-interaction.js','scene-runtime.js'].map(name=>name+'?v=attention-expansion-1'));
+  'publication-renderer.js','compact-diagrams.js','diagram-set.js','canvas-interaction.js','scene-runtime.js'].map(name=>name+'?v=dedicated-interaction-3'));
 const runtime=SemanticSceneRuntime.create();
 self.onmessage=event=>{const {requestId,...task}=event.data;try{self.postMessage({requestId,...runtime.run(task)});}catch(error){self.postMessage({requestId,ok:false,error:error.message});}};

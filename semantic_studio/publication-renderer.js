@@ -33,8 +33,8 @@
       [...idx?.nodes||[]].map(([id,n])=>[id,n.parent,n.label]),context],(_,v)=>v instanceof Map?{map:[...v]}:v instanceof Set?{set:[...v]}:v);
   }
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
-  const css=`.publication text{font-family:Arial,'Noto Sans SC',sans-serif;fill:#293746} .paper-edge{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:1;stroke-dasharray:none}.paper-edge-halo{fill:none;stroke:white;stroke-width:5;stroke-linejoin:round;pointer-events:none}.paper-edge.control{stroke-dasharray:5 4}.paper-port-label{font-size:13px;font-weight:500;fill:#526170}.paper-title{font-weight:600}.paper-caption{fill:#66717f;font-size:13px}`;
-  const defs=`<marker id="paper-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto"><path d="M1 1 L9 5 L1 9Z" fill="#5d6b7a" stroke="none"/></marker>`;
+  const css=`.publication text,.source-diagram-node text{font-family:Arial,'Noto Sans SC',sans-serif;fill:#172336} .paper-edge{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:1;stroke-dasharray:none}.paper-edge-halo{fill:none;stroke:white;stroke-width:5;stroke-linejoin:round;pointer-events:none}.paper-edge.control{stroke-dasharray:5 4}.paper-port-label{font-size:13px;font-weight:500;fill:#526170}.paper-title{font-weight:700}.paper-title.operation-title{font-weight:400}.publication .paper-caption,.source-diagram-node .paper-caption{fill:#969da6;font-size:13px;font-weight:400}.paper-node-shape{stroke-linejoin:round}`;
+  const defs=`<marker id="paper-arrow" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L9 4 L0 8Z" fill="context-stroke" stroke="none"/></marker>`;
   const path=points=>points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
   // Canvas legibility is measured at the SVG's native CSS scale. Print
   // estimates remain informational there and must not choose its frontier.
@@ -46,7 +46,7 @@
     const contents=n.content_inventory;
     const pipeline=n.local_pipeline,labels=new Map(pipeline?.operations.map(o=>[o.node,o.label])||[]);
     const expression=t=>labels.get(t.node)+(t.inputs.length?' ← {'+t.inputs.map(i=>expression(i.expression)).join('; ')+'}':'');
-    return [n.label,...(n.paper?.source_kind_note?['Source kind: '+n.paper.source_kind_note.caption,n.paper.source_kind_note.scope]:[]),...(n.paper?.call_boundary?[n.paper.call_boundary.scope,'Expand to inspect the retained dependency DAG and exact operand bindings.']:[]),...(n.transform_configurations||[]).flatMap(r=>['Source literal configuration: '+r.text,r.scope,
+    return [n.label,...(n.paper?.captions?.length?[n.paper.captions.join('\n')]:[]),...(n.paper?.source_kind_note?['Source kind: '+n.paper.source_kind_note.caption,n.paper.source_kind_note.scope]:[]),...(n.paper?.call_boundary?[n.paper.call_boundary.scope,'Expand to inspect the retained dependency DAG and exact operand bindings.']:[]),...(n.transform_configurations||[]).flatMap(r=>['Source literal configuration: '+r.text,r.scope,
       'Original operation: '+r.node+'; slots: '+JSON.stringify(r.slots)]),...(n.normal_return?[n.normal_return.scope,'Selected source return: '+n.normal_return.selected_return.node,
       'Fixed predicate: '+n.normal_return.predicate.slot+' = '+n.normal_return.predicate.value,
       'Retained source-alternative inputs: '+JSON.stringify(n.normal_return.alternative_inputs)]:[]),...(n.module_arguments||[]).flatMap(r=>[r.label,r.scope,'Reference: '+r.module_identity,JSON.stringify(r.edge),'Construction evidence: '+JSON.stringify(r.proof.construction_evidence)]),...(n.invocation_binding?['Fixed call argument: '+n.invocation_binding.label,n.invocation_binding.proof_scope,n.invocation_binding.claim,
@@ -63,14 +63,45 @@
       ...contents.terms.map(t=>`${t.label} × ${t.count}`),...contents.units.map(u=>`${u.label}: ${u.term} · ${u.evidence_status}`)]:[]),
       ...uses.map(e=>`${e.id}: ${idx.nodes.get(e.target)?.label||e.target} [${e.target_port}] · ${e.evidence}`)].join('\n');
   }
+  // Drawing vocabulary from draw_transformer.py / Scene.rect: solid pastel
+  // regions, dark outlines and quiet operation bars. Selection uses facts,
+  // never a source/model name, ID, label spelling or reference coordinates.
+  function nodeAppearance(n){
+    const op=n.operator?.startsWith('aten.')?n.operator.split('.')[1]:n.operator;
+    const operations=n.role_path_stage?.operations||n.role_operation_stage?.operations||n.local_pipeline?.operations||[];
+    const ops=new Set([op,...operations.map(o=>o.operator?.startsWith('aten.')?o.operator.split('.')[1]:o.operator)]);
+    const type=n.semantic_type||'',category=P.category(n),rules=n.semantic_contracts||[];
+    let fill='#f3f5f7';
+    if(n.kind==='opaque')fill='#fff0eb';
+    else if(n.contract_stage||type.startsWith('residual')||category==='algebra')fill='#fff6bd';
+    else if(type==='feed-forward')fill='#c8ebfb';
+    else if(category==='attention')fill='#ffddb3';
+    else if(ops.has('embedding'))fill='#f8d4e1';
+    else if(ops.has('linear')||ops.has('addmm'))fill='#dfdff8';
+    else if(ops.has('softmax')||ops.has('_softmax'))fill='#c9f1cd';
+    else if(ops.has('normalization')||ops.has('layer_norm')||ops.has('batch_norm'))fill='#fff6bd';
+    else if(category==='convolution')fill='#c8ebfb';
+    else if(category==='recurrent')fill='#ffddb3';
+    else if(n.kind==='composite')fill=n.repeat_contract||n.sequence_remainder?'#fff0f5':'#e7f5fe';
+    return {fill,stroke:'#263348',text:'#172336',radius:n.kind==='composite'&&!n.presentation_only&&!n.contract_stage&&!rules.length?19:10};
+  }
   function nodeBody(n,p){
-    const a=n.paper,symbol=p.symbol,pad=14,header=p.header||p.h;
-    const shape=symbol?`<circle cx="24" cy="24" r="23" fill="${a.fill}" stroke="${a.stroke}" stroke-width="1.5"/>`:n.kind==='control'&&!p.expanded?`<path d="M12 0H${p.w-12}L${p.w} ${p.h/2}L${p.w-12} ${p.h}H12L0 ${p.h/2}Z" fill="${a.fill}" stroke="${a.stroke}"/>`:`<rect width="${p.w}" height="${p.h}" rx="${n.kind==='interface'&&!p.expanded?Math.min(22,p.h/2):p.expanded?10:7}" fill="${p.expanded?'#ffffff':a.fill}" stroke="${a.stroke}" stroke-width="${p.expanded?1.3:1.1}" ${n.kind==='opaque'?'stroke-dasharray="4 3"':''}/>`;
-    if(symbol)return `${shape}<text x="24" y="33" text-anchor="middle" font-size="28" class="paper-title">${symbol}</text>`;
-    const title=`<text x="${pad}" y="${n.kind==='interface'&&a.lines.length===1&&!a.captions.length?p.h/2+5:24}" font-size="${a.font}" class="paper-title">${a.lines.map((line,i)=>`<tspan x="${pad}" dy="${i?20:0}">${esc(line)}</tspan>`).join('')}</text>`;
-    const caption=a.captions.length?`<text x="${pad}" y="${25+a.lines.length*20}" class="paper-caption">${a.captions.map((line,i)=>`<tspan x="${pad}" dy="${i?16:0}">${esc(line)}</tspan>`).join('')}</text>`:'';
-    const line=p.expanded?`<path d="M1 ${header-10} H${p.w-1}" stroke="#e8edf2" fill="none"/>`:'';
-    return shape+line+title+caption;
+    const a=n.paper,symbol=p.symbol,pad=14,style=nodeAppearance(n),border=p.expanded?2.5:2;
+    const attrs=`class="paper-node-shape" fill="${symbol?'#ffffff':style.fill}" stroke="${style.stroke}" stroke-width="${border}"${n.kind==='opaque'?' stroke-dasharray="5 4"':''}`;
+    const shape=symbol?`<circle cx="${p.w/2}" cy="${p.h/2}" r="${Math.min(p.w,p.h)/2-1}" ${attrs}/>`:
+      n.kind==='control'&&!p.expanded?`<path d="M12 0H${p.w-12}L${p.w} ${p.h/2}L${p.w-12} ${p.h}H12L0 ${p.h/2}Z" ${attrs}/>`:
+      `<rect width="${p.w}" height="${p.h}" rx="${Math.min(style.radius,p.h/2)}" ${attrs}/>`;
+    if(symbol)return `${shape}<text x="${p.w/2}" y="${p.h/2+9}" text-anchor="middle" font-size="28" class="paper-title">${esc(symbol)}</text>`;
+    // Keep the measured frontier, header clearance and every printed row.
+    // Detailed operand/source inventories stay left aligned; compact leaves
+    // use the centered operation labels of the reference drawing.
+    const evidence=!!(a.read_binding_rows||a.call_boundary||n.local_pipeline?.dependency_dag||a.captions.length>2);
+    const centered=!p.expanded&&!evidence,tx=centered?(p.w-(n.kind==='composite'?20:0))/2:pad,anchor=centered?'middle':'start';
+    const ty=!p.expanded&&!a.captions.length?(p.h-(a.lines.length-1)*20)/2+5:24;
+    const title=`<text x="${tx}" y="${ty}" text-anchor="${anchor}" font-size="${a.font}" class="paper-title${n.kind==='composite'||p.expanded?'':' operation-title'}">${a.lines.map((line,i)=>`<tspan x="${tx}" dy="${i?20:0}">${esc(line)}</tspan>`).join('')}</text>`;
+    const cy=25+a.lines.length*20;
+    const caption=a.captions.length?`<text x="${tx}" y="${cy}" text-anchor="${anchor}" class="paper-caption">${a.captions.map((line,i)=>`<tspan x="${tx}" dy="${i?16:0}">${esc(line)}</tspan>`).join('')}</text>`:'';
+    return shape+title+caption;
   }
   const overlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
   function lineGeometry(routes){
@@ -2008,15 +2039,16 @@
   // canonical ports, obstacles, constraints and still-expressible goals.
   // Rejection falls through to the ordinary complete candidate search.
   function prepareFrontier(ir,state,before,id){
-    if(state.view!=='publication'||state.paperMedium!=='canvas'||state.paperComposition!=='architecture'||state.paperAuto!==false||
+    const canonical=state.paperCanonical&&state.paperComposition==='dependency';
+    if(state.view!=='publication'||state.paperMedium!=='canvas'||(!canonical&&state.paperComposition!=='architecture')||state.paperAuto!==false||
       !before?.prepared||!before.graph.positions.has(id)||Object.keys(state.offsets||{}).length)return null;
     const composition=root.SemanticCompositionLayout||(typeof require==='function'?require('./composition-layout.js'):null);
     const priorPolicy=before.frontierLayout||{},selectedRows=before.prepared.routing?.architecture_path_rows?.selected;
-    const layout={paperArchitecturePathRows:state.paperArchitecturePathRows??priorPolicy.paperArchitecturePathRows??(selectedRows===false?false:selectedRows||'left'),
+    const layout=canonical?{}:{paperArchitecturePathRows:state.paperArchitecturePathRows??priorPolicy.paperArchitecturePathRows??(selectedRows===false?false:selectedRows||'left'),
       paperArchitectureStreams:state.paperArchitectureStreams??priorPolicy.paperArchitectureStreams??(before.prepared.routing?.architecture_stream_selection?.accepted?'compact':'aligned'),
       paperArchitectureTerminals:false,paperArchitectureInputs:false};
-    const current={paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state,...layout};
-    const source=E.project(ir,{...current,offsets:{},view:'publication'});let graph=composition.compose(source,current);const positions=graph.positions,ctx=positions.context;
+    const current=canonical?state:{paperSampleFrame:true,paperReadBindingRows:true,paperSourceHeadings:true,...state,...layout};
+    const source=E.project(ir,{...current,offsets:{},view:'publication'});let graph=canonical?source:composition.compose(source,current);const positions=graph.positions,ctx=positions.context;
     if(!positions.has(id)||!!positions.get(id).expanded===!!before.graph.positions.get(id).expanded)return null;
     const strategy=before.prepared.quality.route_strategy;
     Object.assign(ctx,{portOrder:strategy.startsWith('neighbors')?'neighbors':'canonical',ancestorPorts:strategy.includes('-header-')?'header':'boundary',
@@ -2044,7 +2076,7 @@
     if(chosen.prepared.quality.line_geometry.crossings>before.prepared.quality.line_geometry.crossings||
       chosen.prepared.quality.line_geometry.unrelated_contacts.length||chosen.prepared.quality.issues.length)
       chosen.prepared=prepare(graph,{initial:chosen.prepared,localOnly:true,parallelRepairs:true});
-    chosen=prepareSharedFanouts(ir,current,chosen);chosen=attachExpressionEvidence(ir,chosen);graph=chosen.graph;
+    if(!canonical)chosen=prepareSharedFanouts(ir,current,chosen);chosen=attachExpressionEvidence(ir,chosen);graph=chosen.graph;
     E.auditConstraintRoutes(graph,chosen.prepared.routes);
     const q=chosen.prepared.quality,b=before.prepared.quality;
     // Opening a parent introduces real edges and repacks surrounding frames;
@@ -2056,7 +2088,7 @@
     const crossingsBefore=lineGeometry(before.prepared.routes.filter(e=>stable.has(e.id))).crossings;
     const crossingsAfter=lineGeometry(chosen.prepared.routes.filter(e=>stable.has(e.id))).crossings;
     const contacts=new Set(b.line_geometry.unrelated_contacts.map(c=>JSON.stringify(c.edges)));
-    if(q.issues.length||q.line_geometry.unrelated_contacts.some(c=>!contacts.has(JSON.stringify(c.edges)))||
+    if((canonical?q.issues.some(issue=>!b.issues.includes(issue)):q.issues.length)||q.line_geometry.unrelated_contacts.some(c=>!contacts.has(JSON.stringify(c.edges)))||
       q.line_geometry.overlapping_paths.some(p=>!p.same_value)||!chosen.prepared.routes.every(physical)||graph.constraint_receipts.some(c=>c.status==='conflict'))return null;
     const oldApplied=new Map(before.graph.constraint_receipts.filter(c=>c.status==='applied').map(c=>[c.id,c]));
     if(graph.constraint_receipts.some(c=>{
@@ -2073,8 +2105,8 @@
       return goals.every(g=>!was.has(g.id)||!eligible(g)||fulfilled.has(g.id));
     };
     const visibleEdges=new Set(chosen.prepared.routes.flatMap(e=>(e.bundle_members||[e]).flatMap(m=>[m.id,...m.originals||[]])));
-    if(!covers('expression_coverage',graph.expression_goals.goals,g=>g.core.every(id=>positions.has(id))&&g.edges.every(id=>visibleEdges.has(id)))||
-      !covers('summary_coverage',graph.summary_goals.goals,g=>positions.has(g.node)))return null;
+    if(!covers('expression_coverage',graph.expression_goals?.goals||[],g=>g.core.every(id=>positions.has(id))&&g.edges.every(id=>visibleEdges.has(id)))||
+      !covers('summary_coverage',graph.summary_goals?.goals||[],g=>positions.has(g.node)))return null;
     chosen.frontierLayout=layout;
     chosen.prepared.routing={...chosen.prepared.routing,parent_frontier:{node:id,reused_routes:reused,rerouted:pending.length,quality_checked:true,
       stable_edge_crossings:[crossingsBefore,crossingsAfter]}};
@@ -2218,5 +2250,5 @@
         })}:{})},
       diagnostics:{route_failures:quality.route_failures,publication:quality,routing:prepared.routing}}};
   }
-  const api={withPreparationCache,prepareFrontier,prepareArchitectureTerminals,prepareRouteShortcuts,sourceForkContextBinding,normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
+  const api={withPreparationCache,prepareFrontier,prepareArchitectureTerminals,prepareRouteShortcuts,sourceForkContextBinding,normalReturnPreference,prepareSourcePortOrder,prepareSharedFanouts,css,defs,nodeTitle,nodeAppearance,nodeBody,edgeBody,labelBody,prepare,evaluateRoutes,polishRoutes,prepareResidualBands,prepareHeaderReflow,prepareCoupledRoutes,prepareCrossScopePorts,prepareConsumerArguments,prepareOperandRows,prepareFinalSampleFrames,prepareCoincidentPorts,prepareLocalBypasses,prepareEmptyBandCompaction,prepareFigure,render,renderPrepared,overlap,lineGeometry};root.SemanticPublicationRenderer=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

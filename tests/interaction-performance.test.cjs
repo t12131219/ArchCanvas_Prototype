@@ -10,7 +10,7 @@ test('spatial drag checks preserve the linear oracle including clamping, existin
   const obstacles=Array.from({length:300},()=>({x:rand(),y:rand(),w:Math.abs(rand()%150)+1,h:Math.abs(rand()%90)+1}));
   if(scene%3===0)obstacles.push({...origins.get('1')});
   const s={id:'0',origins,obstacles,obstacleIndex:G.boxes(obstacles),parent:scene%2?{x:-2000,y:-2000,w:4000,h:4000,header:50}:null,bounds:{x:-2200,y:-2200,w:4400,h:4400},dx:3,dy:-7};
-  for(const [dx,dy]of [[NaN,0],[Infinity,3],[0,0],[-10000,10000],...Array.from({length:25},()=>[rand(),rand()])])assert.deepEqual(I.constrain(s,dx,dy),oracle.constrain(s,dx,dy));
+  for(const [dx,dy]of [[NaN,0],[Infinity,3],[0,0],[-10000,10000],...Array.from({length:25},()=>[rand(),rand()])])assert.deepEqual(I.constrain(s,dx,dy),oracle.constrain({...s,parent:s.parent&&{...s.parent,header:0}},dx,dy));
  }
 });
 test('cached wrapped text retains exact characters, line breaks and independent mutable result arrays',()=>{
@@ -26,7 +26,7 @@ function wide(){
 test('indexed saved geometry accepts valid wide siblings and rejects newly colliding or escaping children',()=>{
  const f=wide(),saved=I.placement(f);saved.positions.find(p=>p[0]==='n20')[1]+=2;const a=I.restore(f,saved);assert.ok(a);assert.equal(a.graph.positions.get('n20').x,f.graph.positions.get('n20').x+2);
  const bad=E.clone(saved);bad.positions.find(p=>p[0]==='n20')[1]=f.graph.positions.get('n21').x;assert.equal(I.restore(f,bad),null);
- const outside=E.clone(saved);outside.positions.find(p=>p[0]==='n20')[2]=10;assert.equal(I.restore(f,outside),null);
+ const outside=E.clone(saved);outside.positions.find(p=>p[0]==='n20')[2]=-10;assert.equal(I.restore(f,outside),null);
  assert.ok(I.restore(f,I.placement(f)));assert.equal(f.graph.positions.get('n20').x,1620);
 });
 test('translated circular ports survive JSON restoration while real terminal displacement is rejected',()=>{

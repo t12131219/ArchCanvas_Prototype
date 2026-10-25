@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const E=require('../semantic_studio/semantic-engine.js'),L=require('../semantic_studio/architecture-layout.js'),R=require('../semantic_studio/publication-renderer.js');
 const {fixtureForRank,state}=require('./rank-clearance-fixtures.cjs');
@@ -69,7 +70,7 @@ test('names and mutable, identity, state or control boundaries do not become new
 test('explicit spacing, print, manual positions and minimum spacing preserve the requested policy',()=>{
  const ir=fixtureForRank();for(const s of [{...state,paperLabelSpacing:'global'},{...state,paperLabelSpacing:'local'},
   {...state,paperMedium:'print'},{...state,offsets:{root:{x:12,y:0}}},{...state,paperLabelGapY:112}]){
-  const r=R.render(ir,s);assert.equal(r.prepared.routing.rank_clearance_refinement,undefined);assert.equal(r.svg,old.render(ir,s).svg);
+  const r=R.render(ir,s);assert.equal(r.prepared.routing.rank_clearance_refinement,undefined);assert.equal(structure(r.svg),structure(old.render(ir,s).svg));
  }
  const p=layout(ir,{gapY:112});assert.ok(gap(p,'x','a')>=112);assert.ok(gap(p,'a','b')>=112);
 });

@@ -999,6 +999,14 @@
     if(!(e.source!==e.target&&b.expanded&&sourceAnc.has(e.target)))boxes.push(bodyBox(b));
     return boxes;
   }
+  function allowsPhysicalSides(e,positions){
+    // Only physical geometry is free. Certified lanes, control entry, compound
+    // boundaries and explicitly routed relations keep their existing policy.
+    return e.source!==e.target&&['data','alias','interface-binding','parameter-read'].includes(e.kind)&&
+      !e.design_route&&!e.context_lane&&!e.layout_after&&!e.iteration&&!e.condition&&!e.bundle_members&&
+      !positions.get(e.source)?.expanded&&!positions.get(e.target)?.expanded&&
+      !positions.context?.crossScopePorts?.some(c=>c.edge===e.id);
+  }
   function route(e,positions,{terminalsOnly=false}={}){
     const a=positions.get(e.source),b=positions.get(e.target);if(!a||!b)return {points:[],ok:false,reason:'missing-endpoint'};
     const context=positions.context,idx=context?.idx;
@@ -1021,6 +1029,8 @@
     if(contextLane){ts=e.context_lane.side;ss=contextSourceSide(e,positions)||ss;}
     const crossScope=context?.crossScopePorts?.find(c=>c.edge===e.id);
     if(crossScope){ss=crossScope.source_side;ts=crossScope.target_side;}
+    const physicalSides=context?.physicalPortSides?.[e.id];
+    if(physicalSides&&allowsPhysicalSides(e,positions)){ss=physicalSides[0];ts=physicalSides[1];}
     function sideFor(edge,isSource){
       const from=positions.get(edge.source),to=positions.get(edge.target);if(!from||!to)return null;
       const down=to.y>=from.y+from.h,up=from.y>=to.y+to.h;
@@ -1037,6 +1047,8 @@
       }
       const crossScope=context?.crossScopePorts?.find(c=>c.edge===edge.id);
       if(crossScope){sourceSide=crossScope.source_side;targetSide=crossScope.target_side;}
+      const physicalSides=context?.physicalPortSides?.[edge.id];
+      if(physicalSides&&allowsPhysicalSides(edge,positions)){sourceSide=physicalSides[0];targetSide=physicalSides[1];}
       return isSource?sourceSide:targetSide;
     }
     function port(id,other,isSource,which){
@@ -1284,5 +1296,5 @@
     return result.sort((a,b)=>a.wire-b.wire||a.points.length-b.points.length).slice(0,64);
   }
   function path(e,positions){const r=route(e,positions);return r.points.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');}
-  const api={withRoutingIndex,routeShortcuts,layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,architectureFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
+  const api={withRoutingIndex,allowsPhysicalSides,routeShortcuts,layout,route,path,components,blocked,routeObstacles,sourcePortSwaps,sharedFanouts,architectureFanouts,fanoutInk,fanoutJunctions,contextEntries,contextSourceSide,crossScopeEntries,consumerArguments,operandRows,declaredOperandOrder,emptyBands,neighborOrder,coincidentPorts,regionFollowers,branchGeometry,entryGeometry,entryBandGeometry,inputDockGeometry,labelClearances,localBypassScope,localBypassGeometry};root.SemanticLayout=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

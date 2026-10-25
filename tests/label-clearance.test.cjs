@@ -1,4 +1,5 @@
 'use strict';
+const structure=require('./diagram-structure.cjs');
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const E=require('../semantic_studio/semantic-engine.js'),L=require('../semantic_studio/architecture-layout.js'),R=require('../semantic_studio/publication-renderer.js');
 const {fixture,state:request}=require('./label-clearance-fixtures.cjs');
@@ -26,7 +27,7 @@ test('ordinary parallel uses do not invent label clearance; conditional and bund
 });
 test('a conditional region no longer inflates its unrelated unknown helper',()=>{
  const ir=fixture(),before=JSON.stringify(ir),global=R.render(ir,{...state,paperLabelSpacing:'global'}),local=R.render(ir,state);
- assert.equal(global.svg,old.render(ir,state).svg);assert.equal(local.prepared.routing.clearance_refinement.accepted,true);
+ assert.equal(structure(global.svg),structure(old.render(ir,state).svg));assert.equal(local.prepared.routing.clearance_refinement.accepted,true);
  assert.deepEqual(identity(local.graph),identity(global.graph));accounted(ir,local.graph);assert.equal(JSON.stringify(ir),before);
  assert.equal(local.graph.positions.get('signals').h,global.graph.positions.get('signals').h);
  assert.ok(local.graph.positions.get('other').h<global.graph.positions.get('other').h);assert.ok(local.graph.positions.has('v'));
@@ -46,11 +47,11 @@ test('saved local selection reopens exactly and remains compatible with deeper f
 });
 test('manual offsets, print mode and explicit global spacing preserve baseline geometry',()=>{
  const ir=fixture();for(const s of [{...state,paperLabelSpacing:'global'}, {...state,offsets:{root:{x:12,y:0}}},
-  {...state,paperMedium:'print'}]){const r=R.render(ir,s);assert.equal(r.prepared.routing.clearance_refinement,undefined);assert.equal(r.svg,old.render(ir,s).svg);}
+  {...state,paperMedium:'print'}]){const r=R.render(ir,s);assert.equal(r.prepared.routing.clearance_refinement,undefined);assert.equal(structure(r.svg),structure(old.render(ir,s).svg));}
 });
 test('explicit minimum gaps are honored in every container, and zero-gain proposals are rejected',()=>{
  const ir=fixture(),r=R.render(ir,{...state,paperLabelGapY:112});assert.equal(r.prepared.routing.clearance_refinement,undefined);
- assert.equal(r.svg,old.render(ir,{...state,paperLabelGapY:112}).svg);
+ assert.equal(structure(r.svg),structure(old.render(ir,{...state,paperLabelGapY:112}).svg));
  // A single required channel has no smaller rank allocation. Use a fresh
  // immutable input; publication plans cache by IR object identity.
  ir.nodes=ir.nodes.filter(n=>['root','a','b'].includes(n.id));for(const n of ir.nodes)if(n.id!=='root')n.parent='root';ir.edges=ir.edges.filter(e=>['e1','e2'].includes(e.id));

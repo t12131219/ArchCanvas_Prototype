@@ -4,6 +4,7 @@
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const el=(tag,attrs={},text)=>{const n=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(attrs))n.setAttribute(k,v);if(text!==undefined)n.textContent=text;return n;};
   let catalog=[],ir=null,state=null,presentation=null,projection=null,selected=null,history=[],future=[],camera={x:0,y:0,w:1000,h:700},drag=null,loadRevision=0;
+  let activePreview=null;
   let renderedNodes=new Map(),renderedEdges=new Map(),pendingFrame=0,dragPoint=null,inspectedBundle=null,canvasQuality=null,displayedFigure=null;
   const paperNodeStamps=new WeakMap(),paperEdgeStamps=new WeakMap();let paperSceneIR=null,renderInstance=0;
   let navigationIndex=[],focusOptions=[],sceneKey=null,busy=false,renderRevision=0,fitRequested=false,persistRequested=false,committed=null,persistTimer=0;
@@ -193,24 +194,25 @@
     }else open.add(id);state.open=[...open];delete state.canvasPlacement;render({frontier:id});if(state.view==='publication')fit();persist();}
   function bindNode(g,n,p,graph=projection){
       const kids=graph.idx.children.get(n.id)||[];
-      if(kids.length){const plus=el('text',{x:p.w-22,y:25,'font-size':18,fill:'#47618a'},p.expanded?'−':'+');plus.style.pointerEvents='auto';plus.style.cursor='pointer';plus.addEventListener('pointerdown',e=>e.stopPropagation());plus.addEventListener('click',e=>{e.stopPropagation();toggle(n.id);});g.append(plus);}
+      if(kids.length){const control=el('g',{'data-toggle-node':n.id,role:'button',tabindex:0,'aria-label':(p.expanded?'收起 ':'展开 ')+(n.paper?.title||n.label),'aria-expanded':String(!!p.expanded),style:'cursor:pointer'});
+        control.append(el('rect',{x:p.w-32,y:8,width:28,height:28,fill:'transparent','pointer-events':'all'}),el('text',{x:p.w-22,y:25,'font-size':18,fill:'#47618a','pointer-events':'none'},p.expanded?'−':'+'));
+        control.addEventListener('pointerdown',e=>e.stopPropagation());control.addEventListener('dblclick',e=>e.stopPropagation());control.addEventListener('click',e=>{e.stopPropagation();toggle(n.id);});control.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();toggle(n.id);}});g.append(control);}
       g.addEventListener('dblclick',e=>{e.stopPropagation();toggle(n.id);});
       g.addEventListener('pointerdown',e=>{
         if(e.button!==0||busy||drag)return;e.stopPropagation();inspect(n.id);const session=I.session(displayedFigure||{graph:projection},n.id);if(!session)return;
-        drag={kind:'node',id:n.id,start:world(e),session,moved:false,dx:0,dy:0,pointerId:e.pointerId,capture:g,beforeHistory:history.slice(),beforeFuture:future.slice(),beforeState:E.clone(state),samples:[]};setBusy(true);g.setPointerCapture(e.pointerId);svg.dataset.interactionPhase='dragging';
+        drag={kind:'node',id:n.id,start:world(e),session,moved:false,dx:0,dy:0,pointerId:e.pointerId,capture:svg,beforeHistory:history.slice(),beforeFuture:future.slice(),beforeState:E.clone(state),samples:[]};setBusy(true);svg.setPointerCapture(e.pointerId);svg.dataset.interactionPhase='dragging';
       });
   }
-  async function drawScene(result,isCurrent=()=>true){if(!ir)return;if(result.geometryOnly){patchGeometry(result.figure);return;}$('architectureReturn').hidden=!state.paperFrontierReturn;$('diagramSuggestions').hidden=true;$('diagramBack').hidden=!state.paperDiagramReturn;$('legend').innerHTML=state.view==='publication'?'<span>蓝灰实线：源码依赖</span><span>绿色：实际张量流</span><span>黄虚线：控制</span><span>虚框：未知操作</span><span>无节点交叉：跨越</span><span>粗线与数量：合绘的独立依赖，可单击查看</span>':'<span>蓝色虚线：源码依赖</span><span>绿色实线：实际张量流</span><span>紫色：参数</span><span>黄色：控制</span><span>红色虚框：未知边界</span>';svg.classList.toggle('publication',state.view==='publication');if(state.view!=='publication'){document.getElementById('paperLabels')?.remove();document.getElementById('paperJunctions')?.remove();}if(state.view==='publication'){await renderPaper(result.figure,result.planned,isCurrent);return;}displayedFigure=result.figure;projection=result.figure.graph;renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
+  async function drawScene(result,isCurrent=()=>true){if(!ir)return;if(result.geometryOnly){patchGeometry(result.figure);return;}$('architectureReturn').hidden=!state.paperFrontierReturn;$('diagramSuggestions').hidden=true;$('diagramBack').hidden=!state.paperDiagramReturn;$('legend').innerHTML=state.view==='publication'?'<span>蓝灰实线：源码依赖</span><span>绿色：实际张量流</span><span>黄虚线：控制</span><span>虚框：未知操作</span><span>无节点交叉：跨越</span><span>粗线与数量：合绘的独立依赖，可单击查看</span>':'<span>蓝色虚线：源码依赖</span><span>绿色实线：实际张量流</span><span>紫色：参数</span><span>黄色：控制</span><span>虚框：未知边界</span>';svg.classList.toggle('publication',state.view==='publication');if(state.view!=='publication'){document.getElementById('paperLabels')?.remove();document.getElementById('paperJunctions')?.remove();}if(state.view==='publication'){await renderPaper(result.figure,result.planned,isCurrent);return;}activePreview?.reset();activePreview=null;displayedFigure=result.figure;projection=result.figure.graph;renderedNodes=new Map();renderedEdges=new Map();for(const id of ['frames','edges','nodes'])$(id).replaceChildren();
     const frameFragment=document.createDocumentFragment(),nodeFragment=document.createDocumentFragment(),edgeFragment=document.createDocumentFragment();
-    for(const n of E.drawingOrder(projection.nodes,projection.idx)){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});const fill=n.glyph?.fill||'#edf2fa',color=n.kind==='opaque'?'#bf6b6b':'#92a8c4';let shape;
-      if(p.symbol){shape=el('circle',{cx:p.w/2,cy:p.h/2,r:p.w/2,fill,stroke:color});}
-      else if(n.kind==='control'&&!p.expanded){shape=el('polygon',{points:`16,0 ${p.w-16},0 ${p.w},${p.h/2} ${p.w-16},${p.h} 16,${p.h} 0,${p.h/2}`,fill,stroke:color});}
-      else shape=el('rect',{x:0,y:0,width:p.w,height:p.h,rx:p.expanded?12:n.kind==='interface'?28:8,fill:p.expanded?'#f7f9fd':fill,stroke:color,'stroke-width':p.expanded?1.6:1.2,...(n.kind==='opaque'?{'stroke-dasharray':'5 4'}:{})});
-      g.append(shape,el('title',{},n.label+' | '+n.kind+' | '+n.evidence_status));
-      const limit=Math.floor((p.w-40)/7.5),label=n.label.length>limit?n.label.slice(0,limit-1)+'…':n.label;
-      g.append(el('text',{x:p.symbol?p.w/2:12,y:p.symbol?p.h/2+8:22,'text-anchor':p.symbol?'middle':'start','font-size':p.symbol?28:p.h<60?12:14,'font-weight':600,fill:'#263b55'},p.symbol||label));
-      const caption=p.expanded?(n.semantic_type||'composite'):(n.semantic_type||n.operator||n.kind);
-      if(p.h>=58&&!p.symbol)g.append(el('text',{x:12,y:46,'font-size':10,fill:'#7385a0'},caption.length>32?caption.slice(0,30)+'…':caption));
+    ensureDiagramStyle();
+    for(const n of E.drawingOrder(projection.nodes,projection.idx)){const p=projection.positions.get(n.id),g=el('g',{class:'node'+(n.id===selected?' selected':''),'data-id':n.id,transform:`translate(${p.x},${p.y})`});const font=p.h<60?12:14,limit=Math.floor((p.w-40)/7.5),label=n.label.length>limit?n.label.slice(0,limit-1)+'…':n.label;
+      const caption=p.h>=58&&!p.symbol?(n.semantic_type||n.operator||n.kind):'';
+      let shortCaption=caption;while(shortCaption&&P.width(shortCaption,13)>p.w-32)shortCaption=shortCaption.slice(0,-1);
+      if(shortCaption!==caption)shortCaption=shortCaption.slice(0,-1)+'…';
+      const paper={font,lines:[label],captions:shortCaption?[shortCaption]:[]};
+      g.classList.add('source-diagram-node');g.innerHTML=R.nodeBody({...n,paper},p);
+      g.append(el('title',{},n.label+' | '+n.kind+' | '+n.evidence_status));
       bindNode(g,n,p);
       renderedNodes.set(n.id,g);(p.expanded?frameFragment:nodeFragment).append(g);
     }
@@ -277,6 +279,7 @@
     $('edges').append(group);
   }
   function patchGeometry(figure){
+    activePreview?.reset();activePreview=null;
     const started=performance.now();
     displayedFigure=figure;projection=figure.graph;if(figure.prepared)projection.bounds=figure.prepared.bounds;
     for(const [id,g]of renderedNodes){const p=projection.positions.get(id);g.setAttribute('transform',`translate(${p.x},${p.y})`);}
@@ -293,6 +296,9 @@
     Object.assign(svg.dataset,{domCreatedNodes:'0',domReusedNodes:String(renderedNodes.size),domCreatedEdges:'0',domReusedEdges:String(renderedEdges.size),domMs:(performance.now()-started).toFixed(2)});
     refreshBundleInspector();$('undo').disabled=!history.length;$('redo').disabled=!future.length;message(`${projection.nodes.length} 个图元 · ${projection.edges.length} 条连接 · 位置与连线已更新`);
   }
+  function ensureDiagramStyle(){
+    if(!document.getElementById('paperStyle')){svg.prepend(el('style',{id:'paperStyle'},R.css));svg.querySelector('defs').insertAdjacentHTML('beforeend',R.defs);}
+  }
   async function renderPaper(figure,planned,isCurrent=()=>true){
     const started=performance.now(),graph=figure.graph,prepared=figure.prepared,nodeMap=new Map(),edgeMap=new Map(),frames=[],nodes=[],edges=[];
     const retain=paperSceneIR===ir&&!!displayedFigure?.prepared,stats={createdNodes:0,reusedNodes:0,createdEdges:0,reusedEdges:0};
@@ -305,7 +311,7 @@
       (p.expanded?frames:nodes).push(g);nodeMap.set(n.id,g);
       if(++built%128===0){await yieldFrame();if(!isCurrent())return;}
     }
-    let style=document.getElementById('paperStyle');if(!style){style=el('style',{id:'paperStyle'},R.css);svg.prepend(style);svg.querySelector('defs').insertAdjacentHTML('beforeend',R.defs);}
+    ensureDiagramStyle();
     const labels=el('g',{id:'paperLabels'});
     for(const edge of prepared.routes){
       const body=R.edgeBody(edge);let g=retain&&renderedEdges.get(edge.id);
@@ -327,7 +333,7 @@
       }
       edges.push(g);edgeMap.set(edge.id,g);if(++built%128===0){await yieldFrame();if(!isCurrent())return;}
     }
-    if(!isCurrent())return;displayedFigure=figure;projection=graph;projection.bounds=prepared.bounds;renderedNodes=nodeMap;renderedEdges=edgeMap;
+    if(!isCurrent())return;activePreview?.reset();activePreview=null;displayedFigure=figure;projection=graph;projection.bounds=prepared.bounds;renderedNodes=nodeMap;renderedEdges=edgeMap;
     // Retained instances stay in the old committed scene throughout async
     // preparation. Only this guarded commit changes live nodes or ordering.
     for(const [id,g]of nodeMap){const p=graph.positions.get(id);g.setAttribute('transform',`translate(${p.x},${p.y})`);g.classList.toggle('selected',id===selected);}
@@ -364,6 +370,7 @@
   $('diagramBack').onclick=()=>{if(!state.paperDiagramReturn)return;snapshot();state=E.clone(state.paperDiagramReturn);selected=null;$('view').value=state.view;$('mode').value=state.mode;syncPaperControls();render();fit();persist();};
   function world(e){const point=svg.createSVGPoint();point.x=e.clientX;point.y=e.clientY;return point.matrixTransform(svg.getScreenCTM().inverse());}
   function restorePreview(){
+    activePreview?.reset();activePreview=null;
     if(!projection)return;
     for(const [id,g]of renderedNodes){const p=projection.positions.get(id);g.setAttribute('transform',`translate(${p.x},${p.y})`);}
     for(const e of displayedFigure?.prepared?.routes||projection.edges.map(e=>({...e,route:E.route(e,projection.positions)}))){
@@ -378,21 +385,17 @@
     if(!c.dx&&!c.dy&&!drag.moved)return;
     if(!drag.moved){snapshot();drag.moved=true;}
     drag.dx=c.dx;drag.dy=c.dy;drag.session.dx=c.dx;drag.session.dy=c.dy;
-    for(const [id,old]of drag.session.origins)renderedNodes.get(id)?.setAttribute('transform',`translate(${old.x+c.dx},${old.y+c.dy})`);
-    for(const e of drag.session.edges){const element=renderedEdges.get(e.id);if(!element)continue;
-      if(drag.session.ids.has(e.source)&&drag.session.ids.has(e.target))element.setAttribute('transform',`translate(${c.dx},${c.dy})`);
-      else {const d=I.path(I.previewRoute(e,drag.session,c.dx,c.dy));if(element.tagName==='g')element.querySelectorAll('path').forEach(p=>p.setAttribute('d',d));else element.setAttribute('d',d);}
+    if(!activePreview){
+      activePreview=window.SemanticCanvasPreview.create({session:drag.session,nodes:renderedNodes,edges:renderedEdges,
+        labels:[...document.querySelectorAll('#paperLabels [data-label-edge]')].map(element=>({element,edge:element.dataset.labelEdge})),
+        markers:[...document.querySelectorAll('#paperJunctions circle')].map(element=>({element,edges:JSON.parse(element.dataset.fanoutEdges)}))});
+      svg.dataset.previewWork=JSON.stringify(activePreview.stats);
     }
-    // Labels of unaffected edges remain visible; labels of translated internal
-    // routes move with their owner. External labels settle after routing.
-    for(const label of drag.labels||[]){if(label.internal)label.element.setAttribute('transform',`translate(${c.dx},${c.dy})`);else label.element.setAttribute('visibility','hidden');}
-    for(const marker of drag.markers||[]){if(marker.internal)marker.element.setAttribute('transform',`translate(${c.dx},${c.dy})`);else marker.element.setAttribute('visibility','hidden');}
+    activePreview.update(c.dx,c.dy);
     drag.samples.push(performance.now()-started);
   }
   svg.addEventListener('pointerdown',e=>{if(e.button===1){e.preventDefault();if(drag)return;drag={kind:'pan',client:{x:e.clientX,y:e.clientY},camera:{...camera},pointerId:e.pointerId,capture:svg};svg.setPointerCapture(e.pointerId);}});
-  svg.addEventListener('pointermove',e=>{if(!drag)return;if(drag.kind==='node'&&!drag.labels){const edges=new Map(drag.session.edges.map(e=>[e.id,e]));drag.labels=[...document.querySelectorAll('#paperLabels [data-label-edge]')].filter(n=>edges.has(n.dataset.labelEdge)).map(element=>{const e=edges.get(element.dataset.labelEdge);return {element,internal:drag.session.ids.has(e.source)&&drag.session.ids.has(e.target)};});}
-    if(drag.kind==='node'&&!drag.markers)drag.markers=[...document.querySelectorAll('#paperJunctions circle')].map(element=>({element,edges:JSON.parse(element.dataset.fanoutEdges)})).filter(m=>m.edges.some(id=>drag.session.edges.some(e=>e.id===id))).map(m=>({...m,internal:m.edges.every(id=>{const e=drag.session.edges.find(e=>e.id===id);return e&&drag.session.ids.has(e.source)&&drag.session.ids.has(e.target);})}));
-    dragPoint={clientX:e.clientX,clientY:e.clientY};if(!pendingFrame)pendingFrame=requestAnimationFrame(move);});
+  svg.addEventListener('pointermove',e=>{if(!drag)return;dragPoint={clientX:e.clientX,clientY:e.clientY};if(!pendingFrame)pendingFrame=requestAnimationFrame(move);});
   function release(gesture){if(gesture.capture?.hasPointerCapture(gesture.pointerId))gesture.capture.releasePointerCapture(gesture.pointerId);}
   function cleanLabels(gesture){for(const l of [...(gesture.labels||[]),...(gesture.markers||[])]){l.element.removeAttribute('transform');l.element.removeAttribute('visibility');}}
   function cancelDrag(){if(!drag)return;const gesture=drag;if(pendingFrame)cancelAnimationFrame(pendingFrame);pendingFrame=0;drag=null;dragPoint=null;
@@ -432,7 +435,7 @@
   const authoringFrame=$('authoringFrame');
   function showMode(edit){document.body.classList.toggle('authoring-mode',edit);authoringFrame.hidden=!edit;$('viewMode').setAttribute('aria-pressed',String(!edit));$('editMode').setAttribute('aria-pressed',String(edit));}
   function sendAuthoring(){if(!authoringReady||!ir)return;authoringFrame.contentWindow.postMessage({type:'semantic-authoring-open',ir,state,document:authoringDocument},location.origin);authoringPending=false;}
-  $('editMode').onclick=async()=>{if(busy||!ir)return;const digest=ir.ir_digest;if(!authoringDocument){const storedEdit=await storage.read('semantic-authoring-document:'+digest);if(ir.ir_digest!==digest)return;if(storedEdit){try{window.SemanticAuthoring.validate(storedEdit);authoringDocument=storedEdit;}catch(_){}}}showMode(true);authoringPending=true;if(!authoringFrame.src)authoringFrame.src='authoring.html';else if(authoringReady)sendAuthoring();};
+  $('editMode').onclick=async()=>{if(busy||!ir)return;const digest=ir.ir_digest;if(!authoringDocument){const storedEdit=await storage.read('semantic-authoring-document:'+digest);if(ir.ir_digest!==digest)return;if(storedEdit){try{window.SemanticAuthoring.validate(storedEdit);authoringDocument=storedEdit;}catch(_){}}}showMode(true);authoringPending=true;if(!authoringFrame.src)authoringFrame.src='authoring.html?v=dedicated-interaction-3';else if(authoringReady)sendAuthoring();};
   $('viewMode').onclick=()=>{if(document.body.classList.contains('authoring-mode')&&authoringReady)authoringFrame.contentWindow.postMessage({type:'semantic-authoring-request-preview'},location.origin);else showMode(false);};
   window.addEventListener('message',async event=>{
     if(event.origin!==location.origin||event.source!==authoringFrame.contentWindow)return;

@@ -225,3 +225,128 @@ test('joint input routing reserves a straight local input and moves lateral ingr
  for(const opts of [{obstacle:true},{fixed:true}]){const g=sample(opts),before=JSON.stringify(g.edges);G.refineJoins(g,G.routeOptions(),SummaryConstraints.validationContext(g),1000);assert.equal(JSON.stringify(g.edges),before);assertValid(g);}
  const limited=sample(),before=JSON.stringify(limited.edges);G.refineJoins(limited,G.routeOptions({joinEdges:new Set(['inline'])}),SummaryConstraints.validationContext(limited),1000);assert.equal(JSON.stringify(limited.edges),before);
 });
+
+test('native wire styles distinguish relation meaning from static/runtime evidence and preserve conditional data',()=>{
+ const edge=(kind,extra={})=>({kind,evidence:'source-dependency',...extra}),by=new Map([['p',{kind:'parameter'}],['c',{invocation_binding:{value:false}}]]);
+ for(const evidence of ['source-dependency','runtime-tensor','framework-contract']){
+  assert.equal(G.edgeAppearance(edge('data',{evidence})).dashed,false);
+  assert.equal(G.edgeAppearance(edge('interface-binding',{evidence})).dashed,false);
+ }
+ const condition={branch:'test',outcome:'false'},data=edge('data',{condition});
+ assert.equal(G.edgeAppearance(data).category,'data');assert.equal(G.edgeAppearance(data).dashed,false);assert.deepEqual(data.condition,condition);
+ assert.equal(G.edgeAppearance(edge('control')).dashed,true);
+ assert.equal(G.edgeAppearance(edge('state-write')).category,'effect');
+ assert.equal(G.edgeAppearance(edge('parameter-read')).category,'resource');
+ for(const source of ['p','c'])assert.equal(G.edgeAppearance(edge('data',{source}),by).category,'resource');
+ assert.equal(G.edgeAppearance(edge('unfamiliar')).category,'unresolved');
+ assert.equal(G.edgeAppearance(edge('data',{evidence_status:'conflict'})).dashed,true);
+ const bundle=bundle_members=>edge('data',{bundle_members});
+ assert.equal(G.edgeAppearance(bundle([edge('data'),edge('control')])).category,'mixed');
+ assert.equal(G.edgeAppearance(bundle([edge('data'),edge('alias',{condition})])).dashed,false);
+ assert.equal(G.edgeAppearance(bundle([edge('parameter-read'),edge('parameter-read')])).category,'resource');
+ const graph=G.build(ir),before=copy(graph.generic.ir);assert.ok(graph.edges.some(e=>!e.dashed));assert.deepEqual(graph.generic.ir,before);
+ const old=G.document(graph);old.renderer='native-semantic/10';const migrated=G.read(old);assert.equal(migrated.nativeLayout,null);assert.deepEqual(migrated.ir,before);assert.deepEqual(migrated.migration.previousNativeLayout,old.nativeLayout);
+});
+
+function columnFixture(variant='serial'){
+ const node=(id,x,y,extra={})=>({id,parent:'frame',x,y,w:80,h:40,semantic:{kind:'compute',label:id,...extra}});
+ const nodes=[{id:'frame',parent:null,x:0,y:0,w:600,h:500,expanded:true,semantic:{kind:'composite'}},node('a',120,100),node('b',200,200,{condition:{branch:'flag',outcome:'true'}}),node('c',240,300),node('side',330,200,{kind:'control'})];
+ const edge=(a,b,kind='data')=>({id:a+b,source:a,target:b,binding:{kind,source:a,target:b,...(a==='a'?{condition:{branch:'flag',outcome:'true'}}:{})}});
+ const edges=[edge('a','b'),edge('b','c'),edge('side','b','control')];
+ if(variant==='cycle')edges.push(edge('c','a'));
+ if(variant==='effect')edges.push(edge('side','a','state-write'));
+ if(variant==='control')for(const e of edges)e.binding.kind='control';
+ if(variant==='crowded')nodes[0].w=200;
+ if(variant==='parallel'){
+  nodes.splice(1,nodes.length-1,node('a',80,100),node('b',120,200),node('c',360,100),node('d',400,200),node('sink',250,300));edges.splice(0,edges.length,edge('a','b'),edge('c','d'),edge('b','sink'),edge('d','sink'));
+ }
+ return {nodes,edges};
+}
+test('parent placement aligns real data paths while retaining conditions, auxiliary controls and parallel columns',()=>{
+ for(const reverse of [false,true]){
+  const graph=columnFixture(),before=copy(graph);if(reverse)for(const n of graph.nodes.filter(n=>n.parent))n.y=400-n.y;
+  const facts=graph.nodes.map(n=>[n.id,n.parent,copy(n.semantic),n.y]);assert.ok(G.placementProposal(graph).length);
+  assert.equal(new Set(graph.nodes.filter(n=>['a','b','c'].includes(n.id)).map(n=>n.x+n.w/2)).size,1);
+  assert.deepEqual(graph.nodes.map(n=>[n.id,n.parent,n.semantic,n.y]),facts);assert.deepEqual(graph.edges,before.edges);
+  const kids=graph.nodes.filter(n=>n.parent);for(const a of kids)for(const b of kids)if(a!==b)assert.ok(a.x+a.w<=b.x||b.x+b.w<=a.x||a.y+a.h<=b.y||b.y+b.h<=a.y);
+ }
+ const graph=columnFixture('parallel'),before=copy(graph);assert.ok(G.placementProposal(graph).length);
+ const by=new Map(graph.nodes.map(n=>[n.id,n]));assert.equal(by.get('a').x,by.get('b').x);assert.equal(by.get('c').x,by.get('d').x);assert.ok(by.get('b').x+by.get('b').w<by.get('d').x);assert.deepEqual(graph.edges,before.edges);
+ const renamed=columnFixture('parallel');for(const n of renamed.nodes)n.semantic.label='Unknown '+n.id;G.placementProposal(renamed);assert.deepEqual(renamed.nodes.map(n=>[n.x,n.y]),graph.nodes.map(n=>[n.x,n.y]));
+});
+test('cycles, effects, control-only relations and insufficient parent space keep original placement',()=>{
+ for(const variant of ['cycle','effect','control','crowded']){const graph=columnFixture(variant),before=copy(graph);assert.deepEqual(G.placementProposal(graph),[],variant);assert.deepEqual(graph,before,variant);}
+});
+test('channel and placement refinements preserve exact source receipts and reject over-budget partial candidates',()=>{
+ const graph=ready(),facts=copy([graph.generic.ir,graph.generic.receipts,graph.nodes.map(n=>n.semantic),graph.edges.map(e=>e.binding)]),before=EdgeRouterLabRouting.stats(graph.edges);
+ G.refineChannels(graph,G.routeOptions(),250);assertValid(graph);const after=EdgeRouterLabRouting.stats(graph.edges);
+ assert.ok(after.length<=before.length+1e-5);assert.ok(after.bends<=before.bends);assert.ok(after.crossings<=before.crossings);
+ assert.deepEqual([graph.generic.ir,graph.generic.receipts,graph.nodes.map(n=>n.semantic),graph.edges.map(e=>e.binding)],facts);
+ const snapshot=G.layoutSnapshot(graph);G.refinePlacement(graph,G.routeOptions(),0);assert.deepEqual(G.layoutSnapshot(graph),snapshot);assertValid(graph);
+});
+
+test('fixed call inputs dock near their sole receiving scope without changing ownership, names or exact uses',()=>{
+ function sample(reverse=false){
+  const nodes=[{id:'owner',parent:null,x:0,y:0,w:600,h:650,expanded:true,semantic:{kind:'composite'}},{id:'arg',parent:'owner',x:30,y:reverse?550:70,w:80,h:40,semantic:{kind:'interface',invocation_binding:{value:null}}},{id:'receiver',parent:'owner',x:200,y:reverse?110:350,w:200,h:200,expanded:true,semantic:{kind:'composite'}},{id:'use',parent:'receiver',x:260,y:reverse?160:420,w:80,h:40,semantic:{kind:'compute'}}];
+  return {nodes,edges:[{id:'use-arg',source:'arg',target:'use',binding:{kind:'data',source_port:'value',target_port:'operand:2',condition:{branch:'enabled',outcome:true}}}]};
+ }
+ for(const reverse of [false,true]){
+  const graph=sample(reverse),before=copy(graph),records=G.placementProposal(graph),arg=graph.nodes[1],use=graph.nodes[3];
+  assert.equal(records.length,1);assert.equal(records[0].kind,'argument-dock');assert.equal(records[0].consumer,'receiver');
+  assert.ok(Math.abs(arg.y-use.y)<Math.abs(before.nodes[1].y-use.y));assert.equal(arg.parent,'owner');assert.deepEqual(arg.semantic,before.nodes[1].semantic);assert.deepEqual(graph.edges,before.edges);
+  assert.deepEqual(graph.nodes.filter(n=>n.id!=='arg'),before.nodes.filter(n=>n.id!=='arg'));
+  const renamed=sample(reverse);for(const n of renamed.nodes)n.semantic.label='opaque '+n.id;G.placementProposal(renamed);assert.deepEqual(renamed.nodes.map(n=>[n.x,n.y]),graph.nodes.map(n=>[n.x,n.y]));
+ }
+ for(const variant of ['shared','incoming','occupied']){
+  const graph=sample();
+  if(variant==='shared'){graph.nodes.push({id:'other',parent:'owner',x:450,y:350,w:80,h:40,semantic:{kind:'compute'}});graph.edges.push({id:'other-use',source:'arg',target:'other',binding:{kind:'data'}});}
+  if(variant==='incoming')graph.edges.push({id:'not-fixed',source:'use',target:'arg',binding:{kind:'data'}});
+  if(variant==='occupied'){graph.nodes[2].x=20;graph.nodes[2].w=560;for(const [id,y,h]of [['above',230,100],['below',564,66]])graph.nodes.push({id,parent:'owner',x:20,y,w:560,h,semantic:{kind:'opaque'}});}
+  const before=copy(graph);assert.deepEqual(G.placementProposal(graph),[],variant);assert.deepEqual(graph,before,variant);
+ }
+});
+test('long frame-parallel routes get clearance in mirrored and horizontal layouts, while manual/scoped routes stay intact',()=>{
+ function sample(transpose=false,mirror=false){
+  const nodes=[{id:'frame',parent:null,x:0,y:0,w:500,h:600,expanded:true},{id:'a',parent:'frame',x:40,y:500,w:80,h:40},{id:'b',parent:'frame',x:40,y:100,w:80,h:40}];
+  const e={id:'ab',source:'a',target:'b',arrow:'target',style:'orthogonal',waypoints:[],fixedSource:{side:'top',fraction:.5},fixedTarget:{side:'bottom',fraction:.5},physicalSource:{side:'left',fraction:.5},physicalTarget:{side:'left',fraction:.5},route:[{x:40,y:520},{x:6,y:520},{x:6,y:120},{x:40,y:120}],portPolicy:{source:{mode:'free',shape:'rectangle',spacing:6},target:{mode:'free',shape:'rectangle',spacing:6}},contract:{source:'a',target:'b',wire:'ab',bus:false,sharedStem:null,minimumTerminal:9,enforcePortApproach:true,gates:[]}};
+  if(mirror){for(const n of nodes)n.x=500-n.x-n.w;for(const p of e.route)p.x=500-p.x;for(const k of ['physicalSource','physicalTarget'])e[k].side='right';}
+  if(transpose){for(const n of nodes)[n.x,n.y,n.w,n.h]=[n.y,n.x,n.h,n.w];for(const p of e.route)[p.x,p.y]=[p.y,p.x];for(const k of ['physicalSource','physicalTarget','fixedSource','fixedTarget'])e[k].side=({left:'top',right:'bottom',top:'left',bottom:'right'})[e[k].side];}
+  return {nodes,edges:[e]};
+ }
+ for(const transpose of [false,true])for(const mirror of [false,true]){
+  const graph=sample(transpose,mirror),before=G.borderProximity(graph,graph.edges[0].route).cost;assert.ok(before>200);assertValid(graph);
+  G.refineChannels(graph,G.routeOptions(),1000);assertValid(graph);assert.ok(G.borderProximity(graph,graph.edges[0].route).cost<before);assert.ok(graph.nativeChannelRefinement.borderAfter<graph.nativeChannelRefinement.borderBefore);
+ }
+ for(const variant of ['manual','scope','disabled']){
+  const graph=sample();graph.edges[0].waypoints=variant==='manual'?[{x:6,y:300}]:[];const before=copy(graph.edges);
+  G.refineChannels(graph,G.routeOptions({preserve:true,...(variant==='scope'?{channelEdges:new Set()}:{}),...(variant==='disabled'?{policy:'never'}:{})}),1000);assert.deepEqual(graph.edges,before,variant);
+ }
+ const graph=sample();assert.equal(G.borderProximity(graph,[{x:6,y:100},{x:6,y:150}]).cost,0);assert.equal(G.borderProximity(graph,[{x:20,y:100},{x:20,y:500}]).cost,0);
+ const leaf={nodes:graph.nodes.map(n=>({...n,expanded:false}))};assert.equal(G.borderProximity(leaf,graph.edges[0].route).cost,0);
+});
+
+test('auxiliary call flags yield the consumer data corridor, even when their own wire becomes longer',()=>{
+ function sample(reverse=false){
+  const n=(id,x,y,w=80,h=40,semantic={kind:'compute'})=>({id,parent:'owner',x,y,w,h,semantic});
+  const graph={nodes:[{id:'owner',parent:null,x:0,y:0,w:600,h:600,expanded:true,semantic:{kind:'composite'}},n('arg',210,110,180,40,{kind:'interface',invocation_binding:{value:false}}),n('consumer',260,220),n('before',260,360),n('after',260,60)],edges:[{id:'config',source:'arg',target:'consumer',binding:{kind:'data',target_port:'flag'}},{id:'in',source:'before',target:'consumer',binding:{kind:'data',target_port:'operand:0'}},{id:'out',source:'consumer',target:'after',binding:{kind:'data',source_port:'value'}}]};
+  if(reverse)for(const node of graph.nodes.filter(n=>n.parent))node.y=500-node.y;
+  return graph;
+ }
+ for(const reverse of [false,true]){
+  const graph=sample(reverse),facts=copy(graph.edges),records=G.placementProposal(graph),arg=graph.nodes[1],consumer=graph.nodes[2],record=records.find(r=>r.kind==='argument-dock');
+  assert.ok(record);assert.equal(record.corridors.before,1);assert.equal(record.corridors.after,0);assert.ok(record.corridors.edges.includes('out'));
+  assert.ok(arg.x+arg.w<consumer.x||arg.x>consumer.x+consumer.w);assert.deepEqual(graph.edges,facts);assert.equal(arg.parent,'owner');
+  const renamed=sample(reverse);for(const n of renamed.nodes)n.semantic.label='different '+n.id;G.placementProposal(renamed);assert.deepEqual(renamed.nodes.map(n=>[n.x,n.y]),graph.nodes.map(n=>[n.x,n.y]));
+ }
+ const graph=sample(),receiver=graph.nodes[2];graph.edges.find(e=>e.id==='out').binding.kind='control';graph.edges.find(e=>e.id==='in').binding.kind='control';
+ const records=G.placementProposal(graph);assert.ok(records.every(r=>!r.corridors||!r.corridors.edges.length));assert.ok(receiver.x>=20);
+});
+
+test('freeing a flag-obstructed corridor reroutes the already-legal main wire and keeps exact operands',()=>{
+ const node=(id,x,y,w=80,h=40,semantic={kind:'compute'})=>({id,parent:'owner',x,y,w,h,semantic,expanded:false});
+ const graph={canvas:[600,600],nodes:[{id:'owner',parent:null,x:0,y:0,w:600,h:600,expanded:true,routingObstacle:false,semantic:{kind:'composite'}},node('flag',210,110,180,40,{kind:'interface',invocation_binding:{value:false}}),node('join',260,220),node('input',260,360),node('output',260,60)],edges:[['config','flag','join'],['in','input','join'],['out','join','output']].map(([id,source,target])=>({id,source,target,binding:{kind:'data',source,target,source_port:'value',target_port:id==='config'?'flag':'operand:0'},arrow:'target',style:'orthogonal',route:[],waypoints:[],fixedSource:{side:'top',fraction:.5},fixedTarget:{side:'bottom',fraction:.5},portPolicy:{source:{mode:'free',shape:'rectangle',spacing:6},target:{mode:'free',shape:'rectangle',spacing:6}},contract:{source,target,wire:id,bus:false,sharedStem:null,minimumTerminal:9,enforcePortApproach:true,gates:[]}}))};
+ assert.equal(G.route(graph,{refinePlacement:false,refineCrossings:false,refineChannels:false}).failed,0,JSON.stringify(graph.edges.map(e=>e.reason)));assertValid(graph);
+ const original=copy(graph.edges.map(e=>e.binding)),before=EdgeRouterLabRouting.stats(graph.edges.filter(e=>e.id==='out'));assert.ok(before.bends>0);
+ G.refinePlacement(graph,G.routeOptions(),1000);assertValid(graph);assert.equal(graph.nativeLayoutRefinement.accepted,true);
+ assert.ok(EdgeRouterLabRouting.stats(graph.edges.filter(e=>e.id==='out')).bends<before.bends);assert.deepEqual(graph.edges.map(e=>e.binding),original);
+});

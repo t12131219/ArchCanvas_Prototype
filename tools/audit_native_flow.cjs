@@ -1,0 +1,28 @@
+/* Frozen native layout/line-style acceptance capture, without model-specific production rules. */
+'use strict';
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),cp=require('child_process');
+const root=path.resolve(__dirname,'..');process.chdir(root);
+global.EdgeRouterLabRouting=require('../yworks_edge_router_lab/router');for(const f of ['physical-ports','junction-markers','route-labels','source-contracts','semantic-constraints','graph-engine','runtime-layout','recursive-graph'])require('../yworks_edge_router_lab/'+f);
+const G=require('../yworks_edge_router_lab/generic-semantic'),R=EdgeRouterLabRouting,N=SummaryEngine;
+const out=path.resolve(process.argv[2]||'verification/native-flow/current'),baseline=process.argv[3],read=p=>JSON.parse(fs.readFileSync(p));fs.mkdirSync(out,{recursive:true});
+const files=[...['yworks_edge_router_lab','semantic_studio'].flatMap(d=>fs.readdirSync(d).filter(f=>/\.(js|html|css)$/.test(f)).map(f=>d+'/'+f)),'tests/native-semantic-host.test.cjs','tests/native-flow-optimizer.test.cjs',__filename],hashes=()=>Object.fromEntries(files.map(f=>[path.relative(root,path.resolve(f)),crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex')])),before=hashes();
+const ir=read('data/semantic/0216717d966327f4.json'),state=read('data/semantic/presentations/transformer.json').default_state;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function svg(graph){
+ const node=n=>`<g data-node-id="${esc(n.id)}" data-parent="${esc(n.parent||'')}" transform="translate(${n.x} ${n.y})">${n.html}</g>`;
+ const edge=e=>{const p=N.displayed(graph,e),color=e.stroke||'#263b4b';return `<g data-edge-id="${esc(e.id)}" data-relation-style="${e.relationStyle}" data-value-slot="${esc(JSON.stringify([e.source,e.contract.wire,e.projection?.presentationSlots?.source||e.binding.source_port]))}"><path class="wire-path" d="${N.path(p,e.style,graph,e)}" fill="none" stroke="${color}" stroke-width="${e.width}" stroke-dasharray="${e.dashed?e.dashPattern:'none'}"/>${e.arrow!=='none'?`<path d="${N.arrow(p.at(-1),p.at(-2),e.arrow==='open')}" fill="${color}"/>`:''}</g>`;};
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="${graph.canvas[0]}" height="${graph.canvas[1]}" viewBox="0 0 ${graph.canvas.join(' ')}"><rect width="100%" height="100%" fill="white"/>${graph.nodes.filter(n=>n.expanded).map(node).join('')}${graph.edges.map(edge).join('')}${graph.nodes.filter(n=>!n.expanded).map(node).join('')}${SummaryFlowOptimizer.markers(graph).map(m=>`<circle data-value-fork="${esc(JSON.stringify(m.edges))}" cx="${m.point.x}" cy="${m.point.y}" r="2.7" fill="${m.fill}"/>`).join('')}</svg>`;
+}
+const rows=[];
+for(const mode of ['F0','F1','attention']){
+ let graph=G.build(ir,mode==='F0'?SemanticCompositionLayout.frontier({mode:'source'},'overview'):state);
+ if(mode==='attention'){const outer=graph.nodes.find(n=>n.semantic.semantic_type==='multihead-attention');graph=G.operate(graph,{kind:'toggle',id:outer.id,force:true});const inner=graph.nodes.find(n=>n.semantic.semantic_type==='scaled-dot-product-attention');graph=G.operate(graph,{kind:'toggle',id:inner.id,force:true});}
+ const facts=JSON.stringify([graph.generic.ir,graph.generic.receipts,graph.nodes.map(n=>[n.id,n.parent,n.semantic]),graph.edges.map(e=>[e.id,e.binding])]),started=performance.now();G.route(graph);const route_ms=performance.now()-started,c=N.validateView(graph);
+ const row={mode,canonical:{nodes:ir.nodes.length,edges:ir.edges.length},visible:{nodes:graph.nodes.length,edges:graph.edges.length},canvas:graph.canvas,stats:R.stats(graph.edges),route_ms,source:c.source.ok,layout:c.layout.ok,invalid:c.edges.filter(([,v])=>!v.ok),facts_unchanged:facts===JSON.stringify([graph.generic.ir,graph.generic.receipts,graph.nodes.map(n=>[n.id,n.parent,n.semantic]),graph.edges.map(e=>[e.id,e.binding])]),styles:graph.edges.reduce((a,e)=>(a[e.relationStyle]=(a[e.relationStyle]||0)+1,a),{}),placement:graph.nativeLayoutRefinement||null,channels:graph.nativeChannelRefinement||null,siblings:graph.nativeSiblingRefinement||null,fanouts:graph.nativeFanoutRefinement||null,border:graph.edges.reduce((sum,e)=>sum+G.borderProximity(graph,e.route).cost,0),ink:SummaryFlowOptimizer.ink(graph.edges),forks:SummaryFlowOptimizer.markers(graph)};
+ if(baseline){const old=read(path.join(baseline,mode+'-report.json'));row.before={stats:old.stats,canvas:old.canvas,nodes:old.nodes,edges:old.edges};}
+ const saveStart=performance.now(),loaded=G.read(G.document(graph)),restored=G.restore(G.build(loaded.ir,loaded.state),loaded.nativeLayout);row.save_roundtrip=JSON.stringify(G.layoutSnapshot(restored))===JSON.stringify(G.layoutSnapshot(graph));row.save_ms=performance.now()-saveStart;
+ if(process.env.CAPTURE_GRAPHS)fs.writeFileSync(path.join(process.env.CAPTURE_GRAPHS,mode+'.json'),JSON.stringify(graph));
+ fs.writeFileSync(path.join(out,mode+'.svg'),svg(graph));rows.push(row);console.log(JSON.stringify({mode,stats:row.stats,valid:row.source&&row.layout&&!row.invalid.length,facts:row.facts_unchanged,styles:row.styles,placement:row.placement?.accepted,roundtrip:row.save_roundtrip}));
+}
+const frozen=JSON.stringify(before)===JSON.stringify(hashes()),report={renderer:G.VERSION,frozen,hashes:before,rows,complete:true};fs.writeFileSync(path.join(out,'flow-audit.json'),JSON.stringify(report,null,2));
+if(!frozen||rows.some(r=>!r.source||!r.layout||r.invalid.length||!r.facts_unchanged||!r.save_roundtrip))process.exitCode=1;

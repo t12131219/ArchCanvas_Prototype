@@ -240,7 +240,11 @@
     // Later repairs must not invalidate an earlier wire, gate or terminal.
     if(affected.some(e=>!legal(e,e.route)))return rollback('local routes conflict');
     if(!C.validateJunctions(graph).ok)return rollback('source tensor fork disconnected');
-    if(graph.generic)root.SummaryNativeSemantic.refineJoins(graph,{...opts,joinTargets:new Set(affected.map(e=>e.target))},context,options.joinBudgetMs??100);
+    if(graph.generic){
+      root.SummaryNativeSemantic.refineJoins(graph,{...opts,joinTargets:new Set(affected.map(e=>e.target))},context,options.joinBudgetMs??100);
+      root.SummaryNativeSemantic.refineChannels(graph,{...opts,channelEdges:new Set(affected.map(e=>e.id))},options.channelBudgetMs??100);
+      root.SummaryFlowOptimizer.fanouts(graph,{...opts,flowEdges:new Set(affected.map(e=>e.id))},options.fanoutBudgetMs??100);
+    }
     return ids;
   }
   // Pointer motion updates only presentation geometry. The authoritative
@@ -444,7 +448,11 @@
       for(const [e,saved]of before){for(const k of Object.keys(e))delete e[k];Object.assign(e,saved);}
       return {graph,routed:0,failed:ids.length,retained:0,reason:junctionCheck.violations.join('; ')};
     }
-    if(graph.generic&&!failed)root.SummaryNativeSemantic.refineJoins(graph,{...options,joinEdges:set},context,options.joinBudgetMs??100);
+    if(graph.generic&&!failed){
+      root.SummaryNativeSemantic.refineJoins(graph,{...options,joinEdges:set},context,options.joinBudgetMs??100);
+      root.SummaryNativeSemantic.refineChannels(graph,{...options,channelEdges:set},options.channelBudgetMs??100);
+      root.SummaryFlowOptimizer.fanouts(graph,{...options,flowEdges:set},options.fanoutBudgetMs??100);
+    }
     return {graph,routed,failed,retained};
   }
   function labelPath(graph,a){const e=graph.edges.find(v=>v.id===a.edge);if(!e)return [];

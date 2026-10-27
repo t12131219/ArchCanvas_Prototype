@@ -1,0 +1,622 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "DynamicGate",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+    "class": "DynamicGate",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+      "cell": null,
+      "sha256": "9f705b5d86cb26f4aaa1bee19adf10b047b1bee93cab1a8c57f7fc30828fad64",
+      "unit_sha256": "9f705b5d86cb26f4aaa1bee19adf10b047b1bee93cab1a8c57f7fc30828fad64"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/11:4:composite:1",
+      "kind": "composite",
+      "label": "DynamicGate",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 11,
+          "end_line": 14,
+          "column": 4,
+          "end_column": 70,
+          "symbol": "DynamicGate.forward",
+          "expression": "def forward(self, x, positive=True):\n    operation = getattr(self, 'projection')\n    value = operation(x)\n    return torch.relu(value) if positive else torch.sigmoid(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "DynamicGate"
+    },
+    {
+      "id": "model/11:4:composite:1/11:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "DynamicGate.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/11:4:composite:1/11:25:interface:1",
+      "kind": "interface",
+      "label": "positive",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 25,
+          "end_column": 33,
+          "symbol": "DynamicGate.forward",
+          "expression": "positive"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "positive"
+    },
+    {
+      "id": "model/11:4:composite:1/12:28:state:1",
+      "kind": "state",
+      "label": "self",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 28,
+          "end_column": 32,
+          "symbol": "DynamicGate.forward",
+          "expression": "self"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "role": "external-value",
+      "value": {
+        "unresolved": "self"
+      }
+    },
+    {
+      "id": "model/11:4:composite:1/12:20:opaque:1",
+      "kind": "opaque",
+      "label": "getattr",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 20,
+          "end_column": 47,
+          "symbol": "DynamicGate.forward",
+          "expression": "getattr(self, 'projection')"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "getattr",
+      "function_target": "getattr",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self"
+          },
+          "projection"
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "getattr",
+        "qualified_target": "getattr",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/11:4:composite:1/12:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "operation",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 12,
+          "end_line": 12,
+          "column": 8,
+          "end_column": 17,
+          "symbol": "DynamicGate.forward",
+          "expression": "operation"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/11:4:composite:1/13:16:opaque:1",
+      "kind": "opaque",
+      "label": "operation",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 13,
+          "end_line": 13,
+          "column": 16,
+          "end_column": 28,
+          "symbol": "DynamicGate.forward",
+          "expression": "operation(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "operation",
+      "function_target": "operation",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "rebound-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "operation",
+        "qualified_target": "operation",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/11:4:composite:1/13:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "value",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 13,
+          "end_line": 13,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "DynamicGate.forward",
+          "expression": "value"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/11:4:composite:1/14:36:control:1",
+      "kind": "control",
+      "label": "positive",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 14,
+          "end_line": 14,
+          "column": 36,
+          "end_column": 44,
+          "symbol": "DynamicGate.forward",
+          "expression": "positive"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if-expression"
+    },
+    {
+      "id": "model/11:4:composite:1/14:15:compute:1",
+      "kind": "compute",
+      "label": "conditional join",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 14,
+          "end_line": 14,
+          "column": 15,
+          "end_column": 70,
+          "symbol": "DynamicGate.forward",
+          "expression": "torch.relu(value) if positive else torch.sigmoid(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "phi",
+      "syntax": {
+        "type": "IfExp",
+        "fields": {
+          "test": {
+            "operand": ".test"
+          },
+          "body": {
+            "operand": ".body"
+          },
+          "orelse": {
+            "operand": ".orelse"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/11:4:composite:1/14:15:compute:2",
+      "kind": "compute",
+      "label": "relu",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 14,
+          "end_line": 14,
+          "column": 15,
+          "end_column": 32,
+          "symbol": "DynamicGate.forward",
+          "expression": "torch.relu(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.relu",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "value"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.relu"
+    },
+    {
+      "id": "model/11:4:composite:1/14:50:compute:1",
+      "kind": "compute",
+      "label": "sigmoid",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 14,
+          "end_line": 14,
+          "column": 50,
+          "end_column": 70,
+          "symbol": "DynamicGate.forward",
+          "expression": "torch.sigmoid(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "function_target": "torch.sigmoid",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "value"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_function": "torch.sigmoid"
+    },
+    {
+      "id": "model/11:4:composite:1/14:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/11:4:composite:1",
+      "source_parent": "model/11:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+          "line": 14,
+          "end_line": 14,
+          "column": 8,
+          "end_column": 70,
+          "symbol": "DynamicGate.forward",
+          "expression": "return torch.relu(value) if positive else torch.sigmoid(value)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/11:4:composite:1/12:28:state:1",
+      "target": "model/11:4:composite:1/12:20:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/11:4:composite:1/12:20:opaque:1",
+      "target": "model/11:4:composite:1/12:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/11:4:composite:1/12:8:value-alias:1",
+      "target": "model/11:4:composite:1/13:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "callable",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/11:4:composite:1/11:22:interface:1",
+      "target": "model/11:4:composite:1/13:16:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/11:4:composite:1/13:16:opaque:1",
+      "target": "model/11:4:composite:1/13:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/11:4:composite:1/11:25:interface:1",
+      "target": "model/11:4:composite:1/14:36:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/11:4:composite:1/13:8:value-alias:1",
+      "target": "model/11:4:composite:1/14:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/11:4:composite:1/14:15:compute:2",
+      "target": "model/11:4:composite:1/14:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/11:4:composite:1/14:36:control:1",
+        "outcome": "true"
+      },
+      "id": "e00007"
+    },
+    {
+      "source": "model/11:4:composite:1/13:8:value-alias:1",
+      "target": "model/11:4:composite:1/14:50:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/11:4:composite:1/14:50:compute:1",
+      "target": "model/11:4:composite:1/14:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/11:4:composite:1/14:36:control:1",
+        "outcome": "false"
+      },
+      "id": "e00009"
+    },
+    {
+      "source": "model/11:4:composite:1/14:36:control:1",
+      "target": "model/11:4:composite:1/14:15:compute:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/11:4:composite:1/14:15:compute:1",
+      "target": "model/11:4:composite:1/14:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/11:4:composite:1/14:36:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+      "line": 14,
+      "column": 15,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if-expression"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "analysis": {
+    "kind": "static-source",
+    "project_root": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures",
+    "loaded_files": 1,
+    "file_budget": 128,
+    "entry_kind": "callable",
+    "imports_executed": false
+  },
+  "ir_digest": "c17e2d0ac0822e8ded37835bd638e014d5cbb3e2e59577cdea9e6f7769282d55"
+}

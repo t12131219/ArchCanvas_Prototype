@@ -50,7 +50,7 @@ def inventory(roots, max_files=2000):
             diagnostics.extend(ds)
             for u in us:
                 for cls in u['tree'].body:
-                    if isinstance(cls, ast.ClassDef) and any(isinstance(m, ast.FunctionDef) and m.name == 'forward' for m in cls.body):
+                    if isinstance(cls, ast.ClassDef) and any(isinstance(m, ast.FunctionDef) and m.name in {'forward', '__call__'} for m in cls.body):
                         models.append({'file': str(path), 'cell': u['cell'], 'entry': cls.name,
                                        'line': cls.lineno, 'source_sha256': u['sha256'], 'bases': [ast.unparse(b) for b in cls.bases], 'status': 'static-candidate'})
     return {'schema': 'semantic-source-inventory/1', 'read_only': True, 'model_executed': False,

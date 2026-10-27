@@ -1,0 +1,70 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "ACTPolicy",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/policy.py",
+    "class": "ACTPolicy",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/policy.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/policy.py",
+      "cell": null,
+      "sha256": "352efca415ee0e31073a27ca91560195702d1e9b545e573a3a668a53f06dd127",
+      "unit_sha256": "352efca415ee0e31073a27ca91560195702d1e9b545e573a3a668a53f06dd127"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/9:0:opaque:1",
+      "kind": "opaque",
+      "label": "ACTPolicy",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/policy.py",
+          "line": 9,
+          "end_line": 41,
+          "column": 0,
+          "end_column": 29,
+          "symbol": "ACTPolicy.forward",
+          "expression": "class ACTPolicy(nn.Module):\n\n    def __init__(self, args_override):\n        super().__init__()\n        model, optimizer = build_ACT_model_and_optimizer(args_override)\n        self.model = model\n        self.optimizer = optimizer\n        self.kl_weight = args_override['kl_weight']\n        print(f'KL Weight {self.kl_weight}')\n\n    def __call__(self, qpos, imag"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "no local forward definition"
+    }
+  ],
+  "edges": [],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "ir_digest": "43dc5d6139d1899d4e700e5d3092cbbb90ac4af71d7ebc1c4b7827db795aac4d"
+}

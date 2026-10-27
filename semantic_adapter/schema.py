@@ -128,6 +128,13 @@ def validate_ir(ir):
                 expected = {n['id'] for n in nodes if n['id'].startswith(f'runtime:{ri}:')}
                 if set(mapping) != expected or len(set(mapping.values())) != len(mapping) or not set(mapping.values()) <= by.keys():
                     errors.append('invalid observed trace correspondence')
+    if 'source_runtime_index' in ir:
+        from .source_runtime import build_index
+        try:
+            if ir['source_runtime_index'] != build_index(ir):
+                errors.append('invalid source-runtime integration evidence')
+        except (KeyError, TypeError, ValueError, IndexError):
+            errors.append('invalid source-runtime integration evidence')
     if ir.get('ir_digest') != digest({k: v for k, v in ir.items() if k != 'ir_digest'}):
         errors.append('IR digest mismatch')
     return {'ok': not errors, 'errors': errors}

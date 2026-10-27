@@ -6,6 +6,7 @@ unsupported Python remains source-backed opaque rather than a fabricated templat
 """
 from __future__ import annotations
 import ast
+from contextlib import contextmanager
 import copy
 from pathlib import Path
 from .schema import SCHEMA, COVERAGE_CONTRACT, GLYPHS, seal
@@ -50,6 +51,42 @@ FUNCTIONS = {
     'add': 'add', 'mul': 'mult', 'sub': 'sub', 'div': 'div',
 }
 
+# Explicit PyTorch API contracts. These remain framework operations; recognizing
+# a public primitive is not a claim to have analyzed its C++/CUDA implementation.
+MODULES.update({
+    **{name: 'convolution' for name in ('ConvTranspose1d', 'ConvTranspose3d', 'LazyConv1d', 'LazyConv2d', 'LazyConv3d', 'LazyConvTranspose1d', 'LazyConvTranspose2d', 'LazyConvTranspose3d')},
+    **{name: 'normalization' for name in ('BatchNorm3d', 'SyncBatchNorm', 'InstanceNorm1d', 'InstanceNorm2d', 'InstanceNorm3d', 'LocalResponseNorm', 'RMSNorm', 'LazyBatchNorm1d', 'LazyBatchNorm2d', 'LazyBatchNorm3d')},
+    **{name: 'activation' for name in ('ReLU6', 'PReLU', 'RReLU', 'CELU', 'SELU', 'Mish', 'Hardswish', 'Hardsigmoid', 'Hardtanh', 'Softplus', 'Softsign', 'Tanhshrink', 'Softshrink', 'Hardshrink', 'Threshold')},
+    **{name: 'pooling' for name in ('MaxPool1d', 'MaxPool3d', 'AvgPool1d', 'AvgPool3d', 'AdaptiveAvgPool1d', 'AdaptiveAvgPool3d', 'AdaptiveMaxPool1d', 'AdaptiveMaxPool2d', 'AdaptiveMaxPool3d', 'LPPool1d', 'LPPool2d')},
+    **{name: 'dropout' for name in ('Dropout1d', 'Dropout2d', 'Dropout3d', 'AlphaDropout', 'FeatureAlphaDropout')},
+    **{name: 'pad' for name in ('ZeroPad1d', 'ZeroPad2d', 'ZeroPad3d', 'ConstantPad1d', 'ConstantPad2d', 'ConstantPad3d', 'ReflectionPad1d', 'ReflectionPad2d', 'ReflectionPad3d', 'ReplicationPad1d', 'ReplicationPad2d', 'ReplicationPad3d')},
+    'LazyLinear': 'linear', 'Bilinear': 'bilinear', 'EmbeddingBag': 'embedding-reduction',
+    'Unflatten': 'reshape', 'Upsample': 'interpolate', 'UpsamplingNearest2d': 'interpolate',
+    'UpsamplingBilinear2d': 'interpolate', 'PixelShuffle': 'pixel-shuffle', 'PixelUnshuffle': 'pixel-unshuffle',
+    'ChannelShuffle': 'channel-shuffle', 'GLU': 'gated-linear-unit',
+    'Fold': 'fold', 'Unfold': 'unfold', 'Softmin': 'softmin', 'Softmax2d': 'softmax',
+})
+FUNCTIONS.update({
+    **{name: 'create' for name in ('full', 'full_like', 'empty', 'empty_like', 'arange', 'linspace', 'eye')},
+    **{name: 'repeat' for name in ('repeat', 'repeat_interleave', 'tile')},
+    **{name: 'reduce' for name in ('prod', 'std', 'var', 'logsumexp', 'all', 'any')},
+    **{name: 'activation' for name in ('relu6', 'prelu', 'rrelu', 'celu', 'selu', 'mish', 'hardswish', 'hardsigmoid', 'hardtanh', 'softplus', 'softsign')},
+    'cumsum': 'cumulative-sum', 'cumprod': 'cumulative-product', 'tril': 'triangular', 'triu': 'triangular',
+    'argmax': 'argmax', 'argmin': 'argmin', 'sort': 'sort', 'argsort': 'argsort',
+    'log': 'log', 'log1p': 'log1p', 'exp2': 'exp', 'square': 'pow', 'reciprocal': 'reciprocal',
+    'ceil': 'round', 'floor': 'round', 'round': 'round', 'neg': 'negate',
+    'conv1d': 'convolution', 'conv3d': 'convolution', 'conv_transpose1d': 'convolution',
+    'conv_transpose2d': 'convolution', 'conv_transpose3d': 'convolution',
+    'instance_norm': 'normalization', 'group_norm': 'normalization', 'normalize': 'normalization',
+    'embedding': 'embedding', 'embedding_bag': 'embedding-reduction', 'bilinear': 'bilinear',
+    'max_pool1d': 'pooling', 'max_pool3d': 'pooling', 'avg_pool1d': 'pooling', 'avg_pool3d': 'pooling',
+    'adaptive_avg_pool1d': 'pooling', 'adaptive_avg_pool3d': 'pooling',
+    'adaptive_max_pool1d': 'pooling', 'adaptive_max_pool2d': 'pooling', 'adaptive_max_pool3d': 'pooling',
+    'pixel_shuffle': 'pixel-shuffle', 'pixel_unshuffle': 'pixel-unshuffle',
+    'unfold': 'unfold', 'fold': 'fold', 'roll': 'roll', 'flip': 'flip', 'narrow': 'slice',
+    'select': 'select', 'take': 'gather', 'masked_select': 'masked-select',
+})
+
 
 def text(n):
     return ast.unparse(n) if n is not None else ''
@@ -77,21 +114,32 @@ def literal(n, values):
 
 
 class Analyzer:
-    def __init__(self, source, entry, constructor=None, cell=None, max_nodes=8000, max_depth=12):
+    def __init__(self, source, entry, constructor=None, cell=None, max_nodes=8000, max_depth=12, project_root=None, factory_entry=False):
         self.path = Path(source).resolve()
         self.units, self.diagnostics = units(self.path)
+        from .project import Project
+        self.project = Project(self.path, project_root)
+        self.project.register(self.path, self.units)
+        self.factory_entry = factory_entry
+        self.project_explicit = project_root is not None
         self.constructor = constructor or {}
         self.entry, self.cell = entry.split(':')[-1], cell
         self.max_nodes, self.max_depth = max_nodes, max_depth
         self.nodes, self.edges, self.branches, self.counts = [], [], [], {}
         self.coverage_blockers = []
-        self.definitions, self.node_by = {}, {}
-        for u in self.units:
+        self.node_by = {}
+        self._scopes = {}
+        self._active_units = self.units
+        self._build_scope(self.units)
+
+    def _build_scope(self, scope_units):
+        self.definitions = {}
+        for u in scope_units:
             for n in u['tree'].body:
                 if isinstance(n, (ast.ClassDef, ast.FunctionDef)):
                     self.definitions.setdefault(n.name, []).append((u, n))
         self.imports = {}
-        for u in self.units:
+        for u in scope_units:
             for n in u['tree'].body:
                 if isinstance(n, ast.Import):
                     for alias in n.names: self.imports[alias.asname or alias.name] = alias.name
@@ -107,7 +155,7 @@ class Analyzer:
             if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
                 shadowed.add(node.id)
             for child in ast.iter_child_nodes(node): module_bindings(child)
-        for u in self.units:
+        for u in scope_units:
             module_bindings(u['tree'])
             for n in ast.walk(u['tree']):
                 if isinstance(n, ast.Global): shadowed.update(n.names)
@@ -120,11 +168,38 @@ class Analyzer:
         # Notebook setup globals are evidence only; resolve literal assignments,
         # never run dataset/download/optimizer cells.
         self.globals = {}
-        for u in self.units:
+        for u in scope_units:
             for n in u['tree'].body:
                 if isinstance(n, ast.Assign) and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name):
                     value = literal(n.value, self.globals)
                     if not isinstance(value, dict): self.globals[n.targets[0].id] = value
+
+
+    @contextmanager
+    def scope(self, unit):
+        fields = ('definitions', 'imports', 'value_imports', 'value_shadowed', 'globals', '_active_units')
+        old = {key: getattr(self, key) for key in fields}
+        if unit not in self._active_units:
+            if unit['path'] not in self._scopes:
+                self._build_scope([unit])
+                self._active_units = [unit]
+                self._scopes[unit['path']] = {key: getattr(self, key) for key in fields}
+            else:
+                for key, value in self._scopes[unit['path']].items():
+                    setattr(self, key, value)
+        try:
+            yield
+        finally:
+            for key, value in old.items():
+                setattr(self, key, value)
+
+    def expression_unit(self, node, fallback=None):
+        return self.project.owner(node) or fallback or self._active_units[0]
+
+    def callable(self, cls):
+        # Python explicit __call__ overrides nn.Module.__call__, including its hooks.
+        methods = {n.name: n for n in cls.body if isinstance(n, ast.FunctionDef)}
+        return methods.get('__call__') or methods.get('forward')
 
     def evidence(self, u, n, symbol):
         return [{'file': u['path'], 'line': n.lineno, 'end_line': n.end_lineno,
@@ -166,15 +241,29 @@ class Analyzer:
 
     def definition(self, name, cell=None):
         candidates = self.definitions.get(name, [])
+        if not candidates and len(self._active_units) == 1:
+            return self.project.definition(name, self._active_units[0])
         if cell is not None: candidates = [(u, n) for u, n in candidates if u['cell'] == cell]
         return candidates[0] if len(candidates) == 1 else None
 
-    def resolve(self, name):
+    def resolve(self, name, unit=None):
+        if unit is not None and unit not in self._active_units:
+            with self.scope(unit):
+                return self.resolve(name)
         head, *tail = name.split('.')
-        return '.'.join([self.imports.get(head, head), *tail])
+        imported = self.imports.get(head, head)
+        if head in self.imports and imported.split('.')[0] in {'torch', 'math'}:
+            base = imported.split('.')[0]
+            if self.project.module(base, self._active_units[0]) or (self.project.root/base).is_dir():
+                return 'project-local:' + '.'.join([imported, *tail])
+        return '.'.join([imported, *tail])
 
     def value_namespace(self, expression, unit):
         """Check the original expression's lexical namespace, including init/factories."""
+        unit = self.expression_unit(expression, unit)
+        if unit not in self._active_units:
+            with self.scope(unit):
+                return self.value_namespace(expression, unit)
         head = text(expression).split('.')[0]
         if head not in self.value_imports: return False
         for fn in ast.walk(unit['tree']):
@@ -251,17 +340,24 @@ class Analyzer:
                 return copy.deepcopy(bindings[n.id]) if n.id in bindings else n
         return source, Substitute().visit(copy.deepcopy(result)), body[0]
 
-    def call(self, cls_pair, parent, label, actuals, keywords, ctor, depth, module_path='', owner=None, ctor_objects=None, object_identity=None, owner_values=None, function_modules=None, forward_constants=None, object_reference=None):
+    def call(self, cls_pair, *args, **kwargs):
+        with self.scope(cls_pair[0]):
+            return self._call(cls_pair, *args, **kwargs)
+
+    def _call(self, cls_pair, parent, label, actuals, keywords, ctor, depth, module_path='', owner=None, ctor_objects=None, object_identity=None, owner_values=None, function_modules=None, forward_constants=None, object_reference=None):
         u, cls = cls_pair
-        symbol = cls.name + '.forward' if isinstance(cls, ast.ClassDef) else cls.name
+        chosen = self.callable(cls) if isinstance(cls, ast.ClassDef) else cls
+        symbol = cls.name + '.' + chosen.name if isinstance(cls, ast.ClassDef) and chosen else cls.name
         if depth > self.max_depth:
             return self.add('opaque', label + ' (depth limit)', parent, u, cls, symbol, reason='analysis-depth-limit')
         is_class = isinstance(cls, ast.ClassDef)
-        fn = next((n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == 'forward'), None) if is_class else cls
+        fn = chosen
+        if fn and (fn.decorator_list or is_class and cls.decorator_list):
+            return self.add('opaque', label, parent, u, fn, symbol, reason='decorated-callable-unresolved')
         if fn:
             self.coverage_blockers.extend({'file': u['path'], 'line': n.lineno, 'kind': type(n).__name__} for n in ast.walk(fn) if isinstance(n, (ast.BoolOp, ast.Try, ast.Assert, ast.While, ast.ListComp, ast.DictComp, ast.SetComp, ast.GeneratorExp)) and hasattr(n, 'lineno'))
         if not fn:
-            return self.add('opaque', label, parent, u, cls, symbol, reason='no local forward definition')
+            return self.add('opaque', label, parent, u, cls, symbol, reason='no local forward or __call__ definition')
         local_shadowed = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name) and isinstance(n.ctx, (ast.Store, ast.Del))}
         local_shadowed.update(n.arg for n in ast.walk(fn) if isinstance(n, ast.arg))
         local_shadowed.update(a.asname or a.name.split('.')[0] for n in ast.walk(fn)
@@ -357,8 +453,8 @@ class Analyzer:
                                 value=values.get(key, {'unresolved': key}))
                 resource = construction.get(key) if rebound_target(key, bindings) is None else None
                 if isinstance(resource, Module):
-                    qualified = self.resolve(text(resource.call.func))
-                    if self.value_namespace(resource.call.func, u) and qualified.startswith('torch.nn.') and qualified.split('.')[-1] in MODULES:
+                    qualified = self.resolve(text(resource.call.func), self.expression_unit(resource.call, u))
+                    if self.value_namespace(resource.call.func, u) and qualified == 'torch.nn.' + qualified.split('.')[-1] and qualified.split('.')[-1] in MODULES:
                         self.node_by[node].update(resource_framework_type=qualified,
                             resource_constructor={'args': [literal(a, resource.constants) for a in resource.call.args],
                                          'kwargs': {k.arg: literal(k.value, resource.constants) for k in resource.call.keywords if k.arg}},
@@ -373,10 +469,12 @@ class Analyzer:
                 if target.endswith('.forward') and target[:-8] in modules:
                     target = target[:-8]
                 rebound = rebound_target(target, bindings)
-                raw_module = modules.get(target) if rebound is None else None
+                raw_module = modules.get(target) if rebound is None and target not in construction.blocked else None
                 declared_factory = self.factory(raw_module, u)
                 bound_module = (iteration_modules.get(target) or construction.get(target)) if rebound is None else None
-                if bound_module is not None:
+                if bound_module is None and rebound is None and isinstance(n.func, ast.Subscript):
+                    bound_module = construction.read(n.func, values, {**construction.objects, **iteration_modules}, target)
+                if isinstance(bound_module, Module):
                     raw_module = bound_module.call
                 factory = declared_factory or self.factory(raw_module, u)
                 if factory: raw_module = factory[1]
@@ -409,19 +507,21 @@ class Analyzer:
                         if isinstance(spec, Module):
                             callable_modules[name] = spec
                     constants = {name: literal(argument, {}) for name, argument in supplied.items() if isinstance(argument, ast.Constant)}
-                    return self.call(helper, scope, target, actuals, kw, ctor, depth + 1, module_path, owner, ctor_objects, object_identity, values, callable_modules, constants, object_reference)
+                    return self.call(helper, scope, target, actuals, kw, ctor if helper[0] is u else {}, depth + 1, module_path, owner if helper[0] is u else None, ctor_objects if helper[0] is u else None, object_identity, values if helper[0] is u else None, callable_modules, constants, object_reference)
                 if isinstance(raw_module, ast.Call):
                     display_name = target[5:] if target.startswith('self.') else target
                     bound_module = bound_module or construction.get(target)
                     module_values = bound_module.constants if isinstance(bound_module, Module) else values
                     constructor_name = text(raw_module.func)
-                    short = constructor_name.split('.')[-1]
-                    local = self.definition(constructor_name, u['cell']) or self.definition(constructor_name)
+                    short = self.resolve(constructor_name, self.expression_unit(raw_module, u)).split('.')[-1]
+                    allocation_unit = self.expression_unit(raw_module, u)
+                    with self.scope(allocation_unit):
+                        local = self.definition(constructor_name, allocation_unit['cell']) or self.definition(constructor_name)
                     if local and isinstance(local[1], ast.ClassDef):
                         bound = construction.arguments(bound_module, local[1]) if isinstance(bound_module, Module) else None
                         v, refs = bound if bound is not None else (self.constructor_values(local[1], raw_module, values), {})
                         child_path = iteration_paths[target] if target in iteration_modules else (module_path + '.' + display_name).strip('.')
-                        child_fn = next((m for m in local[1].body if isinstance(m, ast.FunctionDef) and m.name == 'forward'), None)
+                        child_fn = self.callable(local[1])
                         child_params = [a.arg for a in child_fn.args.args if a.arg != 'self'] if child_fn else []
                         supplied = dict(zip(child_params, n.args)); supplied.update({k.arg: k.value for k in n.keywords if k.arg})
                         constants = {name: literal(argument, {}) for name, argument in supplied.items() if isinstance(argument, ast.Constant)}
@@ -459,7 +559,7 @@ class Analyzer:
                                     out = self.add('interface', 'out', nested, u, child, symbol, role='output')
                                     self.edge(previous, out, 'interface-binding', evidence='framework-contract')
                                     return out
-                                known = child_type.startswith('torch.nn.') and child_short in MODULES
+                                known = child_type == 'torch.nn.' + child_short and child_short in MODULES
                                 sub = self.add('compute' if known else 'opaque', child_label + ': ' + child_short, frame, u, child, symbol,
                                                operator=MODULES[child_short] if known else child_type, framework_type=child_type,
                                                module_path=path, constructor={'args': [literal(a, values) for a in child.args], 'kwargs': {k.arg: literal(k.value, values) for k in child.keywords if k.arg}})
@@ -476,8 +576,8 @@ class Analyzer:
                         output = self.add('interface', 'out', frame, u, n, symbol, role='output')
                         self.edge(previous, output, 'interface-binding', evidence='framework-contract')
                         return output
-                    qualified = self.resolve(constructor_name)
-                    known = qualified.startswith('torch.nn.') and short in MODULES
+                    qualified = self.resolve(constructor_name, self.expression_unit(raw_module, u))
+                    known = qualified == 'torch.nn.' + short and short in MODULES and self.value_namespace(raw_module.func, self.expression_unit(raw_module, u))
                     operator = MODULES[short] if known else qualified
                     kind = 'compute' if known else 'opaque'
                     node = self.add(kind, f'{display_name} · {short}', scope, u, n, symbol, operator=operator,
@@ -498,7 +598,7 @@ class Analyzer:
                     # Parameter resources are separate from the compute call, and
                     # shapes/sharing remain unknown until a runtime observation.
                     if known and short in {'Linear', 'Conv1d', 'Conv2d', 'Conv3d', 'Embedding', 'LayerNorm', 'BatchNorm1d', 'BatchNorm2d'}:
-                        resource = self.add('parameter', target[5:] + '.parameters', scope, u, raw_module, symbol,
+                        resource = self.add('parameter', target[5:] + '.parameters', scope, self.expression_unit(raw_module, u), raw_module, symbol,
                                             parameter_scope=self.node_by[node]['module_path'], identity_status='declared-scope; sharing-unresolved')
                         if self.node_by[node].get('module_identity'):
                             self.node_by[resource]['module_identity'] = self.node_by[node]['module_identity']
@@ -509,7 +609,7 @@ class Analyzer:
                     tensor_method = receiver is not None and short in FUNCTIONS
                     shadowed_callable = rebound and (target in modules or target == rebound)
                     scalar_cast = target in {'float', 'int', 'bool'} and len(n.args) == 1 and isinstance(n.args[0], ast.Constant) and not n.keywords and not self.definition(target) and target not in bindings
-                    known = not shadowed_callable and ((qualified.startswith(('torch.', 'math.')) or tensor_method or target in {'len', 'range', 'enumerate'}) and short in FUNCTIONS or scalar_cast)
+                    known = not shadowed_callable and ((qualified in {prefix + short for prefix in ('torch.', 'torch.nn.functional.', 'torch.nn.utils.rnn.', 'math.')} and target.split('.')[0] in value_imports or tensor_method or target in {'len', 'range', 'enumerate'}) and short in FUNCTIONS or scalar_cast)
                     node = self.add('compute' if known else 'opaque', short, scope, u, n, symbol,
                                     operator='scalar-cast' if scalar_cast else FUNCTIONS.get(short, qualified) if known else qualified, function_target=qualified,
                                     arguments={'args': [literal(a, values) for a in n.args],
@@ -519,6 +619,15 @@ class Analyzer:
                         self.node_by[node]['source_framework_function'] = qualified
                     if scalar_cast and target not in value_shadowed:
                         self.node_by[node]['source_scalar_cast'] = target
+                if self.project_explicit and self.node_by[node]['kind'] == 'opaque':
+                    declared = modules.get(target)
+                    reason = ('conditional-constructor-binding' if target in construction.blocked else
+                              'injected-constructor-object-unresolved' if isinstance(declared, (ast.Name, ast.Attribute)) else
+                              'external-or-dynamic-call-target')
+                    self.node_by[node]['unknown_boundary'] = {
+                        'category': reason, 'target': target, 'qualified_target': qualified,
+                        'source_file': u['path'], 'project_root': str(self.project.root),
+                        'policy': 'source operands retained; no runtime execution or identity guess'}
                 if rebound and (target in modules or target == rebound):
                     self.edge(bindings[rebound], node, target_port='callable')
                 self.edge(receiver, node, target_port='receiver')
@@ -875,12 +984,46 @@ class Analyzer:
                                                        'scope': 'normal-return paths of this invocation; source alternatives retained'}
         return output
 
+    def factory_model(self, pair):
+        """An explicit factory entry is analyzed, never run or guessed from names."""
+        from .construction import Construction, Module
+        unit, fn = pair
+        if not isinstance(fn, ast.FunctionDef):
+            raise ValueError('factory entry must be a source function')
+        call = ast.Call(func=ast.Name(id=fn.name, ctx=ast.Load()), args=[],
+                        keywords=[ast.keyword(arg=k, value=ast.parse(repr(v), mode='eval').body)
+                                  for k,v in self.constructor.items()])
+        ast.copy_location(call, fn)
+        ast.fix_missing_locations(call)
+        construction = Construction(self, unit, None, {}, {}, '', 'entry-factory')
+        module = construction.read(call, {}, {}, 'factory-result')
+        local = None
+        if isinstance(module, Module):
+            with self.scope(self.expression_unit(module.call, unit)):
+                local = self.definition(text(module.call.func))
+        if not local or not isinstance(local[1], ast.ClassDef):
+            self.add('opaque', self.entry, None, unit, fn, fn.name,
+                     reason='factory-result-not-proved; unsupported effect, return or construction')
+            return
+        bound = construction.arguments(module, local[1])
+        if bound is None:
+            self.add('opaque', self.entry, None, unit, fn, fn.name, reason='factory-constructor-binding-unresolved')
+            return
+        self.call(local, None, self.entry, [], {}, bound[0], 0,
+                  ctor_objects=bound[1], object_identity=module.identity, object_reference=module.reference)
+        self.nodes[0]['factory_binding'] = {'entry': self.entry, 'construction_evidence': module.evidence,
+                                          'scope': 'bounded static factory; not an executed constructor'}
+
     def run(self):
         pair = self.definition(self.entry, self.cell)
         if pair is None:
             raise ValueError('entry missing or ambiguous; provide --cell for notebook redefinitions: ' + self.entry)
-        self.call(pair, None, self.entry, [], {}, self.constructor, 0)
-        source_meta = [{k: u[k] for k in ('path', 'physical', 'cell', 'sha256', 'unit_sha256')} for u in self.units]
+        if self.factory_entry:
+            self.factory_model(pair)
+        else:
+            self.call(pair, None, self.entry, [], {}, self.constructor, 0)
+        source_meta = [{k: u[k] for k in ('path', 'physical', 'cell', 'sha256', 'unit_sha256')} for loaded in self.project.loaded.values() for u in loaded]
+        self.diagnostics.extend(self.project.diagnostics)
         ir = {'schema': SCHEMA, 'title': self.entry, 'entry': {'file': str(self.path), 'class': self.entry, 'cell': self.cell, 'constructor': self.constructor},
               'coverage_contract': COVERAGE_CONTRACT, 'sources': source_meta, 'nodes': self.nodes, 'edges': self.edges,
               'branches': self.branches, 'motifs': [], 'diagnostics': self.diagnostics,
@@ -892,6 +1035,11 @@ class Analyzer:
                               'Unresolved calls/loops/external definitions remain explicit opaque boundaries.',
                               'Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.',
                               'Notebook cells are parsed as data; notebook setup/training cells are never executed.']}
+        if self.project_explicit or self.factory_entry or len(self.project.loaded) > 1:
+            ir['analysis'] = {'kind': 'static-source', 'project_root': str(self.project.root),
+                              'loaded_files': len(self.project.loaded), 'file_budget': self.project.max_files,
+                              'entry_kind': 'factory' if self.factory_entry else 'callable',
+                              'imports_executed': False}
         from .identity import certify
         certify(self.nodes, self.edges)
         from .symbolic_values import certify as certify_values

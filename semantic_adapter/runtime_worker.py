@@ -89,13 +89,20 @@ def main(request):
                 return dict(objects[id(t)])
             def ref(t):
                 return dict(objects[id(t)]) if id(t) in objects else register(t, None, 'unresolved')
-            def source():
+            def source_stack():
+                result = []
                 frame = inspect.currentframe()
                 while frame:
                     if frame.f_code.co_filename.startswith('/model/'):
-                        return {'file': frame.f_code.co_filename[7:], 'line': frame.f_lineno, 'symbol': frame.f_code.co_qualname}
+                        site = {'file': frame.f_code.co_filename[7:], 'line': frame.f_lineno, 'symbol': frame.f_code.co_qualname}
+                        positions = getattr(inspect.getframeinfo(frame, context=0), 'positions', None)
+                        if positions:
+                            site.update(line=positions.lineno, end_line=positions.end_lineno,
+                                        column=positions.col_offset, end_column=positions.end_col_offset)
+                        result.append(site)
+                        if len(result) >= 24:break
                     frame = frame.f_back
-                return None
+                return result
             class Recorder(TorchDispatchMode):
                 def __torch_dispatch__(self, func, types, args=(), kwargs=None):
                     kwargs = kwargs or {}
@@ -104,8 +111,9 @@ def main(request):
                         raise RuntimeError('runtime event budget exceeded')
                     identity = 'op' + str(len(events))
                     inputs = [ref(t) for t in tensors((args, kwargs))]
+                    locations = source_stack()
                     event = {'id': identity, 'operator': str(func), 'module_path': stack[-1]['path'] if stack else '', 'module_call': stack[-1]['id'] if stack else None,
-                             'source': source(), 'inputs': inputs, 'outputs': [],
+                             'source': locations[0] if locations else None, 'source_stack': locations, 'inputs': inputs, 'outputs': [],
                              'mutable': bool(func._schema.is_mutable)}
                     events.append(event)
                     result = func(*args, **kwargs)
@@ -129,17 +137,21 @@ def main(request):
                         register(tensor, 'buffer:' + name, name)
                         buffers.append({'name': name, **metadata(tensor)})
                     def pre(path):
-                        def hook(m, args):
-                            call = {'id': 'call' + str(len(module_events)), 'path': path, 'parent_call': stack[-1]['id'] if stack else None, 'module_type': type(m).__module__ + '.' + type(m).__qualname__}
-                            stack.append(call); module_events.append({'event': 'enter', **call, 'inputs': [ref(t) for t in tensors(args)]})
+                        def hook(m, args, kwargs):
+                            call = {'id': 'call' + str(len(module_events)), 'path': path, 'parent_call': stack[-1]['id'] if stack else None, 'module_type': type(m).__module__ + '.' + type(m).__qualname__, 'source_stack': source_stack()}
+                            bindings = []
+                            for port, value in [*((f'arg:{i}', v) for i, v in enumerate(args)), *((f'kw:{k}', v) for k, v in kwargs.items())]:
+                                values = tensors(value)
+                                for t in values:bindings.append({**ref(t), 'port': port, 'component': not isinstance(value, torch.Tensor)})
+                            stack.append(call); module_events.append({'event': 'enter', **call, 'inputs': [ref(t) for t in tensors((args, kwargs))], 'input_bindings': bindings})
                         return hook
                     def post(path):
                         def hook(m, args, output):
-                            module_events.append({'event': 'exit', 'path': path, 'outputs': [ref(t) for t in tensors(output)]})
+                            module_events.append({'event': 'exit', 'id': stack[-1]['id'] if stack else None, 'path': path, 'outputs': [ref(t) for t in tensors(output)], 'output_is_tensor': isinstance(output, torch.Tensor)})
                             if stack: stack.pop()
                         return hook
                     for path, child in model.named_modules():
-                        hooks.extend([child.register_forward_pre_hook(pre(path)), child.register_forward_hook(post(path))])
+                        hooks.extend([child.register_forward_pre_hook(pre(path), with_kwargs=True), child.register_forward_hook(post(path))])
                     def make_inputs(record=False):
                         values = {}
                         for name, spec in case['inputs'].items():

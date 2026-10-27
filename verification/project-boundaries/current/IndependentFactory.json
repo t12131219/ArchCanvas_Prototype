@@ -1,0 +1,670 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "build",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+    "class": "build",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+      "cell": null,
+      "sha256": "3a5656f0fa85a5114a69a3af0cc22412e75e1422fc7c4b8dbee32e09bd9fc18a",
+      "unit_sha256": "3a5656f0fa85a5114a69a3af0cc22412e75e1422fc7c4b8dbee32e09bd9fc18a"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/__init__.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/__init__.py",
+      "cell": null,
+      "sha256": "dc03f3b40007dfd4cd23de0fcbce76da38b0e226befe85b88c13e2caf05e8a84",
+      "unit_sha256": "dc03f3b40007dfd4cd23de0fcbce76da38b0e226befe85b88c13e2caf05e8a84"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+      "cell": null,
+      "sha256": "4c30bda2aac570fc6ed1c72ca88278012218cec76444c2d7dcb6b60d853b0170",
+      "unit_sha256": "4c30bda2aac570fc6ed1c72ca88278012218cec76444c2d7dcb6b60d853b0170"
+    },
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+      "cell": null,
+      "sha256": "d51edbad035847069d69d7ce9a97813b7f20b2454574a9f327c6b841a4d944ff",
+      "unit_sha256": "d51edbad035847069d69d7ce9a97813b7f20b2454574a9f327c6b841a4d944ff"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/10:4:composite:1",
+      "kind": "composite",
+      "label": "build",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+          "line": 10,
+          "end_line": 11,
+          "column": 4,
+          "end_column": 49,
+          "symbol": "Assembly.__call__",
+          "expression": "def __call__(self, x):\n    return self.alias(self.act(self.core(x)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "MLP / feed-forward",
+      "module_path": "",
+      "constructor": {
+        "core": {
+          "unresolved": "shared"
+        }
+      },
+      "source_class": "Assembly",
+      "module_identity": "factory-result.model",
+      "factory_binding": {
+        "entry": "build",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+            "line": 6,
+            "end_line": 9,
+            "column": 0,
+            "end_column": 16,
+            "symbol": "constructor",
+            "expression": "build()"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+            "line": 7,
+            "end_line": 7,
+            "column": 4,
+            "end_column": 31,
+            "symbol": "factory-assignment",
+            "expression": "shared = create_core(width)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 4,
+            "end_column": 28,
+            "symbol": "factory-assignment",
+            "expression": "model = Assembly(shared)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+            "line": 9,
+            "end_line": 9,
+            "column": 4,
+            "end_column": 16,
+            "symbol": "factory-return",
+            "expression": "return model"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 12,
+            "end_column": 28,
+            "symbol": "constructor",
+            "expression": "Assembly(shared)"
+          }
+        ],
+        "scope": "bounded static factory; not an executed constructor"
+      }
+    },
+    {
+      "id": "model/10:4:composite:1/10:23:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/10:4:composite:1",
+      "source_parent": "model/10:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+          "line": 10,
+          "end_line": 10,
+          "column": 23,
+          "end_column": 24,
+          "symbol": "Assembly.__call__",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/10:4:composite:1/11:35:compute:1",
+      "kind": "compute",
+      "label": "core · Linear",
+      "parent": "model/10:4:composite:1",
+      "source_parent": "model/10:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 35,
+          "end_column": 47,
+          "symbol": "Assembly.__call__",
+          "expression": "self.core(x)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "core",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          7,
+          7
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "module_binding": {
+        "reference": "entry-factory|factory-result.shared.projection@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py:5:17",
+        "selection": "self.core",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+            "line": 7,
+            "end_line": 7,
+            "column": 13,
+            "end_column": 31,
+            "symbol": "constructor",
+            "expression": "create_core(width)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+            "line": 5,
+            "end_line": 5,
+            "column": 4,
+            "end_column": 44,
+            "symbol": "factory-assignment",
+            "expression": "projection = layers.Linear(width, width)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+            "line": 6,
+            "end_line": 6,
+            "column": 4,
+            "end_column": 21,
+            "symbol": "factory-return",
+            "expression": "return projection"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+            "line": 5,
+            "end_line": 5,
+            "column": 17,
+            "end_column": 44,
+            "symbol": "constructor",
+            "expression": "layers.Linear(width, width)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/10:4:composite:1/11:35:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry-factory|factory-result.shared.projection@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py:5:17"
+    },
+    {
+      "id": "model/10:4:composite:1/5:17:parameter:1",
+      "kind": "parameter",
+      "label": "core.parameters",
+      "parent": "model/10:4:composite:1",
+      "source_parent": "model/10:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+          "line": 5,
+          "end_line": 5,
+          "column": 17,
+          "end_column": 44,
+          "symbol": "Assembly.__call__",
+          "expression": "layers.Linear(width, width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "core",
+      "identity_status": "declared-scope; sharing-unresolved",
+      "module_identity": "factory-result.shared.projection"
+    },
+    {
+      "id": "model/10:4:composite:1/11:26:compute:1",
+      "kind": "compute",
+      "label": "act · GELU",
+      "parent": "model/10:4:composite:1",
+      "source_parent": "model/10:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 26,
+          "end_column": 48,
+          "symbol": "Assembly.__call__",
+          "expression": "self.act(self.core(x))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "activation",
+      "module_path": "act",
+      "framework_type": "torch.nn.GELU",
+      "constructor": {
+        "args": [],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.GELU",
+      "module_binding": {
+        "reference": "entry-factory|factory-result.model@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py:8:12|factory-result.model.act@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py:8:19",
+        "selection": "self.act",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+            "line": 8,
+            "end_line": 8,
+            "column": 19,
+            "end_column": 28,
+            "symbol": "constructor",
+            "expression": "nn.GELU()"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/10:4:composite:1/11:26:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry-factory|factory-result.model@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py:8:12|factory-result.model.act@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py:8:19"
+    },
+    {
+      "id": "model/10:4:composite:1/11:15:compute:1",
+      "kind": "compute",
+      "label": "alias · Linear",
+      "parent": "model/10:4:composite:1",
+      "source_parent": "model/10:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 15,
+          "end_column": 49,
+          "symbol": "Assembly.__call__",
+          "expression": "self.alias(self.act(self.core(x)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "linear",
+      "module_path": "alias",
+      "framework_type": "torch.nn.Linear",
+      "constructor": {
+        "args": [
+          7,
+          7
+        ],
+        "kwargs": {}
+      },
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      },
+      "source_framework_module": "torch.nn.Linear",
+      "module_binding": {
+        "reference": "entry-factory|factory-result.shared.projection@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py:5:17",
+        "selection": "self.alias",
+        "construction_evidence": [
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/entry.py",
+            "line": 7,
+            "end_line": 7,
+            "column": 13,
+            "end_column": 31,
+            "symbol": "constructor",
+            "expression": "create_core(width)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+            "line": 5,
+            "end_line": 5,
+            "column": 4,
+            "end_column": 44,
+            "symbol": "factory-assignment",
+            "expression": "projection = layers.Linear(width, width)"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+            "line": 6,
+            "end_line": 6,
+            "column": 4,
+            "end_column": 21,
+            "symbol": "factory-return",
+            "expression": "return projection"
+          },
+          {
+            "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+            "line": 5,
+            "end_line": 5,
+            "column": 17,
+            "end_column": 44,
+            "symbol": "constructor",
+            "expression": "layers.Linear(width, width)"
+          }
+        ],
+        "allocation": "fresh-framework-construction",
+        "rule_version": "source-module-binding/1",
+        "invocation": "model/10:4:composite:1/11:15:compute:1",
+        "status": "proved",
+        "scope": "constructor binding selected in a modeled effect-free source prefix",
+        "parameter_identity": "unresolved",
+        "allocation_distinctness": "not-asserted"
+      },
+      "module_identity": "entry-factory|factory-result.shared.projection@/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py:5:17"
+    },
+    {
+      "id": "model/10:4:composite:1/5:17:parameter:2",
+      "kind": "parameter",
+      "label": "alias.parameters",
+      "parent": "model/10:4:composite:1",
+      "source_parent": "model/10:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/factories.py",
+          "line": 5,
+          "end_line": 5,
+          "column": 17,
+          "end_column": 44,
+          "symbol": "Assembly.__call__",
+          "expression": "layers.Linear(width, width)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#f3dff1"
+      },
+      "runtime_evidence": [],
+      "parameter_scope": "alias",
+      "identity_status": "declared-scope; sharing-unresolved",
+      "module_identity": "factory-result.shared.projection"
+    },
+    {
+      "id": "model/10:4:composite:1/11:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/10:4:composite:1",
+      "source_parent": "model/10:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+          "line": 11,
+          "end_line": 11,
+          "column": 8,
+          "end_column": 49,
+          "symbol": "Assembly.__call__",
+          "expression": "return self.alias(self.act(self.core(x)))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/10:4:composite:1/5:17:parameter:1",
+      "target": "model/10:4:composite:1/11:35:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00000"
+    },
+    {
+      "source": "model/10:4:composite:1/10:23:interface:1",
+      "target": "model/10:4:composite:1/11:35:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/10:4:composite:1/11:35:compute:1",
+      "target": "model/10:4:composite:1/11:26:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/10:4:composite:1/5:17:parameter:2",
+      "target": "model/10:4:composite:1/11:15:compute:1",
+      "kind": "parameter-read",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "framework-contract",
+      "id": "e00003"
+    },
+    {
+      "source": "model/10:4:composite:1/11:26:compute:1",
+      "target": "model/10:4:composite:1/11:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/10:4:composite:1/11:15:compute:1",
+      "target": "model/10:4:composite:1/11:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    }
+  ],
+  "branches": [],
+  "motifs": [
+    {
+      "id": "motif:MLP / feed-forward:0",
+      "semantic_type": "MLP / feed-forward",
+      "members": [
+        "model/10:4:composite:1/10:23:interface:1",
+        "model/10:4:composite:1/11:35:compute:1",
+        "model/10:4:composite:1/5:17:parameter:1",
+        "model/10:4:composite:1/11:26:compute:1",
+        "model/10:4:composite:1/11:15:compute:1",
+        "model/10:4:composite:1/5:17:parameter:2",
+        "model/10:4:composite:1/11:8:interface:1"
+      ],
+      "evidence": [
+        "source dependency path: Linear → activation → Linear"
+      ],
+      "confidence": "rule-confirmed",
+      "rule_version": "dataflow-motifs/1"
+    }
+  ],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "analysis": {
+    "kind": "static-source",
+    "project_root": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports",
+    "loaded_files": 4,
+    "file_budget": 128,
+    "entry_kind": "factory",
+    "imports_executed": false
+  },
+  "semantic_contracts": [
+    {
+      "id": "contract:feed-forward:eb0b9977c722",
+      "rule": "feed-forward",
+      "rule_version": "source-contracts/1",
+      "node": "model/10:4:composite:1",
+      "members": [
+        "model/10:4:composite:1",
+        "model/10:4:composite:1/10:23:interface:1",
+        "model/10:4:composite:1/11:35:compute:1",
+        "model/10:4:composite:1/5:17:parameter:1",
+        "model/10:4:composite:1/11:26:compute:1",
+        "model/10:4:composite:1/11:15:compute:1",
+        "model/10:4:composite:1/5:17:parameter:2",
+        "model/10:4:composite:1/11:8:interface:1"
+      ],
+      "roles": {
+        "input_projection": "model/10:4:composite:1/11:35:compute:1",
+        "activation": "model/10:4:composite:1/11:26:compute:1",
+        "output_projection": "model/10:4:composite:1/11:15:compute:1",
+        "output": "model/10:4:composite:1/11:15:compute:1"
+      },
+      "proof": [
+        "the entire local computation is a Linear → activation → Linear dependency chain; explicit wrappers retained"
+      ],
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/project_imports/library/parts.py",
+          "line": 10,
+          "end_line": 11,
+          "column": 4,
+          "end_column": 49,
+          "symbol": "Assembly.__call__",
+          "expression": "def __call__(self, x):\n    return self.alias(self.act(self.core(x)))"
+        }
+      ],
+      "dependencies": [],
+      "edges": [
+        "e00000",
+        "e00001",
+        "e00002",
+        "e00003",
+        "e00004",
+        "e00005"
+      ],
+      "scope": "normal-return paths of the extracted invocation and its fixed constructor configuration",
+      "not_asserted": [
+        "arbitrary-input execution coverage",
+        "independent projection parameters",
+        "helper purity or arbitrary alias equivalence"
+      ],
+      "source_chain": {
+        "rule_version": "source-local-chain/1",
+        "operations": [
+          "model/10:4:composite:1/11:35:compute:1",
+          "model/10:4:composite:1/11:26:compute:1",
+          "model/10:4:composite:1/11:15:compute:1"
+        ],
+        "input": {
+          "node": "model/10:4:composite:1/10:23:interface:1",
+          "slot": "out"
+        },
+        "output": "model/10:4:composite:1/11:8:interface:1",
+        "helpers": []
+      }
+    }
+  ],
+  "semantic_contract_basis": "dab1f769fd5d32b95880dddd9657923f7e8a5d40cf3f1ac520a33c3e978733b1",
+  "ir_digest": "d779cd825030db35077bb495b35fd53a75c389425da04b30976ec3d0e621964f"
+}

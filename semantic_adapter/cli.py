@@ -35,6 +35,8 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     scan = commands.add_parser('inventory'); scan.add_argument('--root', action='append', required=True); scan.add_argument('--output', required=True)
     build = commands.add_parser('analyze'); build.add_argument('--source', required=True); build.add_argument('--entry', required=True)
+    build.add_argument('--factory', action='store_true', help='analyze an explicit effect-free factory returning the model')
+    build.add_argument('--project-root', help='bounded root for local source imports; never executes imports')
     build.add_argument('--cell', type=int); build.add_argument('--constructor', default='{}'); build.add_argument('--output', required=True)
     build.add_argument('--probe-spec'); build.add_argument('--interpreter'); build.add_argument('--source-root'); build.add_argument('--timeout', type=int, default=45)
     build.add_argument('--catalog', help='optional semantic studio catalog path (explicit publication)')
@@ -51,10 +53,11 @@ def main():
     constructor = json.loads(args.constructor)
     spec = json.loads(Path(args.probe_spec).read_text()) if args.probe_spec else None
     if spec:
+        if args.factory: parser.error('--factory is static-only; runtime requires a class entry')
         if not args.interpreter: parser.error('--probe-spec requires explicit --interpreter')
         if constructor and constructor != spec.get('constructor', {}): parser.error('constructor conflicts with probe specification')
         constructor = spec.get('constructor', {})
-    ir = analyze(args.source, args.entry, constructor, args.cell)
+    ir = analyze(args.source, args.entry, constructor, args.cell, project_root=args.project_root or args.source_root, factory_entry=args.factory)
     if spec: ir = merge(ir, observe(args.source, args.entry, spec, args.interpreter, args.source_root, args.timeout))
     validation = validate_ir(ir)
     if not validation['ok']: raise ValueError(validation)

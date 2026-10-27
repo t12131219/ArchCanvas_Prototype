@@ -11,6 +11,8 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'verification/local-relations/current'
 COMMANDS = {
+    'source-runtime': ['node', 'tests/source-runtime.test.cjs'],
+    'probe-assistance': ['node', 'tests/probe-assistance.test.cjs'],
     'native-flow-optimizer': ['node', 'tests/native-flow-optimizer.test.cjs'],
     'native-semantic-host': ['node', 'tests/native-semantic-host.test.cjs'],
     'recursive-expansion': ['node', 'tests/recursive-expansion.test.cjs'],

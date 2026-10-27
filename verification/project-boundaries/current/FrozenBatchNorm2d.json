@@ -1,0 +1,1111 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "FrozenBatchNorm2d",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+    "class": "FrozenBatchNorm2d",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+      "cell": null,
+      "sha256": "dec9770e496e2deb56f694e622a15d01ea3bdea977c2446fb3c41bc18cf4ed55",
+      "unit_sha256": "dec9770e496e2deb56f694e622a15d01ea3bdea977c2446fb3c41bc18cf4ed55"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/47:4:composite:1",
+      "kind": "composite",
+      "label": "FrozenBatchNorm2d",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 47,
+          "end_line": 57,
+          "column": 4,
+          "end_column": 31,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "def forward(self, x):\n    w = self.weight.reshape(1, -1, 1, 1)\n    b = self.bias.reshape(1, -1, 1, 1)\n    rv = self.running_var.reshape(1, -1, 1, 1)\n    rm = self.running_mean.reshape(1, -1, 1, 1)\n    eps = 1e-05\n    scale = w * (rv + eps).rsqrt()\n    bias = b - rm * scale\n    return x * scale + bias"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "FrozenBatchNorm2d"
+    },
+    {
+      "id": "model/47:4:composite:1/47:22:interface:1",
+      "kind": "interface",
+      "label": "x",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 47,
+          "end_line": 47,
+          "column": 22,
+          "end_column": 23,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "x"
+    },
+    {
+      "id": "model/47:4:composite:1/50:12:state:1",
+      "kind": "state",
+      "label": "self.weight",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 12,
+          "end_column": 23,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.weight"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "weight",
+      "value": {
+        "unresolved": "self.weight"
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/50:12:compute:1",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 12,
+          "end_column": 44,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.weight.reshape(1, -1, 1, 1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "self.weight.reshape",
+      "arguments": {
+        "args": [
+          1,
+          -1,
+          1,
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_expression": "UnaryOp(op=USub(), operand=Constant(value=1))"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/50:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "w",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 50,
+          "end_line": 50,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "w"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/47:4:composite:1/51:12:state:1",
+      "kind": "state",
+      "label": "self.bias",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 12,
+          "end_column": 21,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.bias"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "bias",
+      "value": {
+        "unresolved": "self.bias"
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/51:12:compute:1",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 12,
+          "end_column": 42,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.bias.reshape(1, -1, 1, 1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "self.bias.reshape",
+      "arguments": {
+        "args": [
+          1,
+          -1,
+          1,
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_expression": "UnaryOp(op=USub(), operand=Constant(value=1))"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/51:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "b",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 8,
+          "end_column": 9,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "b"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/47:4:composite:1/52:13:state:1",
+      "kind": "state",
+      "label": "self.running_var",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 13,
+          "end_column": 29,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.running_var"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "running_var",
+      "value": {
+        "unresolved": "self.running_var"
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/52:13:compute:1",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 13,
+          "end_column": 50,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.running_var.reshape(1, -1, 1, 1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "self.running_var.reshape",
+      "arguments": {
+        "args": [
+          1,
+          -1,
+          1,
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_expression": "UnaryOp(op=USub(), operand=Constant(value=1))"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/52:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "rv",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 8,
+          "end_column": 10,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "rv"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/47:4:composite:1/53:13:state:1",
+      "kind": "state",
+      "label": "self.running_mean",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 13,
+          "end_column": 30,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.running_mean"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "running_mean",
+      "value": {
+        "unresolved": "self.running_mean"
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/53:13:compute:1",
+      "kind": "compute",
+      "label": "reshape",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 13,
+          "end_column": 51,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "self.running_mean.reshape(1, -1, 1, 1)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "reshape",
+      "function_target": "self.running_mean.reshape",
+      "arguments": {
+        "args": [
+          1,
+          -1,
+          1,
+          1
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_expression": "UnaryOp(op=USub(), operand=Constant(value=1))"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            },
+            {
+              "literal_type": "int",
+              "literal": "1"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/53:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "rm",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 53,
+          "end_line": 53,
+          "column": 8,
+          "end_column": 10,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "rm"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/47:4:composite:1/54:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "eps",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 54,
+          "end_line": 54,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "eps"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/47:4:composite:1/55:16:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 55,
+          "end_line": 55,
+          "column": 16,
+          "end_column": 38,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "w * (rv + eps).rsqrt()"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/55:20:opaque:1",
+      "kind": "opaque",
+      "label": "rsqrt",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 55,
+          "end_line": 55,
+          "column": 20,
+          "end_column": 38,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "(rv + eps).rsqrt()"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "(rv + eps).rsqrt",
+      "function_target": "(rv + eps).rsqrt",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "(rv + eps).rsqrt",
+        "qualified_target": "(rv + eps).rsqrt",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/55:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "scale",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 55,
+          "end_line": 55,
+          "column": 8,
+          "end_column": 13,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "scale"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/47:4:composite:1/56:15:compute:1",
+      "kind": "compute",
+      "label": "sub",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 56,
+          "end_line": 56,
+          "column": 15,
+          "end_column": 29,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "b - rm * scale"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "sub",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Sub",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/56:19:compute:1",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 56,
+          "end_line": 56,
+          "column": 19,
+          "end_column": 29,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "rm * scale"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/56:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "bias",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 56,
+          "end_line": 56,
+          "column": 8,
+          "end_column": 12,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "bias"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/47:4:composite:1/57:15:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 15,
+          "end_column": 31,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "x * scale + bias"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/57:15:compute:2",
+      "kind": "compute",
+      "label": "mult",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 15,
+          "end_column": 24,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "x * scale"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "mult",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Mult",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/47:4:composite:1/57:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/47:4:composite:1",
+      "source_parent": "model/47:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 8,
+          "end_column": 31,
+          "symbol": "FrozenBatchNorm2d.forward",
+          "expression": "return x * scale + bias"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/47:4:composite:1/50:12:state:1",
+      "target": "model/47:4:composite:1/50:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/47:4:composite:1/50:12:compute:1",
+      "target": "model/47:4:composite:1/50:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/47:4:composite:1/51:12:state:1",
+      "target": "model/47:4:composite:1/51:12:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/47:4:composite:1/51:12:compute:1",
+      "target": "model/47:4:composite:1/51:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/47:4:composite:1/52:13:state:1",
+      "target": "model/47:4:composite:1/52:13:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/47:4:composite:1/52:13:compute:1",
+      "target": "model/47:4:composite:1/52:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/47:4:composite:1/53:13:state:1",
+      "target": "model/47:4:composite:1/53:13:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/47:4:composite:1/53:13:compute:1",
+      "target": "model/47:4:composite:1/53:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/47:4:composite:1/50:8:value-alias:1",
+      "target": "model/47:4:composite:1/55:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/47:4:composite:1/55:20:opaque:1",
+      "target": "model/47:4:composite:1/55:16:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/47:4:composite:1/55:16:compute:1",
+      "target": "model/47:4:composite:1/55:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/47:4:composite:1/51:8:value-alias:1",
+      "target": "model/47:4:composite:1/56:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/47:4:composite:1/53:8:value-alias:1",
+      "target": "model/47:4:composite:1/56:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/47:4:composite:1/55:8:value-alias:1",
+      "target": "model/47:4:composite:1/56:19:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/47:4:composite:1/56:19:compute:1",
+      "target": "model/47:4:composite:1/56:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/47:4:composite:1/56:15:compute:1",
+      "target": "model/47:4:composite:1/56:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/47:4:composite:1/47:22:interface:1",
+      "target": "model/47:4:composite:1/57:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/47:4:composite:1/55:8:value-alias:1",
+      "target": "model/47:4:composite:1/57:15:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/47:4:composite:1/57:15:compute:2",
+      "target": "model/47:4:composite:1/57:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/47:4:composite:1/56:8:value-alias:1",
+      "target": "model/47:4:composite:1/57:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/47:4:composite:1/57:15:compute:1",
+      "target": "model/47:4:composite:1/57:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "analysis": {
+    "kind": "static-source",
+    "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+    "loaded_files": 1,
+    "file_budget": 128,
+    "entry_kind": "callable",
+    "imports_executed": false
+  },
+  "ir_digest": "95e7097f182ea3c68e36dde649fe16f7952cc8f2e54f8577df8c1689b0385bf4"
+}

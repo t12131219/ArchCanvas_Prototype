@@ -4,6 +4,7 @@
   const catalog=window.SummaryCatalog,R=window.EdgeRouterLabRouting,E=window.SummaryEngine,C=window.SummaryConstraints,M=window.SummaryInteractionMode,F=window.SummaryRecursive,G=window.SummaryNativeSemantic,svg=$('graph');
   const names={transformer_programmatic_guide:'Transformer'};
   let genericCatalog={models:[]},genericUi=null;
+  let factsDigest=null;
   let current=null,view=null,graph=null,original=null,tool='select',selectedNodes=new Set(),selectedEdges=new Set();
   // Every model is edited as one detailed graph. The compact source views are
   // used only as the initial projection and summary routing reference.
@@ -200,6 +201,11 @@
     if(busy||drag||!presentationOnly)hideEvidence();
     const measuredStart=performance.now();if(!graph)return;syncUnifiedState();
     if(cameraOnly){const scale=stageScale();for(const v of scene.edges.values())setAttrs(v.hit,{'stroke-width':Math.min(45,12/scale)});refreshHandles(scale);svg.setAttribute('data-camera-ms',(performance.now()-measuredStart).toFixed(2));return;}
+    if(graph.generic&&factsDigest!==graph.generic.ir.ir_digest){
+      const ir=graph.generic.ir;factsDigest=ir.ir_digest;
+      $('modelOrigin').textContent=ir.coverage?.reason||'保留源码、调用身份、精确槽位与证据边界';
+      $('sourceFacts').innerHTML='<p>'+esc(ir.nodes.length)+' 个原始单位 / '+esc(ir.edges.length)+' 条依赖；当前切面可继续展开至源码单位。</p><pre>'+esc(JSON.stringify({coverage:ir.coverage,runtime:{status:ir.runtime?.status,model_executed:ir.runtime?.model_executed},cpu_assistance:ir.probe_assistance?{runs:ir.probe_assistance.runs,unknowns:ir.probe_assistance.boundaries.length,associated:ir.probe_assistance.boundaries.filter(b=>b.observations.length).length,scope:ir.probe_assistance.scope}:null},null,2))+'</pre>';
+    }
     if(scene.key!==key()){
       for(const name of ['frameLayer','obstacleLayer','ghostLayer','edgeLayer','nodeLayer','labelLayer','handleLayer'])$(name).replaceChildren();
       for(const name of ['nodes','edges','labels','attachments','junctions','obstacles','checks'])scene[name].clear();scene.key=key();scene.placements=null;
@@ -484,7 +490,19 @@
       const body=JSON.stringify(payload);let response;
       try{response=await fetch('/api/authoring/'+operation,{method:'POST',headers:{'Content-Type':'application/json'},body});if([404,501].includes(response.status))response=null;}catch(_){}
       if(!response)try{response=await fetch('http://127.0.0.1:8767/api/authoring/'+operation,{method:'POST',headers:{'Content-Type':'application/json'},body});}catch(_){throw Error('源码解析服务未启动。请运行 python3 tools/serve_semantic_studio.py，再重试。');}
-      const value=await response.json();if(!response.ok||!value.ok)throw Error(value.error||'静态解析失败');return value;
+      const value=await response.json();if(!response.ok||!value.ok)throw Error(value.error||'源码服务请求失败');return value;
+    },
+    async applyProbe(ir,basis){
+      if(busy||drag)throw Error('当前操作尚未完成');
+      if(graph?.generic?.ir?.ir_digest!==basis)throw Error('当前模型已改变，补证未载入；请打开对应原始 IR 或下载补证结果');
+      const previous=graph,start=performance.now();busy=true;
+      try{
+        const result=await runGraphTask({task:'generic-build',ir,state:{...graph.generic.state,mode:'merged'},options:G.routeOptions(options())});
+        if(!result?.ok)throw Error(result?.error||'补证画布构建失败');
+        save();graph=result.graph;dirty=true;selectedNodes.clear();selectedEdges.clear();ghost=[];
+        metrics={routed:result.routed||0,time:Math.round(performance.now()-start)};
+        busy=false;fit();render({validation:result.validation});persist();toast('运行补证已载入；静态未知边界保留，可撤销或切换源码 / CPU 轨迹。');
+      }catch(error){graph=previous;throw error;}finally{busy=false;}
     },
     async openDocument(value){if(value.schema==='summary-merge-recursive/1'){
       const c=catalog.cases.find(c=>c.id===value.case);if(!c)throw Error('找不到专用案例');if(!value.graph?.recursive?.authority)throw Error('专用文档缺少 authority');

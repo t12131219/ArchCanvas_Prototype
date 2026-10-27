@@ -1,0 +1,22 @@
+语义与来源static-onlyphi/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/detr_vae.py:88if is_training:
+    action_embed = self.encoder_action_proj(actions)
+    qpos_embed = self.encoder_joint_proj(qpos)
+    qpos_embed = torch.unsqueeze(qpos_embed, axis=1)
+    cls_embed = self.cls_embed.weight
+    cls_embed = torch.unsqueeze(cls_embed, axis=0).repeat(bs, 1, 1)
+    encoder_input = torch.cat([cls_embed, qpos_embed, action_embed], axis=1)
+    enco资源、配置与归属{
+  "annotations": []
+}完整证据与路径过程Evidence status: static-only
+Source: /home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/detr_vae.py:88-114
+encoder_input · branch join
+phi
+Source expression:
+if is_training:
+    action_embed = self.encoder_action_proj(actions)
+    qpos_embed = self.encoder_joint_proj(qpos)
+    qpos_embed = torch.unsqueeze(qpos_embed, axis=1)
+    cls_embed = self.cls_embed.weight
+    cls_embed = torch.unsqueeze(cls_embed, axis=0).repeat(bs, 1, 1)
+    encoder_input = torch.cat([cls_embed, qpos_embed, action_embed], axis=1)
+    enco关系详图 · conditional-join

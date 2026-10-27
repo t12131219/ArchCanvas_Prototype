@@ -1,0 +1,3273 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "BasePolicy",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+    "class": "BasePolicy",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "cell": null,
+      "sha256": "8b8425ea09c248d086e47eebaf3875be77bea7d3694fee83a1d7c8f0e1f25c36",
+      "unit_sha256": "8b8425ea09c248d086e47eebaf3875be77bea7d3694fee83a1d7c8f0e1f25c36"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/36:4:composite:1",
+      "kind": "composite",
+      "label": "BasePolicy",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 36,
+          "end_line": 64,
+          "column": 4,
+          "end_column": 58,
+          "symbol": "BasePolicy.__call__",
+          "expression": "def __call__(self, ts):\n    if self.step_count == 0:\n        self.generate_trajectory(ts)\n    if self.left_trajectory[0]['t'] == self.step_count:\n        self.curr_left_waypoint = self.left_trajectory.pop(0)\n    next_left_waypoint = self.left_trajectory[0]\n    if self.right_trajectory[0]['t'] == self.step_count:\n        self.curr_right_waypoint = self.right_"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "BasePolicy"
+    },
+    {
+      "id": "model/36:4:composite:1/36:23:interface:1",
+      "kind": "interface",
+      "label": "ts",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 36,
+          "end_line": 36,
+          "column": 23,
+          "end_column": 25,
+          "symbol": "BasePolicy.__call__",
+          "expression": "ts"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "ts"
+    },
+    {
+      "id": "model/36:4:composite:1/38:11:control:1",
+      "kind": "control",
+      "label": "self.step_count == 0",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 38,
+          "end_line": 38,
+          "column": 11,
+          "end_column": 31,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.step_count == 0"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/36:4:composite:1/38:11:compute:1",
+      "kind": "compute",
+      "label": "compare",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 38,
+          "end_line": 38,
+          "column": 11,
+          "end_column": 31,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.step_count == 0"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "compare",
+      "syntax": {
+        "type": "Compare",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "ops": [
+            {
+              "type": "Eq",
+              "fields": {}
+            }
+          ],
+          "comparators": [
+            {
+              "literal_type": "int",
+              "literal": "0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/38:11:state:1",
+      "kind": "state",
+      "label": "self.step_count",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 38,
+          "end_line": 38,
+          "column": 11,
+          "end_column": 26,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.step_count"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "step_count",
+      "value": 0
+    },
+    {
+      "id": "model/36:4:composite:1/38:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 38,
+          "end_line": 39,
+          "column": 8,
+          "end_column": 40,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.step_count == 0:\n    self.generate_trajectory(ts)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/38:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1",
+      "kind": "composite",
+      "label": "self.generate_trajectory",
+      "parent": "model/36:4:composite:1/38:8:composite:1",
+      "source_parent": "model/36:4:composite:1/38:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 19,
+          "end_line": 20,
+          "column": 4,
+          "end_column": 33,
+          "symbol": "generate_trajectory",
+          "expression": "def generate_trajectory(self, ts_first):\n    raise NotImplementedError"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-function",
+      "module_path": "",
+      "constructor": {},
+      "source_class": null
+    },
+    {
+      "id": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1/19:34:interface:1",
+      "kind": "interface",
+      "label": "ts_first",
+      "parent": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1",
+      "source_parent": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 19,
+          "end_line": 19,
+          "column": 34,
+          "end_column": 42,
+          "symbol": "generate_trajectory",
+          "expression": "ts_first"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "ts_first"
+    },
+    {
+      "id": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1/20:8:control:1",
+      "kind": "control",
+      "label": "raise NotImplementedError",
+      "parent": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1",
+      "source_parent": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 20,
+          "end_line": 20,
+          "column": 8,
+          "end_column": 33,
+          "symbol": "generate_trajectory",
+          "expression": "raise NotImplementedError"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "exception-exit",
+      "exception_expression": "NotImplementedError"
+    },
+    {
+      "id": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1/19:4:interface:1",
+      "kind": "interface",
+      "label": "outputs / conditional returns",
+      "parent": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1",
+      "source_parent": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 19,
+          "end_line": 20,
+          "column": 4,
+          "end_column": 33,
+          "symbol": "generate_trajectory",
+          "expression": "def generate_trajectory(self, ts_first):\n    raise NotImplementedError"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    },
+    {
+      "id": "model/36:4:composite:1/38:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 38,
+          "end_line": 39,
+          "column": 8,
+          "end_column": 40,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.step_count == 0:\n    self.generate_trajectory(ts)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/38:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/42:11:control:1",
+      "kind": "control",
+      "label": "self.left_trajectory[0]['t'] == self.step_count",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 11,
+          "end_column": 58,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.left_trajectory[0]['t'] == self.step_count"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/36:4:composite:1/42:11:compute:1",
+      "kind": "compute",
+      "label": "compare",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 11,
+          "end_column": 58,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.left_trajectory[0]['t'] == self.step_count"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "compare",
+      "syntax": {
+        "type": "Compare",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "ops": [
+            {
+              "type": "Eq",
+              "fields": {}
+            }
+          ],
+          "comparators": [
+            {
+              "operand": ".comparators:0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/42:11:compute:2",
+      "kind": "compute",
+      "label": "getitem · 't'",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 11,
+          "end_column": 39,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.left_trajectory[0]['t']"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "'t'",
+      "syntax": {
+        "type": "Subscript",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "slice": {
+            "literal_type": "str",
+            "literal": "'t'"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/42:11:compute:3",
+      "kind": "compute",
+      "label": "getitem · 0",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 11,
+          "end_column": 34,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.left_trajectory[0]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "0",
+      "syntax": {
+        "type": "Subscript",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "slice": {
+            "literal_type": "int",
+            "literal": "0"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/42:11:state:1",
+      "kind": "state",
+      "label": "self.left_trajectory",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 42,
+          "column": 11,
+          "end_column": 31,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.left_trajectory"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "left_trajectory",
+      "value": null
+    },
+    {
+      "id": "model/36:4:composite:1/42:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 43,
+          "column": 8,
+          "end_column": 65,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.left_trajectory[0]['t'] == self.step_count:\n    self.curr_left_waypoint = self.left_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/42:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/42:8:composite:1/43:38:opaque:1",
+      "kind": "opaque",
+      "label": "pop",
+      "parent": "model/36:4:composite:1/42:8:composite:1",
+      "source_parent": "model/36:4:composite:1/42:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 43,
+          "end_line": 43,
+          "column": 38,
+          "end_column": 65,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.left_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self.left_trajectory.pop",
+      "function_target": "self.left_trajectory.pop",
+      "arguments": {
+        "args": [
+          0
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "self.left_trajectory.pop",
+        "qualified_target": "self.left_trajectory.pop",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/42:8:composite:1/43:12:state:1",
+      "kind": "state",
+      "label": "self.curr_left_waypoint",
+      "parent": "model/36:4:composite:1/42:8:composite:1",
+      "source_parent": "model/36:4:composite:1/42:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 43,
+          "end_line": 43,
+          "column": 12,
+          "end_column": 35,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.curr_left_waypoint"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/42:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 43,
+          "column": 8,
+          "end_column": 65,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.left_trajectory[0]['t'] == self.step_count:\n    self.curr_left_waypoint = self.left_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/42:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/42:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "self.curr_left_waypoint · branch join",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 42,
+          "end_line": 43,
+          "column": 8,
+          "end_column": 65,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.left_trajectory[0]['t'] == self.step_count:\n    self.curr_left_waypoint = self.left_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/36:4:composite:1/44:29:compute:1",
+      "kind": "compute",
+      "label": "getitem · 0",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 44,
+          "end_line": 44,
+          "column": 29,
+          "end_column": 52,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.left_trajectory[0]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "0",
+      "syntax": {
+        "type": "Subscript",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "slice": {
+            "literal_type": "int",
+            "literal": "0"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/44:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "next_left_waypoint",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 44,
+          "end_line": 44,
+          "column": 8,
+          "end_column": 26,
+          "symbol": "BasePolicy.__call__",
+          "expression": "next_left_waypoint"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/46:11:control:1",
+      "kind": "control",
+      "label": "self.right_trajectory[0]['t'] == self.step_count",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 11,
+          "end_column": 59,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.right_trajectory[0]['t'] == self.step_count"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/36:4:composite:1/46:11:compute:1",
+      "kind": "compute",
+      "label": "compare",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 11,
+          "end_column": 59,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.right_trajectory[0]['t'] == self.step_count"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "compare",
+      "syntax": {
+        "type": "Compare",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "ops": [
+            {
+              "type": "Eq",
+              "fields": {}
+            }
+          ],
+          "comparators": [
+            {
+              "operand": ".comparators:0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/46:11:compute:2",
+      "kind": "compute",
+      "label": "getitem · 't'",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 11,
+          "end_column": 40,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.right_trajectory[0]['t']"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "'t'",
+      "syntax": {
+        "type": "Subscript",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "slice": {
+            "literal_type": "str",
+            "literal": "'t'"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/46:11:compute:3",
+      "kind": "compute",
+      "label": "getitem · 0",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 11,
+          "end_column": 35,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.right_trajectory[0]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "0",
+      "syntax": {
+        "type": "Subscript",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "slice": {
+            "literal_type": "int",
+            "literal": "0"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/46:11:state:1",
+      "kind": "state",
+      "label": "self.right_trajectory",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 46,
+          "column": 11,
+          "end_column": 32,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.right_trajectory"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "right_trajectory",
+      "value": null
+    },
+    {
+      "id": "model/36:4:composite:1/46:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 67,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.right_trajectory[0]['t'] == self.step_count:\n    self.curr_right_waypoint = self.right_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/46:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/46:8:composite:1/47:39:opaque:1",
+      "kind": "opaque",
+      "label": "pop",
+      "parent": "model/36:4:composite:1/46:8:composite:1",
+      "source_parent": "model/36:4:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 47,
+          "end_line": 47,
+          "column": 39,
+          "end_column": 67,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.right_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self.right_trajectory.pop",
+      "function_target": "self.right_trajectory.pop",
+      "arguments": {
+        "args": [
+          0
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "self.right_trajectory.pop",
+        "qualified_target": "self.right_trajectory.pop",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/46:8:composite:1/47:12:state:1",
+      "kind": "state",
+      "label": "self.curr_right_waypoint",
+      "parent": "model/36:4:composite:1/46:8:composite:1",
+      "source_parent": "model/36:4:composite:1/46:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 47,
+          "end_line": 47,
+          "column": 12,
+          "end_column": 36,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.curr_right_waypoint"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/46:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 67,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.right_trajectory[0]['t'] == self.step_count:\n    self.curr_right_waypoint = self.right_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/46:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/46:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "self.curr_right_waypoint · branch join",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 46,
+          "end_line": 47,
+          "column": 8,
+          "end_column": 67,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.right_trajectory[0]['t'] == self.step_count:\n    self.curr_right_waypoint = self.right_trajectory.pop(0)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/36:4:composite:1/48:30:compute:1",
+      "kind": "compute",
+      "label": "getitem · 0",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 48,
+          "end_line": 48,
+          "column": 30,
+          "end_column": 54,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.right_trajectory[0]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "getitem",
+      "selector": "0",
+      "syntax": {
+        "type": "Subscript",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "slice": {
+            "literal_type": "int",
+            "literal": "0"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/48:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "next_right_waypoint",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 48,
+          "end_line": 48,
+          "column": 8,
+          "end_column": 27,
+          "symbol": "BasePolicy.__call__",
+          "expression": "next_right_waypoint"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/23:4:opaque:1",
+      "kind": "opaque",
+      "label": "self.interpolate",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 23,
+          "end_line": 34,
+          "column": 4,
+          "end_column": 33,
+          "symbol": "interpolate",
+          "expression": "@staticmethod\ndef interpolate(curr_waypoint, next_waypoint, t):\n    t_frac = (t - curr_waypoint['t']) / (next_waypoint['t'] - curr_waypoint['t'])\n    curr_xyz = curr_waypoint['xyz']\n    curr_quat = curr_waypoint['quat']\n    curr_grip = curr_waypoint['gripper']\n    next_xyz = next_waypoint['xyz']\n    next_quat = next_waypoint['quat']\n    next_grip = next_wayp"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "decorated-callable-unresolved"
+    },
+    {
+      "id": "model/36:4:composite:1/51:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "left_xyz",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 8,
+          "end_column": 16,
+          "symbol": "BasePolicy.__call__",
+          "expression": "left_xyz"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/36:4:composite:1/51:18:value-alias:1",
+      "kind": "value-alias",
+      "label": "left_quat",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 18,
+          "end_column": 27,
+          "symbol": "BasePolicy.__call__",
+          "expression": "left_quat"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/36:4:composite:1/51:29:value-alias:1",
+      "kind": "value-alias",
+      "label": "left_gripper",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 51,
+          "end_line": 51,
+          "column": 29,
+          "end_column": 41,
+          "symbol": "BasePolicy.__call__",
+          "expression": "left_gripper"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "2"
+    },
+    {
+      "id": "model/36:4:composite:1/23:4:opaque:2",
+      "kind": "opaque",
+      "label": "self.interpolate",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 23,
+          "end_line": 34,
+          "column": 4,
+          "end_column": 33,
+          "symbol": "interpolate",
+          "expression": "@staticmethod\ndef interpolate(curr_waypoint, next_waypoint, t):\n    t_frac = (t - curr_waypoint['t']) / (next_waypoint['t'] - curr_waypoint['t'])\n    curr_xyz = curr_waypoint['xyz']\n    curr_quat = curr_waypoint['quat']\n    curr_grip = curr_waypoint['gripper']\n    next_xyz = next_waypoint['xyz']\n    next_quat = next_waypoint['quat']\n    next_grip = next_wayp"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "decorated-callable-unresolved"
+    },
+    {
+      "id": "model/36:4:composite:1/52:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "right_xyz",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 8,
+          "end_column": 17,
+          "symbol": "BasePolicy.__call__",
+          "expression": "right_xyz"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/36:4:composite:1/52:19:value-alias:1",
+      "kind": "value-alias",
+      "label": "right_quat",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 19,
+          "end_column": 29,
+          "symbol": "BasePolicy.__call__",
+          "expression": "right_quat"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/36:4:composite:1/52:31:value-alias:1",
+      "kind": "value-alias",
+      "label": "right_gripper",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 52,
+          "end_line": 52,
+          "column": 31,
+          "end_column": 44,
+          "symbol": "BasePolicy.__call__",
+          "expression": "right_gripper"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "2"
+    },
+    {
+      "id": "model/36:4:composite:1/55:11:control:1",
+      "kind": "control",
+      "label": "self.inject_noise",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 55,
+          "end_line": 55,
+          "column": 11,
+          "end_column": 28,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.inject_noise"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "if"
+    },
+    {
+      "id": "model/36:4:composite:1/55:11:state:1",
+      "kind": "state",
+      "label": "self.inject_noise",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 55,
+          "end_line": 55,
+          "column": 11,
+          "end_column": 28,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.inject_noise"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "inject_noise",
+      "value": false
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1",
+      "kind": "composite",
+      "label": "true",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 55,
+          "end_line": 58,
+          "column": 8,
+          "end_column": 85,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.inject_noise:\n    scale = 0.01\n    left_xyz = left_xyz + np.random.uniform(-scale, scale, left_xyz.shape)\n    right_xyz = right_xyz + np.random.uniform(-scale, scale, right_xyz.shape)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/55:11:control:1",
+        "outcome": "true"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/56:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "scale",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 56,
+          "end_line": 56,
+          "column": 12,
+          "end_column": 17,
+          "symbol": "BasePolicy.__call__",
+          "expression": "scale"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/57:23:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 23,
+          "end_column": 82,
+          "symbol": "BasePolicy.__call__",
+          "expression": "left_xyz + np.random.uniform(-scale, scale, left_xyz.shape)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/57:52:compute:1",
+      "kind": "compute",
+      "label": "unary",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 52,
+          "end_column": 58,
+          "symbol": "BasePolicy.__call__",
+          "expression": "-scale"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "unary",
+      "syntax": {
+        "type": "UnaryOp",
+        "fields": {
+          "op": {
+            "type": "USub",
+            "fields": {}
+          },
+          "operand": {
+            "operand": ".operand"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/57:67:compute:1",
+      "kind": "compute",
+      "label": "left_xyz.shape",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 67,
+          "end_column": 81,
+          "symbol": "BasePolicy.__call__",
+          "expression": "left_xyz.shape"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "shape",
+      "value": {
+        "unresolved": "left_xyz.shape"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "shape"
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/57:34:opaque:1",
+      "kind": "opaque",
+      "label": "uniform",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 34,
+          "end_column": 82,
+          "symbol": "BasePolicy.__call__",
+          "expression": "np.random.uniform(-scale, scale, left_xyz.shape)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "numpy.random.uniform",
+      "function_target": "numpy.random.uniform",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "-scale"
+          },
+          {
+            "unresolved": "scale"
+          },
+          {
+            "unresolved": "left_xyz.shape"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "source_framework_function": "numpy.random.uniform",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "np.random.uniform",
+        "qualified_target": "numpy.random.uniform",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/57:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "left_xyz",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 57,
+          "end_line": 57,
+          "column": 12,
+          "end_column": 20,
+          "symbol": "BasePolicy.__call__",
+          "expression": "left_xyz"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/58:24:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 58,
+          "end_line": 58,
+          "column": 24,
+          "end_column": 85,
+          "symbol": "BasePolicy.__call__",
+          "expression": "right_xyz + np.random.uniform(-scale, scale, right_xyz.shape)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "operand": ".right"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/58:54:compute:1",
+      "kind": "compute",
+      "label": "unary",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 58,
+          "end_line": 58,
+          "column": 54,
+          "end_column": 60,
+          "symbol": "BasePolicy.__call__",
+          "expression": "-scale"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "unary",
+      "syntax": {
+        "type": "UnaryOp",
+        "fields": {
+          "op": {
+            "type": "USub",
+            "fields": {}
+          },
+          "operand": {
+            "operand": ".operand"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/58:69:compute:1",
+      "kind": "compute",
+      "label": "right_xyz.shape",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 58,
+          "end_line": 58,
+          "column": 69,
+          "end_column": 84,
+          "symbol": "BasePolicy.__call__",
+          "expression": "right_xyz.shape"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "shape",
+      "value": {
+        "unresolved": "right_xyz.shape"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "shape"
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/58:36:opaque:1",
+      "kind": "opaque",
+      "label": "uniform",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 58,
+          "end_line": 58,
+          "column": 36,
+          "end_column": 85,
+          "symbol": "BasePolicy.__call__",
+          "expression": "np.random.uniform(-scale, scale, right_xyz.shape)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "numpy.random.uniform",
+      "function_target": "numpy.random.uniform",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "-scale"
+          },
+          {
+            "unresolved": "scale"
+          },
+          {
+            "unresolved": "right_xyz.shape"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "source_framework_function": "numpy.random.uniform",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "np.random.uniform",
+        "qualified_target": "numpy.random.uniform",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:1/58:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "right_xyz",
+      "parent": "model/36:4:composite:1/55:8:composite:1",
+      "source_parent": "model/36:4:composite:1/55:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 58,
+          "end_line": 58,
+          "column": 12,
+          "end_column": 21,
+          "symbol": "BasePolicy.__call__",
+          "expression": "right_xyz"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:composite:2",
+      "kind": "composite",
+      "label": "false",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 55,
+          "end_line": 58,
+          "column": 8,
+          "end_column": 85,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.inject_noise:\n    scale = 0.01\n    left_xyz = left_xyz + np.random.uniform(-scale, scale, left_xyz.shape)\n    right_xyz = right_xyz + np.random.uniform(-scale, scale, right_xyz.shape)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "conditional-region",
+      "condition": {
+        "branch": "model/36:4:composite:1/55:11:control:1",
+        "outcome": "false"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "left_xyz · branch join",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 55,
+          "end_line": 58,
+          "column": 8,
+          "end_column": 85,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.inject_noise:\n    scale = 0.01\n    left_xyz = left_xyz + np.random.uniform(-scale, scale, left_xyz.shape)\n    right_xyz = right_xyz + np.random.uniform(-scale, scale, right_xyz.shape)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:value-alias:2",
+      "kind": "value-alias",
+      "label": "right_xyz · branch join",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 55,
+          "end_line": 58,
+          "column": 8,
+          "end_column": 85,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.inject_noise:\n    scale = 0.01\n    left_xyz = left_xyz + np.random.uniform(-scale, scale, left_xyz.shape)\n    right_xyz = right_xyz + np.random.uniform(-scale, scale, right_xyz.shape)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/36:4:composite:1/55:8:value-alias:3",
+      "kind": "value-alias",
+      "label": "scale · branch join",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 55,
+          "end_line": 58,
+          "column": 8,
+          "end_column": 85,
+          "symbol": "BasePolicy.__call__",
+          "expression": "if self.inject_noise:\n    scale = 0.01\n    left_xyz = left_xyz + np.random.uniform(-scale, scale, left_xyz.shape)\n    right_xyz = right_xyz + np.random.uniform(-scale, scale, right_xyz.shape)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "operator": "phi"
+    },
+    {
+      "id": "model/36:4:composite:1/60:37:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 37,
+          "end_column": 74,
+          "symbol": "BasePolicy.__call__",
+          "expression": "[left_xyz, left_quat, [left_gripper]]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "list",
+      "syntax": {
+        "type": "List",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            },
+            {
+              "operand": ".elts:2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/60:59:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 59,
+          "end_column": 73,
+          "symbol": "BasePolicy.__call__",
+          "expression": "[left_gripper]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "list",
+      "syntax": {
+        "type": "List",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/60:22:opaque:1",
+      "kind": "opaque",
+      "label": "concatenate",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 22,
+          "end_column": 75,
+          "symbol": "BasePolicy.__call__",
+          "expression": "np.concatenate([left_xyz, left_quat, [left_gripper]])"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "numpy.concatenate",
+      "function_target": "numpy.concatenate",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "[left_xyz, left_quat, [left_gripper]]"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "source_framework_function": "numpy.concatenate",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "np.concatenate",
+        "qualified_target": "numpy.concatenate",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/60:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "action_left",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 60,
+          "end_line": 60,
+          "column": 8,
+          "end_column": 19,
+          "symbol": "BasePolicy.__call__",
+          "expression": "action_left"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/61:38:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 61,
+          "end_line": 61,
+          "column": 38,
+          "end_column": 78,
+          "symbol": "BasePolicy.__call__",
+          "expression": "[right_xyz, right_quat, [right_gripper]]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "list",
+      "syntax": {
+        "type": "List",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            },
+            {
+              "operand": ".elts:2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/61:62:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 61,
+          "end_line": 61,
+          "column": 62,
+          "end_column": 77,
+          "symbol": "BasePolicy.__call__",
+          "expression": "[right_gripper]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "list",
+      "syntax": {
+        "type": "List",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/61:23:opaque:1",
+      "kind": "opaque",
+      "label": "concatenate",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 61,
+          "end_line": 61,
+          "column": 23,
+          "end_column": 79,
+          "symbol": "BasePolicy.__call__",
+          "expression": "np.concatenate([right_xyz, right_quat, [right_gripper]])"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "numpy.concatenate",
+      "function_target": "numpy.concatenate",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "[right_xyz, right_quat, [right_gripper]]"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "source_framework_function": "numpy.concatenate",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "np.concatenate",
+        "qualified_target": "numpy.concatenate",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/61:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "action_right",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 61,
+          "end_line": 61,
+          "column": 8,
+          "end_column": 20,
+          "symbol": "BasePolicy.__call__",
+          "expression": "action_right"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/63:8:compute:1",
+      "kind": "compute",
+      "label": "add",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 63,
+          "end_line": 63,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.step_count + 1"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "add",
+      "syntax": {
+        "type": "BinOp",
+        "fields": {
+          "left": {
+            "operand": ".left"
+          },
+          "op": {
+            "type": "Add",
+            "fields": {}
+          },
+          "right": {
+            "literal_type": "int",
+            "literal": "1"
+          }
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/63:8:opaque:1",
+      "kind": "opaque",
+      "label": "augmented write · self.step_count",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 63,
+          "end_line": 63,
+          "column": 8,
+          "end_column": 28,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.step_count += 1"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "augmented-write",
+      "mutable": true,
+      "reason": "inplace-overload-unresolved",
+      "effect_scope": "direct-aliases-only; view-and-external-aliases-unresolved"
+    },
+    {
+      "id": "model/36:4:composite:1/63:8:state:1",
+      "kind": "state",
+      "label": "self.step_count",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 63,
+          "end_line": 63,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "BasePolicy.__call__",
+          "expression": "self.step_count"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "resource",
+        "fill": "#fbe8d3"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/36:4:composite:1/64:30:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 64,
+          "end_line": 64,
+          "column": 30,
+          "end_column": 57,
+          "symbol": "BasePolicy.__call__",
+          "expression": "[action_left, action_right]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "list",
+      "syntax": {
+        "type": "List",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/64:15:opaque:1",
+      "kind": "opaque",
+      "label": "concatenate",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 64,
+          "end_line": 64,
+          "column": 15,
+          "end_column": 58,
+          "symbol": "BasePolicy.__call__",
+          "expression": "np.concatenate([action_left, action_right])"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "numpy.concatenate",
+      "function_target": "numpy.concatenate",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "[action_left, action_right]"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "source_framework_function": "numpy.concatenate",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "np.concatenate",
+        "qualified_target": "numpy.concatenate",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/36:4:composite:1/64:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/36:4:composite:1",
+      "source_parent": "model/36:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+          "line": 64,
+          "end_line": 64,
+          "column": 8,
+          "end_column": 58,
+          "symbol": "BasePolicy.__call__",
+          "expression": "return np.concatenate([action_left, action_right])"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/36:4:composite:1/38:11:state:1",
+      "target": "model/36:4:composite:1/38:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/36:4:composite:1/38:11:compute:1",
+      "target": "model/36:4:composite:1/38:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/36:4:composite:1/38:11:control:1",
+      "target": "model/36:4:composite:1/38:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/36:4:composite:1/36:23:interface:1",
+      "target": "model/36:4:composite:1/38:8:composite:1/19:4:composite:1/19:34:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "ts_first",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/36:4:composite:1/38:11:control:1",
+      "target": "model/36:4:composite:1/38:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/36:4:composite:1/42:11:state:1",
+      "target": "model/36:4:composite:1/42:11:compute:3",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/36:4:composite:1/42:11:compute:3",
+      "target": "model/36:4:composite:1/42:11:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/36:4:composite:1/42:11:compute:2",
+      "target": "model/36:4:composite:1/42:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/36:4:composite:1/38:11:state:1",
+      "target": "model/36:4:composite:1/42:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/36:4:composite:1/42:11:compute:1",
+      "target": "model/36:4:composite:1/42:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/36:4:composite:1/42:11:control:1",
+      "target": "model/36:4:composite:1/42:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/36:4:composite:1/42:8:composite:1/43:38:opaque:1",
+      "target": "model/36:4:composite:1/42:8:composite:1/43:12:state:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/36:4:composite:1/42:11:control:1",
+      "target": "model/36:4:composite:1/42:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/36:4:composite:1/42:8:composite:1/43:12:state:1",
+      "target": "model/36:4:composite:1/42:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/36:4:composite:1/42:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00013"
+    },
+    {
+      "source": "model/36:4:composite:1/42:11:state:1",
+      "target": "model/36:4:composite:1/44:29:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/36:4:composite:1/44:29:compute:1",
+      "target": "model/36:4:composite:1/44:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/36:4:composite:1/46:11:state:1",
+      "target": "model/36:4:composite:1/46:11:compute:3",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/36:4:composite:1/46:11:compute:3",
+      "target": "model/36:4:composite:1/46:11:compute:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/36:4:composite:1/46:11:compute:2",
+      "target": "model/36:4:composite:1/46:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/36:4:composite:1/38:11:state:1",
+      "target": "model/36:4:composite:1/46:11:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/36:4:composite:1/46:11:compute:1",
+      "target": "model/36:4:composite:1/46:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/36:4:composite:1/46:11:control:1",
+      "target": "model/36:4:composite:1/46:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    },
+    {
+      "source": "model/36:4:composite:1/46:8:composite:1/47:39:opaque:1",
+      "target": "model/36:4:composite:1/46:8:composite:1/47:12:state:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00022"
+    },
+    {
+      "source": "model/36:4:composite:1/46:11:control:1",
+      "target": "model/36:4:composite:1/46:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00023"
+    },
+    {
+      "source": "model/36:4:composite:1/46:8:composite:1/47:12:state:1",
+      "target": "model/36:4:composite:1/46:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/36:4:composite:1/46:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00024"
+    },
+    {
+      "source": "model/36:4:composite:1/46:11:state:1",
+      "target": "model/36:4:composite:1/48:30:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00025"
+    },
+    {
+      "source": "model/36:4:composite:1/48:30:compute:1",
+      "target": "model/36:4:composite:1/48:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00026"
+    },
+    {
+      "source": "model/36:4:composite:1/23:4:opaque:1",
+      "target": "model/36:4:composite:1/51:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00027"
+    },
+    {
+      "source": "model/36:4:composite:1/23:4:opaque:1",
+      "target": "model/36:4:composite:1/51:18:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00028"
+    },
+    {
+      "source": "model/36:4:composite:1/23:4:opaque:1",
+      "target": "model/36:4:composite:1/51:29:value-alias:1",
+      "kind": "alias",
+      "source_port": "2",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00029"
+    },
+    {
+      "source": "model/36:4:composite:1/23:4:opaque:2",
+      "target": "model/36:4:composite:1/52:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00030"
+    },
+    {
+      "source": "model/36:4:composite:1/23:4:opaque:2",
+      "target": "model/36:4:composite:1/52:19:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00031"
+    },
+    {
+      "source": "model/36:4:composite:1/23:4:opaque:2",
+      "target": "model/36:4:composite:1/52:31:value-alias:1",
+      "kind": "alias",
+      "source_port": "2",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00032"
+    },
+    {
+      "source": "model/36:4:composite:1/55:11:state:1",
+      "target": "model/36:4:composite:1/55:11:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00033"
+    },
+    {
+      "source": "model/36:4:composite:1/55:11:control:1",
+      "target": "model/36:4:composite:1/55:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "id": "e00034"
+    },
+    {
+      "source": "model/36:4:composite:1/51:8:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:23:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00035"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/56:12:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:52:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00036"
+    },
+    {
+      "source": "model/36:4:composite:1/51:8:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:67:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00037"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/57:52:compute:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:34:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00038"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/56:12:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:34:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00039"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/57:67:compute:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:34:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:2",
+      "evidence": "source-dependency",
+      "id": "e00040"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/57:34:opaque:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:23:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00041"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/57:23:compute:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/57:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00042"
+    },
+    {
+      "source": "model/36:4:composite:1/52:8:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:24:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00043"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/56:12:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:54:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00044"
+    },
+    {
+      "source": "model/36:4:composite:1/52:8:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:69:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00045"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/58:54:compute:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:36:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00046"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/56:12:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:36:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:1",
+      "evidence": "source-dependency",
+      "id": "e00047"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/58:69:compute:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:36:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:2",
+      "evidence": "source-dependency",
+      "id": "e00048"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/58:36:opaque:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:24:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00049"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/58:24:compute:1",
+      "target": "model/36:4:composite:1/55:8:composite:1/58:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00050"
+    },
+    {
+      "source": "model/36:4:composite:1/55:11:control:1",
+      "target": "model/36:4:composite:1/55:8:composite:2",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "id": "e00051"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/57:12:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/36:4:composite:1/55:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00052"
+    },
+    {
+      "source": "model/36:4:composite:1/51:8:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:value-alias:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/36:4:composite:1/55:11:control:1",
+        "outcome": "false"
+      },
+      "id": "e00053"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/58:12:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:value-alias:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/36:4:composite:1/55:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00054"
+    },
+    {
+      "source": "model/36:4:composite:1/52:8:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:value-alias:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "false",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/36:4:composite:1/55:11:control:1",
+        "outcome": "false"
+      },
+      "id": "e00055"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:composite:1/56:12:value-alias:1",
+      "target": "model/36:4:composite:1/55:8:value-alias:3",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "true",
+      "evidence": "source-dependency",
+      "condition": {
+        "branch": "model/36:4:composite:1/55:11:control:1",
+        "outcome": "true"
+      },
+      "id": "e00056"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:value-alias:1",
+      "target": "model/36:4:composite:1/60:37:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00057"
+    },
+    {
+      "source": "model/36:4:composite:1/51:18:value-alias:1",
+      "target": "model/36:4:composite:1/60:37:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00058"
+    },
+    {
+      "source": "model/36:4:composite:1/51:29:value-alias:1",
+      "target": "model/36:4:composite:1/60:59:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00059"
+    },
+    {
+      "source": "model/36:4:composite:1/60:59:compute:1",
+      "target": "model/36:4:composite:1/60:37:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00060"
+    },
+    {
+      "source": "model/36:4:composite:1/60:37:compute:1",
+      "target": "model/36:4:composite:1/60:22:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00061"
+    },
+    {
+      "source": "model/36:4:composite:1/60:22:opaque:1",
+      "target": "model/36:4:composite:1/60:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00062"
+    },
+    {
+      "source": "model/36:4:composite:1/55:8:value-alias:2",
+      "target": "model/36:4:composite:1/61:38:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00063"
+    },
+    {
+      "source": "model/36:4:composite:1/52:19:value-alias:1",
+      "target": "model/36:4:composite:1/61:38:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00064"
+    },
+    {
+      "source": "model/36:4:composite:1/52:31:value-alias:1",
+      "target": "model/36:4:composite:1/61:62:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00065"
+    },
+    {
+      "source": "model/36:4:composite:1/61:62:compute:1",
+      "target": "model/36:4:composite:1/61:38:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "2",
+      "evidence": "source-dependency",
+      "id": "e00066"
+    },
+    {
+      "source": "model/36:4:composite:1/61:38:compute:1",
+      "target": "model/36:4:composite:1/61:23:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00067"
+    },
+    {
+      "source": "model/36:4:composite:1/61:23:opaque:1",
+      "target": "model/36:4:composite:1/61:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00068"
+    },
+    {
+      "source": "model/36:4:composite:1/38:11:state:1",
+      "target": "model/36:4:composite:1/63:8:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00069"
+    },
+    {
+      "source": "model/36:4:composite:1/63:8:compute:1",
+      "target": "model/36:4:composite:1/63:8:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00070"
+    },
+    {
+      "source": "model/36:4:composite:1/38:11:state:1",
+      "target": "model/36:4:composite:1/63:8:opaque:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "previous",
+      "evidence": "source-dependency",
+      "id": "e00071"
+    },
+    {
+      "source": "model/36:4:composite:1/63:8:opaque:1",
+      "target": "model/36:4:composite:1/63:8:state:1",
+      "kind": "state-write",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00072"
+    },
+    {
+      "source": "model/36:4:composite:1/60:8:value-alias:1",
+      "target": "model/36:4:composite:1/64:30:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00073"
+    },
+    {
+      "source": "model/36:4:composite:1/61:8:value-alias:1",
+      "target": "model/36:4:composite:1/64:30:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00074"
+    },
+    {
+      "source": "model/36:4:composite:1/64:30:compute:1",
+      "target": "model/36:4:composite:1/64:15:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00075"
+    },
+    {
+      "source": "model/36:4:composite:1/64:15:opaque:1",
+      "target": "model/36:4:composite:1/64:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00076"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/36:4:composite:1/38:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "line": 38,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    },
+    {
+      "id": "model/36:4:composite:1/42:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "line": 42,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    },
+    {
+      "id": "model/36:4:composite:1/46:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "line": 46,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    },
+    {
+      "id": "model/36:4:composite:1/55:11:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "line": 55,
+      "column": 8,
+      "outcomes": [
+        "true",
+        "false"
+      ],
+      "kind": "if"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "line": 20,
+      "kind": "exception-paths-not-verified"
+    },
+    {
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/scripted_policy.py",
+      "line": 63,
+      "kind": "mutation-alias-coverage-unresolved"
+    }
+  ],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "analysis": {
+    "kind": "static-source",
+    "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+    "loaded_files": 1,
+    "file_budget": 128,
+    "entry_kind": "callable",
+    "imports_executed": false
+  },
+  "ir_digest": "04ca9fb0301d17dc9a7de5032b0c246ab6db47f9527c6da694b7247e066afaad"
+}

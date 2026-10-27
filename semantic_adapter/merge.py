@@ -115,4 +115,6 @@ def merge(ir, receipt):
     recognize_runtime(ir)
     from .observations import index_observations
     index_observations(ir, receipt)
+    from .source_runtime import build_index
+    ir['source_runtime_index'] = build_index(ir)
     return seal(ir)

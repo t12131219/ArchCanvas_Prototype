@@ -1,0 +1,237 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "BackboneBase",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+    "class": "BackboneBase",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+      "cell": null,
+      "sha256": "dec9770e496e2deb56f694e622a15d01ea3bdea977c2446fb3c41bc18cf4ed55",
+      "unit_sha256": "dec9770e496e2deb56f694e622a15d01ea3bdea977c2446fb3c41bc18cf4ed55"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/74:4:composite:1",
+      "kind": "composite",
+      "label": "BackboneBase",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 74,
+          "end_line": 76,
+          "column": 4,
+          "end_column": 17,
+          "symbol": "BackboneBase.forward",
+          "expression": "def forward(self, tensor):\n    xs = self.body(tensor)\n    return xs"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "BackboneBase"
+    },
+    {
+      "id": "model/74:4:composite:1/74:22:interface:1",
+      "kind": "interface",
+      "label": "tensor",
+      "parent": "model/74:4:composite:1",
+      "source_parent": "model/74:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 74,
+          "end_line": 74,
+          "column": 22,
+          "end_column": 28,
+          "symbol": "BackboneBase.forward",
+          "expression": "tensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tensor"
+    },
+    {
+      "id": "model/74:4:composite:1/75:13:opaque:1",
+      "kind": "opaque",
+      "label": "body · IntermediateLayerGetter",
+      "parent": "model/74:4:composite:1",
+      "source_parent": "model/74:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 75,
+          "end_line": 75,
+          "column": 13,
+          "end_column": 30,
+          "symbol": "BackboneBase.forward",
+          "expression": "self.body(tensor)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "torchvision.models._utils.IntermediateLayerGetter",
+      "module_path": "body",
+      "framework_type": "torchvision.models._utils.IntermediateLayerGetter",
+      "constructor": {
+        "args": [
+          {
+            "unresolved": "backbone"
+          }
+        ],
+        "kwargs": {
+          "return_layers": {
+            "unresolved": "return_layers"
+          }
+        }
+      },
+      "source_framework_module": "torchvision.models._utils.IntermediateLayerGetter",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "self.body",
+        "qualified_target": "torchvision.models._utils.IntermediateLayerGetter",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/74:4:composite:1/75:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "xs",
+      "parent": "model/74:4:composite:1",
+      "source_parent": "model/74:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 75,
+          "end_line": 75,
+          "column": 8,
+          "end_column": 10,
+          "symbol": "BackboneBase.forward",
+          "expression": "xs"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/74:4:composite:1/76:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/74:4:composite:1",
+      "source_parent": "model/74:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 76,
+          "end_line": 76,
+          "column": 8,
+          "end_column": 17,
+          "symbol": "BackboneBase.forward",
+          "expression": "return xs"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/74:4:composite:1/74:22:interface:1",
+      "target": "model/74:4:composite:1/75:13:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/74:4:composite:1/75:13:opaque:1",
+      "target": "model/74:4:composite:1/75:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/74:4:composite:1/75:8:value-alias:1",
+      "target": "model/74:4:composite:1/76:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    }
+  ],
+  "branches": [],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "analysis": {
+    "kind": "static-source",
+    "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+    "loaded_files": 1,
+    "file_budget": 128,
+    "entry_kind": "callable",
+    "imports_executed": false
+  },
+  "ir_digest": "109d5d3fda5eb531e28a6c2519ddde4df11d5f8f1c89fb418daaff6a2916243c"
+}

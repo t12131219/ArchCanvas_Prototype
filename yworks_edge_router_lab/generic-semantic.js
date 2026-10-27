@@ -11,9 +11,10 @@
   function normalize(v){return Array.isArray(v)?v.map(normalize):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,normalize(v[k])])):v;}
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const engine={...E,semanticOnly:true,project:(ir,state,plan,opts={})=>E.project(ir,state,plan,{...opts,semanticOnly:true})};
-  const project=(ir,state)=>engine.project(ir,state);
+  const Integration=root.SummarySourceRuntime||(typeof require==='function'?require('./source-runtime.js'):null);
+  const project=(ir,state)=>Integration.project(ir,state,engine);
   const Flow=root.SummaryFlowOptimizer||(typeof require==='function'?require('./flow-optimizer.js'):null);
-  const VERSION='native-semantic/14',SCHEMA='archcanvas-native-semantic/1';
+  const VERSION='native-semantic/15',SCHEMA='archcanvas-native-semantic/1';
   const projectionInputs=new WeakMap(),certificates=new WeakMap(),sharedCertificates=new WeakMap(),frozen=new WeakSet();
   const projections=new WeakMap(),sharedProjections=new Map(),navigationIndexes=new WeakMap();
   function projectionKey(ir,state){return stable(ir)+'\n'+stable(state);}
@@ -26,13 +27,13 @@
     const key=projectionKey(graph.generic.ir,graph.generic.state);cut=sharedProjections.get(key)||project(graph.generic.ir,graph.generic.state);
     return cacheProjection(graph.generic,cut,key);
   }
-  function initial(ir,state){E.validate(ir);return state?{view:'publication',mode:'source',open:[],offsets:{},...clone(state)}:F.certifiedDetails(ir,F.frontier({mode:'source'},'detail'),{semanticOnly:true});}
+  function initial(ir,state){E.validate(ir);return state?{view:'publication',mode:'source',open:[],offsets:{},...clone(state)}:F.certifiedDetails(ir,F.frontier({mode:ir.source_runtime_index?'merged':'source'},'detail'),{semanticOnly:true});}
   // Palette from the dedicated drawing. Only certified roles/operators choose
   // algorithm colors; unlabeled source containers use structural region tones.
   const palette={embedding:'#f8d4e1',ffn:'#c8ebfb',attention:'#ffddb3',norm:'#fff6bd',linear:'#dfdff8',softmax:'#c9f1cd',tensor:'#cdeaf8',control:'#f3f5f7',unknown:'#fff0e8'};
   const regionTones=['#e7f5fe','#fff0f5','#eef7e8','#f1edfa'];
   function color(n,region=0,depth=0){
-    if(n.kind==='opaque')return palette.unknown;
+    if(n.kind==='opaque'||n.source_runtime?.static_kind==='opaque')return palette.unknown;
     if(['control','state','buffer'].includes(n.kind))return palette.control;
     const type=n.semantic_type,op=n.operator;
     if(type==='multihead-attention')return palette.attention;
@@ -95,13 +96,14 @@
     const lines=frame?P.wrap(a.title,Math.max(100,w-72),16).slice(0,2):a.lines;
     const text=lines.map((t,i)=>`<text x="${frame?16:w/2}" y="${titleY+i*20}" text-anchor="${frame?'start':'middle'}" font-family="DejaVu Sans,Arial,sans-serif" font-size="16" fill="${stroke}">${esc(t)}</text>`).join('');
     const notes=frame?'':a.notes.map((t,i)=>`<text x="${w/2}" y="${titleY+lines.length*20+i*15-3}" text-anchor="middle" font-family="DejaVu Sans,Arial,sans-serif" font-size="12" fill="#9aa0a6">${esc(t)}</text>`).join('');
-    const html=`<rect x="0" y="0" width="${w}" height="${h}" rx="${frame?19:10}" fill="${a.fill}" stroke="${frame?'#92a2af':stroke}" stroke-width="${frame?1.4:2}"${n.kind==='opaque'?' stroke-dasharray="6 4"':''}/>${text}${notes}<desc>${esc([a.title,...a.allCaptions].join('\n'))}</desc>`;
+    const html=`<rect x="0" y="0" width="${w}" height="${h}" rx="${frame?19:10}" fill="${a.fill}" stroke="${frame?'#92a2af':stroke}" stroke-width="${frame?1.4:2}"${n.kind==='opaque'||n.source_runtime?.static_kind==='opaque'?' stroke-dasharray="6 4"':''}/>${text}${notes}<desc>${esc([a.title,...a.allCaptions].join('\n'))}</desc>`;
     // Only the actual title text is an obstacle; no reserved full-width strip.
     const labelObstacles=frame?lines.map((t,i)=>({x:14,y:titleY-15+i*20,w:Math.min(w-60,P.width(t,16)+6),h:19})):[];
     return {html,labelObstacles};
   }
   function build(ir,state,extra={}){
     E.validate(ir);ir=clone(ir);const selected=initial(ir,state),cut=project(ir,selected),visible=new Set(cut.nodes.map(n=>n.id)),headings=headingIds(cut),looks=new Map();
+    if(Integration.enabled(ir,selected)){selected.runtimeInlineRun=cut.publication.source_runtime.run;selected.runtimeInlineInitialized=selected.runtimeInlineRun;selected.open=clone(cut.publication.open||selected.open);selected.paperAuto=false;}
     const regions=new Map(),depths=new Map();let ordinal=0;
     const region=id=>{if(regions.has(id))return regions.get(id);const n=cut.idx.nodes.get(id);if(!n||!visible.has(id)||headings.has(id))return 0;
       const parent=n.parent;if(!visible.has(parent)||headings.has(parent)){depths.set(id,0);regions.set(id,n.kind==='composite'?ordinal++:0);}
@@ -139,7 +141,7 @@
     return graph;
   }
   // Delayed hover reads the already-certified projection; no layout or route work.
-  function nodeEvidence(graph,id){const n=graph.nodes.find(n=>n.id===id)?.semantic;return n?Evidence.nodeDetails(n,expected(graph).idx):'';}
+  function nodeEvidence(graph,id){const n=graph.nodes.find(n=>n.id===id)?.semantic;return n?[Evidence.nodeDetails(n,expected(graph).idx),n.source_runtime?'CPU invocation bridge (selected input/mode only):\n'+JSON.stringify(n.source_runtime,null,2):''].filter(Boolean).join('\n'):'';}
   function within(nodes,id,frame){const by=new Map(nodes.map(n=>[n.id,n]));let at=id;while(at){if(at===frame)return true;at=by.get(at)?.parent;}return false;}
   function slotIdentity(e,side){return stable(e.bundle_members?['bundle',e.id,side]:[side==='source'?e.resolved_source||e.canonical_source||e.source:e.canonical_target||e.target,side==='source'?e.source_port:e.target_port]);}
   function children(graph,id){let index=navigationIndexes.get(graph.generic);if(!index){index=new Map(graph.generic.navigation?.children||expected(graph).idx.children);navigationIndexes.set(graph.generic,index);}return index.get(id)||[];}
@@ -153,9 +155,9 @@
   }
   function operate(graph,op){
     remember(graph);const ir=graph.generic.ir;let state=clone(graph.generic.state);
-    if(op.kind==='all'){state=op.open?P.fullyExpanded(ir,state,E):{...state,paperAuto:false,open:[]};delete state.nativeSourceFocus;}
-    else if(op.kind==='frontier'){delete state.nativeSourceFocus;state=F.frontier(state,op.action);if(op.action==='detail')state=F.certifiedDetails(ir,state,{semanticOnly:true});}
-    else if(op.kind==='state')state={...state,...clone(op.patch)};
+    if(op.kind==='all'){state=op.open?P.fullyExpanded(Integration.fullyExpandedIR(ir,state),state,E):{...state,paperAuto:false,open:[]};delete state.nativeSourceFocus;}
+    else if(op.kind==='frontier'){delete state.nativeSourceFocus;state=F.frontier(state,op.action);if(op.action==='detail'){state=F.certifiedDetails(ir,state,{semanticOnly:true});delete state.runtimeInlineInitialized;}}
+    else if(op.kind==='state'){state={...state,...clone(op.patch)};if(op.patch.runtimeInlineRun!=null)delete state.runtimeInlineInitialized;}
     else if(op.kind==='focus'){const back=clone(state);delete back.nativeFocusReturn;state={...state,paperFocus:op.id,paperRelation:null,paperAuto:true,open:state.paperCanonical?state.open:[],nativeFocusReturn:back,...(state.paperCanonical?{nativeSourceFocus:op.id}:{} )};}
     else if(op.kind==='back')state=state.nativeFocusReturn||state.paperFrontierReturn||state;
     else {const cut=expected(graph);if(!cut.idx.children.get(op.id)?.length)throw Error('此节点没有内部源码单位');state.paperAuto=false;state.open=clone(cut.publication?.open||state.open||[]);const open=new Set(state.open);if(op.force??!open.has(op.id))open.add(op.id);else open.delete(op.id);state.open=[...open];}
@@ -601,7 +603,7 @@
   function document(graph){const nativeLayout=layoutSnapshot(graph);return {schema:SCHEMA,renderer:graph.generic.version,ir:clone(graph.generic.ir),state:clone(graph.generic.state),authoring:clone(graph.generic.authoring),migration:clone(graph.generic.migration),layouts:clone(graph.generic.layouts||[]),nativeLayout:clone(nativeLayout)};}
   function read(value){
     let ir,state,authoring,migration,nativeLayout,layouts;
-    if(value.schema===SCHEMA){({ir,state,authoring,migration,nativeLayout,layouts}=value);if(value.renderer!==VERSION){if(!/^native-semantic\/([1-9]|10|11|12|13)$/.test(value.renderer||''))throw Error('不支持的原生语义布局版本');migration={...(migration||{}),previousRenderer:value.renderer,previousNativeLayout:clone(nativeLayout||null),previousLayouts:clone(layouts||[])};nativeLayout=null;layouts=[];}}
+    if(value.schema===SCHEMA){({ir,state,authoring,migration,nativeLayout,layouts}=value);if(value.renderer!==VERSION&&!(value.renderer==='native-semantic/14'&&!Integration.enabled(ir,state||{}))){if(!/^native-semantic\/([1-9]|10|11|12|13|14)$/.test(value.renderer||''))throw Error('不支持的原生语义布局版本');migration={...(migration||{}),previousRenderer:value.renderer,previousNativeLayout:clone(nativeLayout||null),previousLayouts:clone(layouts||[])};nativeLayout=null;layouts=[];}}
     else if(value.schema==='semantic-authoring/1'){A.validate(value);authoring=value;ir=A.sourceIR(value);state={view:'publication',mode:'merged',paperCanonical:true,paperMedium:'canvas',paperAuto:false,open:value.open||[]};migration={schema:value.schema,original:clone(value)};}
     else if(['semantic-canvas/1','archcanvas-architecture-document/1'].includes(value.schema)){({ir,state}=value);authoring=value.authoring||null;migration={schema:value.schema,original:clone(value),geometry:'Retained as provenance; measured again for native canvas'};}
     else if(value.schema==='archcanvas-source-semantic/2')ir=value;

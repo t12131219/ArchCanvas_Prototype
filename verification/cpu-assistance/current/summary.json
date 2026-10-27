@@ -1,0 +1,161 @@
+{
+  "schema": "archcanvas-probe-assistance/1",
+  "status": "passed",
+  "source_ir_digest": "c17e2d0ac0822e8ded37835bd638e014d5cbb3e2e59577cdea9e6f7769282d55",
+  "source_graph_digest": "1ca440e43d22de7ca86015b0e24f7a041c44bbe64a969cb798e9146ca2fd69e2",
+  "reason": null,
+  "model_executed": true,
+  "runs": [
+    {
+      "case": "left",
+      "mode": "eval",
+      "status": "passed",
+      "operators": 3,
+      "module_calls": 2,
+      "truncated": false,
+      "replay": {
+        "matched": true,
+        "output_digest": "3ab9c226f544fde9bdd056dbddb91f5dcdbc4f490ede35e0fb1ddb532178ca42"
+      },
+      "reason": null
+    },
+    {
+      "case": "left",
+      "mode": "train",
+      "status": "passed",
+      "operators": 3,
+      "module_calls": 2,
+      "truncated": false,
+      "replay": {
+        "matched": true,
+        "output_digest": "3ab9c226f544fde9bdd056dbddb91f5dcdbc4f490ede35e0fb1ddb532178ca42"
+      },
+      "reason": null
+    },
+    {
+      "case": "right",
+      "mode": "eval",
+      "status": "passed",
+      "operators": 3,
+      "module_calls": 2,
+      "truncated": false,
+      "replay": {
+        "matched": true,
+        "output_digest": "fcfa21d63d7da2b7a221a4a2609637b7180db537bbacf0292d3cab0a84748467"
+      },
+      "reason": null
+    },
+    {
+      "case": "right",
+      "mode": "train",
+      "status": "passed",
+      "operators": 3,
+      "module_calls": 2,
+      "truncated": false,
+      "replay": {
+        "matched": true,
+        "output_digest": "fcfa21d63d7da2b7a221a4a2609637b7180db537bbacf0292d3cab0a84748467"
+      },
+      "reason": null
+    }
+  ],
+  "boundaries": [
+    {
+      "node": "model/11:4:composite:1/12:20:opaque:1",
+      "label": "getattr",
+      "status": "not-associated",
+      "observations": [],
+      "resolved": false
+    },
+    {
+      "node": "model/11:4:composite:1/13:16:opaque:1",
+      "label": "operation",
+      "status": "source-line-associated",
+      "observations": [
+        {
+          "run": 0,
+          "event": "op0",
+          "node": "runtime:0:op0",
+          "match": "source-line-associated; not operator-equivalence proof"
+        },
+        {
+          "run": 0,
+          "event": "op1",
+          "node": "runtime:0:op1",
+          "match": "source-line-associated; not operator-equivalence proof"
+        },
+        {
+          "run": 1,
+          "event": "op0",
+          "node": "runtime:1:op0",
+          "match": "source-line-associated; not operator-equivalence proof"
+        },
+        {
+          "run": 1,
+          "event": "op1",
+          "node": "runtime:1:op1",
+          "match": "source-line-associated; not operator-equivalence proof"
+        },
+        {
+          "run": 2,
+          "event": "op0",
+          "node": "runtime:2:op0",
+          "match": "source-line-associated; not operator-equivalence proof"
+        },
+        {
+          "run": 2,
+          "event": "op1",
+          "node": "runtime:2:op1",
+          "match": "source-line-associated; not operator-equivalence proof"
+        },
+        {
+          "run": 3,
+          "event": "op0",
+          "node": "runtime:3:op0",
+          "match": "source-line-associated; not operator-equivalence proof"
+        },
+        {
+          "run": 3,
+          "event": "op1",
+          "node": "runtime:3:op1",
+          "match": "source-line-associated; not operator-equivalence proof"
+        }
+      ],
+      "resolved": false
+    }
+  ],
+  "coverage": {
+    "status": "partial",
+    "complete": false,
+    "scope": "declared concrete input set × declared modes; selected forward and expanded local helper source",
+    "finite_domain": {
+      "exhaustive": false,
+      "reason": "no explicit finite input set"
+    },
+    "branches": [
+      {
+        "id": "model/11:4:composite:1/14:36:control:1",
+        "file": "/home/fzg/PycharmProjects/ArchCanvas/prototype/Summary_Merge/tests/semantic_fixtures/probe_dynamic.py",
+        "line": 14,
+        "column": 15,
+        "outcomes": [
+          "true",
+          "false"
+        ],
+        "kind": "if-expression",
+        "observed": [
+          "false",
+          "true"
+        ],
+        "missing": []
+      }
+    ],
+    "opaque_nodes": 2,
+    "coverage_blockers": [],
+    "all_runs_passed": true,
+    "claimed_for_arbitrary_inputs": false,
+    "reason": "unobserved/unsupported source, failed run, or input domain not exhaustively declared"
+  },
+  "scope": "declared inputs and modes only; source-line association is not operator equivalence",
+  "static_unknowns_preserved": true
+}

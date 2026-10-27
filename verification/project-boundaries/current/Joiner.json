@@ -1,0 +1,988 @@
+{
+  "schema": "archcanvas-source-semantic/2",
+  "title": "Joiner",
+  "entry": {
+    "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+    "class": "Joiner",
+    "cell": null,
+    "constructor": {}
+  },
+  "coverage_contract": "在明确限定的模型、输入范围和运行模式内，完整覆盖并验证所有分支。任何任意 PyTorch 模型均无 opaque 无法保证：未知自定义算子、外部依赖或动态 Python 行为可能无法从现有证据中还原。",
+  "sources": [
+    {
+      "path": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+      "physical": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+      "cell": null,
+      "sha256": "dec9770e496e2deb56f694e622a15d01ea3bdea977c2446fb3c41bc18cf4ed55",
+      "unit_sha256": "dec9770e496e2deb56f694e622a15d01ea3bdea977c2446fb3c41bc18cf4ed55"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "model/103:4:composite:1",
+      "kind": "composite",
+      "label": "Joiner",
+      "parent": null,
+      "source_parent": null,
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 103,
+          "end_line": 112,
+          "column": 4,
+          "end_column": 23,
+          "symbol": "Joiner.forward",
+          "expression": "def forward(self, tensor_list: NestedTensor):\n    xs = self[0](tensor_list)\n    out: List[NestedTensor] = []\n    pos = []\n    for name, x in xs.items():\n        out.append(x)\n        pos.append(self[1](x).to(x.dtype))\n    return (out, pos)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "source-module",
+      "module_path": "",
+      "constructor": {},
+      "source_class": "Joiner"
+    },
+    {
+      "id": "model/103:4:composite:1/103:22:interface:1",
+      "kind": "interface",
+      "label": "tensor_list",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 103,
+          "end_line": 103,
+          "column": 22,
+          "end_column": 47,
+          "symbol": "Joiner.forward",
+          "expression": "tensor_list: NestedTensor"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "input",
+      "slot": "tensor_list"
+    },
+    {
+      "id": "model/103:4:composite:1/104:13:opaque:1",
+      "kind": "opaque",
+      "label": "self[0]",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 104,
+          "end_line": 104,
+          "column": 13,
+          "end_column": 33,
+          "symbol": "Joiner.forward",
+          "expression": "self[0](tensor_list)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self[0]",
+      "function_target": "self[0]",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "tensor_list"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "self[0]",
+        "qualified_target": "self[0]",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/104:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "xs",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 104,
+          "end_line": 104,
+          "column": 8,
+          "end_column": 10,
+          "symbol": "Joiner.forward",
+          "expression": "xs"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/103:4:composite:1/105:34:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 105,
+          "end_line": 105,
+          "column": 34,
+          "end_column": 36,
+          "symbol": "Joiner.forward",
+          "expression": "[]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "list",
+      "syntax": {
+        "type": "List",
+        "fields": {
+          "elts": []
+        }
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/105:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "out",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 105,
+          "end_line": 105,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Joiner.forward",
+          "expression": "out"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/103:4:composite:1/106:14:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 106,
+          "end_line": 106,
+          "column": 14,
+          "end_column": 16,
+          "symbol": "Joiner.forward",
+          "expression": "[]"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "list",
+      "syntax": {
+        "type": "List",
+        "fields": {
+          "elts": []
+        }
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/106:8:value-alias:1",
+      "kind": "value-alias",
+      "label": "pos",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 106,
+          "end_line": 106,
+          "column": 8,
+          "end_column": 11,
+          "symbol": "Joiner.forward",
+          "expression": "pos"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": null
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:control:1",
+      "kind": "control",
+      "label": "for (name, x) in xs.items()",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 107,
+          "end_line": 110,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Joiner.forward",
+          "expression": "for name, x in xs.items():\n    out.append(x)\n    pos.append(self[1](x).to(x.dtype))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "diamond",
+        "fill": "#fff0c1"
+      },
+      "runtime_evidence": [],
+      "operator": "loop",
+      "loop_semantics": "source-body-template; repetition-and-carried-state-unresolved"
+    },
+    {
+      "id": "model/103:4:composite:1/107:23:opaque:1",
+      "kind": "opaque",
+      "label": "items",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 107,
+          "end_line": 107,
+          "column": 23,
+          "end_column": 33,
+          "symbol": "Joiner.forward",
+          "expression": "xs.items()"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "xs.items",
+      "function_target": "xs.items",
+      "arguments": {
+        "args": [],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "xs.items",
+        "qualified_target": "xs.items",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1",
+      "kind": "composite",
+      "label": "loop body (source template)",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 107,
+          "end_line": 110,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Joiner.forward",
+          "expression": "for name, x in xs.items():\n    out.append(x)\n    pos.append(self[1](x).to(x.dtype))"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "composite",
+      "glyph": {
+        "shape": "frame",
+        "fill": "#edf2ff"
+      },
+      "runtime_evidence": [],
+      "semantic_type": "loop-template"
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1/107:12:value-alias:1",
+      "kind": "value-alias",
+      "label": "name",
+      "parent": "model/103:4:composite:1/107:8:composite:1",
+      "source_parent": "model/103:4:composite:1/107:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 107,
+          "end_line": 107,
+          "column": 12,
+          "end_column": 16,
+          "symbol": "Joiner.forward",
+          "expression": "name"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "0"
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1/107:18:value-alias:1",
+      "kind": "value-alias",
+      "label": "x",
+      "parent": "model/103:4:composite:1/107:8:composite:1",
+      "source_parent": "model/103:4:composite:1/107:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 107,
+          "end_line": 107,
+          "column": 18,
+          "end_column": 19,
+          "symbol": "Joiner.forward",
+          "expression": "x"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "value",
+        "fill": "#e8f6ef"
+      },
+      "runtime_evidence": [],
+      "slot": "1"
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1/108:12:opaque:1",
+      "kind": "opaque",
+      "label": "append",
+      "parent": "model/103:4:composite:1/107:8:composite:1",
+      "source_parent": "model/103:4:composite:1/107:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 108,
+          "end_line": 108,
+          "column": 12,
+          "end_column": 25,
+          "symbol": "Joiner.forward",
+          "expression": "out.append(x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "out.append",
+      "function_target": "out.append",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "out.append",
+        "qualified_target": "out.append",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1/110:23:opaque:1",
+      "kind": "opaque",
+      "label": "self[1]",
+      "parent": "model/103:4:composite:1/107:8:composite:1",
+      "source_parent": "model/103:4:composite:1/107:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 110,
+          "end_line": 110,
+          "column": 23,
+          "end_column": 33,
+          "symbol": "Joiner.forward",
+          "expression": "self[1](x)"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "self[1]",
+      "function_target": "self[1]",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "self[1]",
+        "qualified_target": "self[1]",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1/110:37:compute:1",
+      "kind": "compute",
+      "label": "x.dtype",
+      "parent": "model/103:4:composite:1/107:8:composite:1",
+      "source_parent": "model/103:4:composite:1/107:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 110,
+          "end_line": 110,
+          "column": 37,
+          "end_column": 44,
+          "symbol": "Joiner.forward",
+          "expression": "x.dtype"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "attribute",
+      "attribute_name": "dtype",
+      "value": {
+        "unresolved": "x.dtype"
+      },
+      "syntax": {
+        "type": "Attribute",
+        "fields": {
+          "value": {
+            "operand": ".value"
+          },
+          "attr": "dtype"
+        }
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1/110:23:compute:1",
+      "kind": "compute",
+      "label": "to",
+      "parent": "model/103:4:composite:1/107:8:composite:1",
+      "source_parent": "model/103:4:composite:1/107:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 110,
+          "end_line": 110,
+          "column": 23,
+          "end_column": 45,
+          "symbol": "Joiner.forward",
+          "expression": "self[1](x).to(x.dtype)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "device-cast",
+      "function_target": "self[1](x).to",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "x.dtype"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": null,
+      "syntax": {
+        "type": "Call",
+        "fields": {
+          "args": [
+            {
+              "operand": ".args:0"
+            }
+          ],
+          "keywords": []
+        }
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:composite:1/110:12:opaque:1",
+      "kind": "opaque",
+      "label": "append",
+      "parent": "model/103:4:composite:1/107:8:composite:1",
+      "source_parent": "model/103:4:composite:1/107:8:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 110,
+          "end_line": 110,
+          "column": 12,
+          "end_column": 46,
+          "symbol": "Joiner.forward",
+          "expression": "pos.append(self[1](x).to(x.dtype))"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "operator": "pos.append",
+      "function_target": "pos.append",
+      "arguments": {
+        "args": [
+          {
+            "unresolved": "self[1](x).to(x.dtype)"
+          }
+        ],
+        "kwargs": {}
+      },
+      "reason": "unresolved-call-target",
+      "unknown_boundary": {
+        "category": "external-or-dynamic-call-target",
+        "target": "pos.append",
+        "qualified_target": "pos.append",
+        "source_file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+        "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+        "policy": "source operands retained; no runtime execution or identity guess"
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:opaque:1",
+      "kind": "opaque",
+      "label": "name · loop-carried value",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 107,
+          "end_line": 110,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Joiner.forward",
+          "expression": "for name, x in xs.items():\n    out.append(x)\n    pos.append(self[1](x).to(x.dtype))"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/103:4:composite:1/107:8:opaque:2",
+      "kind": "opaque",
+      "label": "x · loop-carried value",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 107,
+          "end_line": 110,
+          "column": 8,
+          "end_column": 46,
+          "symbol": "Joiner.forward",
+          "expression": "for name, x in xs.items():\n    out.append(x)\n    pos.append(self[1](x).to(x.dtype))"
+        }
+      ],
+      "evidence_status": "opaque",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "dashed-rect",
+        "fill": "#fbe4e4"
+      },
+      "runtime_evidence": [],
+      "reason": "iteration-binding-unresolved"
+    },
+    {
+      "id": "model/103:4:composite:1/112:15:compute:1",
+      "kind": "compute",
+      "label": "structured value",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 112,
+          "end_line": 112,
+          "column": 15,
+          "end_column": 23,
+          "symbol": "Joiner.forward",
+          "expression": "(out, pos)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "rounded-rect",
+        "fill": "#dceffc"
+      },
+      "runtime_evidence": [],
+      "operator": "structure",
+      "structure_kind": "tuple",
+      "syntax": {
+        "type": "Tuple",
+        "fields": {
+          "elts": [
+            {
+              "operand": ".elts:0"
+            },
+            {
+              "operand": ".elts:1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "model/103:4:composite:1/112:8:interface:1",
+      "kind": "interface",
+      "label": "return",
+      "parent": "model/103:4:composite:1",
+      "source_parent": "model/103:4:composite:1",
+      "source": [
+        {
+          "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+          "line": 112,
+          "end_line": 112,
+          "column": 8,
+          "end_column": 23,
+          "symbol": "Joiner.forward",
+          "expression": "return (out, pos)"
+        }
+      ],
+      "evidence_status": "static-only",
+      "granularity": "atomic",
+      "glyph": {
+        "shape": "port",
+        "fill": "#e7edf4"
+      },
+      "runtime_evidence": [],
+      "role": "output"
+    }
+  ],
+  "edges": [
+    {
+      "source": "model/103:4:composite:1/103:22:interface:1",
+      "target": "model/103:4:composite:1/104:13:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00000"
+    },
+    {
+      "source": "model/103:4:composite:1/104:13:opaque:1",
+      "target": "model/103:4:composite:1/104:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00001"
+    },
+    {
+      "source": "model/103:4:composite:1/105:34:compute:1",
+      "target": "model/103:4:composite:1/105:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00002"
+    },
+    {
+      "source": "model/103:4:composite:1/106:14:compute:1",
+      "target": "model/103:4:composite:1/106:8:value-alias:1",
+      "kind": "alias",
+      "source_port": "out",
+      "target_port": "value",
+      "evidence": "source-dependency",
+      "id": "e00003"
+    },
+    {
+      "source": "model/103:4:composite:1/104:8:value-alias:1",
+      "target": "model/103:4:composite:1/107:23:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00004"
+    },
+    {
+      "source": "model/103:4:composite:1/107:23:opaque:1",
+      "target": "model/103:4:composite:1/107:8:control:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00005"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:control:1",
+      "target": "model/103:4:composite:1/107:8:composite:1",
+      "kind": "control",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00006"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:control:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/107:12:value-alias:1",
+      "kind": "alias",
+      "source_port": "0",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00007"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:control:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/107:18:value-alias:1",
+      "kind": "alias",
+      "source_port": "1",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00008"
+    },
+    {
+      "source": "model/103:4:composite:1/105:8:value-alias:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/108:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00009"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/107:18:value-alias:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/108:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00010"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/107:18:value-alias:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/110:23:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00011"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/107:18:value-alias:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/110:37:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00012"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/110:23:opaque:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/110:23:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00013"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/110:37:compute:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/110:23:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00014"
+    },
+    {
+      "source": "model/103:4:composite:1/106:8:value-alias:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/110:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "receiver",
+      "evidence": "source-dependency",
+      "id": "e00015"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/110:23:compute:1",
+      "target": "model/103:4:composite:1/107:8:composite:1/110:12:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "arg:0",
+      "evidence": "source-dependency",
+      "id": "e00016"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/107:12:value-alias:1",
+      "target": "model/103:4:composite:1/107:8:opaque:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00017"
+    },
+    {
+      "source": "model/103:4:composite:1/107:8:composite:1/107:18:value-alias:1",
+      "target": "model/103:4:composite:1/107:8:opaque:2",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "body",
+      "evidence": "source-dependency",
+      "id": "e00018"
+    },
+    {
+      "source": "model/103:4:composite:1/105:8:value-alias:1",
+      "target": "model/103:4:composite:1/112:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "0",
+      "evidence": "source-dependency",
+      "id": "e00019"
+    },
+    {
+      "source": "model/103:4:composite:1/106:8:value-alias:1",
+      "target": "model/103:4:composite:1/112:15:compute:1",
+      "kind": "data",
+      "source_port": "out",
+      "target_port": "1",
+      "evidence": "source-dependency",
+      "id": "e00020"
+    },
+    {
+      "source": "model/103:4:composite:1/112:15:compute:1",
+      "target": "model/103:4:composite:1/112:8:interface:1",
+      "kind": "interface-binding",
+      "source_port": "out",
+      "target_port": "in",
+      "evidence": "source-dependency",
+      "id": "e00021"
+    }
+  ],
+  "branches": [
+    {
+      "id": "model/103:4:composite:1/107:8:control:1",
+      "file": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act/detr/models/backbone.py",
+      "line": 107,
+      "kind": "loop",
+      "outcomes": [
+        "zero",
+        "nonzero"
+      ],
+      "path_coverage": "unresolved"
+    }
+  ],
+  "motifs": [],
+  "diagnostics": [],
+  "runtime": {
+    "status": "not-requested",
+    "model_executed": false
+  },
+  "coverage_blockers": [],
+  "coverage": {
+    "status": "not-verified",
+    "scope": "static-source",
+    "complete": false,
+    "reason": "static dependencies are not execution proof"
+  },
+  "limitations": [
+    "Static edges express source dependencies, not observed tensor bindings.",
+    "Unresolved calls/loops/external definitions remain explicit opaque boundaries.",
+    "Mutation updates proven direct aliases only; views, external aliases and interprocedural effects remain unresolved.",
+    "Notebook cells are parsed as data; notebook setup/training cells are never executed."
+  ],
+  "analysis": {
+    "kind": "static-source",
+    "project_root": "/home/fzg/PycharmProjects/ArchCanvas/Source_Code_Project/act",
+    "loaded_files": 1,
+    "file_budget": 128,
+    "entry_kind": "callable",
+    "imports_executed": false
+  },
+  "ir_digest": "87fc28b9747045bc1da636977427f5c841f97e6180453a8385e7265878cab54e"
+}

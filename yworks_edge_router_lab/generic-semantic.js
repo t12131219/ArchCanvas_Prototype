@@ -13,7 +13,7 @@
   const engine={...E,semanticOnly:true,project:(ir,state,plan,opts={})=>E.project(ir,state,plan,{...opts,semanticOnly:true})};
   const project=(ir,state)=>engine.project(ir,state);
   const Flow=root.SummaryFlowOptimizer||(typeof require==='function'?require('./flow-optimizer.js'):null);
-  const VERSION='native-semantic/12',SCHEMA='archcanvas-native-semantic/1';
+  const VERSION='native-semantic/14',SCHEMA='archcanvas-native-semantic/1';
   const projectionInputs=new WeakMap(),certificates=new WeakMap(),sharedCertificates=new WeakMap(),frozen=new WeakSet();
   const projections=new WeakMap(),sharedProjections=new Map(),navigationIndexes=new WeakMap();
   function projectionKey(ir,state){return stable(ir)+'\n'+stable(state);}
@@ -317,6 +317,10 @@
   function routeOptions(options={}){return {margin:6,stub:16,bendCost:40,crossingCost:450,overlapCost:2,edgeSpacing:12,sides:'any',style:'orthogonal',boundaryLanes:false,preferCurrentPorts:true,tryDirectPorts:true,maxSearchVertices:20000,searchPadding:768,aStar:true,pruneContainedObstacles:true,spatialPrior:true,...options};}
   function route(graph,options={}){
     const native=root.SummaryEngine,C=root.SummaryConstraints,context=C.validationContext(graph);
+    // Navigation restores an already-validated drawing, including manual
+    // physical ports. Re-running aesthetic passes here would overwrite the
+    // saved presentation even when overview/detail happen to share one cut.
+    if(graph.nativeLayoutRestored){const check=native.validateView(graph);if(check.source.ok&&check.layout.ok&&check.edges.every(([,v])=>v.ok))return {graph,routed:0,failed:0,pending:0};}
     const opts=routeOptions(options),large=graph.nodes.length>1000,budget=options.budgetMs??(large?8000:Infinity),started=performance.now();
     const candidates=graph.nativeRouting?graph.edges.filter(e=>e.pendingRouting||e.failed).sort((a,b)=>Number(!!b.pendingRouting)-Number(!!a.pendingRouting)):graph.edges;
     const selected=new Set(candidates),prior=graph.edges.filter(e=>!selected.has(e)&&!e.failed&&!e.pendingRouting).map(e=>Object.assign(e.route.slice(),{wire:e.contract.wire}));let routed=0;
@@ -348,6 +352,13 @@
     if(options.refineFlow!==false&&graph.nodes.length<=300&&graph.edges.length<=300&&!graph.edges.some(e=>e.failed||e.pendingRouting)&&performance.now()-started<budget){
       if(!graph.nativeLayoutRestored&&!graph.nativeRouting)Flow.reorder(graph,opts,Math.min(options.siblingBudgetMs??2200,budget-(performance.now()-started)));
       Flow.fanouts(graph,opts,Math.min(options.fanoutBudgetMs??600,Math.max(0,budget-(performance.now()-started))));
+      Flow.shortcuts(graph,opts,Math.min(options.shortcutBudgetMs??400,Math.max(0,budget-(performance.now()-started))));
+      Flow.separate(graph,opts,Math.min(options.separationBudgetMs??300,Math.max(0,budget-(performance.now()-started))));
+      if(!graph.nativeLayoutRestored){
+      Flow.convergence(graph,opts,Math.min(options.convergenceBudgetMs??700,Math.max(0,budget-(performance.now()-started))));
+      Flow.separate(graph,{...opts,borderClearance:true},Math.min(options.borderBudgetMs??200,Math.max(0,budget-(performance.now()-started))));
+      Flow.terminals(graph,opts,Math.min(options.terminalBudgetMs??200,Math.max(0,budget-(performance.now()-started))));
+      }
     }
     const pending=graph.edges.filter(e=>e.pendingRouting).length,failed=graph.edges.filter(e=>e.failed).length;
     graph.nativeRouting={pending,failed:failed-pending,complete:!pending};return {graph,routed,failed,pending};
@@ -476,10 +487,11 @@
   function borderProximity(graph,route,frames=graph.nodes.filter(n=>n.expanded&&!n.modelHeading)){
       let cost=0;const xs=[],ys=[];
       for(let i=1;i<route.length;i++){const a=route[i-1],b=route[i];for(const f of frames){
-        if(Math.abs(a.x-b.x)<1e-5){const overlap=Math.min(Math.max(a.y,b.y),f.y+f.h)-Math.max(Math.min(a.y,b.y),f.y);if(overlap<80)continue;
-          for(const x of [f.x,f.x+f.w])if(Math.abs(a.x-x)<18){cost+=overlap*(18-Math.abs(a.x-x))/18;xs.push(x-20,x+20);}
-        }else if(Math.abs(a.y-b.y)<1e-5){const overlap=Math.min(Math.max(a.x,b.x),f.x+f.w)-Math.max(Math.min(a.x,b.x),f.x);if(overlap<80)continue;
-          for(const y of [f.y,f.y+f.h])if(Math.abs(a.y-y)<18){cost+=overlap*(18-Math.abs(a.y-y))/18;ys.push(y-20,y+20);}
+        const gap=f.expanded?18:12,minimum=f.expanded?80:24,lane=f.expanded?20:14;
+        if(Math.abs(a.x-b.x)<1e-5){const overlap=Math.min(Math.max(a.y,b.y),f.y+f.h)-Math.max(Math.min(a.y,b.y),f.y);if(overlap<minimum)continue;
+          for(const x of [f.x,f.x+f.w])if(Math.abs(a.x-x)<gap){cost+=overlap*(gap-Math.abs(a.x-x))/gap;xs.push(x-lane,x+lane);}
+        }else if(Math.abs(a.y-b.y)<1e-5){const overlap=Math.min(Math.max(a.x,b.x),f.x+f.w)-Math.max(Math.min(a.x,b.x),f.x);if(overlap<minimum)continue;
+          for(const y of [f.y,f.y+f.h])if(Math.abs(a.y-y)<gap){cost+=overlap*(gap-Math.abs(a.y-y))/gap;ys.push(y-lane,y+lane);}
         }
       }}return {cost,xs:[...new Set(xs)],ys:[...new Set(ys)]};
   }
@@ -589,7 +601,7 @@
   function document(graph){const nativeLayout=layoutSnapshot(graph);return {schema:SCHEMA,renderer:graph.generic.version,ir:clone(graph.generic.ir),state:clone(graph.generic.state),authoring:clone(graph.generic.authoring),migration:clone(graph.generic.migration),layouts:clone(graph.generic.layouts||[]),nativeLayout:clone(nativeLayout)};}
   function read(value){
     let ir,state,authoring,migration,nativeLayout,layouts;
-    if(value.schema===SCHEMA){({ir,state,authoring,migration,nativeLayout,layouts}=value);if(value.renderer!==VERSION){if(!/^native-semantic\/([1-9]|10|11)$/.test(value.renderer||''))throw Error('不支持的原生语义布局版本');migration={...(migration||{}),previousRenderer:value.renderer,previousNativeLayout:clone(nativeLayout||null),previousLayouts:clone(layouts||[])};nativeLayout=null;layouts=[];}}
+    if(value.schema===SCHEMA){({ir,state,authoring,migration,nativeLayout,layouts}=value);if(value.renderer!==VERSION){if(!/^native-semantic\/([1-9]|10|11|12|13)$/.test(value.renderer||''))throw Error('不支持的原生语义布局版本');migration={...(migration||{}),previousRenderer:value.renderer,previousNativeLayout:clone(nativeLayout||null),previousLayouts:clone(layouts||[])};nativeLayout=null;layouts=[];}}
     else if(value.schema==='semantic-authoring/1'){A.validate(value);authoring=value;ir=A.sourceIR(value);state={view:'publication',mode:'merged',paperCanonical:true,paperMedium:'canvas',paperAuto:false,open:value.open||[]};migration={schema:value.schema,original:clone(value)};}
     else if(['semantic-canvas/1','archcanvas-architecture-document/1'].includes(value.schema)){({ir,state}=value);authoring=value.authoring||null;migration={schema:value.schema,original:clone(value),geometry:'Retained as provenance; measured again for native canvas'};}
     else if(value.schema==='archcanvas-source-semantic/2')ir=value;

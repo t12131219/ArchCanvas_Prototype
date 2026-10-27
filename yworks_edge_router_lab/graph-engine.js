@@ -244,6 +244,11 @@
       root.SummaryNativeSemantic.refineJoins(graph,{...opts,joinTargets:new Set(affected.map(e=>e.target))},context,options.joinBudgetMs??100);
       root.SummaryNativeSemantic.refineChannels(graph,{...opts,channelEdges:new Set(affected.map(e=>e.id))},options.channelBudgetMs??100);
       root.SummaryFlowOptimizer.fanouts(graph,{...opts,flowEdges:new Set(affected.map(e=>e.id))},options.fanoutBudgetMs??100);
+      root.SummaryFlowOptimizer.shortcuts(graph,{...opts,flowEdges:new Set(affected.map(e=>e.id))},options.shortcutBudgetMs??100);
+      root.SummaryFlowOptimizer.separate(graph,{...opts,flowEdges:new Set(affected.map(e=>e.id))},options.separationBudgetMs??100);
+      root.SummaryFlowOptimizer.convergence(graph,{...opts,reorderRows:false,flowEdges:new Set(affected.map(e=>e.id))},options.convergenceBudgetMs??70);
+      root.SummaryFlowOptimizer.separate(graph,{...opts,borderClearance:true,flowEdges:new Set(affected.map(e=>e.id))},options.borderBudgetMs??70);
+      root.SummaryFlowOptimizer.terminals(graph,{...opts,flowEdges:new Set(affected.map(e=>e.id))},options.terminalBudgetMs??70);
     }
     return ids;
   }
@@ -452,6 +457,11 @@
       root.SummaryNativeSemantic.refineJoins(graph,{...options,joinEdges:set},context,options.joinBudgetMs??100);
       root.SummaryNativeSemantic.refineChannels(graph,{...options,channelEdges:set},options.channelBudgetMs??100);
       root.SummaryFlowOptimizer.fanouts(graph,{...options,flowEdges:set},options.fanoutBudgetMs??100);
+      root.SummaryFlowOptimizer.shortcuts(graph,{...options,flowEdges:set},options.shortcutBudgetMs??100);
+      root.SummaryFlowOptimizer.separate(graph,{...options,flowEdges:set},options.separationBudgetMs??100);
+      root.SummaryFlowOptimizer.convergence(graph,{...options,reorderRows:false,flowEdges:set},options.convergenceBudgetMs??70);
+      root.SummaryFlowOptimizer.separate(graph,{...options,borderClearance:true,flowEdges:set},options.borderBudgetMs??70);
+      root.SummaryFlowOptimizer.terminals(graph,{...options,flowEdges:set},options.terminalBudgetMs??70);
     }
     return {graph,routed,failed,retained};
   }
